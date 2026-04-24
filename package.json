@@ -17,6 +17,7 @@
     "verify-ui": "node scripts/verify-ui.mjs",
     "run-task": "node --experimental-strip-types scripts/run-task.ts",
     "spike-babysitter-pi": "node --experimental-strip-types scripts/babysitter-pi-spike.ts",
+    "list-pi-extensions": "node --experimental-strip-types scripts/list-pi-extensions.ts",
     "setup": "pwsh scripts/setup.ps1"
   },
   "dependencies": {
