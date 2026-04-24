@@ -93,6 +93,11 @@ export class TaskStore extends EventEmitter {
     this.root = root;
   }
 
+  /** Absolute path to a task's folder. Folder may not exist yet. */
+  folderFor(taskId: string): string {
+    return path.join(this.root, taskId);
+  }
+
   // Typed overrides so callers get autocomplete on event names.
   override on<K extends keyof TaskStoreEvents>(event: K, listener: TaskStoreEvents[K]): this {
     return super.on(event, listener);

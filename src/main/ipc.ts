@@ -6,7 +6,8 @@
  * Channel naming: `<domain>:<verb>` (e.g. `tasks:list`, `agents:list`).
  * Keeps the main handler surface inspectable in one file.
  */
-import { ipcMain } from "electron";
+import { ipcMain, shell } from "electron";
+import { existsSync } from "node:fs";
 
 import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
@@ -147,6 +148,19 @@ export function registerIpc(stores: Stores): void {
 
   // ── pi meta (model registry from pi's own auth config) ────────────────
   ipcMain.handle("pi:listModels", () => stores.pi.listModels());
+
+  // ── shell convenience — reveal the task's folder in the OS file UI ───
+  // Point the user at the task's on-disk state: PROMPT.md, STATUS.md,
+  // events.jsonl, workspace/, per-role notes. No path is returned to the
+  // renderer; the shell opens it directly.
+  ipcMain.handle("shell:openTaskFolder", (_e, taskId: string) => {
+    const folder = stores.tasks.folderFor(taskId);
+    if (!existsSync(folder)) {
+      return { ok: false, reason: "not-found" as const };
+    }
+    void shell.openPath(folder);
+    return { ok: true };
+  });
 
   // ── app info ─────────────────────────────────────────────────────────
   ipcMain.handle("app:version", () => process.env["npm_package_version"] ?? "dev");

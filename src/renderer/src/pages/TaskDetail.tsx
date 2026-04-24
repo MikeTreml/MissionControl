@@ -51,6 +51,15 @@ export function TaskDetail(): JSX.Element {
           </p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
+          {!isDemo && (
+            <button
+              className="button ghost"
+              title="Open the task's folder in your OS file explorer"
+              onClick={() => { void window.mc?.openTaskFolder(task.id); }}
+            >
+              📁 Open folder
+            </button>
+          )}
           {!isDemo && <DeleteTaskButton taskId={task.id} />}
           <BackToDashboard />
         </div>
