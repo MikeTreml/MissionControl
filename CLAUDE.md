@@ -118,37 +118,56 @@ Then read the docs in this order:
 - All pages route, all hooks wired
 - Demo fallback so fresh installs show something
 
-**Mocked / canned until pi wires:**
+**Real + live:**
 
-- RightBar Run Activity (synthesizes events)
-- Metrics page numbers (canned)
-- Start button on Task Detail now **kicks off a real pi prompt**: it
-  builds a blunt v1 prompt from the task (title + description + project +
-  workflow + cycle), opens a `PiSessionHandle` via babysitter-sdk's
-  `createPiSession`, and calls `session.prompt()`. When pi fires
-  `agent_end` the task auto-flips to idle with `reason: "completed"` /
-  `"failed"`. All pi events land in the task's `events.jsonl` as
-  `pi:<type>` entries. Pause/Resume are still MC-level state only
-  (they don't touch the pi session).
-- Pi inherits auth from the environment — set `OPENAI_API_KEY` or
-  `ANTHROPIC_API_KEY` in the shell that launches `npm run dev`, or log
-  in once via the `pi` CLI so `~/.pi/agent/auth.json` is populated.
+- **Start button runs a full babysitter-orchestrated pipeline.** Clicking
+  Start invokes `/babysit <task brief>` inside a pi session. Babysitter-pi
+  (installed via `pi install npm:@a5c-ai/babysitter-pi`) generates a
+  `process.js` per task and drives Planner → Developer → Reviewer →
+  Surgeon with loopbacks + mandatory stops. When babysitter's final
+  `agent_end` fires, the task flips to idle. Expect runs to take minutes
+  — babysitter is deliberately paced.
+- **Workspace cwd**: `project.path` when set (babysitter writes
+  `.a5c/processes/` + `.a5c/runs/` there — add `.a5c/` to that project's
+  `.gitignore`); fall back to `<userData>/tasks/<id>/workspace/` per-task
+  scratch dir otherwise.
+- **`<userData>/tasks/<id>/PROMPT.md`** is written on each Start as the
+  canonical mission brief. Agents re-read this rather than relying on
+  inline prompt text.
+- **Live events**: TaskStore emits → main forwards via `webContents.send`
+  → `lib/live-events-bridge.ts` republishes to the data-bus → hooks
+  refetch. RightBar Run Activity shows real pi events; TaskDetail's
+  Run History + Metrics derive tokens/cost from the journal.
+- **Model picker** on Task Detail pulls from pi's `ModelRegistry` via
+  `pi:listModels` IPC. Empty value = let pi use its default.
+- **Campaign task kind** UI: kind selector + one-line-per-item textarea
+  + TaskDetail Campaign Items table. Runtime iteration is NOT wired
+  yet — babysitter's `ctx.map` is the intended path.
+- **Per-workflow lanes**: `workflow.json` accepts optional `lanes[]`.
+  Settings → Workflows shows per-workflow lane sequence with
+  default/custom label. X-brainstorm uses `[plan, develop, done]`.
+- Pi inherits auth from the environment — `OPENAI_API_KEY` /
+  `ANTHROPIC_API_KEY` in the shell, or `pi` CLI login populating
+  `~/.pi/agent/auth.json`.
 
 **Not started:**
 
-- Per-agent prompt.md + model routing — today all tasks go through pi's
-  default model with no system prompt override. Next step: read the
-  current agent's `prompt.md` for system prompt, resolve
-  `Agent.primaryModel` through the ModelRoster, pass to pi.
-- Babysitter orchestration — delivered to pi via
-  `pi install npm:@a5c-ai/babysitter-pi` (see "Dep notes" below). MC
-  itself has no babysitter integration; the multi-agent flow lives
-  inside pi's skill system. Single-agent prompting has to feel right
-  before babysitter layers on top.
-- Live event forwarding to the renderer — pi events land in events.jsonl
-  but the UI doesn't auto-refresh yet. RightBar Run Activity still mocks.
-- Campaign task kind (DLL harvest) — schema field exists, UI doesn't
-- Workflow lane customization — both workflows use the same 6 lanes today
+- **Campaign runtime iteration** — schema + UI are built; actual
+  "spawn a session per item" loop should live inside babysitter's
+  generated process.js for campaign-kind tasks.
+- **Plannotator Approval lane** — the lane name exists; the gate
+  doesn't. Next: when a task hits the Approval lane, open plannotator
+  pointed at the planner's artifact; consume its approve/reject result.
+- **pi-memory-md wire-up** — per-project memory at `~/.pi/memory-md/<project>/`.
+  Agents gain memory tools automatically once set up.
+- **pi-superpowers role prompts** — swap hand-rolled `agents/<slug>/prompt.md`
+  for pi-superpowers skill references (brainstorming, planning, TDD,
+  code-review, etc.).
+- **Pause/Resume affecting pi** — currently MC-state only. pi's
+  `session.steer()` / `session.followUp()` could interrupt mid-turn.
+- **Subagent spawn tracking** — install pi-finder + pi-librarian; capture
+  `subagent_spawn` / `subagent_complete` events in RightBar as
+  first-class rows (per wireframe spec).
 
 ## Dep notes
 
