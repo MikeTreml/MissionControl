@@ -1,5 +1,6 @@
 {
   "code": "X",
   "name": "Brainstorm",
-  "description": "Exploratory / ideation workflow. Less coding, more prompting and clustering."
+  "description": "Exploratory / ideation workflow. Less coding, more prompting and clustering.",
+  "lanes": ["plan", "develop", "done"]
 }

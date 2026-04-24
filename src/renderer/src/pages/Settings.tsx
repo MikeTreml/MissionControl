@@ -16,6 +16,7 @@ import { useAgents, modelLabel } from "../hooks/useAgents";
 import { useWorkflows } from "../hooks/useWorkflows";
 import { publish } from "../hooks/data-bus";
 import { useRoute, type ViewId } from "../router";
+import { effectiveLanes } from "../../../shared/models";
 import type { ModelDefinition } from "../../../shared/models";
 
 const SUBTABS: ReadonlyArray<{ id: ViewId; label: string }> = [
@@ -296,17 +297,44 @@ export function SettingsWorkflows(): JSX.Element {
               </p>
             </div>
           )}
-          {workflows.map((w) => (
-            <div key={w.code} className="card">
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span className="pill info" style={{ fontSize: 14 }}>{w.code}</span>
-                <strong style={{ fontSize: 18 }}>{w.name}</strong>
+          {workflows.map((w) => {
+            const lanes = effectiveLanes(w);
+            const customLanes = Boolean(w.lanes && w.lanes.length > 0);
+            return (
+              <div key={w.code} className="card">
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span className="pill info" style={{ fontSize: 14 }}>{w.code}</span>
+                  <strong style={{ fontSize: 18 }}>{w.name}</strong>
+                </div>
+                <p className="muted" style={{ marginTop: 8 }}>
+                  {w.description || "(no description)"}
+                </p>
+                <div style={{ marginTop: 10, display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                  <span className="muted" style={{ fontSize: 12 }}>
+                    Lanes {customLanes ? "(custom)" : "(default)"}:
+                  </span>
+                  {lanes.map((lane, idx) => (
+                    <span key={lane} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      <span
+                        style={{
+                          background: "var(--panel-2)",
+                          border: "1px solid var(--border)",
+                          borderRadius: 6,
+                          padding: "2px 8px",
+                          fontSize: 12,
+                        }}
+                      >
+                        {lane}
+                      </span>
+                      {idx < lanes.length - 1 && (
+                        <span className="muted" style={{ fontSize: 11 }}>→</span>
+                      )}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <p className="muted" style={{ marginTop: 8 }}>
-                {w.description || "(no description)"}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </>

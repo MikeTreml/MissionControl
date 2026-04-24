@@ -56,6 +56,22 @@ export type RunState = z.infer<typeof RunStateSchema>;
 export const TaskKindSchema = z.enum(["single", "campaign"]);
 export type TaskKind = z.infer<typeof TaskKindSchema>;
 
+/**
+ * One item in a campaign task. Each item represents one unit of work the
+ * agent will process (one DLL, one file, one entity). The runtime
+ * iterator (future: babysitter's ctx.map / pi-subagents parallel) spawns
+ * a session per item.
+ */
+export const CampaignItemSchema = z.object({
+  id: z.string().min(1),                       // stable identifier — user-supplied or auto-generated
+  description: z.string().default(""),         // what pi should do for this item
+  status: z
+    .enum(["pending", "running", "done", "failed"])
+    .default("pending"),
+  notes: z.string().default(""),               // free-form — captures exit reason, summary, etc.
+});
+export type CampaignItem = z.infer<typeof CampaignItemSchema>;
+
 // ── main models ──────────────────────────────────────────────────────────
 
 /** Single uppercase letter workflow code (F=Feature, B=Bug, R=Refactor, S=Spike, ...). */
@@ -94,6 +110,13 @@ export const TaskSchema = z.object({
   currentStep: z.string().default(""),         // short human-readable status line
   lastEvent: z.string().default(""),           // most-recent event summary
   laneHistory: z.array(LaneHistoryEntrySchema).default([]), // timeline data
+  /**
+   * Campaign items. Only populated when `kind === "campaign"`. Empty at
+   * creation is fine — the Planner may generate them during its run.
+   * Runtime iteration (one session per item) is PROPOSED and not wired
+   * yet — see docs/WORKFLOW-EXECUTION.md for the babysitter plan.
+   */
+  items: z.array(CampaignItemSchema).default([]),
   createdAt: z.string().datetime(),            // ISO 8601
   updatedAt: z.string().datetime(),
 });
@@ -182,13 +205,28 @@ export type ModelDefinition = z.infer<typeof ModelDefinitionSchema>;
 /**
  * A workflow — how a task moves through the board. Declared by workflow.json
  * under <root>/workflows/<CODE>-<slug>/workflow.json.
+ *
+ * `lanes` is an optional subset of LaneSchema values that this workflow
+ * uses, in order. Omit to use the full LANE_ORDER. X-brainstorm, for
+ * example, might only use ["plan", "develop", "done"] since it doesn't
+ * need review/surgery/approval gates.
  */
 export const WorkflowSchema = z.object({
   code: WorkflowLetterSchema,                  // "F"
   name: z.string().min(1),                     // "Feature"
   description: z.string().default(""),
+  lanes: z.array(LaneSchema).optional(),
 });
 export type Workflow = z.infer<typeof WorkflowSchema>;
+
+/**
+ * Resolve the lanes a workflow actually uses. Returns the workflow's
+ * `lanes` if set, otherwise falls back to the project-wide LANE_ORDER.
+ */
+export function effectiveLanes(workflow: Workflow | undefined): readonly Lane[] {
+  if (workflow?.lanes && workflow.lanes.length > 0) return workflow.lanes;
+  return LANE_ORDER;
+}
 
 /**
  * Permission scope for an agent. Intentionally open-ended (.passthrough) —

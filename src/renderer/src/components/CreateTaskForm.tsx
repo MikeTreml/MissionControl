@@ -10,7 +10,9 @@ import { Modal } from "./Modal";
 import { useProjects } from "../hooks/useProjects";
 import { useWorkflows } from "../hooks/useWorkflows";
 import { useTasks } from "../hooks/useTasks";
+import { useRoute } from "../router";
 import { publish } from "../hooks/data-bus";
+import { effectiveLanes } from "../../../shared/models";
 
 export function CreateTaskForm({
   open,
@@ -22,20 +24,39 @@ export function CreateTaskForm({
   const { projects } = useProjects();
   const { workflows } = useWorkflows();
   const { tasks, refresh: refreshTasks } = useTasks();
+  const { selectedProjectId } = useRoute();
 
   const [projectId, setProjectId] = useState<string>("");
   const [workflow, setWorkflow] = useState<string>("F");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [kind, setKind] = useState<"single" | "campaign">("single");
+  // One item per line for campaigns. Blank lines ignored. Each becomes
+  // a CampaignItem with description + auto-generated id.
+  const [itemsText, setItemsText] = useState("");
   const [error, setError] = useState<string>("");
   const [saving, setSaving] = useState(false);
 
-  // Default project on first open
+  // Default project: the one currently being viewed (selectedProjectId from
+  // the router). Falls back to the first project only when nothing is
+  // selected — prevents silently assigning tasks to whichever project
+  // sorts alphabetically first while the user has a different one open.
   useEffect(() => {
-    if (open && !projectId && projects.length > 0) {
-      setProjectId(projects[0]!.id);
-    }
-  }, [open, projectId, projects]);
+    if (!open) return;
+    if (projectId) return;
+    if (projects.length === 0) return;
+    const preferred =
+      selectedProjectId && projects.find((p) => p.id === selectedProjectId)
+        ? selectedProjectId
+        : projects[0]!.id;
+    setProjectId(preferred);
+  }, [open, projectId, projects, selectedProjectId]);
+
+  // Reset project each time the modal opens so switching views
+  // between opens honors the new selectedProjectId.
+  useEffect(() => {
+    if (!open) setProjectId("");
+  }, [open]);
 
   const activeProject = projects.find((p) => p.id === projectId);
 
@@ -77,12 +98,37 @@ export function CreateTaskForm({
       if (!window.mc) {
         return setError("Not connected to main process — try `npm run dev`");
       }
+      // Start the task in the first lane of the selected workflow. For
+      // workflows that declare `lanes` in workflow.json (e.g. X-brainstorm)
+      // this means new tasks land in the right first step instead of the
+      // schema's "plan" default.
+      const selectedWorkflow = workflows.find((w) => w.code === workflow);
+      const startLane = effectiveLanes(selectedWorkflow)[0];
+
+      const items = kind === "campaign"
+        ? itemsText
+            .split("\n")
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0)
+            .map((description, i) => ({
+              // Post-filter index → contiguous IDs, no gaps from blank lines.
+              // Width scales with count so item-1000 doesn't look like item-001.
+              id: `item-${String(i + 1).padStart(4, "0")}`,
+              description,
+              status: "pending" as const,
+              notes: "",
+            }))
+        : undefined;
+
       await window.mc.createTask({
         title: title.trim(),
         description,
         projectId: activeProject.id,
         projectPrefix: activeProject.prefix,
         workflow,
+        kind,
+        ...(startLane ? { lane: startLane } : {}),
+        ...(items ? { items } : {}),
       });
       publish("tasks");
       await refreshTasks();
@@ -137,6 +183,17 @@ export function CreateTaskForm({
             <div className="hint">Read from the <code>workflows/</code> folder at boot.</div>
           </div>
           <div className="field">
+            <label>Kind</label>
+            <select value={kind} onChange={(e) => setKind(e.target.value as "single" | "campaign")}>
+              <option value="single">Single — one task × N cycles</option>
+              <option value="campaign">Campaign — one task × N items (iterate each)</option>
+            </select>
+            <div className="hint">
+              Campaigns process a list of items, one session per item. Runtime
+              iteration is not wired yet — items show up for planning only.
+            </div>
+          </div>
+          <div className="field">
             <label>Title</label>
             <input
               autoFocus
@@ -155,6 +212,21 @@ export function CreateTaskForm({
               placeholder="What does done look like? Any constraints the Planner should know?"
             />
           </div>
+          {kind === "campaign" && (
+            <div className="field">
+              <label>Items (one per line)</label>
+              <textarea
+                rows={5}
+                value={itemsText}
+                onChange={(e) => setItemsText(e.target.value)}
+                placeholder={"./src/lib/thing-a.dll\n./src/lib/thing-b.dll\n./src/lib/thing-c.dll"}
+              />
+              <div className="hint">
+                Optional at creation — Planner can generate items as part of
+                its run. One item per line, blank lines ignored.
+              </div>
+            </div>
+          )}
 
           {error && (
             <div

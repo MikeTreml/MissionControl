@@ -1,10 +1,15 @@
 /**
  * useTask(id) — fetch one task + its event journal. Demo fallback synthesizes
  * a single task from the mock set when window.mc is unavailable.
+ *
+ * Live updates: refetches whenever the data-bus publishes "tasks" (fired
+ * by the main→renderer bridge on any task event or manifest save, see
+ * `lib/live-events-bridge.ts`).
  */
 import { useEffect, useState } from "react";
 
 import { mockTasks } from "../mock-data";
+import { useSubscribe } from "./data-bus";
 import type { Task, TaskEvent } from "../../../shared/models";
 
 function mockTaskToTask(id: string): Task | null {
@@ -26,6 +31,7 @@ function mockTaskToTask(id: string): Task | null {
     currentStep: m.stepLine,
     lastEvent: m.sub ?? "",
     laneHistory: [{ lane: "plan", enteredAt: now }],
+    items: [],
     createdAt: now,
     updatedAt: now,
   };
@@ -100,6 +106,9 @@ export function useTask(id: string | null): TaskState {
   useEffect(() => {
     void load();
   }, [id]);
+
+  // Live refetch on any task-related push from the main process.
+  useSubscribe("tasks", () => { void load(); });
 
   return { task, events, loading, isDemo, error, refresh: load };
 }

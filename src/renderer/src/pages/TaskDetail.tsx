@@ -8,14 +8,17 @@
  * Controls are UI-only today. When pi is wired (baby step 14+), onClick
  * handlers call window.mc.startRun() etc.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRoute } from "../router";
 import { useTask } from "../hooks/useTask";
 import { useAgents } from "../hooks/useAgents";
+import { usePiModels } from "../hooks/usePiModels";
 import { publish } from "../hooks/data-bus";
+import { deriveRuns, type DerivedRun } from "../lib/derive-runs";
 import { PageStub } from "./PageStub";
 import type { Lane, LaneHistoryEntry, Task, TaskEvent } from "../../../shared/models";
+import type { PiModelInfo } from "../global";
 
 const LANE_LABEL: Record<Lane, string> = {
   plan: "Plan", develop: "Develop", review: "Review",
@@ -60,6 +63,8 @@ export function TaskDetail(): JSX.Element {
           <LaneTimeline task={task} />
           <TaskMeta task={task} events={events} />
         </section>
+
+        {task.kind === "campaign" && <CampaignItems task={task} />}
 
         <RunHistory events={events} />
 
@@ -141,10 +146,22 @@ function DeleteTaskButton({ taskId }: { taskId: string }): JSX.Element {
 function Controls({ task }: { task: Task }): JSX.Element {
   const { agents } = useAgents();
   const primaries = agents.filter((a) => a.code.length === 1);
+  const { models: piModels } = usePiModels();
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [agentSlug, setAgentSlug] = useState(task.currentAgentSlug ?? "");
+  // Empty string = use pi's default (no model override).
+  const [modelId, setModelId] = useState<string>("");
+
+  // Resync local selection when navigating to a different task — useState's
+  // initial value is only honored on first mount; without this, a re-used
+  // Controls instance would keep the previous task's agent/model.
+  useEffect(() => {
+    setAgentSlug(task.currentAgentSlug ?? "");
+    setModelId("");
+    setError("");
+  }, [task.id]);
 
   const canStart   = task.runState === "idle";
   const canPause   = task.runState === "running";
@@ -165,7 +182,13 @@ function Controls({ task }: { task: Task }): JSX.Element {
     setBusy(true);
     try {
       switch (op) {
-        case "start":  await window.mc.startRun({ taskId: task.id, agentSlug: agentSlug || undefined }); break;
+        case "start":
+          await window.mc.startRun({
+            taskId: task.id,
+            agentSlug: agentSlug || undefined,
+            model: modelId || undefined,
+          });
+          break;
         case "pause":  await window.mc.pauseRun({ taskId: task.id }); break;
         case "resume": await window.mc.resumeRun({ taskId: task.id }); break;
         case "stop":   await window.mc.stopRun({ taskId: task.id, reason: "user" }); break;
@@ -213,6 +236,12 @@ function Controls({ task }: { task: Task }): JSX.Element {
                 {primaries.length === 0 && <option value="">(no agents loaded)</option>}
               </select>
             </div>
+            <ModelPicker
+              value={modelId}
+              onChange={setModelId}
+              disabled={busy}
+              models={piModels}
+            />
           </>
         )}
 
@@ -345,8 +374,15 @@ function LaneTimeline({ task }: { task: Task }): JSX.Element {
 }
 
 function TaskMeta({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element {
-  const tokensIn = sumFromEvents(events, "tokensIn");
-  const tokensOut = sumFromEvents(events, "tokensOut");
+  const runs = deriveRuns(events);
+  const totals = runs.reduce(
+    (acc, r) => ({
+      tokensIn:  acc.tokensIn  + (r.tokensIn  ?? 0),
+      tokensOut: acc.tokensOut + (r.tokensOut ?? 0),
+      cost:      acc.cost      + (r.costUSD   ?? 0),
+    }),
+    { tokensIn: 0, tokensOut: 0, cost: 0 },
+  );
   return (
     <div>
       <h3>Task meta</h3>
@@ -356,7 +392,8 @@ function TaskMeta({ task, events }: { task: Task; events: TaskEvent[] }): JSX.El
         <Row label="Kind" value={task.kind} />
         <Row label="Cycles so far" value={String(task.cycle)} />
         <Row label="Current agent" value={task.currentAgentSlug ?? "(none)"} />
-        <Row label="Tokens in / out" value={`${tokensIn.toLocaleString()} / ${tokensOut.toLocaleString()}`} />
+        <Row label="Tokens in / out" value={`${totals.tokensIn.toLocaleString()} / ${totals.tokensOut.toLocaleString()}`} />
+        <Row label="Cost (USD)" value={totals.cost > 0 ? `$${totals.cost.toFixed(4)}` : "—"} />
         <Row label="Created" value={fmt(task.createdAt)} />
         <Row label="Updated" value={fmt(task.updatedAt)} />
         <Row label="Status" value={task.status} />
@@ -381,37 +418,61 @@ function Row({ label, value }: { label: string; value: string }): JSX.Element {
   );
 }
 
+/**
+ * Campaign items table — shown only when task.kind === "campaign". Each
+ * row is one unit of work. The runtime iterator (one session per item)
+ * isn't wired yet; today this is display-only so users can plan + paste
+ * items in, and so the schema is exercised.
+ */
+function CampaignItems({ task }: { task: Task }): JSX.Element {
+  const items = task.items;
+  return (
+    <section className="card">
+      <h3>Campaign items</h3>
+      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+        {items.length === 0
+          ? "No items yet. Paste items into the Create Task form or let the Planner generate them."
+          : `${items.length} item${items.length === 1 ? "" : "s"} · runtime iteration not wired yet (see docs/WORKFLOW-EXECUTION.md).`}
+      </p>
+      {items.length > 0 && (
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 10, fontSize: 13 }}>
+          <thead>
+            <tr style={{ color: "var(--muted)", textAlign: "left" }}>
+              <th style={cellHead}>ID</th>
+              <th style={cellHead}>Description</th>
+              <th style={cellHead}>Status</th>
+              <th style={cellHead}>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id} style={{ borderTop: "1px solid var(--border)" }}>
+                <td style={cell}><strong>{item.id}</strong></td>
+                <td style={cell}>{item.description}</td>
+                <td style={cell}>
+                  <span className={`pill ${item.status === "done" ? "good" : item.status === "failed" ? "bad" : item.status === "running" ? "warn" : "info"}`}>
+                    {item.status}
+                  </span>
+                </td>
+                <td style={cell}>{item.notes || "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </section>
+  );
+}
+
 function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
-  // Pair run-started with run-ended; treat dangling run-started as ongoing.
-  type Run = {
-    startedAt: string;
-    endedAt?: string;
-    role?: string;
-    model?: string;
-    exit?: string;
-  };
-  const runs: Run[] = [];
-  for (const e of events) {
-    if (e.type === "run-started") {
-      runs.push({
-        startedAt: e.timestamp,
-        role: (e as Record<string, unknown>).role as string | undefined,
-        model: (e as Record<string, unknown>).model as string | undefined,
-      });
-    } else if (e.type === "run-ended") {
-      const last = runs[runs.length - 1];
-      if (last) {
-        last.endedAt = e.timestamp;
-        last.exit = (e as Record<string, unknown>).exit as string | undefined;
-      }
-    }
-  }
+  const runs = deriveRuns(events);
 
   return (
     <section className="card">
       <h3>Run history</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-        One row per agent session. Pi session events fill this in once wired.
+        One row per agent session. Model, tokens and cost come from pi's
+        turn_end events.
       </p>
       {runs.length === 0 ? (
         <p className="muted" style={{ marginTop: 10 }}>No runs yet.</p>
@@ -420,9 +481,11 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
           <thead>
             <tr style={{ color: "var(--muted)", textAlign: "left" }}>
               <th style={cellHead}>Started</th>
-              <th style={cellHead}>Role</th>
+              <th style={cellHead}>Agent</th>
               <th style={cellHead}>Model</th>
               <th style={cellHead}>Duration</th>
+              <th style={cellHead}>Tokens (in/out)</th>
+              <th style={cellHead}>Cost</th>
               <th style={cellHead}>Exit</th>
             </tr>
           </thead>
@@ -430,16 +493,18 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
             {runs.map((r, idx) => (
               <tr key={idx} style={{ borderTop: "1px solid var(--border)" }}>
                 <td style={cell}>{fmt(r.startedAt)}</td>
-                <td style={cell}>{r.role ?? "—"}</td>
-                <td style={cell}>{r.model ?? "—"}</td>
+                <td style={cell}>{r.agentSlug ?? "—"}</td>
+                <td style={cell}>{r.model ? `${r.provider ?? ""}${r.provider ? " · " : ""}${r.model}` : "—"}</td>
                 <td style={cell}>{r.endedAt ? dur(r.startedAt, r.endedAt) : "running"}</td>
                 <td style={cell}>
-                  <span
-                    className={`pill ${
-                      r.exit === "completed" ? "good" : r.exit ? "warn" : "warn"
-                    }`}
-                  >
-                    {r.exit ?? "ongoing"}
+                  {r.tokensIn !== undefined
+                    ? `${r.tokensIn.toLocaleString()} / ${(r.tokensOut ?? 0).toLocaleString()}`
+                    : "—"}
+                </td>
+                <td style={cell}>{r.costUSD ? `$${r.costUSD.toFixed(4)}` : "—"}</td>
+                <td style={cell}>
+                  <span className={`pill ${pillForReason(r.reason)}`}>
+                    {r.reason ?? "ongoing"}
                   </span>
                 </td>
               </tr>
@@ -449,6 +514,71 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
       )}
     </section>
   );
+}
+
+/**
+ * Native <select> model picker, grouped by provider. Empty value = let
+ * pi pick its default (auth + settings). Value sent up is in
+ * "provider:id" form so PiSessionManager's resolver finds it cleanly.
+ */
+function ModelPicker({
+  value,
+  onChange,
+  disabled,
+  models,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  disabled?: boolean;
+  models: PiModelInfo[];
+}): JSX.Element {
+  const grouped = new Map<string, PiModelInfo[]>();
+  for (const m of models) {
+    const bucket = grouped.get(m.provider) ?? [];
+    bucket.push(m);
+    grouped.set(m.provider, bucket);
+  }
+  // Providers sorted alpha; within each, models alpha by name.
+  const providers = [...grouped.keys()].sort();
+  for (const p of providers) grouped.get(p)!.sort((a, b) => a.name.localeCompare(b.name));
+
+  return (
+    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+      <span className="muted" style={{ fontSize: 12 }}>Model</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        style={{
+          background: "var(--bg)",
+          color: "var(--text)",
+          border: "1px solid var(--border)",
+          borderRadius: 8,
+          padding: "6px 10px",
+          minWidth: 220,
+        }}
+        title="Model pi will use for this run. Empty = pi's default."
+      >
+        <option value="">(pi default)</option>
+        {providers.map((p) => (
+          <optgroup key={p} label={p}>
+            {grouped.get(p)!.map((m) => (
+              <option key={`${m.provider}:${m.id}`} value={`${m.provider}:${m.id}`}>
+                {m.name} · ${m.costInputPerMTok.toFixed(2)}/${m.costOutputPerMTok.toFixed(2)}/MTok
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function pillForReason(reason: string | undefined): string {
+  if (reason === "completed") return "good";
+  if (reason === "failed")    return "bad";
+  if (reason === "user")      return "info";
+  return "warn";
 }
 
 function LinkedFiles({ task }: { task: Task }): JSX.Element {
@@ -537,12 +667,4 @@ function dur(start: string, end: string): string {
   const mins = Math.round(ms / 60_000);
   if (mins < 60) return `${mins}m`;
   return `${Math.floor(mins / 60)}h ${mins % 60}m`;
-}
-function sumFromEvents(events: TaskEvent[], key: string): number {
-  let total = 0;
-  for (const e of events) {
-    const v = (e as Record<string, unknown>)[key];
-    if (typeof v === "number") total += v;
-  }
-  return total;
 }
