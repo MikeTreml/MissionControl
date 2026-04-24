@@ -9,3 +9,6 @@ dist/
 
 # Playwright UI smoke output
 scripts/screenshots/
+
+# Babysitter runtime state (node_modules, logs, generated processes, run journals)
+.a5c/

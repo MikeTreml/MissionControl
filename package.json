@@ -13,11 +13,15 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
-    "smoke": "node --experimental-strip-types src/main/store.smoke.ts && node --experimental-strip-types src/main/project-store.smoke.ts && node --experimental-strip-types src/main/workflows.smoke.ts && node --experimental-strip-types src/main/agent-loader.smoke.ts && node --experimental-strip-types src/main/model-roster.smoke.ts && node --experimental-strip-types src/main/git-detect.smoke.ts && node --experimental-strip-types src/main/run-manager.smoke.ts",
+    "smoke": "node --experimental-strip-types src/main/store.smoke.ts && node --experimental-strip-types src/main/project-store.smoke.ts && node --experimental-strip-types src/main/workflows.smoke.ts && node --experimental-strip-types src/main/agent-loader.smoke.ts && node --experimental-strip-types src/main/model-roster.smoke.ts && node --experimental-strip-types src/main/git-detect.smoke.ts && node --experimental-strip-types src/main/run-manager.smoke.ts && node --experimental-strip-types src/main/pi-session-manager.smoke.ts",
     "verify-ui": "node scripts/verify-ui.mjs",
+    "run-task": "node --experimental-strip-types scripts/run-task.ts",
+    "spike-babysitter-pi": "node --experimental-strip-types scripts/babysitter-pi-spike.ts",
     "setup": "pwsh scripts/setup.ps1"
   },
   "dependencies": {
+    "@a5c-ai/babysitter-sdk": "^0.0.187",
+    "@mariozechner/pi-coding-agent": "^0.70.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zod": "^3.23.8"
@@ -29,6 +33,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "electron": "^32.0.0",
     "electron-vite": "^2.3.0",
+    "playwright": "^1.59.1",
     "typescript": "^5.5.4",
     "vite": "^5.4.2"
   }
