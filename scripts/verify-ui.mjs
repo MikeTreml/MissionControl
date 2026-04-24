@@ -16,16 +16,26 @@
  *   - console log with GREEN/FAILED per assertion
  *   - exit code 0 on all-green, 1 on first failure
  *
- * Golden path covered:
- *   1. Topbar + bridge ok
- *   2. Create project (sidebar +)
- *   3. Open Project Detail
- *   4. Edit modal opens with populated fields (and Cancel)
- *   5. Create Task via Topbar
- *   6. Click task card → Task Detail
- *   7. Back to dashboard
- *   8. Delete project via Edit modal (two-step confirm)
- *   9. Settings → Models → Load defaults
+ * Click-every-button coverage:
+ *   - Dashboard boot + bridge
+ *   - Add Project modal (+ icon picker click + Create)
+ *   - Project Detail header
+ *   - Edit Project modal (pre-fill + Save with new icon)
+ *   - Create Task modal — single kind (default project = currently viewed)
+ *   - Task Detail — header + Controls visible + Model picker populated
+ *   - Create Task modal — campaign kind (items textarea + persist)
+ *   - Task Detail — Campaign Items table renders rows
+ *   - Delete Task (two-step confirm)
+ *   - All four Settings tabs (Agents / Models / Workflows / Global)
+ *       · Models: Load defaults, + Add model, remove (×), Save roster
+ *       · Workflows: F-feature default lanes, X-brainstorm custom lanes visible
+ *   - Metrics page renders (KPIs + tables, no crash)
+ *   - Modal dismiss via Cancel and ✕
+ *   - Delete Project (two-step confirm)
+ *
+ * Not automated (require real pi auth + long wait):
+ *   - Start / Pause / Resume / Stop buttons
+ *   - Live RightBar events during a run
  *
  * The script wipes its own scratch state in `<userData>/projects/ui-smoke-test/`,
  * `<userData>/tasks/TST-*`, and `<userData>/models.json` before launching so it's
@@ -101,12 +111,24 @@ async function run() {
   const app = await electron.launch({
     args: [REPO_ROOT],
     cwd: REPO_ROOT,
-    // PROPOSED: surface main-process stdout here so pi errors don't hide.
-    // If logs get noisy, filter on the consumer side.
     env: { ...process.env, NODE_ENV: "test" },
   });
 
+  // Forward Electron main-process stdout/stderr so we see crashes + console.log.
+  app.process().stdout?.on("data", (d) => process.stdout.write(`  [main] ${d}`));
+  app.process().stderr?.on("data", (d) => process.stderr.write(`  [main:err] ${d}`));
+
   const win = await app.firstWindow();
+  // Forward DevTools console too — this catches unhandled renderer errors.
+  win.on("console", (msg) => {
+    const type = msg.type();
+    if (type === "error" || type === "warning") {
+      console.log(`  [renderer:${type}] ${msg.text()}`);
+    }
+  });
+  win.on("pageerror", (err) => {
+    console.log(`  [renderer:pageerror] ${err.message}`);
+  });
   await win.waitForLoadState("domcontentloaded");
   // Give React a beat to mount.
   await win.waitForTimeout(500);
@@ -148,7 +170,16 @@ async function run() {
 
     await win.locator('input[placeholder="DogApp"]').fill(TEST_NAME);
     await win.locator('input[placeholder="DA"]').fill(TEST_PREFIX);
-    // Leave path + icon empty — keeps the smoke fast.
+
+    // Click one icon-picker button — exercises the grid. We pick "🧪"
+    // (Testing) since it's semantically right for a smoke test.
+    await win.locator('button[title="Testing / experiments"]').click();
+    await win.waitForTimeout(100);
+    const iconAfterPick = await win.locator('input[placeholder="(empty = prefix)"]').inputValue();
+    assertions.check(
+      iconAfterPick === "🧪",
+      `Icon picker sets icon input to 🧪 (got "${iconAfterPick}")`,
+    );
 
     await win.getByRole("button", { name: "Create Project" }).click();
     await win.waitForTimeout(500);
@@ -214,9 +245,39 @@ async function run() {
       prefixInEdit === TEST_PREFIX,
       `Edit modal shows prefix "${TEST_PREFIX}" (immutable)`,
     );
-    // Cancel — don't commit anything yet, we'll return to edit later for delete.
+    const iconInEdit = await win.locator('input[placeholder="(empty = prefix)"]').inputValue();
+    assertions.check(
+      iconInEdit === "🧪",
+      `Edit modal pre-fills icon (🧪)`,
+    );
+
+    // Change icon via picker + Save — verify new icon persists.
+    await win.locator('button[title="Tools / devops"]').click();
+    await win.waitForTimeout(100);
+    await win.getByRole("button", { name: "Save changes" }).click();
+    await win.waitForTimeout(500);
+    await shoot("after-edit-save");
+    try {
+      const savedData = JSON.parse(await readFile(projectJson, "utf8"));
+      assertions.check(
+        savedData.icon === "🔧",
+        `Edit save persisted new icon (got "${savedData.icon}")`,
+      );
+    } catch (err) {
+      assertions.check(false, `Re-read project.json after save: ${err.message ?? err}`);
+    }
+
+    // Test Modal cancel path: open edit, click Cancel, ensure modal closes
+    // without mutating data (same icon stays).
+    await win.getByRole("button", { name: /Edit/ }).click();
+    await win.waitForTimeout(200);
     await win.getByRole("button", { name: "Cancel" }).click();
     await win.waitForTimeout(200);
+    const modalGone = await win.locator('input[placeholder="DogApp"]').count();
+    assertions.check(
+      modalGone === 0,
+      `Edit modal closes on Cancel (no DogApp-placeholder input visible)`,
+    );
 
     // ── 8. Back to Dashboard so we can hit "Create Task" in the Topbar ──
     await win.getByRole("button", { name: /Dashboard/ }).click();
@@ -273,9 +334,106 @@ async function run() {
       `Task Detail header starts with "${expectedTaskId}" (got "${taskH1.trim()}")`,
     );
 
-    // ── 12. Back to dashboard, then to Project Detail for delete flow ───
-    await win.getByRole("button", { name: /Dashboard/ }).click();
+    // Task is idle → Start button should be present; Pause/Stop hidden.
+    const startVisible = await win.getByRole("button", { name: "Start", exact: true }).count();
+    assertions.check(startVisible > 0, `Task Detail Start button renders (task idle)`);
+    const pauseHidden = await win.getByRole("button", { name: "Pause", exact: true }).count();
+    assertions.check(pauseHidden === 0, `Pause button hidden when task idle`);
+
+    // Model picker dropdown renders with pi's provider-grouped models.
+    // The "(pi default)" option should always exist.
+    const modelPickerExists = await win.locator('select option[value=""]').count();
+    assertions.check(
+      modelPickerExists > 0,
+      `Model picker renders with "(pi default)" option`,
+    );
+    // At least one real model option should appear (pi-ai ships 25+).
+    const modelOptionCount = await win.locator('select optgroup option').count();
+    assertions.check(
+      modelOptionCount > 0,
+      `Model picker populated from pi's ModelRegistry (${modelOptionCount} entries)`,
+    );
+
+    // ── 11b. Delete THIS task from Task Detail (two-step) ───────────────
+    await win.getByRole("button", { name: "Delete", exact: true }).click();
+    await win.waitForTimeout(150);
+    await win.getByRole("button", { name: "Click again to confirm delete" }).click();
+    await win.waitForTimeout(500);
+    await shoot("after-task-delete");
+    assertions.check(
+      !existsSync(taskManifest),
+      `Deleted task ${expectedTaskId} removed from disk`,
+    );
+
+    // ── 11c. Create a CAMPAIGN task to exercise the kind selector ───────
+    // After task delete we're auto-navigated back to Dashboard (the
+    // DeleteTaskButton calls setView("dashboard")). The current project's
+    // id stays in the router's selectedProjectId, so Create Task will
+    // default to TEST_NAME's project.
+    await win.getByRole("button", { name: "Create Task" }).click();
+    await win.waitForTimeout(200);
+    // Kind select — identified by its "Campaign" option text.
+    await win.locator('select').filter({ hasText: "Campaign" }).selectOption("campaign");
+    await win.waitForTimeout(150);
+    // After switching to campaign, two textareas exist: Description (first,
+    // rows=4) and Items (second, rows=5). Target by placeholder to avoid
+    // ordering dependency.
+    await win.locator('textarea[placeholder*="thing-a.dll"]').fill("alpha.dll\nbeta.dll\ngamma.dll");
+    await win.locator('input[placeholder^="Short, imperative"]').fill("Campaign smoke");
+    await shoot("create-task-campaign");
+    await win.locator('button[type="submit"]:has-text("Create Task")').click();
+    await win.waitForTimeout(500);
+
+    // TaskStore's counter re-uses TST-001F because the earlier delete freed
+    // the slot. Find the card by its title rather than hardcoding the id.
+    const campaignTaskCard = win.locator(".task", { hasText: "Campaign smoke" }).first();
+    const campaignCount = await campaignTaskCard.count();
+    assertions.check(
+      campaignCount > 0,
+      `Campaign task "Campaign smoke" appears on the board`,
+    );
+
+    // Click into Task Detail and verify Campaign Items table.
+    await campaignTaskCard.click();
     await win.waitForTimeout(300);
+    await shoot("campaign-task-detail");
+    const campaignHeader = win.locator("h3", { hasText: "Campaign items" });
+    assertions.check(
+      (await campaignHeader.count()) > 0,
+      `Task Detail shows "Campaign items" section for campaign kind`,
+    );
+    // 3 item IDs (item-0001..item-0003) should render as <strong>.
+    const item1 = await win.locator("text=item-0001").count();
+    const item2 = await win.locator("text=item-0002").count();
+    const item3 = await win.locator("text=item-0003").count();
+    assertions.check(
+      item1 > 0 && item2 > 0 && item3 > 0,
+      `Campaign items table renders 3 rows (item-0001..item-0003)`,
+    );
+
+    // Verify item descriptions made it through.
+    const alphaVisible = await win.locator("text=alpha.dll").count();
+    assertions.check(alphaVisible > 0, `Campaign item description "alpha.dll" rendered`);
+
+    // Back to dashboard for the remaining flows.
+    await win.getByRole("button", { name: /Dashboard/ }).click();
+    await win.waitForTimeout(200);
+
+    // ── 11d. Metrics page — navigate, verify KPI row, back ──────────────
+    await win.getByRole("button", { name: "Metrics" }).click();
+    await win.waitForTimeout(400);
+    await shoot("metrics");
+    const metricsH1 = (await win.locator("h1").first().textContent()) ?? "";
+    assertions.check(
+      metricsH1.trim() === "Metrics",
+      `Metrics page renders (h1="${metricsH1.trim()}")`,
+    );
+    const kpiCards = await win.locator(".kpi").count();
+    assertions.check(kpiCards >= 6, `Metrics page shows ≥6 KPI cards (got ${kpiCards})`);
+    await win.getByRole("button", { name: /Dashboard/ }).click();
+    await win.waitForTimeout(200);
+
+    // ── 12. Back to project detail for delete flow ──────────────────────
     await win.locator(`text="${TEST_NAME}"`).first().click();
     await win.waitForTimeout(300);
 
@@ -328,6 +486,26 @@ async function run() {
       `Load defaults added "qwen-coder" row`,
     );
 
+    // Exercise the "+ Add model" button (adds an empty row) then remove it.
+    const rowsBeforeAdd = await win.locator('input[placeholder="claude-opus"]').count();
+    await win.getByRole("button", { name: "+ Add model" }).click();
+    await win.waitForTimeout(100);
+    const rowsAfterAdd = await win.locator('input[placeholder="claude-opus"]').count();
+    assertions.check(
+      rowsAfterAdd === rowsBeforeAdd + 1,
+      `+ Add model appends a new row (${rowsBeforeAdd} → ${rowsAfterAdd})`,
+    );
+    // Click the last × button in that row.
+    const removeBtns = win.locator('button:has-text("✕")');
+    const removeCount = await removeBtns.count();
+    if (removeCount > 0) await removeBtns.nth(removeCount - 1).click();
+    await win.waitForTimeout(100);
+    const rowsAfterRemove = await win.locator('input[placeholder="claude-opus"]').count();
+    assertions.check(
+      rowsAfterRemove === rowsBeforeAdd,
+      `× remove button drops the row (${rowsAfterAdd} → ${rowsAfterRemove})`,
+    );
+
     // Save and verify disk
     await win.getByRole("button", { name: "Save roster" }).click();
     await win.waitForTimeout(400);
@@ -346,6 +524,58 @@ async function run() {
         `models.json at ${modelsFile} — ${err instanceof Error ? err.message : String(err)}`,
       );
     }
+
+    // ── 15. Settings → Workflows: lane pills (F default, X custom) ──────
+    await win.getByRole("button", { name: "Workflows", exact: true }).click();
+    await win.waitForTimeout(300);
+    await shoot("settings-workflows");
+    // F-feature should render "(default)" label — it has no custom lanes.
+    const fDefaultLabel = await win.locator('text="Lanes (default):"').count();
+    assertions.check(
+      fDefaultLabel > 0,
+      `F-feature workflow shows "(default)" lane label`,
+    );
+    // X-brainstorm has lanes=["plan","develop","done"] → "(custom)".
+    const xCustomLabel = await win.locator('text="Lanes (custom):"').count();
+    assertions.check(
+      xCustomLabel > 0,
+      `X-brainstorm workflow shows "(custom)" lane label`,
+    );
+
+    // ── 16. Settings → Agents tab renders ───────────────────────────────
+    await win.getByRole("button", { name: "Agents", exact: true }).click();
+    await win.waitForTimeout(300);
+    await shoot("settings-agents");
+    // Should list primary roles — "Planner" header is always present.
+    const plannerHeader = await win.locator('text="Planner"').count();
+    assertions.check(
+      plannerHeader > 0,
+      `Settings → Agents lists "Planner"`,
+    );
+
+    // ── 17. Settings → Global tab renders ───────────────────────────────
+    await win.getByRole("button", { name: "Global", exact: true }).click();
+    await win.waitForTimeout(300);
+    await shoot("settings-global");
+    const pathsHeader = await win.locator('h3', { hasText: "Paths" }).count();
+    assertions.check(pathsHeader > 0, `Settings → Global shows "Paths" section`);
+
+    // ── 18. Modal dismiss via ✕ close button ────────────────────────────
+    // Navigate back, open Add Project, close via ✕, verify it dismissed.
+    await win.getByRole("button", { name: /Dashboard/ }).click();
+    await win.waitForTimeout(200);
+    const addBtn2 = win.getByRole("button", { name: "+", exact: true });
+    await addBtn2.click();
+    await win.waitForTimeout(150);
+    // Modal's close button is a ✕ in the Modal header.
+    const closeX = win.locator('button:has-text("✕")').first();
+    await closeX.click();
+    await win.waitForTimeout(200);
+    const addModalGone = await win.locator('input[placeholder="DogApp"]').count();
+    assertions.check(
+      addModalGone === 0,
+      `Add Project modal closes on ✕`,
+    );
 
     // ── TODO(CC): once pi is wired ──────────────────────────────────────
     // - Start run on a task → task.runState becomes "running", events.jsonl grows
