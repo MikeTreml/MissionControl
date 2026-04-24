@@ -14,9 +14,11 @@ import { useRoute } from "../router";
 import { useTask } from "../hooks/useTask";
 import { useAgents } from "../hooks/useAgents";
 import { usePiModels } from "../hooks/usePiModels";
+import { useWorkflows } from "../hooks/useWorkflows";
 import { publish } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun } from "../lib/derive-runs";
 import { PageStub } from "./PageStub";
+import { effectiveLanes } from "../../../shared/models";
 import type { Lane, LaneHistoryEntry, Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
 
@@ -67,6 +69,8 @@ export function TaskDetail(): JSX.Element {
 
       <div className="content">
         <Controls task={task} />
+
+        {task.lane === "approval" && !isDemo && <ApprovalGate task={task} />}
 
         <section
           className="card"
@@ -588,6 +592,95 @@ function ModelPicker({
         ))}
       </select>
     </div>
+  );
+}
+
+/**
+ * Approval lane gate — only rendered when task.lane === "approval".
+ * Offers Approve (advance to next lane in workflow.lanes) and Request
+ * Changes (loop back to first lane, cycle++).
+ *
+ * PROPOSED integration: when `plannotator@claude-code-plugins` exposes
+ * an invocation surface, replace these manual buttons with "Open in
+ * plannotator" + read its approve/reject + annotation-feedback result.
+ * Today the buttons are a direct human gate on the lane transition.
+ */
+function ApprovalGate({ task }: { task: Task }): JSX.Element {
+  const { workflows } = useWorkflows();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const workflow = workflows.find((w) => w.code === task.workflow);
+  const lanes = effectiveLanes(workflow);
+  const currentIdx = lanes.indexOf(task.lane);
+  const nextLane: Lane | undefined = lanes[currentIdx + 1];
+  const firstLane: Lane = lanes[0] ?? "plan";
+
+  async function transition(next: Partial<Task>): Promise<void> {
+    if (!window.mc) { setError("Not connected"); return; }
+    setBusy(true);
+    setError("");
+    try {
+      await window.mc.saveTask({ ...task, ...next });
+      publish("tasks");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section
+      className="card"
+      style={{
+        background: "rgba(244,201,93,0.08)",
+        borderColor: "var(--warn)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ flex: 1 }}>
+          <h3 style={{ margin: 0 }}>⏸ Awaiting human approval</h3>
+          <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+            Review the planner's output and per-agent notes. Approve to
+            advance to <strong>{nextLane ?? "done"}</strong>, or request
+            changes to loop back to <strong>{firstLane}</strong> (cycle
+            {" "}{task.cycle + 1}).
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            className="button"
+            onClick={() => void transition({ lane: nextLane ?? "done" })}
+            disabled={busy}
+            title="Advance to the next lane in this workflow"
+          >
+            ✓ Approve
+          </button>
+          <button
+            className="button warn"
+            onClick={() =>
+              void transition({ lane: firstLane, cycle: task.cycle + 1 })
+            }
+            disabled={busy}
+            title="Loop back to the first lane with cycle+1"
+          >
+            ↺ Request changes
+          </button>
+        </div>
+      </div>
+      {error && (
+        <div
+          style={{
+            color: "var(--bad)",
+            fontSize: 12,
+            marginTop: 8,
+          }}
+        >
+          {error}
+        </div>
+      )}
+    </section>
   );
 }
 

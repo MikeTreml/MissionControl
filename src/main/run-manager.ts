@@ -95,6 +95,10 @@ export class RunManager {
       type: "run-started",
       agentSlug: next.currentAgentSlug,
     });
+    await this.tasks.appendStatus(
+      task.id,
+      `Started — agent: ${next.currentAgentSlug ?? "(none)"}`,
+    );
     return next;
   }
 
@@ -116,6 +120,7 @@ export class RunManager {
       type: "run-ended",
       reason,
     });
+    await this.tasks.appendStatus(task.id, `Run ended — ${reason}`);
   }
 
   async pause(input: { taskId: string }): Promise<Task> {
@@ -125,6 +130,7 @@ export class RunManager {
     const next: Task = { ...task, runState: "paused" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-paused" });
+    await this.tasks.appendStatus(task.id, "Paused");
     return next;
   }
 
@@ -135,6 +141,7 @@ export class RunManager {
     const next: Task = { ...task, runState: "running" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-resumed" });
+    await this.tasks.appendStatus(task.id, "Resumed");
     return next;
   }
 
@@ -150,6 +157,7 @@ export class RunManager {
       type: "run-ended",
       reason: input.reason ?? "user",
     });
+    await this.tasks.appendStatus(task.id, `Stopped (${input.reason ?? "user"})`);
 
     // Best-effort pi cleanup — don't let a dispose failure undo the state
     // flip the UI already relied on.
