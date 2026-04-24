@@ -437,6 +437,37 @@ async function run() {
     const alphaVisible = await win.locator("text=alpha.dll").count();
     assertions.check(alphaVisible > 0, `Campaign item description "alpha.dll" rendered`);
 
+    // ── 11d. Approval gate: push the task to "approval" lane via IPC
+    //         (no UI path to flip lane arbitrarily yet), verify the gate
+    //         renders + Approve advances the lane to "done".
+    // Use the current campaign task since it's on Task Detail.
+    const campaignId = await win.evaluate(() => {
+      // Grab the id from the h1 — format is "<id> — <title>".
+      const h1 = document.querySelector("h1");
+      return h1?.textContent?.split(" — ")[0] ?? "";
+    });
+    await win.evaluate(async (id) => {
+      // window.mc is exposed by preload in test mode too.
+      const task = await (window).mc.getTask(id);
+      if (!task) return;
+      await (window).mc.saveTask({ ...task, lane: "approval" });
+    }, campaignId);
+    await win.waitForTimeout(500);
+    await shoot("approval-gate");
+    const gateHeader = await win.locator("h3", { hasText: "Awaiting human approval" }).count();
+    assertions.check(gateHeader > 0, `Approval gate renders when lane === "approval"`);
+
+    await win.getByRole("button", { name: "✓ Approve" }).click();
+    await win.waitForTimeout(500);
+    const afterApprove = await win.evaluate(async (id) => {
+      const t = await (window).mc.getTask(id);
+      return t?.lane ?? "";
+    }, campaignId);
+    assertions.check(
+      afterApprove === "done",
+      `Approve advanced lane from "approval" to "done" (got "${afterApprove}")`,
+    );
+
     // Back to dashboard for the remaining flows.
     await win.getByRole("button", { name: /Dashboard/ }).click();
     await win.waitForTimeout(200);
