@@ -16,7 +16,10 @@
  * `session.prompt(...)` with the task title/description. That step
  * requires API key setup + per-agent model selection.
  */
+import { existsSync } from "node:fs";
+
 import type { TaskStore } from "./store.ts";
+import type { ProjectStore } from "./project-store.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { AgentLoader } from "./agent-loader.ts";
 import type { RunState, Task } from "../shared/models.ts";
@@ -25,6 +28,7 @@ export type StopReason = "user" | "completed" | "failed";
 
 export class RunManager {
   private readonly tasks: TaskStore;
+  private readonly projects: ProjectStore | null;
   private readonly pi: PiSessionManager | null;
   private readonly agents: AgentLoader | null;
 
@@ -32,10 +36,12 @@ export class RunManager {
     tasks: TaskStore,
     pi?: PiSessionManager | null,
     agents?: AgentLoader | null,
+    projects?: ProjectStore | null,
   ) {
     this.tasks = tasks;
     this.pi = pi ?? null;
     this.agents = agents ?? null;
+    this.projects = projects ?? null;
   }
 
   async start(input: {
@@ -47,19 +53,34 @@ export class RunManager {
     this.assertTransition(task.runState, "idle", "start");
 
     // Create the pi session BEFORE flipping state: if pi fails to start
-    // (missing auth, model misconfigured), the task stays idle and the
-    // error surfaces to the UI.
+    // (missing auth, workspace unwritable, etc.), the task stays idle
+    // and the error surfaces to the UI.
     if (this.pi) {
       const agentSlug = input.agentSlug ?? task.currentAgentSlug;
-      // Read the agent's prompt.md if an AgentLoader is wired and the
-      // agent exists on disk. Falls back to pi's own system prompt when
-      // unavailable — either is fine for v1.
-      const systemPrompt = agentSlug && this.agents
-        ? await this.agents.loadPrompt(agentSlug).catch(() => null)
-        : null;
+
+      // Resolve workspace cwd. Prefer the project's real path so pi can
+      // see + edit actual code. Fall back to a per-task scratch workspace
+      // (`tasks/<id>/workspace/`) when the project has no path — keeps
+      // pi's tools from scribbling on unrelated folders.
+      const project = this.projects ? await this.projects.getProject(task.project) : null;
+      const projectPath = project?.path?.trim();
+      const cwd = projectPath && existsSync(projectPath)
+        ? projectPath
+        : await this.tasks.ensureWorkspace(task.id);
+
+      // Persist the task's mission as PROMPT.md alongside manifest.json.
+      // Babysitter's generated process + future agents re-read this when
+      // they need the full brief. Overwrite on each Start so edits to
+      // title/description propagate.
+      await this.tasks.writePromptFile(task.id, renderPromptFile(task, agentSlug));
+
+      // Drive orchestration through babysitter's /babysit skill. Passing
+      // no custom systemPrompt means pi loads its full extension set
+      // (including babysitter-pi), so /babysit resolves to the real
+      // skill and not a free-form user message.
       await this.pi.start(task.id, {
-        prompt: buildTaskPrompt(task, agentSlug),
-        ...(systemPrompt ? { systemPrompt } : {}),
+        prompt: buildBabysitPrompt(task, agentSlug),
+        cwd,
         ...(input.model ? { model: input.model } : {}),
       });
     }
@@ -160,24 +181,55 @@ export class RunManager {
 }
 
 /**
- * Build the v1 prompt for a task. Intentionally blunt: Michael's direction
- * was "the task should have all the needed info to start" — we'll iterate
- * based on what actually works. Agent-specific prompt.md isn't loaded
- * here yet; pi falls back to its own system prompt if `systemPrompt`
- * isn't set in PiSessionOptions.
+ * Build the `/babysit` prompt — a short task brief that babysitter-pi's
+ * skill ingests and turns into an orchestrated multi-agent run
+ * (Planner → Developer → Reviewer → Surgeon, with loopbacks and
+ * mandatory stops). Babysitter generates its own process.js from this
+ * brief and writes it to `.a5c/processes/` in the session's cwd.
+ *
+ * Kept concise: babysitter reads `tasks/<id>/PROMPT.md` (written by
+ * RunManager.start via writePromptFile) for the full mission, so we
+ * don't need to duplicate the description inline.
  */
-function buildTaskPrompt(task: Task, agentSlug: string | null): string {
+function buildBabysitPrompt(task: Task, agentSlug: string | null): string {
   const lines = [
-    `# Task ${task.id} — ${task.title}`,
+    `/babysit ${task.title}`,
     "",
     task.description || "(no description)",
     "",
+    `Task id: ${task.id}`,
     `Project: ${task.project}`,
-    `Workflow: ${task.workflow}`,
-    `Cycle: ${task.cycle}`,
-    `Current agent: ${agentSlug ?? "(none)"}`,
+    `Workflow: ${task.workflow} (cycle ${task.cycle})`,
+    `Suggested starting agent: ${agentSlug ?? "planner"}`,
     "",
-    "Work on this task. When complete, summarize what you did.",
+    "Orchestrate the full workflow: plan, implement, review, finalize.",
+    "Loop back on review rejection; stop at human approval gates.",
+  ];
+  return lines.join("\n");
+}
+
+/**
+ * Content for `tasks/<id>/PROMPT.md` — the human-readable mission brief.
+ * Regenerated on each Start so edits to title/description propagate.
+ * Agents can read this during their session for the full context.
+ */
+function renderPromptFile(task: Task, agentSlug: string | null): string {
+  const lines = [
+    `# ${task.id} — ${task.title}`,
+    "",
+    task.description || "_(no description)_",
+    "",
+    "## Context",
+    "",
+    `- Project: **${task.project}**`,
+    `- Workflow: **${task.workflow}**`,
+    `- Cycle: **${task.cycle}**`,
+    `- Starting agent: **${agentSlug ?? "planner"}**`,
+    "",
+    "## Done criteria",
+    "",
+    "_(fill in as the Planner refines scope)_",
+    "",
   ];
   return lines.join("\n");
 }

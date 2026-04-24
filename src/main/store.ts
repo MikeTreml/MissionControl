@@ -256,6 +256,29 @@ export class TaskStore extends EventEmitter {
       .map((l) => JSON.parse(l) as TaskEvent);
   }
 
+  /**
+   * Write the mission brief for a task to `<taskRoot>/<id>/PROMPT.md`.
+   * Overwrites any prior content — PROMPT.md is expected to reflect the
+   * CURRENT task state, not an append log (STATUS.md is the append log).
+   */
+  async writePromptFile(taskId: string, content: string): Promise<void> {
+    const folder = path.join(this.root, taskId);
+    await fs.mkdir(folder, { recursive: true });
+    await fs.writeFile(path.join(folder, "PROMPT.md"), content, "utf8");
+  }
+
+  /**
+   * Ensure `<taskRoot>/<id>/workspace/` exists and return its absolute
+   * path. Used as a per-task pi cwd when the task's project has no
+   * `path` set — keeps pi's tools from touching MC's own repo or an
+   * unrelated folder.
+   */
+  async ensureWorkspace(taskId: string): Promise<string> {
+    const ws = path.join(this.root, taskId, "workspace");
+    await fs.mkdir(ws, { recursive: true });
+    return ws;
+  }
+
   // ── internals ─────────────────────────────────────────────────────────
 
   /** Create per-role folders + starter notes.md files. One-time per task. */
