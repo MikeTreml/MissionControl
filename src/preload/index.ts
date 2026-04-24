@@ -39,7 +39,7 @@ const api = {
   listWorkflows:   () => ipcRenderer.invoke("workflows:list"),
 
   // ── runs (Start/Pause/Resume/Stop) ───────────────────────────────────
-  startRun:   (input: { taskId: string; agentSlug?: string }) =>
+  startRun:   (input: { taskId: string; agentSlug?: string; model?: string }) =>
     ipcRenderer.invoke("runs:start", input),
   pauseRun:   (input: { taskId: string }) =>
     ipcRenderer.invoke("runs:pause", input),
@@ -47,6 +47,23 @@ const api = {
     ipcRenderer.invoke("runs:resume", input),
   stopRun:    (input: { taskId: string; reason?: "user" | "completed" | "failed" }) =>
     ipcRenderer.invoke("runs:stop", input),
+
+  // ── pi meta ──────────────────────────────────────────────────────────
+  listPiModels: () => ipcRenderer.invoke("pi:listModels"),
+
+  // ── live events (main → renderer push) ───────────────────────────────
+  // Each subscribe returns an unsubscribe function. The listener fires
+  // whenever main broadcasts the corresponding ipc message.
+  onTaskEvent: (listener: (payload: { taskId: string; event: unknown }) => void) => {
+    const wrapped = (_e: unknown, payload: { taskId: string; event: unknown }) => listener(payload);
+    ipcRenderer.on("task:event", wrapped);
+    return () => ipcRenderer.off("task:event", wrapped);
+  },
+  onTaskSaved: (listener: (payload: { task: unknown }) => void) => {
+    const wrapped = (_e: unknown, payload: { task: unknown }) => listener(payload);
+    ipcRenderer.on("task:saved", wrapped);
+    return () => ipcRenderer.off("task:saved", wrapped);
+  },
 
   // ── app ──────────────────────────────────────────────────────────────
   appVersion:      () => ipcRenderer.invoke("app:version"),

@@ -16,6 +16,7 @@
  * The store is deliberately dumb — no in-memory cache. Read on every call.
  * Fast enough for a local dashboard, easy to reason about when debugging.
  */
+import { EventEmitter } from "node:events";
 import { promises as fs } from "node:fs";
 import { existsSync } from "node:fs";
 import path from "node:path";
@@ -26,6 +27,18 @@ import {
   type Task,
   type TaskEvent,
 } from "../shared/models.ts";
+
+/**
+ * Events emitted by TaskStore. Consumers (the main process event
+ * forwarder) subscribe via `.on("event-appended", ...)` / `.on("task-saved", ...)`.
+ *
+ * Using Node's EventEmitter keeps the surface small and avoids pulling in
+ * a pub/sub dep. Renderer-side pub/sub lives in `renderer/src/hooks/data-bus.ts`.
+ */
+export interface TaskStoreEvents {
+  "event-appended": (payload: { taskId: string; event: TaskEvent }) => void;
+  "task-saved": (payload: { task: Task }) => void;
+}
 
 /**
  * Task folder name = task id. Form: <PREFIX>-<NNN><W>
@@ -45,14 +58,26 @@ const ROLE_FOLDERS = [
   "shared",
 ] as const;
 
-export class TaskStore {
+export class TaskStore extends EventEmitter {
   private readonly root: string;
 
   /**
    * @param root  absolute path to the tasks root (e.g. `<userData>/tasks`)
    */
   constructor(root: string) {
+    super();
     this.root = root;
+  }
+
+  // Typed overrides so callers get autocomplete on event names.
+  override on<K extends keyof TaskStoreEvents>(event: K, listener: TaskStoreEvents[K]): this {
+    return super.on(event, listener);
+  }
+  override emit<K extends keyof TaskStoreEvents>(event: K, ...args: Parameters<TaskStoreEvents[K]>): boolean {
+    return super.emit(event, ...args);
+  }
+  override off<K extends keyof TaskStoreEvents>(event: K, listener: TaskStoreEvents[K]): this {
+    return super.off(event, listener);
   }
 
   /** Ensure the root folder exists. Call once at app start. */
@@ -117,6 +142,15 @@ export class TaskStore {
     projectId: string;
     projectPrefix: string;
     workflow?: string;
+    /**
+     * Initial lane — defaults to "plan". Callers that know the workflow
+     * (e.g. via `effectiveLanes(workflow)[0]`) should pass it explicitly
+     * so tasks start in a lane their workflow actually uses.
+     */
+    lane?: Task["lane"];
+    /** "single" (default) or "campaign". Campaigns carry an items list. */
+    kind?: Task["kind"];
+    items?: Task["items"];
   }): Promise<Task> {
     const workflow = (input.workflow ?? "F").toUpperCase();
     const id = await this.nextTaskId(input.projectPrefix, workflow);
@@ -126,6 +160,9 @@ export class TaskStore {
       description: input.description ?? "",
       project: input.projectId,
       workflow,
+      ...(input.lane ? { lane: input.lane } : {}),
+      ...(input.kind ? { kind: input.kind } : {}),
+      ...(input.items ? { items: input.items } : {}),
     });
     await this.scaffold(task);
     await this.saveTask(task);
@@ -165,6 +202,8 @@ export class TaskStore {
         to: validated.cycle,
       });
     }
+
+    this.emit("task-saved", { task: validated });
   }
 
   /**
@@ -203,6 +242,7 @@ export class TaskStore {
       JSON.stringify(line) + "\n",
       "utf8",
     );
+    this.emit("event-appended", { taskId, event: line });
   }
 
   /** Read all events for a task in order. Returns [] if file missing. */

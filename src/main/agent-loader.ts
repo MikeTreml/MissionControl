@@ -86,4 +86,20 @@ export class AgentLoader {
       return a.slug.localeCompare(b.slug);
     });
   }
+
+  /**
+   * Load the prompt.md (or whatever the agent's `promptFile` field points at)
+   * content for a given slug. Returns null if the agent or file is missing
+   * — callers should fall back to pi's default system prompt.
+   */
+  async loadPrompt(slug: string): Promise<string | null> {
+    if (!existsSync(this.root)) return null;
+    const manifestPath = path.join(this.root, slug, "agent.json");
+    if (!existsSync(manifestPath)) return null;
+    const raw = await fs.readFile(manifestPath, "utf8");
+    const agent = AgentSchema.parse(JSON.parse(raw));
+    const promptPath = path.join(this.root, slug, agent.promptFile);
+    if (!existsSync(promptPath)) return null;
+    return fs.readFile(promptPath, "utf8");
+  }
 }

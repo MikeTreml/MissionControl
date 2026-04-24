@@ -11,6 +11,9 @@ import type {
   ModelDefinition,
   Workflow,
   Agent,
+  Lane,
+  TaskKind,
+  CampaignItem,
 } from "../../shared/models";
 
 type CreateTaskInput = {
@@ -19,6 +22,9 @@ type CreateTaskInput = {
   projectId: string;
   projectPrefix: string;
   workflow?: string;
+  lane?: Lane;
+  kind?: TaskKind;
+  items?: CampaignItem[];
 };
 
 type CreateProjectInput = {
@@ -66,13 +72,33 @@ export interface McApi {
   listWorkflows: () => Promise<Workflow[]>;
 
   // runs (Start/Pause/Resume/Stop state machine; returns updated Task)
-  startRun: (input: { taskId: string; agentSlug?: string }) => Promise<Task>;
+  startRun: (input: { taskId: string; agentSlug?: string; model?: string }) => Promise<Task>;
   pauseRun: (input: { taskId: string }) => Promise<Task>;
   resumeRun: (input: { taskId: string }) => Promise<Task>;
   stopRun: (input: { taskId: string; reason?: "user" | "completed" | "failed" }) => Promise<Task>;
 
+  // pi meta
+  listPiModels: () => Promise<PiModelInfo[]>;
+
+  // live events (subscribe; returns unsubscribe)
+  onTaskEvent: (listener: (payload: { taskId: string; event: TaskEvent }) => void) => () => void;
+  onTaskSaved: (listener: (payload: { task: Task }) => void) => () => void;
+
   // app
   appVersion: () => Promise<string>;
+}
+
+/** Compact model info the renderer can show in the picker. */
+export interface PiModelInfo {
+  id: string;
+  name: string;
+  provider: string;
+  api: string;
+  contextWindow: number;
+  maxTokens: number;
+  costInputPerMTok: number;
+  costOutputPerMTok: number;
+  reasoning: boolean;
 }
 
 declare global {

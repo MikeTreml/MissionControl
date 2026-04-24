@@ -14,6 +14,7 @@ import type { ModelRosterStore } from "./model-roster.ts";
 import type { WorkflowLoader } from "./workflows.ts";
 import type { AgentLoader } from "./agent-loader.ts";
 import type { RunManager } from "./run-manager.ts";
+import type { PiSessionManager } from "./pi-session-manager.ts";
 import { detectGit } from "./git-detect.ts";
 import type { Project, ProjectWithGit } from "../shared/models.ts";
 
@@ -34,6 +35,7 @@ export interface Stores {
   workflows: WorkflowLoader;
   agents: AgentLoader;
   runs: RunManager;
+  pi: PiSessionManager;
 }
 
 /** Log each IPC hit at debug level. Uncomment the call site to silence. */
@@ -117,9 +119,9 @@ export function registerIpc(stores: Stores): void {
   ipcMain.handle("workflows:list", () => stores.workflows.loadAll());
 
   // ── runs (Start/Pause/Resume/Stop state machine) ─────────────────────
-  // PI-WIRE: these handlers call RunManager which currently only mutates
-  // Task.runState + appends events. When pi lands, RunManager grows the
-  // real session lifecycle; the channel surface stays the same.
+  // RunManager owns the task state-machine; PiSessionManager owns the
+  // underlying pi session. On Start the RunManager tells PiSessionManager
+  // to create a session, build the prompt, and kick off a turn.
   ipcMain.handle("runs:start", (_e, input: Parameters<RunManager["start"]>[0]) =>
     logged(`runs:start ${input.taskId}`, () => stores.runs.start(input)),
   );
@@ -132,6 +134,9 @@ export function registerIpc(stores: Stores): void {
   ipcMain.handle("runs:stop", (_e, input: Parameters<RunManager["stop"]>[0]) =>
     logged(`runs:stop ${input.taskId}`, () => stores.runs.stop(input)),
   );
+
+  // ── pi meta (model registry from pi's own auth config) ────────────────
+  ipcMain.handle("pi:listModels", () => stores.pi.listModels());
 
   // ── app info ─────────────────────────────────────────────────────────
   ipcMain.handle("app:version", () => process.env["npm_package_version"] ?? "dev");

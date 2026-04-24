@@ -29,13 +29,20 @@
  * See docs/HANDOFF.md for the full orientation.
  */
 import { app, BrowserWindow } from "electron";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// `__dirname` isn't defined under ESM (which electron-vite emits for main).
+// Derive it from import.meta.url so built + packaged runs resolve the
+// preload + renderer paths the same way dev mode does.
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { TaskStore } from "./store.ts";
 import { ProjectStore } from "./project-store.ts";
 import { ModelRosterStore } from "./model-roster.ts";
 import { WorkflowLoader } from "./workflows.ts";
 import { AgentLoader } from "./agent-loader.ts";
+import { PiSessionManager } from "./pi-session-manager.ts";
 import { RunManager } from "./run-manager.ts";
 import { registerIpc } from "./ipc.ts";
 
@@ -53,14 +60,51 @@ async function bootstrapStores(): Promise<void> {
 
   await Promise.all([tasks.init(), projects.init(), models.init()]);
 
-  // PI-WIRE: RunManager currently only mutates Task.runState + appends
-  // events. When pi lands it grows a PiSessionManager dependency and the
-  // start/pause/resume/stop methods delegate real session work. The IPC
-  // channels (`runs:*`) stay the same either way.
-  const runs = new RunManager(tasks);
+  // PiSessionManager owns live pi sessions (via babysitter-sdk's
+  // createPiSession wrapper). RunManager owns the task state machine
+  // and the prompt-building logic. On Start, RunManager tells
+  // PiSessionManager to create a session and prompt it. When pi's
+  // turn resolves, PiSessionManager calls back into RunManager to flip
+  // the task to idle.
+  //
+  // Pi inherits auth from the environment: OPENAI_API_KEY,
+  // ANTHROPIC_API_KEY, etc. Set them in the shell that launched `npm run dev`.
+  const pi = new PiSessionManager(tasks);
+  const runs = new RunManager(tasks, pi, agents);
+  pi.setOnSessionEnd((taskId, result) =>
+    runs.completeRun(taskId, result.reason),
+  );
 
-  registerIpc({ tasks, projects, models, workflows, agents, runs });
+  bootstrappedTasks = tasks;
+
+  registerIpc({ tasks, projects, models, workflows, agents, runs, pi });
   console.log("[main] IPC handlers registered");
+}
+
+/**
+ * Forward TaskStore emissions into the renderer so React hooks can react
+ * to live events. Cleanup is captured per-window so a macOS `activate`
+ * reopen (which spawns a second window) doesn't accidentally detach the
+ * live window's listeners when the stale first window's `closed` event
+ * fires later.
+ */
+function attachStoreForwarders(win: BrowserWindow, tasks: TaskStore): void {
+  const onEvent = (payload: { taskId: string; event: unknown }): void => {
+    if (win.isDestroyed()) return;
+    win.webContents.send("task:event", payload);
+  };
+  const onSaved = (payload: { task: unknown }): void => {
+    if (win.isDestroyed()) return;
+    win.webContents.send("task:saved", payload);
+  };
+  tasks.on("event-appended", onEvent);
+  tasks.on("task-saved", onSaved);
+  // Per-window cleanup — each window captures its own detach closure so
+  // closing window N never affects window N+1's listeners.
+  win.on("closed", () => {
+    tasks.off("event-appended", onEvent);
+    tasks.off("task-saved", onSaved);
+  });
 }
 
 function createMainWindow(): void {
@@ -111,7 +155,15 @@ function createMainWindow(): void {
   } else {
     win.loadFile(join(__dirname, "../renderer/index.html"));
   }
+
+  if (bootstrappedTasks) {
+    attachStoreForwarders(win, bootstrappedTasks);
+  }
 }
+
+// Bootstrapped stores kept at module scope so createMainWindow (which may
+// be called on macOS `activate`) can reattach forwarders to a new window.
+let bootstrappedTasks: TaskStore | null = null;
 
 app.whenReady().then(async () => {
   await bootstrapStores();
