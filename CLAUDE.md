@@ -131,13 +131,26 @@ Then read the docs in this order:
   `.a5c/processes/` + `.a5c/runs/` there — add `.a5c/` to that project's
   `.gitignore`); fall back to `<userData>/tasks/<id>/workspace/` per-task
   scratch dir otherwise.
-- **`<userData>/tasks/<id>/PROMPT.md`** is written on each Start as the
-  canonical mission brief. Agents re-read this rather than relying on
-  inline prompt text.
-- **Live events**: TaskStore emits → main forwards via `webContents.send`
-  → `lib/live-events-bridge.ts` republishes to the data-bus → hooks
-  refetch. RightBar Run Activity shows real pi events; TaskDetail's
-  Run History + Metrics derive tokens/cost from the journal.
+- **Per-task files**: every task folder carries `PROMPT.md` (mission —
+  overwritten on each Start with the current title/description) and
+  `STATUS.md` (append-only progress log, seeded at createTask, updated
+  by RunManager on each lifecycle transition — Started, Paused, Resumed,
+  Stopped, Run ended). Task Detail renders both as scrollable cards
+  above the lane timeline. "📁 Open folder" button reveals the task
+  folder in the OS file explorer.
+- **Approval lane gate**: when `task.lane === "approval"`, Task Detail
+  renders an amber banner with ✓ Approve / ↺ Request changes buttons.
+  Approve advances to the workflow's next lane (or "done"); request
+  changes loops back to the first lane and increments `cycle`.
+  PROPOSED integration: swap buttons for a plannotator launch when the
+  plugin exposes an invocation surface.
+- **Live events** (debounced): TaskStore emits → main forwards via
+  `webContents.send` → `lib/live-events-bridge.ts` republishes to the
+  data-bus with a 400 ms leading+trailing debounce (pi emits 20–50
+  events/sec during babysitter runs — raw republish was an IPC storm).
+  RightBar shows real pi events, suppressing `pi:message_update` and
+  `pi:tool_execution_update` streaming-token noise. RunHistory +
+  Metrics derive tokens/cost from the journal.
 - **Model picker** on Task Detail pulls from pi's `ModelRegistry` via
   `pi:listModels` IPC. Empty value = let pi use its default.
 - **Campaign task kind** UI: kind selector + one-line-per-item textarea
@@ -152,12 +165,13 @@ Then read the docs in this order:
 
 **Not started:**
 
+- **Plannotator hand-off** — current Approval gate is manual
+  buttons. When plannotator exposes an invocation surface, open it
+  pointed at the planner's artifact, consume approve/reject +
+  annotations as structured feedback.
 - **Campaign runtime iteration** — schema + UI are built; actual
   "spawn a session per item" loop should live inside babysitter's
   generated process.js for campaign-kind tasks.
-- **Plannotator Approval lane** — the lane name exists; the gate
-  doesn't. Next: when a task hits the Approval lane, open plannotator
-  pointed at the planner's artifact; consume its approve/reject result.
 - **pi-memory-md wire-up** — per-project memory at `~/.pi/memory-md/<project>/`.
   Agents gain memory tools automatically once set up.
 - **pi-superpowers role prompts** — swap hand-rolled `agents/<slug>/prompt.md`
