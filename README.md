@@ -38,10 +38,24 @@ If you're Claude Code: **`CLAUDE.md` is your short-version entry point**
 
 ## What's missing
 
-The pi-mono SDK wire-in. Start/Pause/Resume/Stop buttons on Task Detail
-flip `Task.runState` and append events via `RunManager` but don't spawn a
-pi session yet — that's the next step. See `grep -rn "PI-WIRE" src` for
-the integration map.
+Babysitter-driven multi-agent workflows. Start on Task Detail now opens
+a real pi `AgentSession` and prompts it with task info; the task
+auto-flips to idle when pi fires `agent_end`. Pause/Resume are MC-level
+state only. Babysitter lives as a pi extension
+(`pi install npm:@a5c-ai/babysitter-pi` — one-time, per user), not an
+MC dep. See `grep -rn "PI-WIRE" src` for the integration map.
+
+**To try it:**
+```powershell
+# One-time (optional — only if you want babysitter skills inside pi):
+pi install npm:@a5c-ai/babysitter-pi
+
+# Every run:
+$env:OPENAI_API_KEY = "sk-…"     # or configure `pi` CLI once
+npm run dev
+# Create a task, click Start on its detail page.
+# Events stream into <userData>/tasks/<ID>/events.jsonl as pi:<type>.
+```
 
 ## Commands
 

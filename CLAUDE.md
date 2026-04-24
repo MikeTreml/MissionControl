@@ -53,6 +53,7 @@ node --experimental-strip-types src/main/agent-loader.smoke.ts
 node --experimental-strip-types src/main/model-roster.smoke.ts
 node --experimental-strip-types src/main/git-detect.smoke.ts
 node --experimental-strip-types src/main/run-manager.smoke.ts
+node --experimental-strip-types src/main/pi-session-manager.smoke.ts
 ```
 
 ## Orientation — grep these first
@@ -121,17 +122,52 @@ Then read the docs in this order:
 
 - RightBar Run Activity (synthesizes events)
 - Metrics page numbers (canned)
-- Start/Pause/Resume/Stop on Task Detail — mutate Task.runState and
-  append events via `RunManager`, but don't spawn a pi session yet. The
-  state machine is real; the agent runtime behind it is the next step.
+- Start button on Task Detail now **kicks off a real pi prompt**: it
+  builds a blunt v1 prompt from the task (title + description + project +
+  workflow + cycle), opens a `PiSessionHandle` via babysitter-sdk's
+  `createPiSession`, and calls `session.prompt()`. When pi fires
+  `agent_end` the task auto-flips to idle with `reason: "completed"` /
+  `"failed"`. All pi events land in the task's `events.jsonl` as
+  `pi:<type>` entries. Pause/Resume are still MC-level state only
+  (they don't touch the pi session).
+- Pi inherits auth from the environment — set `OPENAI_API_KEY` or
+  `ANTHROPIC_API_KEY` in the shell that launches `npm run dev`, or log
+  in once via the `pi` CLI so `~/.pi/agent/auth.json` is populated.
 
 **Not started:**
 
-- pi SDK wire-in — see `PI-WIRE` markers for every spot. `RunManager` is
-  the seam: when `@mariozechner/pi-coding-agent` lands, its `start` body
-  creates a pi session; the IPC surface doesn't change.
+- Per-agent prompt.md + model routing — today all tasks go through pi's
+  default model with no system prompt override. Next step: read the
+  current agent's `prompt.md` for system prompt, resolve
+  `Agent.primaryModel` through the ModelRoster, pass to pi.
+- Babysitter orchestration — delivered to pi via
+  `pi install npm:@a5c-ai/babysitter-pi` (see "Dep notes" below). MC
+  itself has no babysitter integration; the multi-agent flow lives
+  inside pi's skill system. Single-agent prompting has to feel right
+  before babysitter layers on top.
+- Live event forwarding to the renderer — pi events land in events.jsonl
+  but the UI doesn't auto-refresh yet. RightBar Run Activity still mocks.
 - Campaign task kind (DLL harvest) — schema field exists, UI doesn't
 - Workflow lane customization — both workflows use the same 6 lanes today
+
+## Dep notes
+
+- **Only pi is a direct dep.** MC depends on
+  `@mariozechner/pi-coding-agent`. We deliberately do NOT depend on
+  `@a5c-ai/babysitter` or `@a5c-ai/babysitter-sdk` — those live under
+  pi's extension directory (`~/.pi/agent/extensions/`), installed via
+  pi's own CLI. Keeping them out of our `node_modules` avoids version
+  skew where our copy drifts from the one pi actually loads.
+
+- **Babysitter is delivered as a pi extension.** If the user wants
+  babysitter orchestration inside pi sessions (the `/babysit`, `/plan`,
+  `/resume` slash commands), install once per user:
+  ```
+  pi install npm:@a5c-ai/babysitter-pi
+  ```
+  MC doesn't gate on this — it just means babysitter skills are
+  unavailable inside pi until installed. See
+  `github.com/a5c-ai/babysitter/tree/main/plugins/babysitter-pi`.
 
 ## Gotchas
 
