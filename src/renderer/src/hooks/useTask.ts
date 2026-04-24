@@ -54,6 +54,10 @@ function mockEvents(id: string): TaskEvent[] {
 export interface TaskState {
   task: Task | null;
   events: TaskEvent[];
+  /** PROMPT.md content; null when file missing. */
+  prompt: string | null;
+  /** STATUS.md content; null when file missing. */
+  status: string | null;
   loading: boolean;
   isDemo: boolean;
   error: Error | null;
@@ -63,6 +67,8 @@ export interface TaskState {
 export function useTask(id: string | null): TaskState {
   const [task, setTask] = useState<Task | null>(null);
   const [events, setEvents] = useState<TaskEvent[]>([]);
+  const [prompt, setPrompt] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isDemo, setIsDemo] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -73,11 +79,15 @@ export function useTask(id: string | null): TaskState {
       if (!id) {
         setTask(null);
         setEvents([]);
+        setPrompt(null);
+        setStatus(null);
         return;
       }
       if (!window.mc) {
         setTask(mockTaskToTask(id));
         setEvents(mockEvents(id));
+        setPrompt(null);
+        setStatus(null);
         setIsDemo(true);
         return;
       }
@@ -86,17 +96,27 @@ export function useTask(id: string | null): TaskState {
         // Fall back to mock so the page isn't blank while wireframing
         setTask(mockTaskToTask(id));
         setEvents(mockEvents(id));
+        setPrompt(null);
+        setStatus(null);
         setIsDemo(true);
         return;
       }
-      const ev = await window.mc.readTaskEvents(id);
+      const [ev, pmt, sts] = await Promise.all([
+        window.mc.readTaskEvents(id),
+        window.mc.readTaskPrompt(id),
+        window.mc.readTaskStatus(id),
+      ]);
       setTask(real);
       setEvents(ev);
+      setPrompt(pmt);
+      setStatus(sts);
       setIsDemo(false);
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
       setTask(id ? mockTaskToTask(id) : null);
       setEvents(id ? mockEvents(id) : []);
+      setPrompt(null);
+      setStatus(null);
       setIsDemo(true);
     } finally {
       setLoading(false);
@@ -110,5 +130,5 @@ export function useTask(id: string | null): TaskState {
   // Live refetch on any task-related push from the main process.
   useSubscribe("tasks", () => { void load(); });
 
-  return { task, events, loading, isDemo, error, refresh: load };
+  return { task, events, prompt, status, loading, isDemo, error, refresh: load };
 }

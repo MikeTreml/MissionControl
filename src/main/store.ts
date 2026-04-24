@@ -58,6 +58,30 @@ const ROLE_FOLDERS = [
   "shared",
 ] as const;
 
+/**
+ * Initial PROMPT.md content written at task creation. RunManager replaces
+ * this with its richer render on the first Start, but we seed something
+ * here so Task Detail's Mission card isn't empty right after createTask.
+ */
+function renderInitialPrompt(task: Task): string {
+  return [
+    `# ${task.id} — ${task.title}`,
+    "",
+    task.description || "_(no description)_",
+    "",
+    "## Context",
+    "",
+    `- Project: **${task.project}**`,
+    `- Workflow: **${task.workflow}**`,
+    `- Cycle: **${task.cycle}**`,
+    "",
+    "## Done criteria",
+    "",
+    "_(fill in as the Planner refines scope)_",
+    "",
+  ].join("\n");
+}
+
 export class TaskStore extends EventEmitter {
   private readonly root: string;
 
@@ -279,11 +303,92 @@ export class TaskStore extends EventEmitter {
     return ws;
   }
 
+  /**
+   * Read PROMPT.md for a task. Returns null if absent (task created
+   * before this convention landed, or the file was deleted externally).
+   */
+  async readPromptFile(taskId: string): Promise<string | null> {
+    const p = path.join(this.root, taskId, "PROMPT.md");
+    if (!existsSync(p)) return null;
+    return fs.readFile(p, "utf8");
+  }
+
+  /**
+   * Read STATUS.md for a task. Returns null if absent. STATUS.md is an
+   * append-only progress log — consumers typically tail recent entries
+   * rather than render the whole thing.
+   */
+  async readStatusFile(taskId: string): Promise<string | null> {
+    const p = path.join(this.root, taskId, "STATUS.md");
+    if (!existsSync(p)) return null;
+    return fs.readFile(p, "utf8");
+  }
+
+  /**
+   * Append a line to STATUS.md, prefixed with an ISO timestamp. Creates
+   * the file (with a header) if missing. Emits `task-saved` so the UI
+   * refreshes its status view.
+   */
+  async appendStatus(taskId: string, line: string): Promise<void> {
+    const folder = path.join(this.root, taskId);
+    await fs.mkdir(folder, { recursive: true });
+    const statusPath = path.join(folder, "STATUS.md");
+    if (!existsSync(statusPath)) {
+      await fs.writeFile(
+        statusPath,
+        `# Status — ${taskId}\n\nAppend-only progress log.\n\n`,
+        "utf8",
+      );
+    }
+    const stamp = new Date().toISOString();
+    await fs.appendFile(statusPath, `- \`${stamp}\` ${line}\n`, "utf8");
+    // Piggyback on task-saved so existing UI refetch paths pick it up.
+    const task = await this.getTask(taskId);
+    if (task) this.emit("task-saved", { task });
+  }
+
+  /**
+   * Read a task-linked agent artifact by its file name stem
+   * (e.g. `taskId` for the base, `<taskId>-p` for Planner output).
+   * Returns null if the file doesn't exist yet. Callers can use this to
+   * show artifact contents in Task Detail.
+   */
+  async readTaskFile(taskId: string, stem: string): Promise<string | null> {
+    const p = path.join(this.root, taskId, `${stem}.md`);
+    if (!existsSync(p)) return null;
+    return fs.readFile(p, "utf8");
+  }
+
   // ── internals ─────────────────────────────────────────────────────────
 
-  /** Create per-role folders + starter notes.md files. One-time per task. */
+  /**
+   * Create per-role folders + starter notes.md files + initial
+   * PROMPT.md and STATUS.md. One-time per task. Start overwrites
+   * PROMPT.md with RunManager's richer render; STATUS.md is pure
+   * append-only from here on.
+   */
   private async scaffold(task: Task): Promise<void> {
     const base = path.join(this.root, task.id);
+    // Create the task folder up-front so the PROMPT.md / STATUS.md
+    // writes below have a home. Role subdirs are created in the loop.
+    await fs.mkdir(base, { recursive: true });
+
+    // Mission brief stub. Start replaces this with RunManager's fuller
+    // render; we seed it here so Task Detail has something to render
+    // immediately after create-task (before first Start).
+    await fs.writeFile(
+      path.join(base, "PROMPT.md"),
+      renderInitialPrompt(task),
+      "utf8",
+    );
+
+    // Progress log — append-only from now on.
+    await fs.writeFile(
+      path.join(base, "STATUS.md"),
+      `# Status — ${task.id}\n\nAppend-only progress log.\n\n- \`${task.createdAt}\` task created\n`,
+      "utf8",
+    );
+
     for (const name of ROLE_FOLDERS) {
       const folder = path.join(base, name);
       await fs.mkdir(folder, { recursive: true });
@@ -335,6 +440,7 @@ export class TaskStore extends EventEmitter {
    * across all workflow letters (e.g. DA-001F, DA-002B, DA-003F).
    */
   private async nextTaskId(prefix: string, workflow: string): Promise<string> {
+
     const entries = await fs.readdir(this.root, { withFileTypes: true });
     let maxN = 0;
     for (const entry of entries) {

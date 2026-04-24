@@ -62,6 +62,16 @@ export function registerIpc(stores: Stores): void {
     (_e, id: string, event: { type: string } & Record<string, unknown>) =>
       logged(`tasks:appendEvent ${id} ${event.type}`, () => stores.tasks.appendEvent(id, event)),
   );
+  // Per-task file reads — PROMPT.md, STATUS.md, arbitrary task-linked .md
+  // (e.g. <taskId>-p for Planner output). Return null when the file is
+  // missing so the renderer can distinguish "not produced yet" from empty.
+  ipcMain.handle("tasks:readPrompt", (_e, id: string) => stores.tasks.readPromptFile(id));
+  ipcMain.handle("tasks:readStatus", (_e, id: string) => stores.tasks.readStatusFile(id));
+  ipcMain.handle("tasks:readFile",   (_e, id: string, stem: string) => stores.tasks.readTaskFile(id, stem));
+  ipcMain.handle("tasks:appendStatus",
+    (_e, id: string, line: string) =>
+      logged(`tasks:appendStatus ${id}`, () => stores.tasks.appendStatus(id, line)),
+  );
 
   // ── projects (enriched with derived git info on read) ────────────────
   ipcMain.handle("projects:list", async () =>

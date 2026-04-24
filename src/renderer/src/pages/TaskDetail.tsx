@@ -27,7 +27,7 @@ const LANE_LABEL: Record<Lane, string> = {
 
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
-  const { task, events, isDemo } = useTask(selectedTaskId);
+  const { task, events, prompt, status, isDemo } = useTask(selectedTaskId);
 
   if (!task) {
     return (
@@ -58,6 +58,14 @@ export function TaskDetail(): JSX.Element {
 
       <div className="content">
         <Controls task={task} />
+
+        <section
+          className="card"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}
+        >
+          <Mission prompt={prompt} />
+          <StatusLog status={status} />
+        </section>
 
         <section className="card" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 18 }}>
           <LaneTimeline task={task} />
@@ -570,6 +578,89 @@ function ModelPicker({
           </optgroup>
         ))}
       </select>
+    </div>
+  );
+}
+
+/**
+ * Mission card — renders the task's PROMPT.md. Not parsed as markdown
+ * today (keeping the dep footprint minimal); shown as preformatted text
+ * in a scrollable container. Empty/missing state is explicit so the
+ * user knows whether the file has been created yet.
+ */
+function Mission({ prompt }: { prompt: string | null }): JSX.Element {
+  return (
+    <div>
+      <h3>Mission</h3>
+      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+        PROMPT.md — regenerated on each Start. Edit the task's title or
+        description to change it.
+      </p>
+      {prompt === null ? (
+        <div className="muted" style={{ fontSize: 12, padding: "10px 2px" }}>
+          No PROMPT.md yet. Click Start once to generate it.
+        </div>
+      ) : (
+        <pre
+          style={{
+            margin: "10px 0 0",
+            padding: 10,
+            background: "var(--panel-2)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            fontSize: 12,
+            lineHeight: 1.5,
+            whiteSpace: "pre-wrap",
+            maxHeight: 280,
+            overflow: "auto",
+          }}
+        >
+          {prompt}
+        </pre>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Status log card — renders STATUS.md tail. Append-only progress log
+ * updated by agents during their sessions (and seeded with a "task
+ * created" line at createTask time).
+ */
+function StatusLog({ status }: { status: string | null }): JSX.Element {
+  // Show most recent entries first by tailing lines. STATUS.md tends to
+  // grow linearly; we render the last ~40 lines so it stays readable.
+  const lines = (status ?? "").split("\n").filter((l) => l.length > 0);
+  const tail = lines.slice(-40);
+
+  return (
+    <div>
+      <h3>Status log</h3>
+      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+        STATUS.md — append-only. Agents add one line per meaningful step.
+      </p>
+      {status === null ? (
+        <div className="muted" style={{ fontSize: 12, padding: "10px 2px" }}>
+          No STATUS.md yet.
+        </div>
+      ) : (
+        <pre
+          style={{
+            margin: "10px 0 0",
+            padding: 10,
+            background: "var(--panel-2)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            fontSize: 12,
+            lineHeight: 1.5,
+            whiteSpace: "pre-wrap",
+            maxHeight: 280,
+            overflow: "auto",
+          }}
+        >
+          {tail.join("\n")}
+        </pre>
+      )}
     </div>
   );
 }

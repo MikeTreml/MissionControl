@@ -20,6 +20,12 @@ const api = {
   readTaskEvents:  (id: string) => ipcRenderer.invoke("tasks:events", id),
   appendTaskEvent: (id: string, event: unknown) =>
     ipcRenderer.invoke("tasks:appendEvent", id, event),
+  readTaskPrompt:  (id: string) => ipcRenderer.invoke("tasks:readPrompt", id),
+  readTaskStatus:  (id: string) => ipcRenderer.invoke("tasks:readStatus", id),
+  readTaskFile:    (id: string, stem: string) =>
+    ipcRenderer.invoke("tasks:readFile", id, stem),
+  appendTaskStatus: (id: string, line: string) =>
+    ipcRenderer.invoke("tasks:appendStatus", id, line),
 
   // ── projects ─────────────────────────────────────────────────────────
   listProjects:    () => ipcRenderer.invoke("projects:list"),

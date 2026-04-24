@@ -337,6 +337,28 @@ async function run() {
     // Task is idle → Start button should be present; Pause/Stop hidden.
     const startVisible = await win.getByRole("button", { name: "Start", exact: true }).count();
     assertions.check(startVisible > 0, `Task Detail Start button renders (task idle)`);
+
+    // Mission + Status log cards (Phase 2). Mission card exists with
+    // the task title rendered inside. Status log card exists with the
+    // "task created" seed line visible.
+    const missionHeader = await win.locator("h3", { hasText: "Mission" }).count();
+    assertions.check(missionHeader > 0, `Mission card renders on Task Detail`);
+    const missionContainsTitle = await win.locator('pre').filter({
+      hasText: "First smoke task",
+    }).count();
+    assertions.check(
+      missionContainsTitle > 0,
+      `Mission card contains task title (PROMPT.md content rendered)`,
+    );
+    const statusHeader = await win.locator("h3", { hasText: "Status log" }).count();
+    assertions.check(statusHeader > 0, `Status log card renders`);
+    const statusSeed = await win.locator('pre').filter({
+      hasText: "task created",
+    }).count();
+    assertions.check(
+      statusSeed > 0,
+      `Status log seeded with "task created" entry`,
+    );
     const pauseHidden = await win.getByRole("button", { name: "Pause", exact: true }).count();
     assertions.check(pauseHidden === 0, `Pause button hidden when task idle`);
 

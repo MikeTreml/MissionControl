@@ -50,6 +50,10 @@ export interface McApi {
     id: string,
     event: { type: string } & Record<string, unknown>,
   ) => Promise<void>;
+  readTaskPrompt: (id: string) => Promise<string | null>;
+  readTaskStatus: (id: string) => Promise<string | null>;
+  readTaskFile: (id: string, stem: string) => Promise<string | null>;
+  appendTaskStatus: (id: string, line: string) => Promise<void>;
 
   // projects — enriched with derived git info on the main side
   listProjects: () => Promise<ProjectWithGit[]>;
