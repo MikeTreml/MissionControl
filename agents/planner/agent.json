@@ -1,0 +1,11 @@
+{
+  "slug": "planner",
+  "code": "p",
+  "name": "Planner",
+  "title": "Planner",
+  "description": "Breaks the task into units, clarifies constraints, decides which subagents to spawn.",
+  "primaryModel": "claude-opus",
+  "fallbackModels": ["qwen-coder"],
+  "permissions": { "inherit": true },
+  "promptFile": "prompt.md"
+}

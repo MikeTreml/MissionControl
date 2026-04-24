@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx -y @a5c-ai/babysitter-sdk@0.0.187 harness:call --harness claude-code --prompt \"implement user authentication with TDD\")",
+      "Bash(npm view *)",
+      "Bash(npx -y -p @a5c-ai/babysitter-sdk@0.0.187 babysitter harness:call --harness claude-code --prompt \"implement user authentication with TDD\")",
+      "Bash(npx -y -p @a5c-ai/babysitter-sdk@0.0.187 babysitter harness:call --help)"
+    ]
+  }
+}

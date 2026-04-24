@@ -1,0 +1,35 @@
+{
+  "name": "mc-v2-electron",
+  "version": "0.1.0",
+  "description": "Mission Control — Electron + Vite + React + TypeScript",
+  "main": "./out/main/index.js",
+  "type": "module",
+  "author": "Michael Treml",
+  "private": true,
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "smoke": "node --experimental-strip-types src/main/store.smoke.ts && node --experimental-strip-types src/main/project-store.smoke.ts && node --experimental-strip-types src/main/workflows.smoke.ts && node --experimental-strip-types src/main/agent-loader.smoke.ts && node --experimental-strip-types src/main/model-roster.smoke.ts && node --experimental-strip-types src/main/git-detect.smoke.ts && node --experimental-strip-types src/main/run-manager.smoke.ts",
+    "verify-ui": "node scripts/verify-ui.mjs",
+    "setup": "pwsh scripts/setup.ps1"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "electron": "^32.0.0",
+    "electron-vite": "^2.3.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
+  }
+}

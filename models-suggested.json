@@ -1,0 +1,18 @@
+[
+  {
+    "id": "gpt-5-codex",
+    "label": "GPT-5 Codex (OpenAI)",
+    "kind": "openai",
+    "model": "gpt-5-codex",
+    "endpoint": "",
+    "notes": "Requires OPENAI_API_KEY. Model id should match what your OpenAI account is entitled to — change to gpt-4.1 etc. if gpt-5-codex isn't available to you."
+  },
+  {
+    "id": "qwen-coder",
+    "label": "Qwen 2.5 Coder (local / Ollama)",
+    "kind": "ollama",
+    "model": "qwen2.5-coder",
+    "endpoint": "http://localhost:11434",
+    "notes": "Requires Ollama running locally. Install from ollama.com, then `ollama pull qwen2.5-coder`."
+  }
+]

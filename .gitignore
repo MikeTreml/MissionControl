@@ -1,0 +1,11 @@
+node_modules/
+out/
+dist/
+.vite/
+*.log
+.env
+.env.local
+.DS_Store
+
+# Playwright UI smoke output
+scripts/screenshots/

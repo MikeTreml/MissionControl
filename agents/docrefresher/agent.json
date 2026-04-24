@@ -1,0 +1,11 @@
+{
+  "slug": "docrefresher",
+  "code": "drf",
+  "name": "DocRefresher",
+  "title": "Subagent",
+  "description": "Regenerates linked docs (spec, decision-log, diff-report) from the current task state.",
+  "primaryModel": "qwen-coder",
+  "fallbackModels": [],
+  "permissions": { "inherit": true },
+  "promptFile": "prompt.md"
+}

@@ -1,0 +1,11 @@
+{
+  "slug": "surgeon",
+  "code": "s",
+  "name": "Surgeon",
+  "title": "Surgeon",
+  "description": "Post-review cleanup — doc regeneration, diff reports, artifact maintenance.",
+  "primaryModel": "qwen-coder",
+  "fallbackModels": ["claude-opus"],
+  "permissions": { "inherit": true },
+  "promptFile": "prompt.md"
+}

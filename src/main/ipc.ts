@@ -1,0 +1,138 @@
+/**
+ * IPC registration — single place where main-process stores/loaders are
+ * bound to channel names. The preload script mirrors this list and exposes
+ * it on `window.mc`.
+ *
+ * Channel naming: `<domain>:<verb>` (e.g. `tasks:list`, `agents:list`).
+ * Keeps the main handler surface inspectable in one file.
+ */
+import { ipcMain } from "electron";
+
+import type { TaskStore } from "./store.ts";
+import type { ProjectStore } from "./project-store.ts";
+import type { ModelRosterStore } from "./model-roster.ts";
+import type { WorkflowLoader } from "./workflows.ts";
+import type { AgentLoader } from "./agent-loader.ts";
+import type { RunManager } from "./run-manager.ts";
+import { detectGit } from "./git-detect.ts";
+import type { Project, ProjectWithGit } from "../shared/models.ts";
+
+/** Parallel map: enrich each stored project with live git detection. */
+async function enrichProjects(projects: Project[]): Promise<ProjectWithGit[]> {
+  return Promise.all(
+    projects.map(async (p) => ({
+      ...p,
+      gitInfo: await detectGit(p.path),
+    })),
+  );
+}
+
+export interface Stores {
+  tasks: TaskStore;
+  projects: ProjectStore;
+  models: ModelRosterStore;
+  workflows: WorkflowLoader;
+  agents: AgentLoader;
+  runs: RunManager;
+}
+
+/** Log each IPC hit at debug level. Uncomment the call site to silence. */
+function logged<T>(channel: string, fn: () => Promise<T> | T): Promise<T> | T {
+  console.log(`[ipc] ← ${channel}`);
+  return fn();
+}
+
+export function registerIpc(stores: Stores): void {
+  // ── tasks ────────────────────────────────────────────────────────────
+  ipcMain.handle("tasks:list",   () => logged("tasks:list", () => stores.tasks.listTasks()));
+  ipcMain.handle("tasks:get",    (_e, id: string) => logged(`tasks:get ${id}`, () => stores.tasks.getTask(id)));
+  ipcMain.handle("tasks:create", (_e, input: Parameters<TaskStore["createTask"]>[0]) =>
+    logged(`tasks:create ${input.projectPrefix}/${input.title}`, () => stores.tasks.createTask(input)),
+  );
+  ipcMain.handle("tasks:save",   (_e, task: Parameters<TaskStore["saveTask"]>[0]) =>
+    logged(`tasks:save ${task.id}`, () => stores.tasks.saveTask(task)),
+  );
+  ipcMain.handle("tasks:delete", (_e, id: string) =>
+    logged(`tasks:delete ${id}`, () => stores.tasks.deleteTask(id)),
+  );
+  ipcMain.handle("tasks:events", (_e, id: string) => logged(`tasks:events ${id}`, () => stores.tasks.readEvents(id)));
+  ipcMain.handle("tasks:appendEvent",
+    (_e, id: string, event: { type: string } & Record<string, unknown>) =>
+      logged(`tasks:appendEvent ${id} ${event.type}`, () => stores.tasks.appendEvent(id, event)),
+  );
+
+  // ── projects (enriched with derived git info on read) ────────────────
+  ipcMain.handle("projects:list", async () =>
+    enrichProjects(await stores.projects.listProjects()),
+  );
+  ipcMain.handle("projects:get", async (_e, id: string) => {
+    const p = await stores.projects.getProject(id);
+    if (!p) return null;
+    return (await enrichProjects([p]))[0];
+  });
+  ipcMain.handle("projects:create", async (_e, input: Parameters<ProjectStore["createProject"]>[0]) => {
+    const created = await stores.projects.createProject(input);
+    return (await enrichProjects([created]))[0];
+  });
+  ipcMain.handle("projects:update", async (
+    _e,
+    id: string,
+    patch: Parameters<ProjectStore["updateProject"]>[1],
+  ) => {
+    const updated = await stores.projects.updateProject(id, patch);
+    return (await enrichProjects([updated]))[0];
+  });
+  ipcMain.handle("projects:delete", (_e, id: string) =>
+    stores.projects.deleteProject(id),
+  );
+
+  // ── models (the LLM roster) ──────────────────────────────────────────
+  ipcMain.handle("models:list", () => stores.models.listModels());
+  ipcMain.handle("models:save",
+    (_e, models: Parameters<ModelRosterStore["saveModels"]>[0]) =>
+      stores.models.saveModels(models),
+  );
+  /**
+   * Read models-suggested.json from the bundled app root. Used by the
+   * Settings → Models page's "Load defaults" button so a fresh install
+   * can be seeded without the user typing.
+   *
+   * PROPOSED: returning the raw JSON unparsed; the renderer parses it
+   * as ModelDefinition[]. If we later want to validate on the main side,
+   * wrap with ModelListSchema.parse().
+   */
+  ipcMain.handle("models:suggested", async () => {
+    const { app } = await import("electron");
+    const { readFile } = await import("node:fs/promises");
+    const { existsSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const p = join(app.getAppPath(), "models-suggested.json");
+    if (!existsSync(p)) return [];
+    const raw = await readFile(p, "utf8");
+    return JSON.parse(raw);
+  });
+
+  // ── agents + workflows (read-only loaders) ───────────────────────────
+  ipcMain.handle("agents:list",    () => stores.agents.loadAll());
+  ipcMain.handle("workflows:list", () => stores.workflows.loadAll());
+
+  // ── runs (Start/Pause/Resume/Stop state machine) ─────────────────────
+  // PI-WIRE: these handlers call RunManager which currently only mutates
+  // Task.runState + appends events. When pi lands, RunManager grows the
+  // real session lifecycle; the channel surface stays the same.
+  ipcMain.handle("runs:start", (_e, input: Parameters<RunManager["start"]>[0]) =>
+    logged(`runs:start ${input.taskId}`, () => stores.runs.start(input)),
+  );
+  ipcMain.handle("runs:pause", (_e, input: Parameters<RunManager["pause"]>[0]) =>
+    logged(`runs:pause ${input.taskId}`, () => stores.runs.pause(input)),
+  );
+  ipcMain.handle("runs:resume", (_e, input: Parameters<RunManager["resume"]>[0]) =>
+    logged(`runs:resume ${input.taskId}`, () => stores.runs.resume(input)),
+  );
+  ipcMain.handle("runs:stop", (_e, input: Parameters<RunManager["stop"]>[0]) =>
+    logged(`runs:stop ${input.taskId}`, () => stores.runs.stop(input)),
+  );
+
+  // ── app info ─────────────────────────────────────────────────────────
+  ipcMain.handle("app:version", () => process.env["npm_package_version"] ?? "dev");
+}
