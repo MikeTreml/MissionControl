@@ -153,9 +153,13 @@ Then read the docs in this order:
   Metrics derive tokens/cost from the journal.
 - **Model picker** on Task Detail pulls from pi's `ModelRegistry` via
   `pi:listModels` IPC. Empty value = let pi use its default.
-- **Campaign task kind** UI: kind selector + one-line-per-item textarea
-  + TaskDetail Campaign Items table. Runtime iteration is NOT wired
-  yet — babysitter's `ctx.map` is the intended path.
+- **Campaign task kind** end-to-end: kind selector + items textarea +
+  Campaign Items table with progress bar. **Runtime iteration is wired**
+  — RunManager dispatches single vs campaign on `task.kind`, opens one
+  pi session per item, marks items done/failed/running as it
+  progresses. Stop marks any running item failed; failed items don't
+  halt the campaign. Per-item /babysit prompt includes "item N of M"
+  context. State-machine fully smoke-tested.
 - **Per-workflow lanes**: `workflow.json` accepts optional `lanes[]`.
   Settings → Workflows shows per-workflow lane sequence with
   default/custom label. X-brainstorm uses `[plan, develop, done]`.
@@ -169,9 +173,6 @@ Then read the docs in this order:
   buttons. When plannotator exposes an invocation surface, open it
   pointed at the planner's artifact, consume approve/reject +
   annotations as structured feedback.
-- **Campaign runtime iteration** — schema + UI are built; actual
-  "spawn a session per item" loop should live inside babysitter's
-  generated process.js for campaign-kind tasks.
 - **pi-memory-md wire-up** — per-project memory at `~/.pi/memory-md/<project>/`.
   Agents gain memory tools automatically once set up.
 - **pi-superpowers role prompts** — swap hand-rolled `agents/<slug>/prompt.md`
