@@ -354,6 +354,22 @@ function buildBabysitPrompt(task: Task, agentSlug: string | null): string {
     "",
     "Orchestrate the full workflow: plan, implement, review, finalize.",
     "Loop back on review rejection; stop at human approval gates.",
+    "",
+    "## File naming convention",
+    "",
+    `When phase agents produce artifacts, save them in this folder using the`,
+    `task-id + agent-code suffix convention so Mission Control's UI can`,
+    `link them automatically:`,
+    "",
+    `  - Planner output    → ${task.id}-p.md`,
+    `  - Developer output  → ${task.id}-d.md`,
+    `  - Reviewer output   → ${task.id}-r.md`,
+    `  - Surgeon output    → ${task.id}-s.md`,
+    `  - Subagent output   → ${task.id}-<2-4 char code>.md (e.g. -rmp, -drf)`,
+    "",
+    `Babysitter's own scaffolding (process.js, run journals) can stay`,
+    `under .a5c/ — that's expected. The convention applies to per-agent`,
+    `MARKDOWN deliverables that humans read.`,
   ];
   return lines.join("\n");
 }

@@ -15,15 +15,21 @@ import { mockRunActivity, mockQueue } from "../mock-data";
 import { useRoute } from "../router";
 import type { TaskEvent } from "../../../shared/models";
 
-const MAX_LIVE_EVENTS = 30;
+const MAX_LIVE_EVENTS = 50;
 
 // Event types too noisy to render row-by-row. They still land in
 // events.jsonl and drive Task Detail's Run History / Metrics aggregation,
-// we just don't want 50 of them per second pushing everything else off
-// screen in the live feed.
+// we just don't want them pushing structural events off screen in the
+// live feed. Real-task numbers from a 3-minute run: 4806 message_update,
+// 108 message_start/end pairs (one per tool wrap) — keeping all of them
+// blew through the rail every ~25s. We keep turn_*, tool_execution_*,
+// and the lifecycle wrappers; toss the streaming-token + tool-stdout
+// + per-toolcall message wrappers.
 const SUPPRESSED_TYPES = new Set([
-  "pi:message_update", // streaming tokens
+  "pi:message_update",        // streaming tokens
   "pi:tool_execution_update", // streaming tool output
+  "pi:message_start",         // each tool call wraps in start/end of a "toolResult" message — noise
+  "pi:message_end",
 ]);
 
 // Event-type prefixes that warrant a visual badge — first-class signals
