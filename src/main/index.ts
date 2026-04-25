@@ -44,6 +44,7 @@ import { WorkflowLoader } from "./workflows.ts";
 import { AgentLoader } from "./agent-loader.ts";
 import { PiSessionManager } from "./pi-session-manager.ts";
 import { RunManager } from "./run-manager.ts";
+import { SettingsStore } from "./settings-store.ts";
 import { registerIpc } from "./ipc.ts";
 
 async function bootstrapStores(): Promise<void> {
@@ -57,8 +58,9 @@ async function bootstrapStores(): Promise<void> {
   const models = new ModelRosterStore(userData);
   const workflows = new WorkflowLoader(join(appRoot, "workflows"));
   const agents = new AgentLoader(join(appRoot, "agents"));
+  const settings = new SettingsStore(userData);
 
-  await Promise.all([tasks.init(), projects.init(), models.init()]);
+  await Promise.all([tasks.init(), projects.init(), models.init(), settings.init()]);
 
   // PiSessionManager owns live pi sessions (via babysitter-sdk's
   // createPiSession wrapper). RunManager owns the task state machine
@@ -70,14 +72,14 @@ async function bootstrapStores(): Promise<void> {
   // Pi inherits auth from the environment: OPENAI_API_KEY,
   // ANTHROPIC_API_KEY, etc. Set them in the shell that launched `npm run dev`.
   const pi = new PiSessionManager(tasks);
-  const runs = new RunManager(tasks, pi, agents, projects);
+  const runs = new RunManager(tasks, pi, agents, projects, settings);
   pi.setOnSessionEnd((taskId, result) =>
     runs.completeRun(taskId, result.reason),
   );
 
   bootstrappedTasks = tasks;
 
-  registerIpc({ tasks, projects, models, workflows, agents, runs, pi });
+  registerIpc({ tasks, projects, models, workflows, agents, runs, pi, settings });
   console.log("[main] IPC handlers registered");
 }
 

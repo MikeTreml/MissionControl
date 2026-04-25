@@ -324,6 +324,23 @@ export type SubagentSpawn = z.infer<typeof SubagentSpawnSchema>;
 
 // ── helpers ──────────────────────────────────────────────────────────────
 
+/**
+ * App-level settings persisted to `<userData>/settings.json`. Distinct
+ * from the LLM model roster (models.json) and from pi's own settings
+ * (~/.pi/agent/settings.json). MC owns this file.
+ *
+ * `babysitterMode` controls which slash command `RunManager.start`
+ * sends:
+ *   - "plan"    → /babysit  (author a process.js, don't execute it)
+ *   - "execute" → /yolo     (author + run, including breakpoints)
+ * Default is "plan" because /babysit is empirically verified; /yolo
+ * is the path we want to test next.
+ */
+export const MCSettingsSchema = z.object({
+  babysitterMode: z.enum(["plan", "execute"]).default("plan"),
+}).passthrough();
+export type MCSettings = z.infer<typeof MCSettingsSchema>;
+
 /** Fixed lane render order for the board. Source of truth — don't hardcode elsewhere. */
 export const LANE_ORDER: readonly Lane[] = [
   "plan",

@@ -58,6 +58,10 @@ const api = {
   // ── pi meta ──────────────────────────────────────────────────────────
   listPiModels: () => ipcRenderer.invoke("pi:listModels"),
 
+  // ── app settings (MC's own) ──────────────────────────────────────────
+  getSettings:  () => ipcRenderer.invoke("settings:get"),
+  saveSettings: (patch: unknown) => ipcRenderer.invoke("settings:save", patch),
+
   // ── live events (main → renderer push) ───────────────────────────────
   // Each subscribe returns an unsubscribe function. The listener fires
   // whenever main broadcasts the corresponding ipc message.

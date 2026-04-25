@@ -10,14 +10,14 @@
  * No hardcoded role names / titles / workflow names in this file — all
  * labels come from loaded data.
  */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useAgents, modelLabel } from "../hooks/useAgents";
 import { useWorkflows } from "../hooks/useWorkflows";
 import { publish } from "../hooks/data-bus";
 import { useRoute, type ViewId } from "../router";
 import { effectiveLanes } from "../../../shared/models";
-import type { ModelDefinition } from "../../../shared/models";
+import type { ModelDefinition, MCSettings } from "../../../shared/models";
 
 const SUBTABS: ReadonlyArray<{ id: ViewId; label: string }> = [
   { id: "settings-agents",    label: "Agents" },
@@ -348,12 +348,16 @@ export function SettingsGlobal(): JSX.Element {
       <Header />
       <div className="content">
         <SubTabs />
+
+        <BabysitterMode />
+
         <div className="card">
           <h3>Paths</h3>
           <div style={{ marginTop: 10 }}>
             <PathRow label="Tasks"           value="(userData)/tasks" />
             <PathRow label="Projects"        value="(userData)/projects" />
             <PathRow label="Model roster"    value="(userData)/models.json" />
+            <PathRow label="App settings"    value="(userData)/settings.json" />
             <PathRow label="Agents"          value="(bundled)/agents" />
             <PathRow label="Workflows"       value="(bundled)/workflows" />
           </div>
@@ -378,6 +382,91 @@ export function SettingsGlobal(): JSX.Element {
         </div>
       </div>
     </>
+  );
+}
+
+/**
+ * Babysitter mode card on Settings → Global. Lets the user pick which
+ * slash command MC sends when Start is clicked: /babysit (plan only,
+ * default — author a process.js but don't execute) vs /yolo (plan +
+ * execute). Both run inside a pi session driven by RunManager;
+ * babysitter-pi's skill resolves the slash command.
+ */
+function BabysitterMode(): JSX.Element {
+  const [settings, setSettings] = useState<MCSettings | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!window.mc) return;
+    void window.mc.getSettings().then(setSettings).catch((e) => setError(String(e)));
+  }, []);
+
+  async function setMode(mode: MCSettings["babysitterMode"]): Promise<void> {
+    if (!window.mc) return;
+    setSaving(true);
+    setError("");
+    try {
+      const next = await window.mc.saveSettings({ babysitterMode: mode });
+      setSettings(next);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="card">
+      <h3>Babysitter mode</h3>
+      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+        Controls which slash command MC sends to babysitter-pi when you
+        click Start. <strong>Plan only</strong> is verified to author a
+        process.js but doesn't execute it. <strong>Plan + execute</strong>{" "}
+        sends <code>/yolo</code> which (per babysitter-pi docs) plans
+        and runs the workflow including breakpoints — try it on a small
+        scratch task first.
+      </p>
+      <div style={{ display: "flex", gap: 14, marginTop: 12, alignItems: "center" }}>
+        <label style={{ display: "flex", gap: 6, alignItems: "center", cursor: "pointer" }}>
+          <input
+            type="radio"
+            name="babysitter-mode"
+            checked={settings?.babysitterMode === "plan"}
+            onChange={() => void setMode("plan")}
+            disabled={saving}
+          />
+          <span>Plan only — <code>/babysit</code></span>
+        </label>
+        <label style={{ display: "flex", gap: 6, alignItems: "center", cursor: "pointer" }}>
+          <input
+            type="radio"
+            name="babysitter-mode"
+            checked={settings?.babysitterMode === "execute"}
+            onChange={() => void setMode("execute")}
+            disabled={saving}
+          />
+          <span>Plan + execute — <code>/yolo</code></span>
+        </label>
+        {saving && <span className="muted" style={{ fontSize: 12 }}>Saving…</span>}
+      </div>
+      {error && (
+        <div
+          className="muted"
+          style={{
+            color: "var(--bad)",
+            background: "rgba(255,123,123,0.08)",
+            border: "1px solid var(--bad)",
+            borderRadius: 8,
+            padding: "8px 10px",
+            marginTop: 10,
+            fontSize: 12,
+          }}
+        >
+          {error}
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -23,8 +23,9 @@ import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { AgentLoader } from "./agent-loader.ts";
+import type { SettingsStore } from "./settings-store.ts";
 import { renderPromptFile } from "./render-prompt.ts";
-import type { CampaignItem, RunState, Task } from "../shared/models.ts";
+import type { CampaignItem, MCSettings, RunState, Task } from "../shared/models.ts";
 
 export type StopReason = "user" | "completed" | "failed";
 
@@ -33,17 +34,20 @@ export class RunManager {
   private readonly projects: ProjectStore | null;
   private readonly pi: PiSessionManager | null;
   private readonly agents: AgentLoader | null;
+  private readonly settings: SettingsStore | null;
 
   constructor(
     tasks: TaskStore,
     pi?: PiSessionManager | null,
     agents?: AgentLoader | null,
     projects?: ProjectStore | null,
+    settings?: SettingsStore | null,
   ) {
     this.tasks = tasks;
     this.pi = pi ?? null;
     this.agents = agents ?? null;
     this.projects = projects ?? null;
+    this.settings = settings ?? null;
   }
 
   async start(input: {
@@ -69,9 +73,10 @@ export class RunManager {
     if (this.pi) {
       const agentSlug = input.agentSlug ?? task.currentAgentSlug;
       const cwd = await this.resolveCwd(task);
+      const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
       await this.tasks.writePromptFile(task.id, renderPromptFile(task, agentSlug));
       await this.pi.start(task.id, {
-        prompt: buildBabysitPrompt(task, agentSlug),
+        prompt: buildBabysitPrompt(task, agentSlug, mode),
         cwd,
         ...(input.model ? { model: input.model } : {}),
       });
@@ -133,11 +138,12 @@ export class RunManager {
     if (!this.pi) return;
     const cwd = await this.resolveCwd(task);
     const m = model ?? this.activeModel.get(task.id);
+    const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
     await this.tasks.writePromptFile(task.id, renderPromptFile(task, task.currentAgentSlug));
     await this.tasks.appendEvent(task.id, { type: "item-started", itemId: item.id });
     await this.tasks.appendStatus(task.id, `Item ${item.id} started — ${item.description}`);
     await this.pi.start(task.id, {
-      prompt: buildItemBabysitPrompt(task, item),
+      prompt: buildItemBabysitPrompt(task, item, mode),
       cwd,
       ...(m ? { model: m } : {}),
     });
@@ -341,9 +347,14 @@ function pendingItemCount(task: Task): number {
  * RunManager.start via writePromptFile) for the full mission, so we
  * don't need to duplicate the description inline.
  */
-function buildBabysitPrompt(task: Task, agentSlug: string | null): string {
+function buildBabysitPrompt(
+  task: Task,
+  agentSlug: string | null,
+  mode: MCSettings["babysitterMode"] = "plan",
+): string {
+  const slash = mode === "execute" ? "/yolo" : "/babysit";
   const lines = [
-    `/babysit ${task.title}`,
+    `${slash} ${task.title}`,
     "",
     task.description || "(no description)",
     "",
@@ -380,11 +391,16 @@ function buildBabysitPrompt(task: Task, agentSlug: string | null): string {
  * for the next pending one. Item description is the user prompt;
  * task.title gives shared context for cross-item lessons.
  */
-function buildItemBabysitPrompt(task: Task, item: CampaignItem): string {
+function buildItemBabysitPrompt(
+  task: Task,
+  item: CampaignItem,
+  mode: MCSettings["babysitterMode"] = "plan",
+): string {
+  const slash = mode === "execute" ? "/yolo" : "/babysit";
   const total = task.items.length;
   const idx = task.items.findIndex((i) => i.id === item.id);
   return [
-    `/babysit ${task.title} — item ${item.id} (${idx + 1}/${total})`,
+    `${slash} ${task.title} — item ${item.id} (${idx + 1}/${total})`,
     "",
     item.description,
     "",

@@ -14,6 +14,7 @@ import type {
   Lane,
   TaskKind,
   CampaignItem,
+  MCSettings,
 } from "../../shared/models";
 
 type CreateTaskInput = {
@@ -84,6 +85,10 @@ export interface McApi {
 
   // pi meta
   listPiModels: () => Promise<PiModelInfo[]>;
+
+  // app settings
+  getSettings: () => Promise<MCSettings>;
+  saveSettings: (patch: Partial<MCSettings>) => Promise<MCSettings>;
 
   // live events (subscribe; returns unsubscribe)
   onTaskEvent: (listener: (payload: { taskId: string; event: TaskEvent }) => void) => () => void;

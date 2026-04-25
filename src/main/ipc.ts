@@ -16,6 +16,7 @@ import type { WorkflowLoader } from "./workflows.ts";
 import type { AgentLoader } from "./agent-loader.ts";
 import type { RunManager } from "./run-manager.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
+import type { SettingsStore } from "./settings-store.ts";
 import { detectGit } from "./git-detect.ts";
 import type { Project, ProjectWithGit } from "../shared/models.ts";
 
@@ -37,6 +38,7 @@ export interface Stores {
   agents: AgentLoader;
   runs: RunManager;
   pi: PiSessionManager;
+  settings: SettingsStore;
 }
 
 /** Log each IPC hit at debug level. Uncomment the call site to silence. */
@@ -148,6 +150,12 @@ export function registerIpc(stores: Stores): void {
 
   // ── pi meta (model registry from pi's own auth config) ────────────────
   ipcMain.handle("pi:listModels", () => stores.pi.listModels());
+
+  // ── app settings (MC's own settings, not pi's) ───────────────────────
+  ipcMain.handle("settings:get",  () => stores.settings.get());
+  ipcMain.handle("settings:save", (_e, patch: Parameters<SettingsStore["save"]>[0]) =>
+    stores.settings.save(patch),
+  );
 
   // ── shell convenience — reveal the task's folder in the OS file UI ───
   // Point the user at the task's on-disk state: PROMPT.md, STATUS.md,
