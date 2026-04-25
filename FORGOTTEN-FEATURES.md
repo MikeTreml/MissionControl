@@ -77,12 +77,48 @@ Grouped by blast-radius. Top of the list = biggest implications for data shape.
 
 ---
 
-## Recommended next-step ordering
+## Status — what got addressed (2026-04-24)
 
-1. **Rename `dev` → `builder`** in models + store (small, clears the naming mismatch early).
-2. **Add `taskType` enum + project-prefixed IDs** to the store (changes ID generation; do before much data exists).
-3. **Introduce `Workflow` enum** — just Dev for now, but stub it so brainstorm / fix can be added without a schema migration later.
-4. **Artifacts vs linked files** split — shapes how the renderer's files panel is built.
-5. **Subagent model + run activity feed** — depends on pi session events; design alongside the IPC layer.
+The items above are mockup-vs-code observations. Most are now resolved:
 
-Items 11, 12, 13, 14 are renderer-only and can wait until after IPC is wired.
+- **#2 Task ID convention** — implemented as `<PREFIX>-<NNN><W>` with
+  per-prefix counters; task IDs do require project context.
+- **#3 Task type / category** — covered by the `Workflow` letter on the
+  task ID + `Task.kind: "single" | "campaign"`.
+- **#4 Workflow types** — `WorkflowSchema` shipped; loaded from
+  `workflows/<CODE>-<slug>/`. Per-workflow lane subsets via the
+  optional `lanes` field; `effectiveLanes(workflow)` resolves.
+- **#7 Run Activity** — RightBar subscribes live to `task:event` from
+  main, renders the most recent ~30 with type icons + click-to-open.
+- **#9 Blocked duration** — partial: `Task.laneHistory[]` records lane
+  entry/exit times; Task Detail's lane timeline renders both. Stuck-task
+  highlight in Project Detail derives from these timestamps.
+- **#11 Project source integration** — `git-detect.ts` parses `.git/config`
+  and classifies GitHub / Azure DevOps / GitLab automatically.
+- **#12 Project stats in sidebar** — derived in `useProjects` /
+  `useTasks`. Sidebar shows prefix chip + name; a richer count rollup
+  is one of the remaining renderer tweaks.
+- **#13 Model shown per task card** — Task Detail's Run History pulls
+  model from `pi:message_start.message.model`; per-card model badge is
+  a small follow-up.
+- **#14 Current project filter** — `selectedProjectId` lives in
+  `router.ts`; Create Task defaults to it (fixed the silent
+  wrong-project bug found by Playwright).
+
+Still open:
+
+- **#1 Role naming "Builder"** — the role enum still says `developer`.
+  Cosmetic; deferred.
+- **#5 Subagents first-class** — pi-finder + pi-librarian + pi-subagents
+  install via `pi install`. Event plumbing recognizes
+  `pi:subagent_spawn` / `pi:subagent_complete` (Phase 6 prep). Real
+  shape pending dogfood.
+- **#6 Artifacts vs linked files split** — Task Detail's "Linked Files"
+  panel still lists speculative names; doesn't yet check disk for the
+  actual `<taskId>-<code>.md` files. `TaskStore.readTaskFile(id, stem)`
+  is wired; the Linked Files component just needs to call it.
+- **#8 Queue — what is being waited on** — still mocked. Approval lane
+  gate is real now; "Waiting on build callback" / "Waiting on human"
+  reasons aren't enumerated.
+- **#10 Agent primary / fallback model pairs** — already in
+  `agent.json`. Good.

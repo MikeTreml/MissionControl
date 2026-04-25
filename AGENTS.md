@@ -70,8 +70,31 @@ Grep these whenever orienting.
   - `DA-001F` — base manifest (no agent code)
   - `DA-001F-p` — Planner output (primary roles get 1-char codes)
   - `DA-001F-rmp` — RepoMapper subagent output (subagents get 2-4 char codes)
-- Each task has a `PROMPT.md` (mission) and `STATUS.md` (progress log) in
-  its folder. You append to STATUS.md as you work.
+- Each task folder has:
+  - `PROMPT.md` — the mission. Re-rendered by MC on each Start so edits to
+    the task's title/description propagate. Read this for context.
+  - `STATUS.md` — append-only progress log. MC seeds it at create-time
+    and auto-appends lifecycle milestones (Started, Stopped, Run ended,
+    Item N done — for campaign tasks). You should also append your own
+    one-line updates as you work — that's what humans tail to see what
+    the run is doing.
+  - `events.jsonl` — structured event journal (lane changes, run events,
+    pi tool calls). Don't write here directly; MC appends.
+  - `workspace/` — pi's cwd when the task's project has no `path`. Files
+    you produce here live with the task. When the project DOES have a
+    path, that's pi's cwd instead.
+  - `manifest.json` — the persisted Task — don't edit by hand.
+
+## Campaign tasks
+
+When `task.kind === "campaign"`, MC iterates `task.items[]` — one pi
+session per item, in order. Each item has `{ id, description, status,
+notes }`. Status flows: `pending → running → done` (or `failed`). MC
+fires `item-started`/`item-ended` events around each iteration; STATUS.md
+gets `Item <id> started/done — N pending` lines. Failed items don't
+halt the campaign; the next pending item starts. If you're handling a
+campaign item: do the work for THIS item only, summarize what you
+produced, then stop. The orchestrator handles the rest.
 
 ## Hand-off pattern
 
