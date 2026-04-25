@@ -1,20 +1,21 @@
 /**
  * RunManager — owns task run state transitions.
  *
- * Start/Pause/Resume/Stop flip Task.runState on disk and append events to
- * events.jsonl. When a PiSessionManager is provided, Start also creates a
- * live pi AgentSession for the task, and Stop disposes it.
+ * Single tasks: Start opens one pi session driven by /babysit, agent_end
+ * flips the task to idle. Pause/Resume are MC-level only (they don't
+ * touch the pi session) — pi has no first-class pause primitive.
  *
- * Pause and Resume are MC-level state today — they do NOT touch the pi
- * session. A paused task's pi session sits idle (no prompt in flight);
- * resume just flips MC state back. This mirrors how pi itself has no
- * first-class pause primitive on AgentSession.
+ * Campaign tasks (`task.kind === "campaign"`): Start kicks off the
+ * iteration. Each item gets its own pi session — when one finishes the
+ * next pending item starts automatically. Task.runState stays "running"
+ * across the whole campaign; flips to "idle" only when every item is
+ * done OR the user stops. Stop marks any "running" item as "failed".
  *
- * ── PI-WIRE: prompting ──────────────────────────────────────────────────
- * Today the pi session is created but never prompted. Next baby step:
- * resolve the task's current agent → its primaryModel → call
- * `session.prompt(...)` with the task title/description. That step
- * requires API key setup + per-agent model selection.
+ * ── PI-WIRE: campaign prompting ─────────────────────────────────────────
+ * Today every campaign item invokes /babysit with the item's description.
+ * Babysitter generates its own per-item process.js. A future enhancement
+ * could pre-author a campaign-specific process.js (with cross-item
+ * lessons + checkpoint-every-N) — see docs/IDEAS-WORTH-BORROWING.md.
  */
 import { existsSync } from "node:fs";
 
@@ -22,7 +23,7 @@ import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { AgentLoader } from "./agent-loader.ts";
-import type { RunState, Task } from "../shared/models.ts";
+import type { CampaignItem, RunState, Task } from "../shared/models.ts";
 
 export type StopReason = "user" | "completed" | "failed";
 
@@ -52,39 +53,28 @@ export class RunManager {
     const task = await this.requireTask(input.taskId);
     this.assertTransition(task.runState, "idle", "start");
 
-    // Create the pi session BEFORE flipping state: if pi fails to start
-    // (missing auth, workspace unwritable, etc.), the task stays idle
-    // and the error surfaces to the UI.
+    // Per-task active model — held in memory so completeRun can pass it
+    // to the next campaign item without the renderer needing to re-send.
+    if (input.model) this.activeModel.set(task.id, input.model);
+
+    if (task.kind === "campaign") {
+      return this.startCampaign(task, input);
+    }
+    return this.startSingle(task, input);
+  }
+
+  /** Single-task path: one /babysit run, agent_end flips task to idle. */
+  private async startSingle(task: Task, input: { agentSlug?: string; model?: string }): Promise<Task> {
     if (this.pi) {
       const agentSlug = input.agentSlug ?? task.currentAgentSlug;
-
-      // Resolve workspace cwd. Prefer the project's real path so pi can
-      // see + edit actual code. Fall back to a per-task scratch workspace
-      // (`tasks/<id>/workspace/`) when the project has no path — keeps
-      // pi's tools from scribbling on unrelated folders.
-      const project = this.projects ? await this.projects.getProject(task.project) : null;
-      const projectPath = project?.path?.trim();
-      const cwd = projectPath && existsSync(projectPath)
-        ? projectPath
-        : await this.tasks.ensureWorkspace(task.id);
-
-      // Persist the task's mission as PROMPT.md alongside manifest.json.
-      // Babysitter's generated process + future agents re-read this when
-      // they need the full brief. Overwrite on each Start so edits to
-      // title/description propagate.
+      const cwd = await this.resolveCwd(task);
       await this.tasks.writePromptFile(task.id, renderPromptFile(task, agentSlug));
-
-      // Drive orchestration through babysitter's /babysit skill. Passing
-      // no custom systemPrompt means pi loads its full extension set
-      // (including babysitter-pi), so /babysit resolves to the real
-      // skill and not a free-form user message.
       await this.pi.start(task.id, {
         prompt: buildBabysitPrompt(task, agentSlug),
         cwd,
         ...(input.model ? { model: input.model } : {}),
       });
     }
-
     const next: Task = {
       ...task,
       runState: "running",
@@ -103,9 +93,63 @@ export class RunManager {
   }
 
   /**
+   * Campaign path: kick off the first pending item. Subsequent items are
+   * started by `completeRun` as each finishes. The task stays in
+   * runState="running" across the whole campaign.
+   */
+  private async startCampaign(task: Task, input: { agentSlug?: string; model?: string }): Promise<Task> {
+    const pendingIdx = task.items.findIndex((i) => i.status === "pending");
+    if (pendingIdx === -1) {
+      // Nothing to do — flip to idle so the UI doesn't get stuck.
+      await this.tasks.appendStatus(task.id, "Campaign has no pending items");
+      return task;
+    }
+
+    // Mark the chosen item as running, save, then start pi for it.
+    const items = task.items.slice();
+    items[pendingIdx] = { ...items[pendingIdx]!, status: "running" };
+    const next: Task = {
+      ...task,
+      runState: "running",
+      currentAgentSlug: input.agentSlug ?? task.currentAgentSlug,
+      items,
+    };
+    await this.tasks.saveTask(next);
+    await this.tasks.appendEvent(task.id, {
+      type: "run-started",
+      agentSlug: next.currentAgentSlug,
+    });
+    await this.tasks.appendStatus(
+      task.id,
+      `Campaign started — ${pendingItemCount(next)} of ${next.items.length} pending`,
+    );
+    await this.startCampaignItem(next, items[pendingIdx]!, input.model);
+    return next;
+  }
+
+  /** Open a pi session focused on a single campaign item. */
+  private async startCampaignItem(task: Task, item: CampaignItem, model?: string): Promise<void> {
+    if (!this.pi) return;
+    const cwd = await this.resolveCwd(task);
+    const m = model ?? this.activeModel.get(task.id);
+    await this.tasks.writePromptFile(task.id, renderPromptFile(task, task.currentAgentSlug));
+    await this.tasks.appendEvent(task.id, { type: "item-started", itemId: item.id });
+    await this.tasks.appendStatus(task.id, `Item ${item.id} started — ${item.description}`);
+    await this.pi.start(task.id, {
+      prompt: buildItemBabysitPrompt(task, item),
+      cwd,
+      ...(m ? { model: m } : {}),
+    });
+  }
+
+  /**
    * Called by PiSessionManager when pi completes (or errors) a prompt.
-   * Transitions the task to idle with the matching exit reason. If the
-   * task is already idle (user clicked Stop first), we no-op.
+   *
+   * Single tasks: flip to idle with the exit reason.
+   *
+   * Campaign tasks: mark the running item as done/failed; if more pending
+   * items remain, kick off the next one and STAY in running. Otherwise
+   * flip the whole task to idle.
    */
   async completeRun(
     taskId: string,
@@ -114,6 +158,12 @@ export class RunManager {
     const task = await this.tasks.getTask(taskId);
     if (!task || task.runState === "idle") return;
 
+    if (task.kind === "campaign") {
+      await this.completeCampaignItem(task, reason);
+      return;
+    }
+
+    // Single task — original behavior.
     const next: Task = { ...task, runState: "idle" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, {
@@ -121,6 +171,66 @@ export class RunManager {
       reason,
     });
     await this.tasks.appendStatus(task.id, `Run ended — ${reason}`);
+    this.activeModel.delete(task.id);
+  }
+
+  private async completeCampaignItem(task: Task, reason: StopReason): Promise<void> {
+    // Find the running item; mark it done or failed based on exit reason.
+    const idx = task.items.findIndex((i) => i.status === "running");
+    if (idx === -1) {
+      // Defensive: no running item to close out. Treat as fully done.
+      await this.finalizeCampaign(task, reason);
+      return;
+    }
+
+    const items = task.items.slice();
+    const finishedItem = items[idx]!;
+    const newStatus: CampaignItem["status"] = reason === "completed" ? "done" : "failed";
+    items[idx] = {
+      ...finishedItem,
+      status: newStatus,
+      notes: reason === "completed" ? finishedItem.notes : `${finishedItem.notes}\n[run reason: ${reason}]`.trim(),
+    };
+
+    const updated: Task = { ...task, items };
+    await this.tasks.saveTask(updated);
+    await this.tasks.appendEvent(task.id, {
+      type: "item-ended",
+      itemId: finishedItem.id,
+      reason,
+    });
+    await this.tasks.appendStatus(
+      task.id,
+      `Item ${finishedItem.id} ${newStatus} — ${pendingItemCount(updated)} pending`,
+    );
+
+    // More items pending? Start the next one. Else finalize.
+    const nextPending = items.find((i) => i.status === "pending");
+    if (nextPending) {
+      const items2 = items.slice();
+      const nextIdx = items2.findIndex((i) => i.id === nextPending.id);
+      items2[nextIdx] = { ...nextPending, status: "running" };
+      const stepped: Task = { ...updated, items: items2 };
+      await this.tasks.saveTask(stepped);
+      await this.startCampaignItem(stepped, items2[nextIdx]!);
+      return;
+    }
+
+    await this.finalizeCampaign(updated, reason);
+  }
+
+  private async finalizeCampaign(task: Task, _reason: StopReason): Promise<void> {
+    const failed = task.items.filter((i) => i.status === "failed").length;
+    const done = task.items.filter((i) => i.status === "done").length;
+    const finalReason: StopReason = failed > 0 && done === 0 ? "failed" : "completed";
+    const next: Task = { ...task, runState: "idle" };
+    await this.tasks.saveTask(next);
+    await this.tasks.appendEvent(task.id, { type: "run-ended", reason: finalReason });
+    await this.tasks.appendStatus(
+      task.id,
+      `Campaign ended — ${done}/${task.items.length} done, ${failed} failed`,
+    );
+    this.activeModel.delete(task.id);
   }
 
   async pause(input: { taskId: string }): Promise<Task> {
@@ -151,7 +261,19 @@ export class RunManager {
       throw new Error(`Task "${task.id}" is already idle`);
     }
 
-    const next: Task = { ...task, runState: "idle" };
+    // For campaigns: mark any running item as failed before the state flip,
+    // so the UI doesn't show an item stuck in "running" after a Stop click.
+    let next: Task;
+    if (task.kind === "campaign") {
+      const items = task.items.map((i) =>
+        i.status === "running"
+          ? { ...i, status: "failed" as const, notes: `${i.notes}\n[stopped by user]`.trim() }
+          : i,
+      );
+      next = { ...task, runState: "idle", items };
+    } else {
+      next = { ...task, runState: "idle" };
+    }
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, {
       type: "run-ended",
@@ -164,15 +286,30 @@ export class RunManager {
     if (this.pi) {
       await this.pi.stop(task.id);
     }
+    this.activeModel.delete(task.id);
     return next;
   }
 
   // ── internals ────────────────────────────────────────────────────────
 
+  /** Per-task model selection, kept in memory across campaign items. */
+  private readonly activeModel = new Map<string, string>();
+
   private async requireTask(id: string): Promise<Task> {
     const task = await this.tasks.getTask(id);
     if (!task) throw new Error(`Task "${id}" not found`);
     return task;
+  }
+
+  /**
+   * Resolve workspace cwd. Prefer project.path when set so pi can see
+   * the real codebase; fall back to per-task scratch workspace.
+   */
+  private async resolveCwd(task: Task): Promise<string> {
+    const project = this.projects ? await this.projects.getProject(task.project) : null;
+    const projectPath = project?.path?.trim();
+    if (projectPath && existsSync(projectPath)) return projectPath;
+    return this.tasks.ensureWorkspace(task.id);
   }
 
   private assertTransition(
@@ -186,6 +323,10 @@ export class RunManager {
       );
     }
   }
+}
+
+function pendingItemCount(task: Task): number {
+  return task.items.filter((i) => i.status === "pending").length;
 }
 
 /**
@@ -214,6 +355,30 @@ function buildBabysitPrompt(task: Task, agentSlug: string | null): string {
     "Loop back on review rejection; stop at human approval gates.",
   ];
   return lines.join("\n");
+}
+
+/**
+ * Per-item /babysit prompt for a campaign task. Each item gets its own
+ * pi session — RunManager loops items[] in completeRun and calls this
+ * for the next pending one. Item description is the user prompt;
+ * task.title gives shared context for cross-item lessons.
+ */
+function buildItemBabysitPrompt(task: Task, item: CampaignItem): string {
+  const total = task.items.length;
+  const idx = task.items.findIndex((i) => i.id === item.id);
+  return [
+    `/babysit ${task.title} — item ${item.id} (${idx + 1}/${total})`,
+    "",
+    item.description,
+    "",
+    `Task id: ${task.id}`,
+    `Project: ${task.project}`,
+    `Campaign workflow: ${task.workflow}`,
+    `Item index: ${idx + 1} of ${total}`,
+    "",
+    "Process this single item. When done, summarize what you produced.",
+    "The orchestrator iterates the remaining items after this one ends.",
+  ].join("\n");
 }
 
 /**

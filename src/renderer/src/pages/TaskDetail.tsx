@@ -447,14 +447,48 @@ function Row({ label, value }: { label: string; value: string }): JSX.Element {
  */
 function CampaignItems({ task }: { task: Task }): JSX.Element {
   const items = task.items;
+  const counts = items.reduce(
+    (acc, i) => ({ ...acc, [i.status]: (acc[i.status] ?? 0) + 1 }),
+    {} as Record<string, number>,
+  );
+  const done = counts.done ?? 0;
+  const failed = counts.failed ?? 0;
+  const running = counts.running ?? 0;
+  const pending = counts.pending ?? 0;
+  const finishedPct = items.length === 0 ? 0 : Math.round(((done + failed) / items.length) * 100);
+
   return (
     <section className="card">
       <h3>Campaign items</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
         {items.length === 0
           ? "No items yet. Paste items into the Create Task form or let the Planner generate them."
-          : `${items.length} item${items.length === 1 ? "" : "s"} · runtime iteration not wired yet (see docs/WORKFLOW-EXECUTION.md).`}
+          : `${done} done · ${failed} failed · ${running} running · ${pending} pending — ${finishedPct}% finished`}
       </p>
+      {items.length > 0 && (
+        <div
+          style={{
+            marginTop: 8,
+            height: 8,
+            background: "var(--panel-2)",
+            border: "1px solid var(--border)",
+            borderRadius: 6,
+            overflow: "hidden",
+            display: "flex",
+          }}
+          title={`${done} done · ${failed} failed · ${running} running · ${pending} pending`}
+        >
+          <div style={{ width: `${(done / items.length) * 100}%`, background: "var(--good)" }} />
+          <div style={{ width: `${(failed / items.length) * 100}%`, background: "var(--bad)" }} />
+          <div
+            style={{
+              width: `${(running / items.length) * 100}%`,
+              background: "var(--warn)",
+              animation: running > 0 ? "mc-pulse 2.1s ease-in-out infinite" : undefined,
+            }}
+          />
+        </div>
+      )}
       {items.length > 0 && (
         <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 10, fontSize: 13 }}>
           <thead>

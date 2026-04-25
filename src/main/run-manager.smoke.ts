@@ -96,6 +96,87 @@ async function main(): Promise<void> {
   try { await mgr.start({ taskId: "NOPE-999F" }); } catch { threw = true; }
   assert(threw, "start throws on unknown task id");
 
+  // ── Campaign iteration ──────────────────────────────────────────────
+  // pi is null → start/completeRun follow the state-machine paths only,
+  // which is exactly what we want to test (campaign iteration logic).
+  const campaign = await tasks.createTask({
+    title: "Campaign smoke",
+    projectId: "runner",
+    projectPrefix: "RN",
+    kind: "campaign",
+    items: [
+      { id: "item-001", description: "first",  status: "pending", notes: "" },
+      { id: "item-002", description: "second", status: "pending", notes: "" },
+      { id: "item-003", description: "third",  status: "pending", notes: "" },
+    ],
+  });
+  assert(campaign.kind === "campaign", "campaign created");
+
+  // Start: first item should flip to running, others stay pending.
+  await mgr.start({ taskId: campaign.id });
+  let cur = (await tasks.getTask(campaign.id))!;
+  assert(cur.runState === "running", "campaign task in running state");
+  assert(cur.items[0]!.status === "running", "item-001 running after start");
+  assert(cur.items[1]!.status === "pending", "item-002 pending after start");
+  assert(cur.items[2]!.status === "pending", "item-003 pending after start");
+
+  // Complete item 1 → item 2 should flip to running, task stays running.
+  await mgr.completeRun(campaign.id, "completed");
+  cur = (await tasks.getTask(campaign.id))!;
+  assert(cur.items[0]!.status === "done", "item-001 done after first completeRun");
+  assert(cur.items[1]!.status === "running", "item-002 advanced to running");
+  assert(cur.runState === "running", "task still running mid-campaign");
+
+  // Fail item 2 → item 3 should flip to running.
+  await mgr.completeRun(campaign.id, "failed");
+  cur = (await tasks.getTask(campaign.id))!;
+  assert(cur.items[1]!.status === "failed", "item-002 marked failed on failed reason");
+  assert(cur.items[2]!.status === "running", "item-003 advanced to running");
+  assert(cur.runState === "running", "task continues after a failed item");
+
+  // Complete item 3 → task fully idle, run-ended event with summary.
+  await mgr.completeRun(campaign.id, "completed");
+  cur = (await tasks.getTask(campaign.id))!;
+  assert(cur.items[2]!.status === "done", "item-003 done");
+  assert(cur.runState === "idle", "task idle after every item resolved");
+  console.log(`[smoke] campaign 3-item iteration OK (1 failed, 2 done)`);
+
+  // ── Stop mid-campaign marks the running item as failed ──────────────
+  const campaign2 = await tasks.createTask({
+    title: "Stop mid-campaign smoke",
+    projectId: "runner",
+    projectPrefix: "RN",
+    kind: "campaign",
+    items: [
+      { id: "item-001", description: "alpha", status: "pending", notes: "" },
+      { id: "item-002", description: "beta",  status: "pending", notes: "" },
+    ],
+  });
+  await mgr.start({ taskId: campaign2.id });
+  let mid = (await tasks.getTask(campaign2.id))!;
+  assert(mid.items[0]!.status === "running", "first item running after start");
+
+  await mgr.stop({ taskId: campaign2.id });
+  mid = (await tasks.getTask(campaign2.id))!;
+  assert(mid.runState === "idle", "task idle after stop");
+  assert(mid.items[0]!.status === "failed", "running item marked failed on stop");
+  assert(mid.items[1]!.status === "pending", "untouched item stays pending");
+  console.log(`[smoke] stop mid-campaign marks running item failed`);
+
+  // Empty-items campaign: start should be a graceful no-op.
+  const empty = await tasks.createTask({
+    title: "Empty campaign",
+    projectId: "runner",
+    projectPrefix: "RN",
+    kind: "campaign",
+    items: [],
+  });
+  await mgr.start({ taskId: empty.id });
+  const after = (await tasks.getTask(empty.id))!;
+  // No items means nothing to flip running; we don't error, just leave idle.
+  assert(after.runState === "idle", "empty campaign stays idle");
+  console.log(`[smoke] empty-items campaign no-ops gracefully`);
+
   console.log("GREEN");
 }
 
