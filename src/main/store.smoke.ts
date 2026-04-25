@@ -117,6 +117,67 @@ async function main(): Promise<void> {
   assert(taskFile("DA-015F", "rmp") === "DA-015F-rmp", "subagent (2+ chars) suffix");
   console.log(`[smoke] taskFile helper OK`);
 
+  // ── Phase 2: PROMPT.md + STATUS.md convention ──────────────────────
+  // Every task is scaffolded with both files. PROMPT.md has an initial
+  // brief; STATUS.md is seeded with a "task created" entry.
+  const initialPrompt = await store.readPromptFile("DA-001F");
+  assert(
+    initialPrompt !== null && initialPrompt.includes("DA-001F"),
+    `PROMPT.md seeded on scaffold (got ${initialPrompt?.slice(0, 40)}…)`,
+  );
+  const initialStatus = await store.readStatusFile("DA-001F");
+  assert(
+    initialStatus !== null && initialStatus.includes("task created"),
+    `STATUS.md seeded with "task created"`,
+  );
+  console.log(`[smoke] PROMPT.md + STATUS.md seeded at scaffold`);
+
+  // writePromptFile overwrites (represents the "Start re-renders" flow)
+  await store.writePromptFile("DA-001F", "# replaced mission\n\nnew brief");
+  const rewritten = await store.readPromptFile("DA-001F");
+  assert(
+    rewritten === "# replaced mission\n\nnew brief",
+    `writePromptFile overwrites content`,
+  );
+  console.log(`[smoke] writePromptFile overwrite OK`);
+
+  // appendStatus adds a stamped line + fires task-saved
+  let gotEmission = false;
+  const unsub = () => store.off("task-saved", listener);
+  const listener = () => { gotEmission = true; };
+  store.on("task-saved", listener);
+  await store.appendStatus("DA-001F", "Planner picked up task");
+  unsub();
+  assert(gotEmission, `appendStatus emits task-saved for live refresh`);
+  const afterAppend = await store.readStatusFile("DA-001F");
+  assert(
+    afterAppend !== null && afterAppend.includes("Planner picked up task"),
+    `appendStatus line landed in STATUS.md`,
+  );
+  console.log(`[smoke] appendStatus + task-saved emission OK`);
+
+  // ensureWorkspace creates + returns the per-task scratch dir
+  const ws = await store.ensureWorkspace("DA-001F");
+  assert(existsSync(ws), `ensureWorkspace mkdir'd ${ws}`);
+  assert(
+    ws.endsWith(path.join("DA-001F", "workspace")),
+    `ensureWorkspace returns the expected path`,
+  );
+  console.log(`[smoke] ensureWorkspace creates workspace dir`);
+
+  // folderFor returns the task folder path
+  const folder = store.folderFor("DA-001F");
+  assert(existsSync(folder), `folderFor points at an existing task folder`);
+  console.log(`[smoke] folderFor OK`);
+
+  // readTaskFile returns null for missing artifacts (<taskId>-p.md etc.)
+  const plannerOutput = await store.readTaskFile("DA-001F", "DA-001F-p");
+  assert(
+    plannerOutput === null,
+    `readTaskFile returns null for not-yet-produced artifact`,
+  );
+  console.log(`[smoke] readTaskFile missing returns null`);
+
   // ── cleanup ─────────────────────────────────────────────────────────
   await fs.rm(tmp, { recursive: true, force: true });
   console.log("GREEN");

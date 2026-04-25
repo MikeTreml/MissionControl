@@ -15,6 +15,7 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "smoke": "node --experimental-strip-types src/main/store.smoke.ts && node --experimental-strip-types src/main/project-store.smoke.ts && node --experimental-strip-types src/main/workflows.smoke.ts && node --experimental-strip-types src/main/agent-loader.smoke.ts && node --experimental-strip-types src/main/model-roster.smoke.ts && node --experimental-strip-types src/main/git-detect.smoke.ts && node --experimental-strip-types src/main/run-manager.smoke.ts && node --experimental-strip-types src/main/pi-session-manager.smoke.ts",
     "verify-ui": "node scripts/verify-ui.mjs",
+    "doctor": "npm run typecheck && npm run smoke && npm run build && npm run verify-ui",
     "run-task": "node --experimental-strip-types scripts/run-task.ts",
     "spike-babysitter-pi": "node --experimental-strip-types scripts/babysitter-pi-spike.ts",
     "list-pi-extensions": "node --experimental-strip-types scripts/list-pi-extensions.ts",

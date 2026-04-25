@@ -1,8 +1,13 @@
 /**
- * useKpis — derived from useTasks(). Counts tasks by status/lane and
- * formats the four dashboard header numbers.
+ * useKpis — dashboard header numbers, derived from useTasks() + the
+ * per-task event journals. Demo-fallback returns the wireframe's canned
+ * numbers when no real tasks exist.
+ *
+ * "Failed Runs Today" = count of `run-ended` events with reason=failed
+ * whose timestamp lands inside today's local-day window.
  */
 import { useTasks } from "./useTasks";
+import { useAllTaskEvents } from "./useAllTaskEvents";
 
 export interface KpiItem {
   label: string;
@@ -17,14 +22,26 @@ export interface KpisState {
 
 export function useKpis(): KpisState {
   const { tasks, loading, isDemo } = useTasks();
+  const { perTask } = useAllTaskEvents();
 
-  // Mock KPIs are canned in mockKpis, but if we're on real data, derive.
   // For demo: counts happen to match the mock board (12/3/5/1) if we
   // extend the numbers beyond what's shown.
   const active = tasks.filter((t) => t.lane !== "Done" && t.roleLabel !== "Waiting").length;
   const waiting = tasks.filter((t) => t.lane === "Approval").length;
   const running = tasks.filter((t) => t.active).length;
-  const failed = 0; // will come from events.jsonl (run-ended type=failed) later
+
+  // Failed runs today: walk every task's events, count run-ended with
+  // reason=failed since midnight local time.
+  const todayStart = startOfToday();
+  let failed = 0;
+  for (const events of perTask.values()) {
+    for (const e of events) {
+      if (e.type !== "run-ended") continue;
+      const rec = e as unknown as Record<string, unknown>;
+      if (rec.reason !== "failed") continue;
+      if (new Date(e.timestamp).getTime() >= todayStart) failed += 1;
+    }
+  }
 
   // When demo-fallback kicks in, use the canned numbers from the mockup —
   // the demo set is too small to produce the familiar 12/3/5/1 counts.
@@ -51,4 +68,10 @@ export function useKpis(): KpisState {
       { label: "Failed Runs Today", value: failed },
     ],
   };
+}
+
+function startOfToday(): number {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
 }

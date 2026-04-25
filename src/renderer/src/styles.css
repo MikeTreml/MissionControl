@@ -98,6 +98,21 @@ body {
 }
 .project.active, .task.active { outline: 1px solid var(--accent); }
 
+/* Pulsing halo on any task card whose runState is "running" — makes it
+   obvious from a cross-project view which tasks are actively working
+   without scanning for role pills. */
+.task.active {
+  animation: mc-pulse 2.1s ease-in-out infinite;
+}
+@keyframes mc-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(110, 168, 254, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(110, 168, 254, 0);
+  }
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

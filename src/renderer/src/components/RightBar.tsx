@@ -12,6 +12,7 @@
 import { useEffect, useState } from "react";
 
 import { mockRunActivity, mockQueue } from "../mock-data";
+import { useRoute } from "../router";
 import type { TaskEvent } from "../../../shared/models";
 
 const MAX_LIVE_EVENTS = 30;
@@ -33,6 +34,7 @@ interface LiveEntry {
 export function RightBar(): JSX.Element {
   const [live, setLive] = useState<LiveEntry[]>([]);
   const hasBridge = Boolean(window.mc);
+  const { openTask } = useRoute();
 
   useEffect(() => {
     if (!hasBridge) return;
@@ -56,7 +58,11 @@ export function RightBar(): JSX.Element {
                 </div>
               )
               : live.map((entry, idx) => (
-                <LiveRow key={`${entry.taskId}-${entry.event.timestamp}-${idx}`} entry={entry} />
+                <LiveRow
+                  key={`${entry.taskId}-${entry.event.timestamp}-${idx}`}
+                  entry={entry}
+                  onOpen={() => openTask(entry.taskId)}
+                />
               ))
             : mockRunActivity.map((r) => (
               <div key={r.label} className="task">
@@ -82,11 +88,27 @@ export function RightBar(): JSX.Element {
   );
 }
 
-function LiveRow({ entry }: { entry: LiveEntry }): JSX.Element {
+function LiveRow({
+  entry,
+  onOpen,
+}: {
+  entry: LiveEntry;
+  onOpen: () => void;
+}): JSX.Element {
   const { taskId, event } = entry;
   const time = new Date(event.timestamp).toLocaleTimeString();
   return (
-    <div className="task">
+    <div
+      className="task"
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(); }
+      }}
+      style={{ cursor: "pointer" }}
+      title={`Open task ${taskId}`}
+    >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <strong style={{ fontSize: 12 }}>{taskId}</strong>
         <span className="muted" style={{ fontSize: 11, marginLeft: "auto" }}>{time}</span>
