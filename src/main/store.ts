@@ -27,6 +27,7 @@ import {
   type Task,
   type TaskEvent,
 } from "../shared/models.ts";
+import { renderPromptFile } from "./render-prompt.ts";
 
 /**
  * Events emitted by TaskStore. Consumers (the main process event
@@ -57,30 +58,6 @@ const ROLE_FOLDERS = [
   "surgeon",
   "shared",
 ] as const;
-
-/**
- * Initial PROMPT.md content written at task creation. RunManager replaces
- * this with its richer render on the first Start, but we seed something
- * here so Task Detail's Mission card isn't empty right after createTask.
- */
-function renderInitialPrompt(task: Task): string {
-  return [
-    `# ${task.id} — ${task.title}`,
-    "",
-    task.description || "_(no description)_",
-    "",
-    "## Context",
-    "",
-    `- Project: **${task.project}**`,
-    `- Workflow: **${task.workflow}**`,
-    `- Cycle: **${task.cycle}**`,
-    "",
-    "## Done criteria",
-    "",
-    "_(fill in as the Planner refines scope)_",
-    "",
-  ].join("\n");
-}
 
 export class TaskStore extends EventEmitter {
   private readonly root: string;
@@ -378,12 +355,13 @@ export class TaskStore extends EventEmitter {
     // writes below have a home. Role subdirs are created in the loop.
     await fs.mkdir(base, { recursive: true });
 
-    // Mission brief stub. Start replaces this with RunManager's fuller
-    // render; we seed it here so Task Detail has something to render
-    // immediately after create-task (before first Start).
+    // Mission brief stub. Start re-runs renderPromptFile (with the
+    // current agentSlug) on each click so edits propagate; this seed
+    // ensures Task Detail has something to render immediately after
+    // create-task, before the first Start.
     await fs.writeFile(
       path.join(base, "PROMPT.md"),
-      renderInitialPrompt(task),
+      renderPromptFile(task, null),
       "utf8",
     );
 

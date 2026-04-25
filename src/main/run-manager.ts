@@ -23,6 +23,7 @@ import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { AgentLoader } from "./agent-loader.ts";
+import { renderPromptFile } from "./render-prompt.ts";
 import type { CampaignItem, RunState, Task } from "../shared/models.ts";
 
 export type StopReason = "user" | "completed" | "failed";
@@ -381,28 +382,3 @@ function buildItemBabysitPrompt(task: Task, item: CampaignItem): string {
   ].join("\n");
 }
 
-/**
- * Content for `tasks/<id>/PROMPT.md` — the human-readable mission brief.
- * Regenerated on each Start so edits to title/description propagate.
- * Agents can read this during their session for the full context.
- */
-function renderPromptFile(task: Task, agentSlug: string | null): string {
-  const lines = [
-    `# ${task.id} — ${task.title}`,
-    "",
-    task.description || "_(no description)_",
-    "",
-    "## Context",
-    "",
-    `- Project: **${task.project}**`,
-    `- Workflow: **${task.workflow}**`,
-    `- Cycle: **${task.cycle}**`,
-    `- Starting agent: **${agentSlug ?? "planner"}**`,
-    "",
-    "## Done criteria",
-    "",
-    "_(fill in as the Planner refines scope)_",
-    "",
-  ];
-  return lines.join("\n");
-}

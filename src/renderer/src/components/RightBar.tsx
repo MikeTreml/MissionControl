@@ -26,6 +26,22 @@ const SUPPRESSED_TYPES = new Set([
   "pi:tool_execution_update", // streaming tool output
 ]);
 
+// Event-type prefixes that warrant a visual badge — first-class signals
+// for the human watching the rail. Tool calls are babysitter doing real
+// work; subagent events are pi-subagents spawning specialized helpers
+// (RepoMapper, DocRefresher, etc.).
+const HIGHLIGHT_TYPES = new Set([
+  "pi:tool_execution_start",
+  "pi:tool_execution_end",
+  "pi:subagent_spawn",
+  "pi:subagent_complete",
+  "item-started",
+  "item-ended",
+  "run-started",
+  "run-ended",
+  "lane-changed",
+]);
+
 interface LiveEntry {
   taskId: string;
   event: TaskEvent;
@@ -97,6 +113,8 @@ function LiveRow({
 }): JSX.Element {
   const { taskId, event } = entry;
   const time = new Date(event.timestamp).toLocaleTimeString();
+  const highlighted = HIGHLIGHT_TYPES.has(event.type);
+  const icon = iconForEvent(event.type);
   return (
     <div
       className="task"
@@ -106,10 +124,16 @@ function LiveRow({
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(); }
       }}
-      style={{ cursor: "pointer" }}
+      style={{
+        cursor: "pointer",
+        ...(highlighted
+          ? { borderLeft: "2px solid var(--accent)", paddingLeft: 12 }
+          : {}),
+      }}
       title={`Open task ${taskId}`}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {icon && <span style={{ fontSize: 12 }}>{icon}</span>}
         <strong style={{ fontSize: 12 }}>{taskId}</strong>
         <span className="muted" style={{ fontSize: 11, marginLeft: "auto" }}>{time}</span>
       </div>
@@ -121,6 +145,20 @@ function LiveRow({
       )}
     </div>
   );
+}
+
+/** One-glyph icon hint for high-signal event types. */
+function iconForEvent(type: string): string {
+  if (type === "run-started"  || type === "item-started")  return "▶";
+  if (type === "run-ended"    || type === "item-ended")    return "■";
+  if (type === "run-paused")                                return "⏸";
+  if (type === "run-resumed")                               return "▷";
+  if (type === "lane-changed")                              return "→";
+  if (type === "pi:subagent_spawn")                         return "⤴";
+  if (type === "pi:subagent_complete")                      return "⤵";
+  if (type === "pi:tool_execution_start")                   return "⚙";
+  if (type === "pi:tool_execution_end")                     return "✓";
+  return "";
 }
 
 /**
@@ -153,6 +191,22 @@ function summarizePayload(event: TaskEvent): string {
       ? ` ${summarizeToolInput(record.toolInput as Record<string, unknown>)}`
       : "";
     return `${record.toolName}${inputSummary}`;
+  }
+
+  // Subagent spawn / complete events (pi-subagents — RepoMapper, etc.)
+  if (typeof record.agentName === "string") {
+    const dur = typeof record.durationMs === "number"
+      ? ` · ${(record.durationMs / 1000).toFixed(1)}s`
+      : "";
+    return `${record.agentName}${dur}`;
+  }
+  if (typeof record.subagent === "string") {
+    return String(record.subagent);
+  }
+
+  // Campaign item events
+  if (typeof record.itemId === "string") {
+    return String(record.itemId);
   }
 
   // Pi message events — pull model + role from the nested message.
