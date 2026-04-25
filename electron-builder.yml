@@ -1,0 +1,47 @@
+appId: com.miketreml.mc-v2-electron
+productName: Mission Control
+copyright: © Michael Treml
+
+# Files included in every build. Anything outside this list is dropped.
+# We ship only the built output + bundled JSON definitions agents/workflows.
+files:
+  - out/**/*
+  - agents/**/*
+  - workflows/**/*
+  - models-suggested.json
+  - package.json
+
+# Out-of-asar directories — pi-coding-agent + babysitter-pi access these
+# at runtime via require/import. Keeping them on the filesystem (vs
+# inside the asar archive) avoids "MODULE_NOT_FOUND" surprises.
+asarUnpack:
+  - node_modules/@mariozechner/**/*
+  - node_modules/pi-memory-md/**/*
+
+directories:
+  output: dist
+  buildResources: build
+
+# Windows: portable directory (--dir) + nsis installer when we want to
+# ship a real installer later. Both are "user-mode" — no admin elevation.
+win:
+  target:
+    - target: dir       # fastest; produces dist/win-unpacked/
+  artifactName: ${productName}-${version}-${arch}.${ext}
+
+# Mac builds left as a placeholder — fill in `category` and `target` when
+# Michael wants a .dmg.
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - target: dir
+
+linux:
+  target:
+    - target: dir
+
+# Skip sub-package npm rebuilds during pack. We're not using native
+# modules; this avoids accidental MSBuild invocations on Windows.
+buildDependenciesFromSource: false
+nodeGypRebuild: false
+npmRebuild: false
