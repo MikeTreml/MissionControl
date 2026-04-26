@@ -154,3 +154,8 @@ body {
 
 .file { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .file:last-child { border-bottom: none; }
+
+@keyframes mc-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(0.7); }
+}

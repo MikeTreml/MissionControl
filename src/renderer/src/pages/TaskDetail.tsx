@@ -52,7 +52,8 @@ export function TaskDetail(): JSX.Element {
             {isDemo && " · demo"}
           </p>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <CostTicker events={events} />
           {!isDemo && (
             <button
               className="button ghost"
@@ -391,6 +392,63 @@ function LaneTimeline({ task }: { task: Task }): JSX.Element {
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * Compact cost + token pill for the topbar — running total across every
+ * pi:turn_end seen for this task. Hidden until at least one run has been
+ * recorded. A green pulse on the left means the most recent run-started
+ * has no matching run-ended yet (i.e. an agent is currently spending).
+ */
+function CostTicker({ events }: { events: TaskEvent[] }): JSX.Element | null {
+  const runs = deriveRuns(events);
+  if (runs.length === 0) return null;
+  const totals = runs.reduce(
+    (a, r) => ({
+      tokensIn:  a.tokensIn  + (r.tokensIn  ?? 0),
+      tokensOut: a.tokensOut + (r.tokensOut ?? 0),
+      cost:      a.cost      + (r.costUSD   ?? 0),
+    }),
+    { tokensIn: 0, tokensOut: 0, cost: 0 },
+  );
+  const live = !runs[runs.length - 1].endedAt;
+  const fmtTok = (n: number): string =>
+    n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M`
+    : n >= 1_000   ? `${(n / 1_000).toFixed(1)}k`
+    : String(n);
+  const tip =
+    `${runs.length} run${runs.length === 1 ? "" : "s"} · ` +
+    `${totals.tokensIn.toLocaleString()} in / ${totals.tokensOut.toLocaleString()} out` +
+    (live ? " · running now" : "");
+  return (
+    <span
+      className="pill info"
+      title={tip}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        marginRight: 0,
+      }}
+    >
+      {live && (
+        <span
+          aria-label="run live"
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: "var(--good)",
+            animation: "mc-pulse 1.4s ease-in-out infinite",
+          }}
+        />
+      )}
+      {totals.cost > 0 ? `$${totals.cost.toFixed(4)}` : "$0.0000"}
+      <span style={{ opacity: 0.65, fontWeight: 400 }}>
+        · {fmtTok(totals.tokensIn)} in / {fmtTok(totals.tokensOut)} out
+      </span>
+    </span>
   );
 }
 
