@@ -24,7 +24,6 @@
     "setup": "pwsh scripts/setup.ps1"
   },
   "dependencies": {
-    "@a5c-ai/babysitter-sdk": "^0.0.187",
     "@mariozechner/pi-coding-agent": "^0.70.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
