@@ -11,9 +11,10 @@
  */
 import { useEffect, useState } from "react";
 
+import { useSubscribe } from "../hooks/data-bus";
 import { mockRunActivity, mockQueue } from "../mock-data";
 import { useRoute } from "../router";
-import type { TaskEvent } from "../../../shared/models";
+import type { Task, TaskEvent } from "../../../shared/models";
 
 const MAX_LIVE_EVENTS = 50;
 
@@ -95,6 +96,45 @@ export function RightBar(): JSX.Element {
         </div>
       </div>
 
+      <NeedsAttentionPanel hasBridge={hasBridge} onOpen={openTask} />
+    </aside>
+  );
+}
+
+/**
+ * "Needs attention" — replaces the old static Queue rail with a real list
+ * derived from window.mc.listTasks(). Surfaces tasks that block on humans
+ * or have failed, in priority order:
+ *   1. lane === "approval"   (waiting for review-then-ship sign-off)
+ *   2. status === "failed"
+ *   3. runState === "paused" (someone hit Pause and walked away)
+ * Hidden when there are no real tasks; falls back to the canned mockQueue
+ * so the wireframe still reads the same in static-preview mode.
+ */
+function NeedsAttentionPanel({
+  hasBridge,
+  onOpen,
+}: {
+  hasBridge: boolean;
+  onOpen: (taskId: string) => void;
+}): JSX.Element {
+  const [tasks, setTasks] = useState<Task[] | null>(null);
+
+  async function load(): Promise<void> {
+    if (!hasBridge) return;
+    try {
+      setTasks(await window.mc.listTasks());
+    } catch {
+      setTasks([]);
+    }
+  }
+
+  useEffect(() => { void load(); }, [hasBridge]);
+  useSubscribe("tasks", () => { void load(); });
+
+  // Static-preview fallback — keeps the mock for the wireframe.
+  if (!hasBridge) {
+    return (
       <div className="group">
         <h3>Queue</h3>
         <div className="task-list" style={{ marginTop: 10 }}>
@@ -106,7 +146,59 @@ export function RightBar(): JSX.Element {
           ))}
         </div>
       </div>
-    </aside>
+    );
+  }
+
+  const flagged: Array<{ task: Task; reason: string; pill: "warn" | "bad" }> = [];
+  for (const t of tasks ?? []) {
+    if (t.status === "failed") {
+      flagged.push({ task: t, reason: "failed", pill: "bad" });
+    } else if (t.lane === "approval") {
+      flagged.push({ task: t, reason: "awaiting approval", pill: "warn" });
+    } else if (t.runState === "paused") {
+      flagged.push({ task: t, reason: "paused", pill: "warn" });
+    }
+  }
+  // Most recently updated first — fresh blockers > stale ones.
+  flagged.sort((a, b) => b.task.updatedAt.localeCompare(a.task.updatedAt));
+
+  return (
+    <div className="group">
+      <h3>Needs attention</h3>
+      <div className="task-list" style={{ marginTop: 10 }}>
+        {flagged.length === 0 ? (
+          <div className="muted" style={{ fontSize: 12, padding: "6px 2px" }}>
+            Nothing waiting on you.
+          </div>
+        ) : (
+          flagged.map(({ task, reason, pill }) => (
+            <div
+              key={task.id}
+              className="task"
+              role="button"
+              tabIndex={0}
+              onClick={() => onOpen(task.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onOpen(task.id);
+                }
+              }}
+              style={{ cursor: "pointer" }}
+              title={`Open task ${task.id}`}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <strong style={{ fontSize: 12 }}>{task.id}</strong>
+                <span className={`pill ${pill}`} style={{ marginLeft: "auto", marginRight: 0 }}>
+                  {reason}
+                </span>
+              </div>
+              <div className="sub" style={{ fontSize: 12 }}>{task.title}</div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 }
 
