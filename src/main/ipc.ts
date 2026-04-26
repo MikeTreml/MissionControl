@@ -71,6 +71,7 @@ export function registerIpc(stores: Stores): void {
   ipcMain.handle("tasks:readPrompt", (_e, id: string) => stores.tasks.readPromptFile(id));
   ipcMain.handle("tasks:readStatus", (_e, id: string) => stores.tasks.readStatusFile(id));
   ipcMain.handle("tasks:readFile",   (_e, id: string, stem: string) => stores.tasks.readTaskFile(id, stem));
+  ipcMain.handle("tasks:listFiles",  (_e, id: string) => stores.tasks.listTaskFiles(id));
   ipcMain.handle("tasks:appendStatus",
     (_e, id: string, line: string) =>
       logged(`tasks:appendStatus ${id}`, () => stores.tasks.appendStatus(id, line)),

@@ -341,6 +341,34 @@ export class TaskStore extends EventEmitter {
     return fs.readFile(p, "utf8");
   }
 
+  /**
+   * List the files in a task's folder (top level only — no recursion
+   * into per-role subdirs or the workspace). Used by Task Detail's
+   * Linked Files panel to render real artifacts babysitter / agents
+   * produced, not speculative names.
+   */
+  async listTaskFiles(taskId: string): Promise<Array<{
+    name: string;
+    size: number;
+    modifiedAt: string;
+  }>> {
+    const folder = path.join(this.root, taskId);
+    if (!existsSync(folder)) return [];
+    const entries = await fs.readdir(folder, { withFileTypes: true });
+    const out: Array<{ name: string; size: number; modifiedAt: string }> = [];
+    for (const e of entries) {
+      if (!e.isFile()) continue;
+      const stat = await fs.stat(path.join(folder, e.name));
+      out.push({
+        name: e.name,
+        size: stat.size,
+        modifiedAt: stat.mtime.toISOString(),
+      });
+    }
+    out.sort((a, b) => a.name.localeCompare(b.name));
+    return out;
+  }
+
   // ── internals ─────────────────────────────────────────────────────────
 
   /**

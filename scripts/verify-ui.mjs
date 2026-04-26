@@ -613,11 +613,11 @@ async function run() {
     const pathsHeader = await win.locator('h3', { hasText: "Paths" }).count();
     assertions.check(pathsHeader > 0, `Settings → Global shows "Paths" section`);
 
-    // Babysitter mode card with both radios.
+    // Babysitter mode card with three radios (plan / execute / direct).
     const babysitterHeader = await win.locator('h3', { hasText: "Babysitter mode" }).count();
     assertions.check(babysitterHeader > 0, `Settings → Global shows Babysitter mode card`);
     const radios = await win.locator('input[name="babysitter-mode"]').count();
-    assertions.check(radios === 2, `Both babysitter-mode radios render (got ${radios})`);
+    assertions.check(radios === 3, `All three babysitter-mode radios render (got ${radios})`);
 
     // ── 18. Modal dismiss via ✕ close button ────────────────────────────
     // Navigate back, open Add Project, close via ✕, verify it dismissed.

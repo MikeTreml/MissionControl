@@ -54,6 +54,7 @@ export interface McApi {
   readTaskPrompt: (id: string) => Promise<string | null>;
   readTaskStatus: (id: string) => Promise<string | null>;
   readTaskFile: (id: string, stem: string) => Promise<string | null>;
+  listTaskFiles: (id: string) => Promise<Array<{ name: string; size: number; modifiedAt: string }>>;
   appendTaskStatus: (id: string, line: string) => Promise<void>;
   openTaskFolder: (id: string) => Promise<{ ok: boolean; reason?: "not-found" }>;
 

@@ -330,14 +330,18 @@ export type SubagentSpawn = z.infer<typeof SubagentSpawnSchema>;
  * (~/.pi/agent/settings.json). MC owns this file.
  *
  * `babysitterMode` controls which slash command `RunManager.start`
- * sends:
- *   - "plan"    → /babysit  (author a process.js, don't execute it)
- *   - "execute" → /yolo     (author + run, including breakpoints)
- * Default is "plan" because /babysit is empirically verified; /yolo
- * is the path we want to test next.
+ * sends to babysitter-pi:
+ *   - "plan"    → /plan   (author a process.js + run scaffold, don't run)
+ *   - "execute" → /yolo   (author + run end-to-end, no breakpoints)
+ *   - "direct"  → no slash command — send the task brief as a regular pi
+ *                 prompt. Skips babysitter entirely. Use for trivial
+ *                 tasks where babysitter's investigation overhead
+ *                 (~$0.30 + 90s before any work happens) isn't worth it.
+ *
+ * Default is "plan" because it's the safest first test. Flip per task.
  */
 export const MCSettingsSchema = z.object({
-  babysitterMode: z.enum(["plan", "execute"]).default("plan"),
+  babysitterMode: z.enum(["plan", "execute", "direct"]).default("plan"),
 }).passthrough();
 export type MCSettings = z.infer<typeof MCSettingsSchema>;
 

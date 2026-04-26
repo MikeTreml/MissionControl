@@ -15,7 +15,7 @@ import { useTask } from "../hooks/useTask";
 import { useAgents } from "../hooks/useAgents";
 import { usePiModels } from "../hooks/usePiModels";
 import { useWorkflows } from "../hooks/useWorkflows";
-import { publish } from "../hooks/data-bus";
+import { publish, useSubscribe } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun } from "../lib/derive-runs";
 import { PageStub } from "./PageStub";
 import { effectiveLanes } from "../../../shared/models";
@@ -811,23 +811,52 @@ function pillForReason(reason: string | undefined): string {
 function LinkedFiles({ task }: { task: Task }): JSX.Element {
   const { agents } = useAgents();
   const primaries = agents.filter((a) => a.code.length === 1);
+  const [files, setFiles] = useState<Array<{ name: string; size: number; modifiedAt: string }>>([]);
 
-  // Base manifest + one file per primary agent (code-based suffix). Subagent
-  // files are added dynamically once they've actually been spawned — not
-  // listed speculatively here.
-  const files: Array<{ name: string; note: string }> = [
-    { name: task.id, note: "base manifest" },
-    ...primaries.map((a) => ({
-      name: `${task.id}-${a.code}`,
-      note: `${a.name} output`,
-    })),
-  ];
+  // Refetch the task folder listing on mount + every "tasks" topic publish
+  // (which fires on every event-appended / task-saved). Cheap stat-only call.
+  useSubscribe("tasks", () => { void load(); });
+  async function load(): Promise<void> {
+    if (!window.mc) return;
+    try { setFiles(await window.mc.listTaskFiles(task.id)); } catch { /* ignore */ }
+  }
+  useEffect(() => { void load(); }, [task.id]);
+
+  // Map known agent-code suffix → friendly note. Files written by
+  // babysitter that don't match the convention show as "(babysitter)"
+  // so the user can tell them apart from agent deliverables.
+  const noteFor = (name: string): string => {
+    const stem = name.replace(/\.md$/, "");
+    if (stem === task.id) return "task brief / manifest area";
+    if (stem === "PROMPT") return "mission brief";
+    if (stem === "STATUS") return "progress log";
+    const m = stem.match(new RegExp(`^${task.id}-([a-z0-9]{1,4})$`, "i"));
+    if (m) {
+      const code = m[1]!.toLowerCase();
+      const agent = agents.find((a) => a.code === code);
+      if (agent) return `${agent.name} output`;
+      return `agent code "${code}"`;
+    }
+    if (name.endsWith(".jsonl")) return "event journal";
+    if (name.endsWith(".json"))  return "manifest";
+    return "(other)";
+  };
+
+  // Expected-but-not-yet-produced placeholders, only for primary agents
+  // whose code-suffix file doesn't exist yet. Helps the user see what's
+  // expected vs what's there.
+  const presentNames = new Set(files.map((f) => f.name));
+  const expectedMissing = primaries
+    .map((a) => `${task.id}-${a.code}.md`)
+    .filter((n) => !presentNames.has(n));
 
   return (
     <div>
       <h3>Task-linked files</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-        File names follow the task-id + agent-code convention.
+        Live listing of the task folder. Per-agent deliverables follow
+        the <code>&lt;taskId&gt;-&lt;code&gt;.md</code> convention; agents in
+        babysitter mode are asked to honor it but may not always.
       </p>
       <div style={{ marginTop: 10 }}>
         {files.map((f) => (
@@ -838,15 +867,40 @@ function LinkedFiles({ task }: { task: Task }): JSX.Element {
               borderBottom: "1px solid var(--border)",
               display: "flex",
               justifyContent: "space-between",
+              alignItems: "baseline",
+              gap: 12,
             }}
           >
-            <strong>{f.name}</strong>
-            <span className="muted">{f.note}</span>
+            <strong style={{ fontFamily: "monospace", fontSize: 13 }}>{f.name}</strong>
+            <span className="muted" style={{ fontSize: 12, textAlign: "right" }}>
+              {noteFor(f.name)} · {fmtSize(f.size)}
+            </span>
           </div>
         ))}
+        {files.length === 0 && (
+          <div className="muted" style={{ fontSize: 12, padding: "10px 2px" }}>
+            No files yet.
+          </div>
+        )}
+        {expectedMissing.length > 0 && (
+          <div style={{ marginTop: 12, fontSize: 12 }}>
+            <div className="muted" style={{ marginBottom: 4 }}>Expected (not yet produced):</div>
+            {expectedMissing.map((n) => (
+              <div key={n} style={{ fontFamily: "monospace", color: "var(--muted)", padding: "2px 0" }}>
+                · {n}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
+}
+
+function fmtSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
 function PerAgentNotes({ task: _task }: { task: Task }): JSX.Element {

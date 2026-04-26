@@ -24,6 +24,7 @@ const api = {
   readTaskStatus:  (id: string) => ipcRenderer.invoke("tasks:readStatus", id),
   readTaskFile:    (id: string, stem: string) =>
     ipcRenderer.invoke("tasks:readFile", id, stem),
+  listTaskFiles:   (id: string) => ipcRenderer.invoke("tasks:listFiles", id),
   appendTaskStatus: (id: string, line: string) =>
     ipcRenderer.invoke("tasks:appendStatus", id, line),
   openTaskFolder: (id: string) => ipcRenderer.invoke("shell:openTaskFolder", id),

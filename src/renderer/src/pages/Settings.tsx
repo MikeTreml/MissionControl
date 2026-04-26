@@ -420,16 +420,17 @@ function BabysitterMode(): JSX.Element {
     <div className="card">
       <h3>Babysitter mode</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-        Controls which slash command MC sends to babysitter-pi when you
-        click Start. <strong>Plan only</strong> sends <code>/plan</code>{" "}
-        — author a <code>process.js</code> + run scaffold, don't execute.{" "}
-        <strong>Plan + execute</strong> sends <code>/yolo</code> — author{" "}
-        and run end-to-end without breakpoints. (<code>/babysit</code>{" "}
-        itself is the interactive variant; pi's breakpoints have no UI
-        to land on from MC's programmatic session, so we skip it here
-        until the Approval gate can surface them.)
+        Controls how MC drives pi when you click Start.{" "}
+        <strong>Plan only</strong> sends <code>/plan</code> — author a
+        <code>process.js</code> + run scaffold, don't execute.{" "}
+        <strong>Plan + execute</strong> sends <code>/yolo</code> — author
+        and run end-to-end without breakpoints.{" "}
+        <strong>Direct</strong> skips babysitter entirely and prompts pi
+        as a single agent — cheapest, fastest, no multi-agent loop. Use
+        for trivial tasks where babysitter's investigation overhead
+        isn't worth ~$0.30 + 90s.
       </p>
-      <div style={{ display: "flex", gap: 14, marginTop: 12, alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 14, marginTop: 12, alignItems: "center", flexWrap: "wrap" }}>
         <label style={{ display: "flex", gap: 6, alignItems: "center", cursor: "pointer" }}>
           <input
             type="radio"
@@ -449,6 +450,16 @@ function BabysitterMode(): JSX.Element {
             disabled={saving}
           />
           <span>Plan + execute — <code>/yolo</code></span>
+        </label>
+        <label style={{ display: "flex", gap: 6, alignItems: "center", cursor: "pointer" }}>
+          <input
+            type="radio"
+            name="babysitter-mode"
+            checked={settings?.babysitterMode === "direct"}
+            onChange={() => void setMode("direct")}
+            disabled={saving}
+          />
+          <span>Direct — single-agent (no babysitter)</span>
         </label>
         {saving && <span className="muted" style={{ fontSize: 12 }}>Saving…</span>}
       </div>

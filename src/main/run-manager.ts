@@ -358,10 +358,14 @@ function buildBabysitPrompt(
   //              only useful from a real pi TUI; in MC's programmatic
   //              session breakpoints have no surface to land on)
   //   /yolo    — author + execute NON-interactively (no breakpoints)
-  // For MC's programmatic path, the meaningful pair is /plan vs /yolo.
-  const slash = mode === "execute" ? "/yolo" : "/plan";
+  //   "direct" — no slash command; pi runs as a single agent on the brief
+  //              alone. Skips babysitter authoring + execution entirely.
+  const prefix =
+    mode === "execute" ? "/yolo " :
+    mode === "plan"    ? "/plan "  :
+    "";  // direct
   const lines = [
-    `${slash} ${task.title}`,
+    `${prefix}${task.title}`,
     "",
     task.description || "(no description)",
     "",
@@ -403,11 +407,14 @@ function buildItemBabysitPrompt(
   item: CampaignItem,
   mode: MCSettings["babysitterMode"] = "plan",
 ): string {
-  const slash = mode === "execute" ? "/yolo" : "/plan";
+  const prefix =
+    mode === "execute" ? "/yolo " :
+    mode === "plan"    ? "/plan "  :
+    "";  // direct
   const total = task.items.length;
   const idx = task.items.findIndex((i) => i.id === item.id);
   return [
-    `${slash} ${task.title} — item ${item.id} (${idx + 1}/${total})`,
+    `${prefix}${task.title} — item ${item.id} (${idx + 1}/${total})`,
     "",
     item.description,
     "",
