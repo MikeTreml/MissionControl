@@ -352,7 +352,14 @@ function buildBabysitPrompt(
   agentSlug: string | null,
   mode: MCSettings["babysitterMode"] = "plan",
 ): string {
-  const slash = mode === "execute" ? "/yolo" : "/babysit";
+  // Per babysitter-pi's skill files (read 2026-04-26):
+  //   /plan    — author process.js, do NOT execute it
+  //   /babysit — author + execute INTERACTIVELY (breakpoints prompt the user;
+  //              only useful from a real pi TUI; in MC's programmatic
+  //              session breakpoints have no surface to land on)
+  //   /yolo    — author + execute NON-interactively (no breakpoints)
+  // For MC's programmatic path, the meaningful pair is /plan vs /yolo.
+  const slash = mode === "execute" ? "/yolo" : "/plan";
   const lines = [
     `${slash} ${task.title}`,
     "",
@@ -396,7 +403,7 @@ function buildItemBabysitPrompt(
   item: CampaignItem,
   mode: MCSettings["babysitterMode"] = "plan",
 ): string {
-  const slash = mode === "execute" ? "/yolo" : "/babysit";
+  const slash = mode === "execute" ? "/yolo" : "/plan";
   const total = task.items.length;
   const idx = task.items.findIndex((i) => i.id === item.id);
   return [
