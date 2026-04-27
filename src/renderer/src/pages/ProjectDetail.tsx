@@ -128,7 +128,7 @@ export function ProjectDetail(): JSX.Element {
           <Kpi label="Active" value={stats.active} />
           <Kpi label="Done" value={stats.done} />
           <Kpi label="Avg cycles" value={stats.avgCycles.toFixed(1)} />
-          <Kpi label="Avg idle" value={stats.avgIdleHours.toFixed(1) + "h"} />
+          <Kpi label="Avg idle" value={fmtAvgIdle(stats.avgIdleHours)} />
           <Kpi label="Stuck (>24h)" value={stats.stuck} />
         </section>
 
@@ -200,11 +200,22 @@ function LaneBars({ tasks }: { tasks: UiTask[] }): JSX.Element {
 }
 
 function StuckTable({ tasks }: { tasks: UiTask[] }): JSX.Element {
-  const stuck = tasks.filter((t) => t.lane === "Approval" || t.roleLabel === "Waiting");
+  const now = Date.now();
+  const idleHours = (t: UiTask): number =>
+    Math.max(0, (now - new Date(t.updatedAt).getTime()) / 3_600_000);
+  // Same definition as computeStats: approval / waiting / idle > 24h.
+  const stuck = tasks.filter((t) =>
+    t.lane !== "Done" &&
+    (t.lane === "Approval" || t.roleLabel === "Waiting" || idleHours(t) > 24),
+  );
   const { openTask } = useRoute();
   if (stuck.length === 0) {
-    return <p className="muted" style={{ marginTop: 10 }}>No stuck tasks 🎉</p>;
+    return <p className="muted" style={{ marginTop: 10 }}>No stuck tasks.</p>;
   }
+  const fmtIdle = (h: number): string =>
+    h < 1 ? `${Math.round(h * 60)}m`
+    : h < 24 ? `${h.toFixed(1)}h`
+    : `${(h / 24).toFixed(1)}d`;
   return (
     <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 10, fontSize: 13 }}>
       <thead>
@@ -213,6 +224,7 @@ function StuckTable({ tasks }: { tasks: UiTask[] }): JSX.Element {
           <th style={{ padding: "8px 10px", fontSize: 12, textTransform: "uppercase", letterSpacing: 0.5 }}>Title</th>
           <th style={{ padding: "8px 10px", fontSize: 12, textTransform: "uppercase", letterSpacing: 0.5 }}>Lane</th>
           <th style={{ padding: "8px 10px", fontSize: 12, textTransform: "uppercase", letterSpacing: 0.5 }}>Status</th>
+          <th style={{ padding: "8px 10px", fontSize: 12, textTransform: "uppercase", letterSpacing: 0.5 }}>Idle</th>
         </tr>
       </thead>
       <tbody>
@@ -228,6 +240,7 @@ function StuckTable({ tasks }: { tasks: UiTask[] }): JSX.Element {
             <td style={{ padding: "8px 10px" }}>
               <span className={`pill ${t.rolePill}`}>{t.roleLabel}</span>
             </td>
+            <td style={{ padding: "8px 10px", color: "var(--muted)" }}>{fmtIdle(idleHours(t))}</td>
           </tr>
         ))}
       </tbody>
@@ -249,21 +262,39 @@ interface ProjectStats {
 function computeStats(tasks: UiTask[]): ProjectStats {
   const total = tasks.length;
   const done = tasks.filter((t) => t.lane === "Done").length;
-  const stuck = tasks.filter((t) => t.lane === "Approval" || t.roleLabel === "Waiting").length;
   const active = total - done;
 
-  // UiTask doesn't carry cycles/updatedAt. The real version (when IPC is on)
-  // will look at the raw Task array; for now read from the mock defaults so
-  // the page renders something sensible.
-  // See mockTasks source — treat all as cycle=1 and 4h idle average.
-  return {
-    total,
-    active,
-    done,
-    stuck,
-    avgCycles: tasks.length === 0 ? 0 : 1.2,
-    avgIdleHours: tasks.length === 0 ? 0 : 4.1,
-  };
+  // Idle (hours since last write to manifest.json) — used by both the
+  // "Avg idle" KPI and the time-based "stuck" check below. Done tasks
+  // don't contribute; their idle clock isn't operationally useful.
+  const now = Date.now();
+  const idleHours = (t: UiTask): number =>
+    Math.max(0, (now - new Date(t.updatedAt).getTime()) / 3_600_000);
+  const liveTasks = tasks.filter((t) => t.lane !== "Done");
+
+  // "Stuck" = blocked on a human (approval lane or waiting/paused) OR
+  // idle for over 24h while still active. Both are operationally
+  // useful signals; either alone misses real cases.
+  const stuck = liveTasks.filter((t) =>
+    t.lane === "Approval" || t.roleLabel === "Waiting" || idleHours(t) > 24,
+  ).length;
+
+  const avgCycles = total === 0
+    ? 0
+    : tasks.reduce((sum, t) => sum + t.cycle, 0) / total;
+  const avgIdleHours = liveTasks.length === 0
+    ? 0
+    : liveTasks.reduce((s, t) => s + idleHours(t), 0) / liveTasks.length;
+
+  return { total, active, done, stuck, avgCycles, avgIdleHours };
+}
+
+/** Compact idle formatter: <1h shows minutes; <1d shows hours; ≥1d shows days. */
+function fmtAvgIdle(hours: number): string {
+  if (hours <= 0) return "—";
+  if (hours < 1)  return `${Math.round(hours * 60)}m`;
+  if (hours < 24) return `${hours.toFixed(1)}h`;
+  return `${(hours / 24).toFixed(1)}d`;
 }
 
 // Re-exported for tests / future real-task stats path.

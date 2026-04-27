@@ -23,6 +23,7 @@ export type UiTask = MockTask & {
   projectId: string;
   projectIcon: string;     // empty if no icon set on the project
   cycle: number;           // Task.cycle — counts reviewer loopbacks
+  updatedAt: string;       // ISO 8601 — needed for idle / stuck calculations
 };
 
 /** Map real lane code → display label. */
@@ -59,6 +60,7 @@ function toUiTask(t: Task, projectIcon: string): UiTask {
     projectId: t.project,
     projectIcon,
     cycle: t.cycle,
+    updatedAt: t.updatedAt,
   };
 }
 
@@ -82,7 +84,7 @@ export function useTasks(): TasksState {
       if (!window.mc) {
         // Mock tasks don't have a real project id; stamp a synthetic one so
         // filters don't collapse them.
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1 })));
+        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString() })));
         setIsDemo(true);
         return;
       }
@@ -93,7 +95,7 @@ export function useTasks(): TasksState {
       // Map project id → icon so each task can carry its project's icon.
       const iconByProject = new Map(projects.map((p) => [p.id, p.icon]));
       if (real.length === 0) {
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1 })));
+        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString() })));
         setIsDemo(true);
       } else {
         setTasks(real.map((t) => toUiTask(t, iconByProject.get(t.project) ?? "")));
@@ -101,7 +103,7 @@ export function useTasks(): TasksState {
       }
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
-      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1 })));
+      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString() })));
       setIsDemo(true);
     } finally {
       setLoading(false);
