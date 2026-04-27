@@ -112,12 +112,21 @@ export class PiSessionManager {
   }
 
   /**
-   * Return every model pi knows about, in compact UI-friendly form.
-   * Models from providers the user isn't logged into are still included
-   * — the UI can grey them out if desired.
+   * Return only models the user actually has access to right now — same
+   * set pi's `/model` slash command and `pi list-models` CLI show, via
+   * `ModelRegistry.getAvailable()` (filters to providers with auth
+   * configured: API key in env, /login OAuth token, or models.json
+   * custom-provider key).
+   *
+   * AuthStorage caches `~/.pi/agent/auth.json` in memory at construction.
+   * To pick up new auth without restarting MC (the common case: user runs
+   * `pi /login` in a separate shell, then opens the model picker), we
+   * reload before each call. Cheap — one file read of a small JSON.
    */
   listModels(): PiModelInfo[] {
-    return this.getModelRegistry().getAll().map((m) => ({
+    const registry = this.getModelRegistry();
+    registry.authStorage.reload();
+    return registry.getAvailable().map((m) => ({
       id: m.id,
       name: m.name,
       provider: m.provider,

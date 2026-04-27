@@ -170,7 +170,7 @@ function DeleteTaskButton({ taskId }: { taskId: string }): JSX.Element {
 function Controls({ task }: { task: Task }): JSX.Element {
   const { agents } = useAgents();
   const primaries = agents.filter((a) => a.code.length === 1);
-  const { models: piModels } = usePiModels();
+  const { models: piModels, refresh: refreshPiModels } = usePiModels();
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -265,6 +265,7 @@ function Controls({ task }: { task: Task }): JSX.Element {
               onChange={setModelId}
               disabled={busy}
               models={piModels}
+              onRefresh={refreshPiModels}
             />
           </>
         )}
@@ -733,17 +734,23 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
  * Native <select> model picker, grouped by provider. Empty value = let
  * pi pick its default (auth + settings). Value sent up is in
  * "provider:id" form so PiSessionManager's resolver finds it cleanly.
+ *
+ * The list is restricted to models pi has auth for — same set
+ * `pi /model` shows. The ↻ button refetches without restarting MC,
+ * for the case where the user just ran `pi /login` in another shell.
  */
 function ModelPicker({
   value,
   onChange,
   disabled,
   models,
+  onRefresh,
 }: {
   value: string;
   onChange: (v: string) => void;
   disabled?: boolean;
   models: PiModelInfo[];
+  onRefresh?: () => Promise<void>;
 }): JSX.Element {
   const grouped = new Map<string, PiModelInfo[]>();
   for (const m of models) {
@@ -770,9 +777,15 @@ function ModelPicker({
           padding: "6px 10px",
           minWidth: 220,
         }}
-        title="Model pi will use for this run. Empty = pi's default."
+        title={
+          providers.length === 0
+            ? "No authed providers. Run `pi /login` (or set OPENAI_API_KEY / ANTHROPIC_API_KEY) and click ↻."
+            : "Model pi will use for this run. Empty = pi's default. Limited to providers pi has auth for."
+        }
       >
-        <option value="">(pi default)</option>
+        <option value="">
+          {providers.length === 0 ? "(no authed providers — pi default)" : "(pi default)"}
+        </option>
         {providers.map((p) => (
           <optgroup key={p} label={p}>
             {grouped.get(p)!.map((m) => (
@@ -783,6 +796,17 @@ function ModelPicker({
           </optgroup>
         ))}
       </select>
+      {onRefresh && (
+        <button
+          className="button ghost"
+          onClick={() => { void onRefresh(); }}
+          disabled={disabled}
+          title="Reload models from pi (use after `pi /login` or env-var changes)"
+          style={{ padding: "4px 10px", lineHeight: 1 }}
+        >
+          ↻
+        </button>
+      )}
     </div>
   );
 }
