@@ -59,6 +59,14 @@ const api = {
   // ── pi meta ──────────────────────────────────────────────────────────
   listPiModels: () => ipcRenderer.invoke("pi:listModels"),
 
+  // ── mc_ask_user routing ─────────────────────────────────────────────
+  listPendingAsks: (taskId: string) =>
+    ipcRenderer.invoke("pi:pendingAsks", taskId),
+  answerAsk: (taskId: string, toolCallId: string, answer: string) =>
+    ipcRenderer.invoke("pi:answerAsk", { taskId, toolCallId, answer }),
+  cancelAsk: (taskId: string, toolCallId: string) =>
+    ipcRenderer.invoke("pi:cancelAsk", { taskId, toolCallId }),
+
   // ── app settings (MC's own) ──────────────────────────────────────────
   getSettings:  () => ipcRenderer.invoke("settings:get"),
   saveSettings: (patch: unknown) => ipcRenderer.invoke("settings:save", patch),

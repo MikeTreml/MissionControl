@@ -152,6 +152,18 @@ export function registerIpc(stores: Stores): void {
   // ── pi meta (model registry from pi's own auth config) ────────────────
   ipcMain.handle("pi:listModels", () => stores.pi.listModels());
 
+  // ── mc_ask_user routing — renderer answers / cancels pending asks ─────
+  ipcMain.handle("pi:pendingAsks", (_e, taskId: string) =>
+    stores.pi.pendingAsksFor(taskId));
+  ipcMain.handle("pi:answerAsk",
+    (_e, args: { taskId: string; toolCallId: string; answer: string }) =>
+      logged(`pi:answerAsk ${args.taskId}/${args.toolCallId}`, () =>
+        Promise.resolve(stores.pi.answerAsk(args.taskId, args.toolCallId, args.answer))));
+  ipcMain.handle("pi:cancelAsk",
+    (_e, args: { taskId: string; toolCallId: string }) =>
+      logged(`pi:cancelAsk ${args.taskId}/${args.toolCallId}`, () =>
+        Promise.resolve(stores.pi.cancelAsk(args.taskId, args.toolCallId))));
+
   // ── app settings (MC's own settings, not pi's) ───────────────────────
   ipcMain.handle("settings:get",  () => stores.settings.get());
   ipcMain.handle("settings:save", (_e, patch: Parameters<SettingsStore["save"]>[0]) =>

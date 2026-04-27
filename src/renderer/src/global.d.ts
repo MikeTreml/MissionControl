@@ -87,6 +87,11 @@ export interface McApi {
   // pi meta
   listPiModels: () => Promise<PiModelInfo[]>;
 
+  // mc_ask_user — pending question routing
+  listPendingAsks: (taskId: string) => Promise<PendingAskInfo[]>;
+  answerAsk: (taskId: string, toolCallId: string, answer: string) => Promise<boolean>;
+  cancelAsk: (taskId: string, toolCallId: string) => Promise<boolean>;
+
   // app settings
   getSettings: () => Promise<MCSettings>;
   saveSettings: (patch: Partial<MCSettings>) => Promise<MCSettings>;
@@ -97,6 +102,18 @@ export interface McApi {
 
   // app
   appVersion: () => Promise<string>;
+}
+
+/** Pending mc_ask_user question, surfaced in Task Detail. */
+export interface PendingAskInfo {
+  toolCallId: string;
+  params: {
+    question: string;
+    category: "scope" | "ambiguity" | "destructive" | "credential";
+    why_blocked: string;
+    options?: string[];
+  };
+  postedAt: number;
 }
 
 /** Compact model info the renderer can show in the picker. */

@@ -37,12 +37,27 @@ import {
 } from "@mariozechner/pi-coding-agent";
 
 import type { TaskStore } from "./store.ts";
+import {
+  makeAskUserTool,
+  type AskUserParams,
+} from "./ask-user-tool.ts";
+
+interface PendingAsk {
+  toolCallId: string;
+  params: AskUserParams;
+  resolve: (value: { answer: string; cancelled?: boolean }) => void;
+  postedAt: number;
+}
 
 interface Entry {
   session: AgentSession;
   unsubscribe: () => void;
   /** True once we've fired onSessionEnd — prevents double-dispatch on stop(). */
   ended: boolean;
+  /** Open ask_user calls keyed by toolCallId. resolve() is called by the IPC handler when the renderer sends an answer. */
+  pendingAsks: Map<string, PendingAsk>;
+  /** Last successful ask timestamp — drives the runtime rate limit per task. */
+  lastAskedAt?: number;
 }
 
 export interface PiStartOptions {
@@ -155,6 +170,57 @@ export class PiSessionManager {
     return [...this.sessions.keys()];
   }
 
+  /**
+   * List currently pending ask_user calls for a task (renderer uses this
+   * to seed the question card on first mount, in addition to the live
+   * `pi:awaiting_input` event stream).
+   */
+  pendingAsksFor(taskId: string): Array<{
+    toolCallId: string;
+    params: AskUserParams;
+    postedAt: number;
+  }> {
+    const entry = this.sessions.get(taskId);
+    if (!entry) return [];
+    return [...entry.pendingAsks.values()].map((p) => ({
+      toolCallId: p.toolCallId,
+      params: p.params,
+      postedAt: p.postedAt,
+    }));
+  }
+
+  /**
+   * Resolve a pending ask_user with the user's answer. The pi tool's
+   * `execute()` Promise resolves and the agent sees `answer` as the tool
+   * result. No-op if the ask was already answered/cancelled (keeps the
+   * IPC channel idempotent in the face of double-clicks).
+   */
+  answerAsk(taskId: string, toolCallId: string, answer: string): boolean {
+    const entry = this.sessions.get(taskId);
+    if (!entry) return false;
+    const pending = entry.pendingAsks.get(toolCallId);
+    if (!pending) return false;
+    entry.pendingAsks.delete(toolCallId);
+    pending.resolve({ answer });
+    void this.tasks.appendEvent(taskId, {
+      type: "pi:input_answered",
+      toolCallId,
+      answerLength: answer.length,
+    });
+    return true;
+  }
+
+  /** Mark a pending ask as cancelled (e.g. user clicked Stop). */
+  cancelAsk(taskId: string, toolCallId: string): boolean {
+    const entry = this.sessions.get(taskId);
+    if (!entry) return false;
+    const pending = entry.pendingAsks.get(toolCallId);
+    if (!pending) return false;
+    entry.pendingAsks.delete(toolCallId);
+    pending.resolve({ answer: "", cancelled: true });
+    return true;
+  }
+
   async start(taskId: string, options: PiStartOptions = {}): Promise<void> {
     if (this.sessions.has(taskId)) {
       throw new Error(`Pi session already active for task "${taskId}"`);
@@ -175,12 +241,47 @@ export class PiSessionManager {
       ? this.resolveModel(options.model)
       : undefined;
 
+    // Per-task ask_user tool: closes over `entry` (created below) so the
+    // tool's hooks read/write the live entry's pending map + lastAskedAt.
+    // Build the entry shell first so the tool can capture it; we mutate
+    // the session/unsubscribe properties after createAgentSession returns.
+    const entry: Entry = {
+      session: undefined as unknown as AgentSession, // filled below
+      unsubscribe: () => {},
+      ended: false,
+      pendingAsks: new Map(),
+    };
+    const askUserTool = makeAskUserTool({
+      postQuestion: (toolCallId, params) =>
+        new Promise((resolve) => {
+          entry.pendingAsks.set(toolCallId, {
+            toolCallId,
+            params,
+            resolve,
+            postedAt: Date.now(),
+          });
+          // Surface the question to the renderer via the journal — TaskDetail
+          // subscribes to `pi:awaiting_input` and renders an answer card.
+          void this.tasks.appendEvent(taskId, {
+            type: "pi:awaiting_input",
+            toolCallId,
+            question: params.question,
+            category: params.category,
+            why_blocked: params.why_blocked,
+            options: params.options ?? [],
+          });
+        }),
+      getLastAskedAt: () => entry.lastAskedAt,
+      recordAsk: (now) => { entry.lastAskedAt = now; },
+    });
+
     const { session } = await createAgentSession({
       cwd,
       ...(resourceLoader ? { resourceLoader } : {}),
       ...(resolvedModel ? { model: resolvedModel } : {}),
+      customTools: [askUserTool],
     });
-    const entry: Entry = { session, unsubscribe: () => {}, ended: false };
+    entry.session = session;
 
     const unsubscribe = session.subscribe((event: AgentSessionEvent) => {
       // Mirror every pi event into MC's journal as `pi:<type>`. Fire-and-
@@ -213,6 +314,13 @@ export class PiSessionManager {
   async stop(taskId: string): Promise<void> {
     const entry = this.sessions.get(taskId);
     if (!entry) return;
+
+    // Cancel any pending ask_user calls so their Promises resolve and
+    // pi's tool-call machinery cleans up rather than hanging forever.
+    for (const pending of entry.pendingAsks.values()) {
+      pending.resolve({ answer: "", cancelled: true });
+    }
+    entry.pendingAsks.clear();
 
     entry.unsubscribe();
     try {

@@ -15,8 +15,10 @@ import { useTask } from "../hooks/useTask";
 import { useAgents } from "../hooks/useAgents";
 import { usePiModels } from "../hooks/usePiModels";
 import { useWorkflows } from "../hooks/useWorkflows";
+import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun } from "../lib/derive-runs";
+import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
 import { effectiveLanes } from "../../../shared/models";
@@ -31,6 +33,7 @@ const LANE_LABEL: Record<Lane, string> = {
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
   const { task, events, prompt, status, isDemo } = useTask(selectedTaskId);
+  const pendingAsks = usePendingAsks(selectedTaskId);
   const [editOpen, setEditOpen] = useState(false);
 
   if (!task) {
@@ -89,6 +92,10 @@ export function TaskDetail(): JSX.Element {
 
       <div className="content">
         <Controls task={task} />
+
+        {!isDemo && pendingAsks.map((ask) => (
+          <AskUserCard key={ask.toolCallId} taskId={task.id} ask={ask} />
+        ))}
 
         {!isDemo && <BlockerField task={task} />}
 
