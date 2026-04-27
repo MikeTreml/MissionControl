@@ -17,6 +17,7 @@ import { usePiModels } from "../hooks/usePiModels";
 import { useWorkflows } from "../hooks/useWorkflows";
 import { publish, useSubscribe } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun } from "../lib/derive-runs";
+import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
 import { effectiveLanes } from "../../../shared/models";
 import type { Lane, LaneHistoryEntry, Task, TaskEvent } from "../../../shared/models";
@@ -30,6 +31,7 @@ const LANE_LABEL: Record<Lane, string> = {
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
   const { task, events, prompt, status, isDemo } = useTask(selectedTaskId);
+  const [editOpen, setEditOpen] = useState(false);
 
   if (!task) {
     return (
@@ -57,6 +59,15 @@ export function TaskDetail(): JSX.Element {
           {!isDemo && (
             <button
               className="button ghost"
+              title="Edit title and description"
+              onClick={() => setEditOpen(true)}
+            >
+              Edit
+            </button>
+          )}
+          {!isDemo && (
+            <button
+              className="button ghost"
               title="Open the task's folder in your OS file explorer"
               onClick={() => { void window.mc?.openTaskFolder(task.id); }}
             >
@@ -67,6 +78,14 @@ export function TaskDetail(): JSX.Element {
           <BackToDashboard />
         </div>
       </div>
+
+      {!isDemo && (
+        <EditTaskForm
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+          task={task}
+        />
+      )}
 
       <div className="content">
         <Controls task={task} />

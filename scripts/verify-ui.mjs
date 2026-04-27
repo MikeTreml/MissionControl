@@ -386,6 +386,34 @@ async function run() {
       `Model picker populated from pi's ModelRegistry (${modelOptionCount} entries)`,
     );
 
+    // Edit modal — change title + description, save, verify persistence.
+    await win.getByRole("button", { name: "Edit", exact: true }).click();
+    await win.waitForTimeout(200);
+    const editTitleInput = win.locator('input[placeholder^="Short, imperative"]');
+    await editTitleInput.fill("First smoke task — edited");
+    await win.locator('textarea[placeholder^="Optional"]').fill("Now with a description.");
+    await win.getByRole("button", { name: "Save changes" }).click();
+    await win.waitForTimeout(500);
+    try {
+      const editedManifest = JSON.parse(await readFile(taskManifest, "utf8"));
+      assertions.check(
+        editedManifest.title === "First smoke task — edited",
+        `Edit modal persisted new title (got "${editedManifest.title}")`,
+      );
+      assertions.check(
+        editedManifest.description === "Now with a description.",
+        `Edit modal persisted new description (got "${editedManifest.description}")`,
+      );
+    } catch (err) {
+      assertions.check(false, `Re-read manifest after edit: ${err.message ?? err}`);
+    }
+    // The Task Detail H1 should now reflect the edited title.
+    const h1AfterEdit = (await win.locator("h1").first().textContent()) ?? "";
+    assertions.check(
+      h1AfterEdit.includes("edited"),
+      `Task Detail header reflects edited title (got "${h1AfterEdit.trim()}")`,
+    );
+
     // Blocker field renders, accepts text, persists on Enter.
     const blockerInput = win.locator('input[placeholder^="What\'s this waiting on?"]');
     assertions.check(
