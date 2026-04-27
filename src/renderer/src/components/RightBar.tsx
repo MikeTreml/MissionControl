@@ -47,6 +47,8 @@ const HIGHLIGHT_TYPES = new Set([
   "run-started",
   "run-ended",
   "lane-changed",
+  "interrupted",
+  "blocker-changed",
 ]);
 
 interface LiveEntry {
@@ -267,6 +269,8 @@ function iconForEvent(type: string): string {
   if (type === "pi:subagent_complete")                      return "⤵";
   if (type === "pi:tool_execution_start")                   return "⚙";
   if (type === "pi:tool_execution_end")                     return "✓";
+  if (type === "interrupted")                               return "⚠";
+  if (type === "blocker-changed")                           return "🚧";
   return "";
 }
 

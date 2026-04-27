@@ -178,6 +178,50 @@ async function main(): Promise<void> {
   );
   console.log(`[smoke] readTaskFile missing returns null`);
 
+  // ── crash recovery: reconcileInterruptedRuns ───────────────────────
+  // Simulate a prior crash by manually rewriting a task's manifest with
+  // runState="running" and a campaign-style item left in "running". Then
+  // re-init a fresh store on the same root and assert it cleaned up.
+  const stuckId = "DA-001F";
+  const stuckFolder = store.folderFor(stuckId);
+  const stuckRaw = await fs.readFile(path.join(stuckFolder, "manifest.json"), "utf8");
+  const stuckTask = JSON.parse(stuckRaw);
+  stuckTask.runState = "running";
+  stuckTask.items = [
+    { id: "1", description: "in-flight item", status: "running", notes: "" },
+    { id: "2", description: "queued item",    status: "pending", notes: "" },
+  ];
+  await fs.writeFile(
+    path.join(stuckFolder, "manifest.json"),
+    JSON.stringify(stuckTask, null, 2),
+    "utf8",
+  );
+  // Re-init: reconcile should fire and report 1 fix.
+  const recovered = new TaskStore(tmp);
+  const fixed = await recovered.reconcileInterruptedRuns();
+  assert(fixed === 1, `reconcileInterruptedRuns reported ${fixed}, expected 1`);
+  // Re-read the manifest — runState back to idle, item 1 marked failed.
+  const recoveredTask = await recovered.getTask(stuckId);
+  assert(recoveredTask !== null, "task still exists after reconcile");
+  assert(recoveredTask!.runState === "idle", `runState reset to idle (got ${recoveredTask!.runState})`);
+  assert(recoveredTask!.items[0].status === "failed", `running item flipped to failed`);
+  assert(
+    recoveredTask!.items[0].notes.includes("interrupted"),
+    `failed item carries interrupted note`,
+  );
+  assert(recoveredTask!.items[1].status === "pending", `pending item left untouched`);
+  // events.jsonl should contain interrupted + run-ended entries.
+  const recoveredEvents = await recovered.readEvents(stuckId);
+  const types = recoveredEvents.map((e) => e.type);
+  assert(
+    types.includes("interrupted") && types.includes("run-ended"),
+    `events.jsonl has interrupted + run-ended (got ${types.join(", ")})`,
+  );
+  // Idempotent: a second reconcile is a no-op.
+  const fixedAgain = await recovered.reconcileInterruptedRuns();
+  assert(fixedAgain === 0, `second reconcile no-ops (got ${fixedAgain})`);
+  console.log(`[smoke] reconcileInterruptedRuns recovers + idempotent`);
+
   // ── cleanup ─────────────────────────────────────────────────────────
   await fs.rm(tmp, { recursive: true, force: true });
   console.log("GREEN");

@@ -89,6 +89,71 @@ export class TaskStore extends EventEmitter {
   /** Ensure the root folder exists. Call once at app start. */
   async init(): Promise<void> {
     await fs.mkdir(this.root, { recursive: true });
+    await this.reconcileInterruptedRuns();
+  }
+
+  /**
+   * Crash recovery — at process start, scan every task and fix any whose
+   * `runState` is "running" or "paused". A live runState only makes sense
+   * while a pi session is attached; if we're booting fresh, no session
+   * exists, so the value is stale state from a prior crash / force-quit.
+   *
+   * For each stuck task:
+   *   - flip runState back to "idle"
+   *   - close any in-flight campaign items (running → failed with note)
+   *   - append `interrupted` + `run-ended { reason: "interrupted" }` to
+   *     events.jsonl so Run History closes the open run cleanly
+   *   - rewrite manifest.json
+   *
+   * Idempotent: tasks already idle are skipped. Returns how many it fixed
+   * so callers / tests can verify.
+   */
+  async reconcileInterruptedRuns(): Promise<number> {
+    if (!existsSync(this.root)) return 0;
+    const entries = await fs.readdir(this.root, { withFileTypes: true });
+    let fixed = 0;
+    for (const entry of entries) {
+      if (!entry.isDirectory() || !TASK_ID_RE.test(entry.name)) continue;
+      const folder = path.join(this.root, entry.name);
+      const task = await this.readManifest(folder);
+      if (!task) continue;
+      if (task.runState === "idle") continue;
+
+      // Mark any running campaign item failed — we can't resume mid-item.
+      const items = task.items.map((it) =>
+        it.status === "running"
+          ? { ...it, status: "failed" as const, notes: it.notes
+              ? `${it.notes} · interrupted by process restart`
+              : "interrupted by process restart" }
+          : it,
+      );
+
+      const recovered: Task = {
+        ...task,
+        runState: "idle",
+        items,
+      };
+      const validated = TaskSchema.parse({
+        ...recovered,
+        updatedAt: new Date().toISOString(),
+      });
+      await fs.writeFile(
+        path.join(folder, "manifest.json"),
+        JSON.stringify(validated, null, 2),
+        "utf8",
+      );
+      await this.appendEvent(validated.id, {
+        type: "interrupted",
+        priorRunState: task.runState,
+        reason: "process-restart",
+      });
+      await this.appendEvent(validated.id, {
+        type: "run-ended",
+        reason: "interrupted",
+      });
+      fixed += 1;
+    }
+    return fixed;
   }
 
   // ── read ──────────────────────────────────────────────────────────────
