@@ -386,6 +386,32 @@ async function run() {
       `Model picker populated from pi's ModelRegistry (${modelOptionCount} entries)`,
     );
 
+    // Blocker field renders, accepts text, persists on Enter.
+    const blockerInput = win.locator('input[placeholder^="What\'s this waiting on?"]');
+    assertions.check(
+      (await blockerInput.count()) === 1,
+      `Blocker field renders on Task Detail`,
+    );
+    await blockerInput.fill("Waiting on customer review");
+    await blockerInput.press("Enter");
+    await win.waitForTimeout(400);
+    // Persisted to manifest.json
+    try {
+      const refreshed = JSON.parse(await readFile(taskManifest, "utf8"));
+      assertions.check(
+        refreshed.blocker === "Waiting on customer review",
+        `Blocker persisted to manifest.json (got "${refreshed.blocker}")`,
+      );
+    } catch (err) {
+      assertions.check(false, `Re-read manifest after blocker save: ${err.message ?? err}`);
+    }
+    // Clear button appears once a blocker is set
+    const clearBtnCount = await win.getByRole("button", { name: "Clear", exact: true }).count();
+    assertions.check(
+      clearBtnCount > 0,
+      `Clear button appears when blocker is set`,
+    );
+
     // ── 11b. Delete THIS task from Task Detail (two-step) ───────────────
     await win.getByRole("button", { name: "Delete", exact: true }).click();
     await win.waitForTimeout(150);

@@ -149,14 +149,25 @@ function NeedsAttentionPanel({
     );
   }
 
+  // Reason precedence:
+  //   1. user-set blocker — most specific, shown verbatim
+  //   2. status === "failed"
+  //   3. lane === "approval"
+  //   4. runState === "paused"
+  // A task with a blocker but no other state still surfaces here so the
+  // operator sees what they're tracking even when the task is technically
+  // "running" but waiting on something external.
   const flagged: Array<{ task: Task; reason: string; pill: "warn" | "bad" }> = [];
   for (const t of tasks ?? []) {
+    const blocker = (t.blocker ?? "").trim();
     if (t.status === "failed") {
-      flagged.push({ task: t, reason: "failed", pill: "bad" });
+      flagged.push({ task: t, reason: blocker || "failed", pill: "bad" });
     } else if (t.lane === "approval") {
-      flagged.push({ task: t, reason: "awaiting approval", pill: "warn" });
+      flagged.push({ task: t, reason: blocker || "awaiting approval", pill: "warn" });
     } else if (t.runState === "paused") {
-      flagged.push({ task: t, reason: "paused", pill: "warn" });
+      flagged.push({ task: t, reason: blocker || "paused", pill: "warn" });
+    } else if (blocker) {
+      flagged.push({ task: t, reason: blocker, pill: "warn" });
     }
   }
   // Most recently updated first — fresh blockers > stale ones.

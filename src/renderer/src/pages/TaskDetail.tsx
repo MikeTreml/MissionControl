@@ -71,6 +71,8 @@ export function TaskDetail(): JSX.Element {
       <div className="content">
         <Controls task={task} />
 
+        {!isDemo && <BlockerField task={task} />}
+
         {task.lane === "approval" && !isDemo && <ApprovalGate task={task} />}
 
         <section
@@ -323,6 +325,104 @@ function Controls({ task }: { task: Task }): JSX.Element {
         </div>
       )}
     </>
+  );
+}
+
+/**
+ * Inline editable "Blocker" field — free text for the reason a task is
+ * waiting on something external (a build callback, a customer, a plannotator
+ * review, etc). Decoupled from runState/lane so it works in every wait
+ * scenario. Empty by default; saves on blur. The Needs Attention rail picks
+ * this up to show "why" instead of just "paused" / "awaiting approval".
+ */
+function BlockerField({ task }: { task: Task }): JSX.Element {
+  const [value, setValue] = useState(task.blocker ?? "");
+  const [busy, setBusy] = useState(false);
+
+  // Keep local state aligned when the task changes (navigation, store push).
+  useEffect(() => {
+    setValue(task.blocker ?? "");
+  }, [task.id, task.blocker]);
+
+  async function commit(): Promise<void> {
+    const next = value.trim();
+    if (next === (task.blocker ?? "")) return;
+    if (!window.mc) return;
+    try {
+      setBusy(true);
+      await window.mc.saveTask({ ...task, blocker: next });
+      publish("tasks");
+    } catch (err) {
+      console.error("[TaskDetail] saveTask blocker failed:", err);
+      // Roll back local state so the UI doesn't lie about persisted value.
+      setValue(task.blocker ?? "");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function clear(): void {
+    setValue("");
+    if (!window.mc) return;
+    void (async () => {
+      try {
+        setBusy(true);
+        await window.mc.saveTask({ ...task, blocker: "" });
+        publish("tasks");
+      } finally {
+        setBusy(false);
+      }
+    })();
+  }
+
+  const hasBlocker = (task.blocker ?? "").length > 0;
+  return (
+    <section
+      className="card"
+      style={{
+        borderLeft: hasBlocker ? "3px solid var(--warn)" : undefined,
+        paddingLeft: hasBlocker ? 12 : undefined,
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+      }}
+    >
+      <strong style={{ fontSize: 13, color: hasBlocker ? "var(--warn)" : "var(--muted)", flex: "0 0 auto" }}>
+        Blocker:
+      </strong>
+      <input
+        type="text"
+        value={value}
+        placeholder="What's this waiting on? (optional — empty means not blocked)"
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={() => { void commit(); }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter")  { e.preventDefault(); void commit(); (e.target as HTMLInputElement).blur(); }
+          if (e.key === "Escape") { setValue(task.blocker ?? ""); (e.target as HTMLInputElement).blur(); }
+        }}
+        disabled={busy}
+        style={{
+          flex: 1,
+          padding: "6px 10px",
+          border: "1px solid var(--border)",
+          background: "var(--panel-2)",
+          color: "var(--text)",
+          borderRadius: 6,
+          fontSize: 13,
+        }}
+      />
+      {hasBlocker && (
+        <button
+          className="button ghost"
+          onClick={clear}
+          disabled={busy}
+          title="Clear blocker"
+          style={{ flex: "0 0 auto" }}
+        >
+          Clear
+        </button>
+      )}
+    </section>
   );
 }
 

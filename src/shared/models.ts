@@ -117,6 +117,14 @@ export const TaskSchema = z.object({
    * yet — see docs/WORKFLOW-EXECUTION.md for the babysitter plan.
    */
   items: z.array(CampaignItemSchema).default([]),
+  /**
+   * Free-text reason this task is currently blocked, if any. Decoupled
+   * from `runState`/`lane` so it works in every wait scenario:
+   * "Awaiting customer clarification" while runState=idle, "Build
+   * callback pending" while paused, "Plannotator review" while in the
+   * approval lane. Empty string = not blocked.
+   */
+  blocker: z.string().default(""),
   createdAt: z.string().datetime(),            // ISO 8601
   updatedAt: z.string().datetime(),
 });

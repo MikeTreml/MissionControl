@@ -32,6 +32,7 @@ function mockTaskToTask(id: string): Task | null {
     lastEvent: m.sub ?? "",
     laneHistory: [{ lane: "plan", enteredAt: now }],
     items: [],
+    blocker: "",
     createdAt: now,
     updatedAt: now,
   };

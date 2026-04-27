@@ -209,6 +209,16 @@ export class TaskStore extends EventEmitter {
       });
     }
 
+    // Blocker change is independent of lane/cycle — log it separately so
+    // the journal records when a human marked / cleared a blocker.
+    if (prior && (prior.blocker ?? "") !== (validated.blocker ?? "")) {
+      await this.appendEvent(validated.id, {
+        type: "blocker-changed",
+        from: prior.blocker ?? "",
+        to: validated.blocker ?? "",
+      });
+    }
+
     this.emit("task-saved", { task: validated });
   }
 
