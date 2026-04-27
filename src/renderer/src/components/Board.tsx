@@ -8,6 +8,8 @@ import { MOCK_LANES, type MockLane } from "../mock-data";
 import { useTasks, type UiTask } from "../hooks/useTasks";
 import { useProjects } from "../hooks/useProjects";
 import { useAgents } from "../hooks/useAgents";
+import { useAllTaskEvents } from "../hooks/useAllTaskEvents";
+import { latestModelForEvents } from "../lib/derive-runs";
 import { TaskCard } from "./TaskCard";
 
 /** Group tasks into a dict keyed by lane for render. */
@@ -23,7 +25,18 @@ export function Board(): JSX.Element {
   const { tasks, isDemo } = useTasks();
   const { projects } = useProjects();
   const { agents } = useAgents();
+  const { perTask } = useAllTaskEvents();
   const byLane = groupByLane(tasks);
+
+  // Per-task last-known model for the card badge. Computed once here so we
+  // don't re-walk events inside every TaskCard render.
+  const modelByTask = new Map<string, string>();
+  for (const t of tasks) {
+    const events = perTask.get(t.id);
+    if (events && events.length > 0) {
+      modelByTask.set(t.id, latestModelForEvents(events));
+    }
+  }
 
   const primaries = agents.filter((a) => a.code.length === 1);
   // Render the flow caption from actual agent names (hardcoded lane labels
@@ -66,7 +79,7 @@ export function Board(): JSX.Element {
               </div>
             )}
             {byLane[lane].map((t) => (
-              <TaskCard key={t.id} task={t} />
+              <TaskCard key={t.id} task={t} model={modelByTask.get(t.id) ?? ""} />
             ))}
           </div>
         ))}

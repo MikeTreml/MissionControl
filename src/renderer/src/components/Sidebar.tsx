@@ -12,6 +12,7 @@
 import { useState } from "react";
 
 import { useProjects } from "../hooks/useProjects";
+import { useTasks } from "../hooks/useTasks";
 import { useRoute } from "../router";
 import { AddProjectForm } from "./AddProjectForm";
 import { colorForKey, colorForKeyBorder } from "../lib/color-hash";
@@ -19,7 +20,16 @@ import { colorForKey, colorForKeyBorder } from "../lib/color-hash";
 export function Sidebar(): JSX.Element {
   const { setView, openProject } = useRoute();
   const { projects, isDemo } = useProjects();
+  const { tasks } = useTasks();
   const [addProjectOpen, setAddProjectOpen] = useState(false);
+
+  // Open-task count per project: anything not in the Done lane. Cheaper than
+  // walking events; UiTask already carries the resolved lane label.
+  const openByProject = new Map<string, number>();
+  for (const t of tasks) {
+    if (t.lane === "Done") continue;
+    openByProject.set(t.projectId, (openByProject.get(t.projectId) ?? 0) + 1);
+  }
 
   return (
     <aside className="sidebar">
@@ -90,6 +100,7 @@ export function Sidebar(): JSX.Element {
           <ProjectRow
             key={p.id}
             project={p}
+            openCount={openByProject.get(p.id) ?? 0}
             onClick={() => openProject(p.id)}
           />
         ))}
@@ -105,9 +116,11 @@ export function Sidebar(): JSX.Element {
 
 function ProjectRow({
   project,
+  openCount,
   onClick,
 }: {
   project: ReturnType<typeof useProjects>["projects"][number];
+  openCount: number;
   onClick: () => void;
 }): JSX.Element {
   const bg = colorForKey(project.prefix);
@@ -173,6 +186,29 @@ function ProjectRow({
           {project.sourceHint}
         </div>
       </div>
+
+      {/* Open-task count — only when > 0; subtle, sits at the right edge.
+          Skipped on demo rows (project.active comes from mock data). */}
+      {openCount > 0 && (
+        <div
+          aria-label={`${openCount} open task${openCount === 1 ? "" : "s"}`}
+          title={`${openCount} open task${openCount === 1 ? "" : "s"}`}
+          style={{
+            flex: "0 0 auto",
+            fontSize: 11,
+            fontWeight: 600,
+            color: "var(--accent)",
+            background: "rgba(110, 168, 254, 0.12)",
+            borderRadius: 999,
+            padding: "1px 7px",
+            lineHeight: 1.3,
+            marginLeft: 4,
+            marginRight: project.icon ? 18 : 0,
+          }}
+        >
+          {openCount}
+        </div>
+      )}
 
       {/* Optional icon — accent in the upper-right */}
       {project.icon && (

@@ -72,3 +72,47 @@ export function runDurationMs(run: DerivedRun): number | undefined {
   if (!run.endedAt) return undefined;
   return new Date(run.endedAt).getTime() - new Date(run.startedAt).getTime();
 }
+
+/**
+ * Latest model the task has been running on. Walks events in reverse looking
+ * for the most recent assistant `pi:message_start` and returns its model id.
+ * Empty string when the task has never had a real run.
+ */
+export function latestModelForEvents(events: TaskEvent[]): string {
+  for (let i = events.length - 1; i >= 0; i--) {
+    const e = events[i];
+    if (e.type !== "pi:message_start") continue;
+    const rec = e as unknown as Record<string, unknown>;
+    const msg = rec.message as Record<string, unknown> | undefined;
+    if (msg && msg.role === "assistant" && typeof msg.model === "string" && msg.model) {
+      return msg.model;
+    }
+  }
+  return "";
+}
+
+/**
+ * Compact a model id for display on a card. Trims provider prefixes and dated
+ * suffixes that don't add information at a glance:
+ *   "claude-opus-4-7-20251001" → "Opus 4.7"
+ *   "claude-sonnet-4-6"         → "Sonnet 4.6"
+ *   "gpt-5-codex"               → "Codex"
+ *   "qwen2.5-coder"             → "qwen2.5-coder"  (unknown — leave as-is)
+ */
+export function shortModelLabel(model: string): string {
+  if (!model) return "";
+  const m = model.toLowerCase();
+  // Claude family: claude-{tier}-{major}-{minor}[-{date}]
+  const claude = /^claude-(opus|sonnet|haiku)-(\d+)-(\d+)/.exec(m);
+  if (claude) {
+    const tier = claude[1].charAt(0).toUpperCase() + claude[1].slice(1);
+    return `${tier} ${claude[2]}.${claude[3]}`;
+  }
+  // OpenAI Codex
+  if (m.includes("codex")) return "Codex";
+  // GPT-N
+  const gpt = /^gpt-(\d+)/.exec(m);
+  if (gpt) return `GPT-${gpt[1]}`;
+  // Local Ollama models — keep as-is, they're already short
+  return model;
+}

@@ -8,10 +8,12 @@
  * so you can tell which project a card belongs to at a glance.
  */
 import type { UiTask } from "../hooks/useTasks";
+import { shortModelLabel } from "../lib/derive-runs";
 import { useRoute } from "../router";
 
-export function TaskCard({ task }: { task: UiTask }): JSX.Element {
+export function TaskCard({ task, model = "" }: { task: UiTask; model?: string }): JSX.Element {
   const { openTask } = useRoute();
+  const modelLabel = shortModelLabel(model);
   return (
     <div
       className={task.active ? "task active" : "task"}
@@ -40,6 +42,15 @@ export function TaskCard({ task }: { task: UiTask }): JSX.Element {
         {task.stepLine}
       </div>
       {task.sub && <div className="sub">{task.sub}</div>}
+      {modelLabel && (
+        <div
+          className="muted"
+          style={{ fontSize: 11, marginTop: 6 }}
+          title={`Model: ${model}`}
+        >
+          Model: {modelLabel}
+        </div>
+      )}
     </div>
   );
 }

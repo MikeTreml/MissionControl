@@ -303,6 +303,16 @@ async function run() {
       `Task "${expectedTaskId}" appears on the board`,
     );
 
+    // Sidebar count badge: the test project should now show "1" open task.
+    // The badge is a small accent-colored pill rendered next to the prefix
+    // chip when openCount > 0.
+    const sidebarRow = win.locator(`.project:has-text("${TEST_PREFIX}")`).first();
+    const sidebarCountText = (await sidebarRow.textContent()) ?? "";
+    assertions.check(
+      sidebarCountText.includes("1"),
+      `Sidebar shows "1" open-task count for ${TEST_PREFIX} (got "${sidebarCountText.trim()}")`,
+    );
+
     // Verify task persisted to disk
     const taskManifest = path.join(
       userDataPath(),
