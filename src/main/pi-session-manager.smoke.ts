@@ -61,6 +61,27 @@ async function main(): Promise<void> {
   await pi.stop(task.id);
   assert(!pi.hasSession(task.id), "restart + stop lifecycle OK");
 
+  // steer/followUp path with a fake session entry — avoids needing a live
+  // streaming LLM turn just to prove the manager forwards the calls.
+  const calls: string[] = [];
+  (pi as any).sessions.set(task.id, {
+    session: {
+      steer: async (text: string) => { calls.push(`steer:${text}`); },
+      followUp: async (text: string) => { calls.push(`followUp:${text}`); },
+      abort: async () => {},
+      dispose: () => {},
+    },
+    unsubscribe: () => {},
+    ended: false,
+    paused: false,
+    pendingAsks: new Map(),
+  });
+  await pi.steer(task.id, "pause-test");
+  await pi.followUp(task.id, "resume-test");
+  assert(calls[0] === "steer:pause-test", "steer forwards to live session");
+  assert(calls[1] === "followUp:resume-test", "followUp forwards to live session");
+  await pi.stop(task.id);
+
   console.log("GREEN");
 }
 

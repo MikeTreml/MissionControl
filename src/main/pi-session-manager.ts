@@ -54,6 +54,8 @@ interface Entry {
   unsubscribe: () => void;
   /** True once we've fired onSessionEnd — prevents double-dispatch on stop(). */
   ended: boolean;
+  /** True while MC has paused the task via session.steer(). */
+  paused: boolean;
   /** Open ask_user calls keyed by toolCallId. resolve() is called by the IPC handler when the renderer sends an answer. */
   pendingAsks: Map<string, PendingAsk>;
   /** Last successful ask timestamp — drives the runtime rate limit per task. */
@@ -249,6 +251,7 @@ export class PiSessionManager {
       session: undefined as unknown as AgentSession, // filled below
       unsubscribe: () => {},
       ended: false,
+      paused: false,
       pendingAsks: new Map(),
     };
     const askUserTool = makeAskUserTool({
@@ -291,9 +294,17 @@ export class PiSessionManager {
         ...extractPayload(event),
       });
 
-      // agent_end = the turn pi was running has finished. Treat as
-      // completion; orchestrator decides what to do next.
+      // agent_end = the turn pi was running has finished. If MC paused the
+      // task via session.steer(), keep the session alive so resume can send a
+      // follow-up into the same conversation instead of disposing it.
       if (event.type === "agent_end") {
+        if (entry.paused) {
+          void this.tasks.appendEvent(taskId, {
+            type: "pi:session-held",
+            reason: "paused",
+          });
+          return;
+        }
         void this.fireEnd(taskId, { reason: "completed" });
       }
     });
@@ -311,6 +322,24 @@ export class PiSessionManager {
     }
   }
 
+  async steer(taskId: string, text: string): Promise<void> {
+    const entry = this.sessions.get(taskId);
+    if (!entry) {
+      throw new Error(`No active pi session for task "${taskId}"`);
+    }
+    entry.paused = true;
+    await entry.session.steer(text);
+  }
+
+  async followUp(taskId: string, text: string): Promise<void> {
+    const entry = this.sessions.get(taskId);
+    if (!entry) {
+      throw new Error(`No active pi session for task "${taskId}"`);
+    }
+    entry.paused = false;
+    await entry.session.followUp(text);
+  }
+
   async stop(taskId: string): Promise<void> {
     const entry = this.sessions.get(taskId);
     if (!entry) return;
@@ -322,6 +351,7 @@ export class PiSessionManager {
     }
     entry.pendingAsks.clear();
 
+    entry.paused = false;
     entry.unsubscribe();
     try {
       await entry.session.abort();

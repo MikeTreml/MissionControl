@@ -4,7 +4,7 @@
  * Run from mc-v2-electron/:
  *   node --experimental-strip-types src/main/workflows.smoke.ts
  *
- * Covers the happy path (the two starter workflows shipped in ../../workflows)
+ * Covers the happy path (the bundled workflows shipped in ../../workflows)
  * plus error cases on a freshly-built tmp directory.
  */
 import { promises as fs } from "node:fs";
@@ -21,11 +21,13 @@ async function main(): Promise<void> {
   // ── happy path: load real workflows shipped in /workflows ───────────
   const realLoader = new WorkflowLoader(path.join(REPO_ROOT, "workflows"));
   const loaded = await realLoader.loadAll();
-  assert(loaded.length === 2, `expected 2 workflows, got ${loaded.length}`);
-  assert(loaded[0]!.code === "F", `expected F first (alphabetical), got ${loaded[0]!.code}`);
-  assert(loaded[0]!.name === "Feature", `expected name "Feature"`);
-  assert(loaded[1]!.code === "X", `expected X second, got ${loaded[1]!.code}`);
-  console.log(`[smoke] real workflows load: ${loaded.map((w) => w.code).join(", ")}`);
+  const codes = loaded.map((w) => w.code);
+  assert(loaded.length >= 2, `expected at least 2 workflows, got ${loaded.length}`);
+  assert(codes.includes("F"), `expected bundled workflows to include F, got ${codes.join(",")}`);
+  assert(codes.includes("X"), `expected bundled workflows to include X, got ${codes.join(",")}`);
+  assert(codes.join(",") === [...codes].sort().join(","), `expected workflows sorted alphabetically, got ${codes.join(",")}`);
+  assert(loaded.find((w) => w.code === "F")!.name === "Feature", `expected workflow F to be named Feature`);
+  console.log(`[smoke] real workflows load: ${codes.join(", ")}`);
 
   // ── missing root → returns [] instead of throwing ───────────────────
   const missing = await new WorkflowLoader("/tmp/does-not-exist-mc").loadAll();

@@ -96,6 +96,26 @@ async function main(): Promise<void> {
   try { await mgr.start({ taskId: "NOPE-999F" }); } catch { threw = true; }
   assert(threw, "start throws on unknown task id");
 
+  // pause/resume should forward to pi when present
+  const piCalls: string[] = [];
+  const mgrWithPi = new RunManager(tasks, {
+    start: async () => {},
+    steer: async (taskId: string, text: string) => { piCalls.push(`steer:${taskId}:${text}`); },
+    followUp: async (taskId: string, text: string) => { piCalls.push(`followUp:${taskId}:${text}`); },
+    stop: async () => {},
+  } as any);
+  const piTask = await tasks.createTask({
+    title: "Runner with pi",
+    projectId: "runner",
+    projectPrefix: "RN",
+  });
+  await mgrWithPi.start({ taskId: piTask.id, agentSlug: "developer" });
+  await mgrWithPi.pause({ taskId: piTask.id });
+  await mgrWithPi.resume({ taskId: piTask.id });
+  assert(piCalls.length === 2, "pause/resume call through to pi session manager");
+  assert(piCalls[0]!.includes("[paused by user"), "pause forwards steer message");
+  assert(piCalls[1]!.includes("[resumed — continue from where you left off]"), "resume forwards followUp message");
+
   // ── Campaign iteration ──────────────────────────────────────────────
   // pi is null → start/completeRun follow the state-machine paths only,
   // which is exactly what we want to test (campaign iteration logic).

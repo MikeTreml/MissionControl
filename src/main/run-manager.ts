@@ -244,6 +244,15 @@ export class RunManager {
     const task = await this.requireTask(input.taskId);
     this.assertTransition(task.runState, "running", "pause");
 
+    if (this.pi) {
+      await this.pi.steer(task.id, "[paused by user — wait for resume signal]");
+      await this.tasks.appendEvent(task.id, {
+        type: "pi:steer-sent",
+        reason: "pause",
+        message: "[paused by user — wait for resume signal]",
+      });
+    }
+
     const next: Task = { ...task, runState: "paused" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-paused" });
@@ -254,6 +263,15 @@ export class RunManager {
   async resume(input: { taskId: string }): Promise<Task> {
     const task = await this.requireTask(input.taskId);
     this.assertTransition(task.runState, "paused", "resume");
+
+    if (this.pi) {
+      await this.pi.followUp(task.id, "[resumed — continue from where you left off]");
+      await this.tasks.appendEvent(task.id, {
+        type: "pi:steer-sent",
+        reason: "resume",
+        message: "[resumed — continue from where you left off]",
+      });
+    }
 
     const next: Task = { ...task, runState: "running" };
     await this.tasks.saveTask(next);

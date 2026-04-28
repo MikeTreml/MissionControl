@@ -1,0 +1,6 @@
+{
+  "code": "M",
+  "name": "Maintenance Forever",
+  "description": "Continuous Mission Control improvement loop: read plans, implement one bounded task, validate, commit, sleep, repeat.",
+  "lanes": ["plan", "develop", "review", "surgery", "done"]
+}
