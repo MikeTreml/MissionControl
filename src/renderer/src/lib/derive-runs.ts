@@ -16,6 +16,18 @@
  */
 import type { TaskEvent } from "../../../shared/models";
 
+export interface DerivedSubagent {
+  spawnId: string;
+  startedAt: string;
+  endedAt?: string;
+  agentSlug?: string;
+  agentName?: string;
+  parentAgentSlug?: string;
+  reason?: string;
+  exitReason?: string;
+  durationMs?: number;
+}
+
 export interface DerivedRun {
   startedAt: string;
   endedAt?: string;
@@ -28,6 +40,7 @@ export interface DerivedRun {
   reason?: string;
   babysitterRunId?: string;
   babysitterRunPath?: string;
+  subagents: DerivedSubagent[];
 }
 
 export function deriveRuns(events: TaskEvent[]): DerivedRun[] {
@@ -40,6 +53,7 @@ export function deriveRuns(events: TaskEvent[]): DerivedRun[] {
       current = {
         startedAt: e.timestamp,
         agentSlug: typeof rec.agentSlug === "string" ? rec.agentSlug : undefined,
+        subagents: [],
       };
       runs.push(current);
     } else if (e.type === "run-ended" && current) {
@@ -67,9 +81,38 @@ export function deriveRuns(events: TaskEvent[]): DerivedRun[] {
     } else if (current && e.type === "babysitter-run-detected") {
       if (typeof rec.babysitterRunId === "string") current.babysitterRunId = rec.babysitterRunId;
       if (typeof rec.runPath === "string") current.babysitterRunPath = rec.runPath;
+    } else if (current && e.type === "pi:subagent_spawn") {
+      const spawnId = typeof rec.spawnId === "string" ? rec.spawnId : undefined;
+      if (!spawnId) continue;
+      current.subagents.push({
+        spawnId,
+        startedAt: e.timestamp,
+        agentSlug: firstString(rec, ["agentSlug", "subagent", "agentName"]),
+        agentName: firstString(rec, ["agentName", "subagent", "agentSlug"]),
+        parentAgentSlug: typeof rec.parentAgentSlug === "string" ? rec.parentAgentSlug : undefined,
+        reason: typeof rec.reason === "string" ? rec.reason : undefined,
+      });
+    } else if (current && e.type === "pi:subagent_complete") {
+      const spawnId = typeof rec.spawnId === "string" ? rec.spawnId : undefined;
+      if (!spawnId) continue;
+      const target = current.subagents.find((s) => s.spawnId === spawnId);
+      if (!target) continue;
+      target.endedAt = e.timestamp;
+      target.exitReason = firstString(rec, ["exitReason", "reason", "status"]);
+      if (typeof rec.durationMs === "number") target.durationMs = rec.durationMs;
+      if (!target.agentSlug) target.agentSlug = firstString(rec, ["agentSlug", "subagent", "agentName"]);
+      if (!target.agentName) target.agentName = firstString(rec, ["agentName", "subagent", "agentSlug"]);
     }
   }
   return runs;
+}
+
+function firstString(rec: Record<string, unknown>, keys: string[]): string | undefined {
+  for (const key of keys) {
+    const value = rec[key];
+    if (typeof value === "string" && value) return value;
+  }
+  return undefined;
 }
 
 /** Duration in ms, undefined if still running. */

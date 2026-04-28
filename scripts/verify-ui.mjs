@@ -445,6 +445,43 @@ async function run() {
       `Clear button appears when blocker is set`,
     );
 
+    // Seed a synthetic run with one subagent so Run History can derive and expand it.
+    await win.evaluate(async (id) => {
+      const now = Date.now();
+      const at = (ms) => new Date(now + ms).toISOString();
+      await window.mc.appendTaskEvent(id, { type: "run-started", timestamp: at(0), agentSlug: "planner" });
+      await window.mc.appendTaskEvent(id, {
+        type: "pi:subagent_spawn",
+        timestamp: at(100),
+        spawnId: "spawn-001",
+        agentName: "RepoMapper",
+        agentSlug: "rmp",
+        parentAgentSlug: "planner",
+        reason: "map the repo",
+      });
+      await window.mc.appendTaskEvent(id, {
+        type: "pi:subagent_complete",
+        timestamp: at(800),
+        spawnId: "spawn-001",
+        agentName: "RepoMapper",
+        exitReason: "completed",
+        durationMs: 700,
+      });
+      await window.mc.appendTaskEvent(id, { type: "run-ended", timestamp: at(1000), reason: "completed" });
+    }, expectedTaskId);
+    await win.waitForTimeout(600);
+    const subagentToggle = win.getByRole("button", { name: /1 subagent/ }).first();
+    assertions.check(
+      (await subagentToggle.count()) > 0,
+      `Run History shows a subagent summary toggle`,
+    );
+    await subagentToggle.click();
+    await win.waitForTimeout(200);
+    assertions.check(
+      (await win.locator('text="RepoMapper"').count()) > 0,
+      `Expanded Run History shows derived subagent details`,
+    );
+
     // ── 11b. Delete THIS task from Task Detail (two-step) ───────────────
     await win.getByRole("button", { name: "Delete", exact: true }).click();
     await win.waitForTimeout(150);

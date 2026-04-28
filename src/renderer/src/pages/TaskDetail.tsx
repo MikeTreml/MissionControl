@@ -17,7 +17,7 @@ import { usePiModels } from "../hooks/usePiModels";
 import { useWorkflows } from "../hooks/useWorkflows";
 import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
-import { deriveRuns, type DerivedRun } from "../lib/derive-runs";
+import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
@@ -706,6 +706,7 @@ function CampaignItems({ task }: { task: Task }): JSX.Element {
 
 function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
   const runs = deriveRuns(events);
+  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
 
   return (
     <section className="card">
@@ -724,6 +725,7 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
               <th style={cellHead}>Agent</th>
               <th style={cellHead}>Model</th>
               <th style={cellHead}>Babysitter run</th>
+              <th style={cellHead}>Subagents</th>
               <th style={cellHead}>Duration</th>
               <th style={cellHead}>Tokens (in/out)</th>
               <th style={cellHead}>Cost</th>
@@ -732,40 +734,90 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
           </thead>
           <tbody>
             {runs.map((r, idx) => (
-              <tr key={idx} style={{ borderTop: "1px solid var(--border)" }}>
-                <td style={cell}>{fmt(r.startedAt)}</td>
-                <td style={cell}>{r.agentSlug ?? "—"}</td>
-                <td style={cell}>{r.model ? `${r.provider ?? ""}${r.provider ? " · " : ""}${r.model}` : "—"}</td>
-                <td style={cell}>
-                  {r.babysitterRunId && r.babysitterRunPath ? (
-                    <button
-                      className="button ghost"
-                      style={{ padding: "2px 8px", fontSize: 12 }}
-                      title={r.babysitterRunPath}
-                      onClick={() => { void window.mc?.openPath(r.babysitterRunPath!); }}
-                    >
-                      {r.babysitterRunId}
-                    </button>
-                  ) : "—"}
-                </td>
-                <td style={cell}>{r.endedAt ? dur(r.startedAt, r.endedAt) : "running"}</td>
-                <td style={cell}>
-                  {r.tokensIn !== undefined
-                    ? `${r.tokensIn.toLocaleString()} / ${(r.tokensOut ?? 0).toLocaleString()}`
-                    : "—"}
-                </td>
-                <td style={cell}>{r.costUSD ? `$${r.costUSD.toFixed(4)}` : "—"}</td>
-                <td style={cell}>
-                  <span className={`pill ${pillForReason(r.reason)}`}>
-                    {r.reason ?? "ongoing"}
-                  </span>
-                </td>
-              </tr>
+              <>
+                <tr key={`run-${idx}`} style={{ borderTop: "1px solid var(--border)" }}>
+                  <td style={cell}>{fmt(r.startedAt)}</td>
+                  <td style={cell}>{r.agentSlug ?? "—"}</td>
+                  <td style={cell}>{r.model ? `${r.provider ?? ""}${r.provider ? " · " : ""}${r.model}` : "—"}</td>
+                  <td style={cell}>
+                    {r.babysitterRunId && r.babysitterRunPath ? (
+                      <button
+                        className="button ghost"
+                        style={{ padding: "2px 8px", fontSize: 12 }}
+                        title={r.babysitterRunPath}
+                        onClick={() => { void window.mc?.openPath(r.babysitterRunPath!); }}
+                      >
+                        {r.babysitterRunId}
+                      </button>
+                    ) : "—"}
+                  </td>
+                  <td style={cell}>
+                    {r.subagents.length > 0 ? (
+                      <button
+                        className="button ghost"
+                        style={{ padding: "2px 8px", fontSize: 12 }}
+                        onClick={() => setExpanded((prev) => ({ ...prev, [idx]: !prev[idx] }))}
+                      >
+                        {expanded[idx] ? "▾" : "▸"} {r.subagents.length} subagent{r.subagents.length === 1 ? "" : "s"}
+                      </button>
+                    ) : "—"}
+                  </td>
+                  <td style={cell}>{r.endedAt ? dur(r.startedAt, r.endedAt) : "running"}</td>
+                  <td style={cell}>
+                    {r.tokensIn !== undefined
+                      ? `${r.tokensIn.toLocaleString()} / ${(r.tokensOut ?? 0).toLocaleString()}`
+                      : "—"}
+                  </td>
+                  <td style={cell}>{r.costUSD ? `$${r.costUSD.toFixed(4)}` : "—"}</td>
+                  <td style={cell}>
+                    <span className={`pill ${pillForReason(r.reason)}`}>
+                      {r.reason ?? "ongoing"}
+                    </span>
+                  </td>
+                </tr>
+                {expanded[idx] && r.subagents.length > 0 && (
+                  <tr key={`subagents-${idx}`} style={{ borderTop: "1px solid var(--border)" }}>
+                    <td style={{ ...cell, paddingTop: 8, paddingBottom: 12 }} colSpan={9}>
+                      <div style={{ display: "grid", gap: 8 }}>
+                        {r.subagents.map((sub) => (
+                          <SubagentRow key={sub.spawnId} sub={sub} />
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
         </table>
       )}
     </section>
+  );
+}
+
+function SubagentRow({ sub }: { sub: DerivedSubagent }): JSX.Element {
+  const label = sub.agentName ?? sub.agentSlug ?? sub.spawnId;
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        padding: "8px 10px",
+        border: "1px solid var(--border)",
+        borderRadius: 10,
+        background: "var(--panel-2)",
+      }}
+    >
+      <span style={{ fontSize: 12 }}>⤴</span>
+      <strong>{label}</strong>
+      <span className="muted" style={{ fontSize: 12 }}>{sub.reason ?? sub.spawnId}</span>
+      <span className="muted" style={{ fontSize: 12, marginLeft: "auto" }}>
+        {sub.endedAt
+          ? `${sub.exitReason ?? "completed"} · ${sub.durationMs !== undefined ? `${(sub.durationMs / 1000).toFixed(1)}s` : dur(sub.startedAt, sub.endedAt)}`
+          : "running"}
+      </span>
+    </div>
   );
 }
 
