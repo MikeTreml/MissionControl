@@ -9,6 +9,7 @@ import { useState } from "react";
 
 import { Sidebar } from "./components/Sidebar";
 import { RightBar } from "./components/RightBar";
+import { Toaster } from "./components/Toaster";
 
 import { Dashboard } from "./pages/Dashboard";
 import { ProjectDetail } from "./pages/ProjectDetail";
@@ -63,13 +64,16 @@ export function App(): JSX.Element {
         openProject,
       }}
     >
-      <div className="app-shell">
-        <Sidebar />
-        <main className="main">
-          <CurrentView view={view} />
-        </main>
-        <RightBar />
-      </div>
+      <>
+        <div className="app-shell">
+          <Sidebar />
+          <main className="main">
+            <CurrentView view={view} />
+          </main>
+          <RightBar />
+        </div>
+        <Toaster />
+      </>
     </RouteContext.Provider>
   );
 }

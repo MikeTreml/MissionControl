@@ -159,3 +159,51 @@ body {
   0%, 100% { opacity: 1; transform: scale(1); }
   50%      { opacity: 0.45; transform: scale(0.7); }
 }
+
+.toaster {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 1000;
+  display: grid;
+  gap: 10px;
+  width: min(320px, calc(100vw - 36px));
+}
+
+.toast {
+  background: rgba(29, 34, 48, 0.98);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  animation: toast-in 140ms ease-out;
+}
+.toast[data-tone="good"] { border-left-color: var(--good); }
+.toast[data-tone="warn"] { border-left-color: var(--warn); }
+.toast[data-tone="bad"]  { border-left-color: var(--bad); }
+
+.toast-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-close {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

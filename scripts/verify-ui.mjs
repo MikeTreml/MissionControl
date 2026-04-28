@@ -537,6 +537,23 @@ async function run() {
       `Approve advanced lane from "approval" to "done" (got "${afterApprove}")`,
     );
 
+    const toast = win.locator('.toast:has-text("Moved to done")').first();
+    assertions.check(
+      (await toast.count()) > 0,
+      `Lane change shows a toast`,
+    );
+
+    // Back to dashboard, then use the toast to jump back into the task.
+    await win.getByRole("button", { name: /Dashboard/ }).click();
+    await win.waitForTimeout(200);
+    await toast.click();
+    await win.waitForTimeout(300);
+    const h1AfterToast = (await win.locator("h1").first().textContent()) ?? "";
+    assertions.check(
+      h1AfterToast.startsWith(campaignId),
+      `Clicking a toast opens the matching task (got "${h1AfterToast.trim()}")`,
+    );
+
     // Back to dashboard for the remaining flows.
     await win.getByRole("button", { name: /Dashboard/ }).click();
     await win.waitForTimeout(200);
