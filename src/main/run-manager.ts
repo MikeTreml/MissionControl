@@ -17,7 +17,8 @@
  * could pre-author a campaign-specific process.js (with cross-item
  * lessons + checkpoint-every-N) — see docs/IDEAS-WORTH-BORROWING.md.
  */
-import { existsSync } from "node:fs";
+import { existsSync, promises as fs } from "node:fs";
+import path from "node:path";
 
 import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
@@ -75,11 +76,13 @@ export class RunManager {
       const cwd = await this.resolveCwd(task);
       const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
       await this.tasks.writePromptFile(task.id, renderPromptFile(task, agentSlug));
+      const beforeRuns = await snapshotBabysitterRuns(cwd);
       await this.pi.start(task.id, {
         prompt: buildBabysitPrompt(task, agentSlug, mode),
         cwd,
         ...(input.model ? { model: input.model } : {}),
       });
+      void this.detectBabysitterRun(task.id, cwd, beforeRuns);
     }
     const next: Task = {
       ...task,
@@ -348,6 +351,35 @@ export class RunManager {
       );
     }
   }
+
+  private async detectBabysitterRun(taskId: string, cwd: string, beforeRuns: Set<string>): Promise<void> {
+    const runsRoot = path.join(cwd, ".a5c", "runs");
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+      await sleep(250);
+      const afterRuns = await snapshotBabysitterRuns(cwd);
+      const newRunId = [...afterRuns].find((id) => !beforeRuns.has(id));
+      if (!newRunId) continue;
+      const runPath = path.join(runsRoot, newRunId);
+      await this.tasks.appendEvent(taskId, {
+        type: "babysitter-run-detected",
+        babysitterRunId: newRunId,
+        runPath,
+      });
+      await this.tasks.appendStatus(taskId, `Babysitter run detected — ${newRunId}`);
+      return;
+    }
+  }
+}
+
+async function snapshotBabysitterRuns(cwd: string): Promise<Set<string>> {
+  const runsRoot = path.join(cwd, ".a5c", "runs");
+  if (!existsSync(runsRoot)) return new Set();
+  const entries = await fs.readdir(runsRoot, { withFileTypes: true });
+  return new Set(entries.filter((e) => e.isDirectory()).map((e) => e.name));
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function pendingItemCount(task: Task): number {

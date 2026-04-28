@@ -28,6 +28,7 @@ const api = {
   appendTaskStatus: (id: string, line: string) =>
     ipcRenderer.invoke("tasks:appendStatus", id, line),
   openTaskFolder: (id: string) => ipcRenderer.invoke("shell:openTaskFolder", id),
+  openPath:       (absPath: string) => ipcRenderer.invoke("shell:openPath", absPath),
 
   // ── projects ─────────────────────────────────────────────────────────
   listProjects:    () => ipcRenderer.invoke("projects:list"),

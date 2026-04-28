@@ -26,6 +26,8 @@ export interface DerivedRun {
   tokensOut?: number;
   costUSD?: number;
   reason?: string;
+  babysitterRunId?: string;
+  babysitterRunPath?: string;
 }
 
 export function deriveRuns(events: TaskEvent[]): DerivedRun[] {
@@ -62,6 +64,9 @@ export function deriveRuns(events: TaskEvent[]): DerivedRun[] {
         current.tokensOut = (current.tokensOut ?? 0) + outp;
         current.costUSD   = (current.costUSD   ?? 0) + total;
       }
+    } else if (current && e.type === "babysitter-run-detected") {
+      if (typeof rec.babysitterRunId === "string") current.babysitterRunId = rec.babysitterRunId;
+      if (typeof rec.runPath === "string") current.babysitterRunPath = rec.runPath;
     }
   }
   return runs;

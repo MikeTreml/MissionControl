@@ -2,7 +2,7 @@
  * Smoke for RunManager — exercises the state machine against a real TaskStore
  * in a temp dir. No pi involvement; when pi lands this smoke grows alongside.
  */
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -99,7 +99,11 @@ async function main(): Promise<void> {
   // pause/resume should forward to pi when present
   const piCalls: string[] = [];
   const mgrWithPi = new RunManager(tasks, {
-    start: async () => {},
+    start: async (taskId: string, options?: { cwd?: string }) => {
+      if (options?.cwd) {
+        mkdirSync(join(options.cwd, ".a5c", "runs", `run-${taskId}`), { recursive: true });
+      }
+    },
     steer: async (taskId: string, text: string) => { piCalls.push(`steer:${taskId}:${text}`); },
     followUp: async (taskId: string, text: string) => { piCalls.push(`followUp:${taskId}:${text}`); },
     stop: async () => {},
@@ -115,6 +119,10 @@ async function main(): Promise<void> {
   assert(piCalls.length === 2, "pause/resume call through to pi session manager");
   assert(piCalls[0]!.includes("[paused by user"), "pause forwards steer message");
   assert(piCalls[1]!.includes("[resumed — continue from where you left off]"), "resume forwards followUp message");
+  await new Promise((resolve) => setTimeout(resolve, 2800));
+  const piEvents = await tasks.readEvents(piTask.id);
+  const detected = piEvents.find((e) => e.type === "babysitter-run-detected") as ({ babysitterRunId?: string } & Record<string, unknown>) | undefined;
+  assert(Boolean(detected?.babysitterRunId), "run manager detects newly created babysitter run directories");
 
   // ── Campaign iteration ──────────────────────────────────────────────
   // pi is null → start/completeRun follow the state-machine paths only,

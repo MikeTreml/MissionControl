@@ -723,6 +723,7 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
               <th style={cellHead}>Started</th>
               <th style={cellHead}>Agent</th>
               <th style={cellHead}>Model</th>
+              <th style={cellHead}>Babysitter run</th>
               <th style={cellHead}>Duration</th>
               <th style={cellHead}>Tokens (in/out)</th>
               <th style={cellHead}>Cost</th>
@@ -735,6 +736,18 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
                 <td style={cell}>{fmt(r.startedAt)}</td>
                 <td style={cell}>{r.agentSlug ?? "—"}</td>
                 <td style={cell}>{r.model ? `${r.provider ?? ""}${r.provider ? " · " : ""}${r.model}` : "—"}</td>
+                <td style={cell}>
+                  {r.babysitterRunId && r.babysitterRunPath ? (
+                    <button
+                      className="button ghost"
+                      style={{ padding: "2px 8px", fontSize: 12 }}
+                      title={r.babysitterRunPath}
+                      onClick={() => { void window.mc?.openPath(r.babysitterRunPath!); }}
+                    >
+                      {r.babysitterRunId}
+                    </button>
+                  ) : "—"}
+                </td>
                 <td style={cell}>{r.endedAt ? dur(r.startedAt, r.endedAt) : "running"}</td>
                 <td style={cell}>
                   {r.tokensIn !== undefined

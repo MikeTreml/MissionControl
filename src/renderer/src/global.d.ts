@@ -57,6 +57,7 @@ export interface McApi {
   listTaskFiles: (id: string) => Promise<Array<{ name: string; size: number; modifiedAt: string }>>;
   appendTaskStatus: (id: string, line: string) => Promise<void>;
   openTaskFolder: (id: string) => Promise<{ ok: boolean; reason?: "not-found" }>;
+  openPath: (absPath: string) => Promise<{ ok: boolean; reason?: "invalid-path" | "not-absolute" | "not-found" }>;
 
   // projects — enriched with derived git info on the main side
   listProjects: () => Promise<ProjectWithGit[]>;

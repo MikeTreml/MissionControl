@@ -8,6 +8,7 @@
  */
 import { ipcMain, shell } from "electron";
 import { existsSync } from "node:fs";
+import path from "node:path";
 
 import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
@@ -170,16 +171,27 @@ export function registerIpc(stores: Stores): void {
     stores.settings.save(patch),
   );
 
-  // ── shell convenience — reveal the task's folder in the OS file UI ───
-  // Point the user at the task's on-disk state: PROMPT.md, STATUS.md,
-  // events.jsonl, workspace/, per-role notes. No path is returned to the
-  // renderer; the shell opens it directly.
+  // ── shell convenience — reveal folders in the OS file UI ─────────────
+  // Point the user at on-disk state: task folder, babysitter run dir, etc.
   ipcMain.handle("shell:openTaskFolder", (_e, taskId: string) => {
     const folder = stores.tasks.folderFor(taskId);
     if (!existsSync(folder)) {
       return { ok: false, reason: "not-found" as const };
     }
     void shell.openPath(folder);
+    return { ok: true };
+  });
+  ipcMain.handle("shell:openPath", (_e, absPath: string) => {
+    if (typeof absPath !== "string" || !absPath) {
+      return { ok: false, reason: "invalid-path" as const };
+    }
+    if (!path.isAbsolute(absPath)) {
+      return { ok: false, reason: "not-absolute" as const };
+    }
+    if (!existsSync(absPath)) {
+      return { ok: false, reason: "not-found" as const };
+    }
+    void shell.openPath(absPath);
     return { ok: true };
   });
 
