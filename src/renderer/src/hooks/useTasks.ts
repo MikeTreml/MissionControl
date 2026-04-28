@@ -9,7 +9,8 @@ import { useEffect, useState } from "react";
 
 import { mockTasks, type MockLane, type MockPill, type MockRoleLabel, type MockTask } from "../mock-data";
 import { useSubscribe } from "./data-bus";
-import type { Lane, Task } from "../../../shared/models";
+import { latestModelForEvents } from "../lib/derive-runs";
+import type { Lane, Task, TaskEvent } from "../../../shared/models";
 
 /**
  * Board-shaped task. Extends MockTask with:
@@ -24,6 +25,7 @@ export type UiTask = MockTask & {
   projectIcon: string;     // empty if no icon set on the project
   cycle: number;           // Task.cycle — counts reviewer loopbacks
   updatedAt: string;       // ISO 8601 — needed for idle / stuck calculations
+  currentModel: string;
 };
 
 /** Map real lane code → display label. */
@@ -46,7 +48,7 @@ const LANE_STYLE: Record<Lane, { role: MockRoleLabel; pill: MockPill }> = {
   done:     { role: "Done",      pill: "good" },
 };
 
-function toUiTask(t: Task, projectIcon: string): UiTask {
+function toUiTask(t: Task, projectIcon: string, currentModel: string): UiTask {
   const style = LANE_STYLE[t.lane];
   return {
     id: t.id,
@@ -61,6 +63,7 @@ function toUiTask(t: Task, projectIcon: string): UiTask {
     projectIcon,
     cycle: t.cycle,
     updatedAt: t.updatedAt,
+    currentModel,
   };
 }
 
@@ -84,7 +87,7 @@ export function useTasks(): TasksState {
       if (!window.mc) {
         // Mock tasks don't have a real project id; stamp a synthetic one so
         // filters don't collapse them.
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString() })));
+        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "" })));
         setIsDemo(true);
         return;
       }
@@ -95,15 +98,23 @@ export function useTasks(): TasksState {
       // Map project id → icon so each task can carry its project's icon.
       const iconByProject = new Map(projects.map((p) => [p.id, p.icon]));
       if (real.length === 0) {
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString() })));
+        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "" })));
         setIsDemo(true);
       } else {
-        setTasks(real.map((t) => toUiTask(t, iconByProject.get(t.project) ?? "")));
+        const eventRows = await Promise.all(real.map(async (t) => {
+          try {
+            return [t.id, await window.mc.readTaskEvents(t.id)] as const;
+          } catch {
+            return [t.id, [] as TaskEvent[]] as const;
+          }
+        }));
+        const modelByTask = new Map(eventRows.map(([id, events]) => [id, latestModelForEvents(events)]));
+        setTasks(real.map((t) => toUiTask(t, iconByProject.get(t.project) ?? "", modelByTask.get(t.id) ?? "")));
         setIsDemo(false);
       }
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
-      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString() })));
+      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "" })));
       setIsDemo(true);
     } finally {
       setLoading(false);

@@ -451,6 +451,11 @@ async function run() {
       const at = (ms) => new Date(now + ms).toISOString();
       await window.mc.appendTaskEvent(id, { type: "run-started", timestamp: at(0), agentSlug: "planner" });
       await window.mc.appendTaskEvent(id, {
+        type: "pi:message_start",
+        timestamp: at(50),
+        message: { role: "assistant", model: "gpt-5-codex", provider: "openai" },
+      });
+      await window.mc.appendTaskEvent(id, {
         type: "pi:subagent_spawn",
         timestamp: at(100),
         spawnId: "spawn-001",
@@ -470,6 +475,14 @@ async function run() {
       await window.mc.appendTaskEvent(id, { type: "run-ended", timestamp: at(1000), reason: "completed" });
     }, expectedTaskId);
     await win.waitForTimeout(600);
+    await win.getByRole("button", { name: /Dashboard/ }).click();
+    await win.waitForTimeout(300);
+    assertions.check(
+      (await win.locator(`.task:has-text("${expectedTaskId}")`).filter({ hasText: "Model: Codex" }).count()) > 0,
+      `Task card shows latest model badge`,
+    );
+    await win.locator(`text="${expectedTaskId}"`).first().click();
+    await win.waitForTimeout(300);
     const subagentToggle = win.getByRole("button", { name: /1 subagent/ }).first();
     assertions.check(
       (await subagentToggle.count()) > 0,
