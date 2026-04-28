@@ -1,0 +1,11 @@
+{
+  "slug": "documenter",
+  "code": "k",
+  "name": "Documenter",
+  "title": "Documenter",
+  "description": "Writes technical documentation — wiring docs, integration guides, runbooks, decision logs. Cares about correctness and completeness over voice.",
+  "primaryModel": "claude-opus",
+  "fallbackModels": ["qwen-coder", "gpt-5-codex"],
+  "permissions": { "inherit": true },
+  "promptFile": "prompt.md"
+}
