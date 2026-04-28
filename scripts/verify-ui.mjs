@@ -414,11 +414,16 @@ async function run() {
       `Task Detail header reflects edited title (got "${h1AfterEdit.trim()}")`,
     );
 
-    // Blocker field renders, accepts text, persists on Enter.
+    // Waiting-on field renders, accepts text, persists on Enter.
+    const waitingLabel = win.locator('strong:has-text("Waiting on:")').first();
+    assertions.check(
+      (await waitingLabel.count()) === 1,
+      `Waiting on label renders on Task Detail`,
+    );
     const blockerInput = win.locator('input[placeholder^="What\'s this waiting on?"]');
     assertions.check(
       (await blockerInput.count()) === 1,
-      `Blocker field renders on Task Detail`,
+      `Waiting on field renders on Task Detail`,
     );
     await blockerInput.fill("Waiting on customer review");
     await blockerInput.press("Enter");
@@ -428,7 +433,7 @@ async function run() {
       const refreshed = JSON.parse(await readFile(taskManifest, "utf8"));
       assertions.check(
         refreshed.blocker === "Waiting on customer review",
-        `Blocker persisted to manifest.json (got "${refreshed.blocker}")`,
+        `Waiting reason persisted to manifest.json (got "${refreshed.blocker}")`,
       );
     } catch (err) {
       assertions.check(false, `Re-read manifest after blocker save: ${err.message ?? err}`);

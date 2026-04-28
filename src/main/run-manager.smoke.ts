@@ -114,11 +114,13 @@ async function main(): Promise<void> {
     projectPrefix: "RN",
   });
   await mgrWithPi.start({ taskId: piTask.id, agentSlug: "developer" });
+  await tasks.saveTask({ ...(await tasks.getTask(piTask.id))!, blocker: "Build callback pending" });
   await mgrWithPi.pause({ taskId: piTask.id });
   await mgrWithPi.resume({ taskId: piTask.id });
   assert(piCalls.length === 2, "pause/resume call through to pi session manager");
   assert(piCalls[0]!.includes("[paused by user"), "pause forwards steer message");
   assert(piCalls[1]!.includes("[resumed — continue from where you left off]"), "resume forwards followUp message");
+  assert((await tasks.getTask(piTask.id))!.blocker === "", "resume clears stale waiting reason");
   await new Promise((resolve) => setTimeout(resolve, 2800));
   const piEvents = await tasks.readEvents(piTask.id);
   const detected = piEvents.find((e) => e.type === "babysitter-run-detected") as ({ babysitterRunId?: string } & Record<string, unknown>) | undefined;

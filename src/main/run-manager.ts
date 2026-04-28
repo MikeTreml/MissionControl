@@ -276,10 +276,10 @@ export class RunManager {
       });
     }
 
-    const next: Task = { ...task, runState: "running" };
+    const next: Task = { ...task, runState: "running", blocker: "" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-resumed" });
-    await this.tasks.appendStatus(task.id, "Resumed");
+    await this.tasks.appendStatus(task.id, task.blocker ? "Resumed — cleared waiting reason" : "Resumed");
     return next;
   }
 

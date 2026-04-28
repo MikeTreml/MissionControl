@@ -415,7 +415,7 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
       }}
     >
       <strong style={{ fontSize: 13, color: hasBlocker ? "var(--warn)" : "var(--muted)", flex: "0 0 auto" }}>
-        Blocker:
+        Waiting on:
       </strong>
       <input
         type="text"
@@ -443,7 +443,7 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
           className="button ghost"
           onClick={clear}
           disabled={busy}
-          title="Clear blocker"
+          title="Clear waiting reason"
           style={{ flex: "0 0 auto" }}
         >
           Clear
