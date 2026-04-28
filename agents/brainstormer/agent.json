@@ -1,0 +1,11 @@
+{
+  "slug": "brainstormer",
+  "code": "b",
+  "name": "Brainstormer",
+  "title": "Brainstormer",
+  "description": "Generates many candidate ideas / approaches without committing. Optimises for breadth and weirdness, not correctness.",
+  "primaryModel": "claude-opus",
+  "fallbackModels": ["gpt-5-codex", "qwen-coder"],
+  "permissions": { "inherit": true },
+  "promptFile": "prompt.md"
+}

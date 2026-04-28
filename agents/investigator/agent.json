@@ -1,0 +1,11 @@
+{
+  "slug": "investigator",
+  "code": "i",
+  "name": "Investigator",
+  "title": "Researcher",
+  "description": "Gathers sources, quotes, and prior art for a research task. Cites everything. Distinguishes primary sources from commentary.",
+  "primaryModel": "claude-opus",
+  "fallbackModels": ["gpt-5-codex"],
+  "permissions": { "inherit": true },
+  "promptFile": "prompt.md"
+}
