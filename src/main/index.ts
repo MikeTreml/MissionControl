@@ -43,6 +43,7 @@ import { AgentLoader } from "./agent-loader.ts";
 import { PiSessionManager } from "./pi-session-manager.ts";
 import { RunManager } from "./run-manager.ts";
 import { SettingsStore } from "./settings-store.ts";
+import { LibraryIndexStore } from "./library-index.ts";
 import { registerIpc } from "./ipc.ts";
 
 async function bootstrapStores(): Promise<void> {
@@ -56,6 +57,7 @@ async function bootstrapStores(): Promise<void> {
   const workflows = new WorkflowLoader(join(appRoot, "workflows"));
   const agents = new AgentLoader(join(appRoot, "agents"));
   const settings = new SettingsStore(userData);
+  const libraryIndex = new LibraryIndexStore(join(appRoot, "library"));
 
   await Promise.all([tasks.init(), projects.init(), settings.init()]);
 
@@ -76,7 +78,7 @@ async function bootstrapStores(): Promise<void> {
 
   bootstrappedTasks = tasks;
 
-  registerIpc({ tasks, projects, workflows, agents, runs, pi, settings });
+  registerIpc({ tasks, projects, workflows, agents, runs, pi, settings, libraryIndex });
   console.log("[main] IPC handlers registered");
 }
 

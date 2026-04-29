@@ -207,6 +207,36 @@ async function main(): Promise<void> {
   assert(after.runState === "idle", "empty campaign stays idle");
   console.log(`[smoke] empty-items campaign no-ops gracefully`);
 
+  // ── Parallel step coordination via events.jsonl ─────────────────────
+  const parallelTask = await tasks.createTask({
+    title: "Parallel coordination smoke",
+    projectId: "runner",
+    projectPrefix: "RN",
+  });
+  await mgr.startParallelStep({ taskId: parallelTask.id, stepId: "build", agents: ["dev1", "dev2", "dev3"] });
+  let stepResult = await mgr.recordParallelAgentEnd({ taskId: parallelTask.id, stepId: "build", agent: "dev1", status: "ok" });
+  assert(stepResult.done === false && stepResult.completed === 1 && stepResult.expected === 3, "parallel step remains open after first agent");
+  stepResult = await mgr.recordParallelAgentEnd({ taskId: parallelTask.id, stepId: "build", agent: "dev2", status: "ok" });
+  assert(stepResult.done === false && stepResult.completed === 2, "parallel step remains open after second agent");
+  stepResult = await mgr.recordParallelAgentEnd({ taskId: parallelTask.id, stepId: "build", agent: "dev3", status: "failed", error: "boom" });
+  assert(stepResult.done === true && stepResult.status === "partial", "parallel step ends partial after all agents finish with one failure");
+  const parallelEvents = (await tasks.readEvents(parallelTask.id)).filter((e) => e.type.startsWith("step:"));
+  const parallelTypes = parallelEvents.map((e) => e.type).join(",");
+  assert(parallelTypes === "step:start,step:agent-end,step:agent-end,step:agent-end,step:end", `parallel events written in order (got ${parallelTypes})`);
+  const lastParallel = parallelEvents[parallelEvents.length - 1] as Record<string, unknown>;
+  assert(lastParallel.status === "partial", "parallel step:end captures partial status");
+
+  const abortTask = await tasks.createTask({
+    title: "Parallel stop-on-first-failure smoke",
+    projectId: "runner",
+    projectPrefix: "RN",
+  });
+  await mgr.startParallelStep({ taskId: abortTask.id, stepId: "review", agents: ["rev1", "rev2", "rev3"], stopOnFirstFailure: true });
+  const abortResult = await mgr.recordParallelAgentEnd({ taskId: abortTask.id, stepId: "review", agent: "rev2", status: "failed", error: "bad" });
+  assert(abortResult.done === true && abortResult.status === "aborted", "parallel step aborts immediately on first failure when configured");
+  const abortEvents = (await tasks.readEvents(abortTask.id)).filter((e) => e.type.startsWith("step:"));
+  assert(abortEvents.length === 3, "abort path emits step:start, step:agent-end, step:end only");
+
   console.log("GREEN");
 }
 

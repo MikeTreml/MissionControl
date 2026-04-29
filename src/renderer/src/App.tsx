@@ -12,6 +12,7 @@ import { RightBar } from "./components/RightBar";
 import { Toaster } from "./components/Toaster";
 
 import { Dashboard } from "./pages/Dashboard";
+import { LibraryBrowser } from "./pages/Library";
 import { ProjectDetail } from "./pages/ProjectDetail";
 import { TaskDetail } from "./pages/TaskDetail";
 import { Metrics } from "./pages/Metrics";
@@ -28,6 +29,7 @@ import { RouteContext, type ViewId } from "./router";
 function CurrentView({ view }: { view: ViewId }): JSX.Element {
   switch (view) {
     case "dashboard":           return <Dashboard />;
+    case "library":             return <LibraryBrowser />;
     case "project":             return <ProjectDetail />;
     case "task":                return <TaskDetail />;
     case "metrics":             return <Metrics />;

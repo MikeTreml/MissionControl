@@ -15,6 +15,21 @@ import type {
   CampaignItem,
   MCSettings,
 } from "../../shared/models";
+import type { LibraryIndex } from "./types/library";
+
+export interface WorkflowRunTemplate {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  workflowLogicalPath: string;
+  workflowName: string;
+  projectId: string;
+  workflowCode: string;
+  goal: string;
+  model: string | null;
+  inputs: Record<string, unknown>;
+}
 
 type CreateTaskInput = {
   title: string;
@@ -52,8 +67,11 @@ export interface McApi {
   ) => Promise<void>;
   readTaskPrompt: (id: string) => Promise<string | null>;
   readTaskStatus: (id: string) => Promise<string | null>;
-  readTaskFile: (id: string, stem: string) => Promise<string | null>;
+  readTaskRunConfig: (id: string) => Promise<Record<string, unknown> | null>;
+  writeTaskRunConfig: (id: string, config: Record<string, unknown>) => Promise<void>;
+  readTaskFile: (id: string, stem: string, options?: { cycle?: number }) => Promise<string | null>;
   listTaskFiles: (id: string) => Promise<Array<{ name: string; size: number; modifiedAt: string }>>;
+  listTaskFileCycles: (id: string, stem: string) => Promise<number[]>;
   appendTaskStatus: (id: string, line: string) => Promise<void>;
   openTaskFolder: (id: string) => Promise<{ ok: boolean; reason?: "not-found" }>;
   openPath: (absPath: string) => Promise<{ ok: boolean; reason?: "invalid-path" | "not-absolute" | "not-found" }>;
@@ -73,6 +91,8 @@ export interface McApi {
   listAgents: () => Promise<Agent[]>;
   saveAgents: (agents: Agent[]) => Promise<Agent[]>;
   listWorkflows: () => Promise<Workflow[]>;
+  getLibraryIndex: () => Promise<LibraryIndex>;
+  readLibraryJsonSchema: (absPath: string | null | undefined) => Promise<Record<string, unknown> | null>;
 
   // runs (Start/Pause/Resume/Stop state machine; returns updated Task)
   startRun: (input: { taskId: string; agentSlug?: string; model?: string }) => Promise<Task>;
@@ -91,6 +111,9 @@ export interface McApi {
   // app settings
   getSettings: () => Promise<MCSettings>;
   saveSettings: (patch: Partial<MCSettings>) => Promise<MCSettings>;
+  listWorkflowRunTemplates: () => Promise<WorkflowRunTemplate[]>;
+  saveWorkflowRunTemplate: (input: Omit<WorkflowRunTemplate, "createdAt" | "updatedAt">) => Promise<WorkflowRunTemplate>;
+  deleteWorkflowRunTemplate: (id: string) => Promise<void>;
 
   // live events (subscribe; returns unsubscribe)
   onTaskEvent: (listener: (payload: { taskId: string; event: TaskEvent }) => void) => () => void;

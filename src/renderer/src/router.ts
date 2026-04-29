@@ -9,6 +9,7 @@ import { createContext, useContext } from "react";
 
 export type ViewId =
   | "dashboard"
+  | "library"
   | "project"
   | "task"
   | "settings-agents"      // unified list of primary roles + subagents

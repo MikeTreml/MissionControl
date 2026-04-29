@@ -30,6 +30,18 @@ import { AgentSchema, isPrimaryAgent, type Agent, type CampaignItem, type MCSett
 
 export type StopReason = "user" | "completed" | "failed";
 
+interface ParallelStepState {
+  stepId: string;
+  cycle: number;
+  agents: string[];
+  expected: number;
+  completed: number;
+  failed: number;
+  seen: Set<string>;
+  ended: boolean;
+  stopOnFirstFailure: boolean;
+}
+
 export class RunManager {
   private readonly tasks: TaskStore;
   private readonly projects: ProjectStore | null;
@@ -97,7 +109,7 @@ export class RunManager {
     });
     await this.tasks.appendStatus(
       task.id,
-      `Started — agent: ${next.currentAgentSlug ?? "(none)"}`,
+      `Started — cycle ${next.cycle} · agent: ${next.currentAgentSlug ?? "(none)"}`,
     );
     return next;
   }
@@ -133,7 +145,7 @@ export class RunManager {
     });
     await this.tasks.appendStatus(
       task.id,
-      `Campaign started — ${pendingItemCount(next)} of ${next.items.length} pending`,
+      `Campaign started — cycle ${next.cycle} · ${pendingItemCount(next)} of ${next.items.length} pending`,
     );
     await this.startCampaignItem(next, items[pendingIdx]!, input.model);
     return next;
@@ -149,7 +161,7 @@ export class RunManager {
     const agentSlug = pickStartAgent(task.currentAgentSlug, agents);
     await this.tasks.writePromptFile(task.id, renderPromptFile(task, agentSlug));
     await this.tasks.appendEvent(task.id, { type: "item-started", itemId: item.id });
-    await this.tasks.appendStatus(task.id, `Item ${item.id} started — ${item.description}`);
+    await this.tasks.appendStatus(task.id, `Item ${item.id} started — cycle ${task.cycle} · ${item.description}`);
     await this.pi.start(task.id, {
       prompt: buildItemBabysitPrompt(task, item, mode, agents),
       cwd,
@@ -185,7 +197,7 @@ export class RunManager {
       type: "run-ended",
       reason,
     });
-    await this.tasks.appendStatus(task.id, `Run ended — ${reason}`);
+    await this.tasks.appendStatus(task.id, `Run ended — cycle ${task.cycle} · ${reason}`);
     this.activeModel.delete(task.id);
   }
 
@@ -216,7 +228,7 @@ export class RunManager {
     });
     await this.tasks.appendStatus(
       task.id,
-      `Item ${finishedItem.id} ${newStatus} — ${pendingItemCount(updated)} pending`,
+      `Item ${finishedItem.id} ${newStatus} — cycle ${task.cycle} · ${pendingItemCount(updated)} pending`,
     );
 
     // More items pending? Start the next one. Else finalize.
@@ -243,7 +255,7 @@ export class RunManager {
     await this.tasks.appendEvent(task.id, { type: "run-ended", reason: finalReason });
     await this.tasks.appendStatus(
       task.id,
-      `Campaign ended — ${done}/${task.items.length} done, ${failed} failed`,
+      `Campaign ended — cycle ${task.cycle} · ${done}/${task.items.length} done, ${failed} failed`,
     );
     this.activeModel.delete(task.id);
   }
@@ -264,7 +276,7 @@ export class RunManager {
     const next: Task = { ...task, runState: "paused" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-paused" });
-    await this.tasks.appendStatus(task.id, "Paused");
+    await this.tasks.appendStatus(task.id, `Paused — cycle ${task.cycle}`);
     return next;
   }
 
@@ -284,7 +296,7 @@ export class RunManager {
     const next: Task = { ...task, runState: "running", blocker: "" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-resumed" });
-    await this.tasks.appendStatus(task.id, task.blocker ? "Resumed — cleared waiting reason" : "Resumed");
+    await this.tasks.appendStatus(task.id, task.blocker ? `Resumed — cycle ${task.cycle} · cleared waiting reason` : `Resumed — cycle ${task.cycle}`);
     return next;
   }
 
@@ -312,7 +324,7 @@ export class RunManager {
       type: "run-ended",
       reason: input.reason ?? "user",
     });
-    await this.tasks.appendStatus(task.id, `Stopped (${input.reason ?? "user"})`);
+    await this.tasks.appendStatus(task.id, `Stopped — cycle ${task.cycle} (${input.reason ?? "user"})`);
 
     // Best-effort pi cleanup — don't let a dispose failure undo the state
     // flip the UI already relied on.
@@ -320,13 +332,110 @@ export class RunManager {
       await this.pi.stop(task.id);
     }
     this.activeModel.delete(task.id);
+    this.parallelSteps.delete(task.id);
     return next;
+  }
+
+  async startParallelStep(input: {
+    taskId: string;
+    stepId: string;
+    agents: string[];
+    cycle?: number;
+    stopOnFirstFailure?: boolean;
+  }): Promise<void> {
+    const task = await this.requireTask(input.taskId);
+    const agents = [...new Set(input.agents.map((a) => a.trim()).filter(Boolean))];
+    if (agents.length === 0) throw new Error(`Parallel step "${input.stepId}" needs at least one agent`);
+    const key = stepKey(input.stepId, input.cycle ?? task.cycle);
+    const byTask = this.parallelSteps.get(task.id) ?? new Map<string, ParallelStepState>();
+    if (byTask.has(key)) throw new Error(`Parallel step "${input.stepId}" already active for cycle ${input.cycle ?? task.cycle}`);
+    byTask.set(key, {
+      stepId: input.stepId,
+      cycle: input.cycle ?? task.cycle,
+      agents,
+      expected: agents.length,
+      completed: 0,
+      failed: 0,
+      seen: new Set(),
+      ended: false,
+      stopOnFirstFailure: input.stopOnFirstFailure ?? false,
+    });
+    this.parallelSteps.set(task.id, byTask);
+    await this.tasks.appendEvent(task.id, {
+      type: "step:start",
+      stepId: input.stepId,
+      cycle: input.cycle ?? task.cycle,
+      expected: agents.length,
+      agents,
+    });
+  }
+
+  async recordParallelAgentEnd(input: {
+    taskId: string;
+    stepId: string;
+    agent: string;
+    status: "ok" | "failed";
+    cycle?: number;
+    outputPath?: string;
+    error?: string;
+  }): Promise<{ done: boolean; status?: "ok" | "partial" | "aborted"; completed: number; failed: number; expected: number }> {
+    const task = await this.requireTask(input.taskId);
+    const cycle = input.cycle ?? task.cycle;
+    const key = stepKey(input.stepId, cycle);
+    const byTask = this.parallelSteps.get(task.id);
+    const state = byTask?.get(key);
+    if (!state) throw new Error(`Parallel step "${input.stepId}" is not active for cycle ${cycle}`);
+    if (state.ended) {
+      return { done: true, status: state.failed === 0 ? "ok" : state.stopOnFirstFailure ? "aborted" : "partial", completed: state.completed, failed: state.failed, expected: state.expected };
+    }
+    if (state.seen.has(input.agent)) {
+      throw new Error(`Parallel step "${input.stepId}" already recorded agent "${input.agent}" for cycle ${cycle}`);
+    }
+    state.seen.add(input.agent);
+    if (input.status === "ok") state.completed += 1;
+    else state.failed += 1;
+
+    await this.tasks.appendEvent(task.id, {
+      type: "step:agent-end",
+      stepId: input.stepId,
+      cycle,
+      agent: input.agent,
+      status: input.status,
+      completed: state.completed,
+      failed: state.failed,
+      expected: state.expected,
+      ...(input.outputPath ? { outputPath: input.outputPath } : {}),
+      ...(input.error ? { error: input.error } : {}),
+    });
+
+    const total = state.completed + state.failed;
+    const shouldAbort = input.status === "failed" && state.stopOnFirstFailure;
+    if (!shouldAbort && total < state.expected) {
+      return { done: false, completed: state.completed, failed: state.failed, expected: state.expected };
+    }
+
+    const endStatus: "ok" | "partial" | "aborted" =
+      state.failed === 0 ? "ok" : state.stopOnFirstFailure ? "aborted" : "partial";
+    state.ended = true;
+    await this.tasks.appendEvent(task.id, {
+      type: "step:end",
+      stepId: input.stepId,
+      cycle,
+      status: endStatus,
+      completed: state.completed,
+      failed: state.failed,
+      expected: state.expected,
+    });
+    byTask?.delete(key);
+    if (byTask && byTask.size === 0) this.parallelSteps.delete(task.id);
+    return { done: true, status: endStatus, completed: state.completed, failed: state.failed, expected: state.expected };
   }
 
   // ── internals ────────────────────────────────────────────────────────
 
   /** Per-task model selection, kept in memory across campaign items. */
   private readonly activeModel = new Map<string, string>();
+  private readonly parallelSteps = new Map<string, Map<string, ParallelStepState>>();
 
   private async requireTask(id: string): Promise<Task> {
     const task = await this.tasks.getTask(id);
@@ -400,6 +509,10 @@ function pendingItemCount(task: Task): number {
   return task.items.filter((i) => i.status === "pending").length;
 }
 
+function stepKey(stepId: string, cycle: number): string {
+  return `${stepId}@c${cycle}`;
+}
+
 /**
  * Build the `/babysit` prompt — a short task brief that babysitter-pi's
  * skill ingests and turns into an orchestrated multi-agent run
@@ -448,7 +561,7 @@ function buildBabysitPrompt(
     `task-id + agent-code suffix convention so Mission Control's UI can`,
     `link them automatically:`,
     "",
-    ...artifactExampleLines(task.id, agents),
+    ...artifactExampleLines(task.id, task.cycle, agents),
     "",
     `Babysitter's own scaffolding (process.js, run journals) can stay`,
     `under .a5c/ — that's expected. The convention applies to per-agent`,
@@ -485,20 +598,20 @@ function buildItemBabysitPrompt(
     `Campaign workflow: ${task.workflow}`,
     `Item index: ${idx + 1} of ${total}`,
     "",
-    ...artifactExampleLines(task.id, agents),
+    ...artifactExampleLines(task.id, task.cycle, agents),
     "",
     "Process this single item. When done, summarize what you produced.",
     "The orchestrator iterates the remaining items after this one ends.",
   ].join("\n");
 }
 
-function artifactExampleLines(taskId: string, agents: Agent[]): string[] {
+function artifactExampleLines(taskId: string, cycle: number, agents: Agent[]): string[] {
   const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
   if (primaries.length === 0) {
-    return ["  - Per-agent output → <task-id>-<1-char primary code>.md"];
+    return ["  - Per-agent output → <task-id>-<1-char primary code>-c<cycle>.md"];
   }
-  const lines = primaries.map((agent) => `  - ${agent.name} output  → ${taskId}-${agent.code}.md`);
-  lines.push("  - Subagent output   → <task-id>-<2-4 char code>.md");
+  const lines = primaries.map((agent) => `  - ${agent.name} output  → ${taskId}-${agent.code}-c${cycle}.md`);
+  lines.push("  - Subagent output   → <task-id>-<2-4 char code>-c<cycle>.md");
   return lines;
 }
 

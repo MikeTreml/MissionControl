@@ -12,6 +12,20 @@ import path from "node:path";
 
 import { MCSettingsSchema, type MCSettings } from "../shared/models.ts";
 
+export interface WorkflowRunTemplate {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  workflowLogicalPath: string;
+  workflowName: string;
+  projectId: string;
+  workflowCode: string;
+  goal: string;
+  model: string | null;
+  inputs: Record<string, unknown>;
+}
+
 export class SettingsStore {
   private readonly file: string;
 
@@ -47,5 +61,38 @@ export class SettingsStore {
     const merged = MCSettingsSchema.parse({ ...current, ...patch });
     await fs.writeFile(this.file, JSON.stringify(merged, null, 2), "utf8");
     return merged;
+  }
+
+  async listWorkflowRunTemplates(): Promise<WorkflowRunTemplate[]> {
+    const settings = (await this.get()) as Record<string, unknown>;
+    const raw = settings["workflowRunTemplates"];
+    if (!Array.isArray(raw)) return [];
+    return raw
+      .filter((x): x is WorkflowRunTemplate => {
+        return typeof x === "object" && x !== null && typeof (x as { id?: unknown }).id === "string";
+      })
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  }
+
+  async saveWorkflowRunTemplate(input: Omit<WorkflowRunTemplate, "createdAt" | "updatedAt">): Promise<WorkflowRunTemplate> {
+    const now = new Date().toISOString();
+    const all = await this.listWorkflowRunTemplates();
+    const existing = all.find((t) => t.id === input.id);
+    const next: WorkflowRunTemplate = {
+      ...input,
+      createdAt: existing?.createdAt ?? now,
+      updatedAt: now,
+    };
+    const merged = [next, ...all.filter((t) => t.id !== input.id)];
+    const current = (await this.get()) as Record<string, unknown>;
+    await this.save({ ...(current as MCSettings), workflowRunTemplates: merged } as unknown as Partial<MCSettings>);
+    return next;
+  }
+
+  async deleteWorkflowRunTemplate(id: string): Promise<void> {
+    const all = await this.listWorkflowRunTemplates();
+    const next = all.filter((t) => t.id !== id);
+    const current = (await this.get()) as Record<string, unknown>;
+    await this.save({ ...(current as MCSettings), workflowRunTemplates: next } as unknown as Partial<MCSettings>);
   }
 }

@@ -23,6 +23,7 @@ import path from "node:path";
 
 import {
   makeTask,
+  taskFile,
   TaskSchema,
   type Task,
   type TaskEvent,
@@ -405,15 +406,70 @@ export class TaskStore extends EventEmitter {
   }
 
   /**
-   * Read a task-linked agent artifact by its file name stem
-   * (e.g. `taskId` for the base, `<taskId>-p` for Planner output).
-   * Returns null if the file doesn't exist yet. Callers can use this to
-   * show artifact contents in Task Detail.
+   * Persist workflow-runner settings sidecar for reproducibility.
+   * Stored at `<taskId>/RUN_CONFIG.json`.
    */
-  async readTaskFile(taskId: string, stem: string): Promise<string | null> {
-    const p = path.join(this.root, taskId, `${stem}.md`);
+  async writeRunConfig(taskId: string, config: Record<string, unknown>): Promise<void> {
+    const folder = path.join(this.root, taskId);
+    await fs.mkdir(folder, { recursive: true });
+    await fs.writeFile(
+      path.join(folder, "RUN_CONFIG.json"),
+      JSON.stringify(config, null, 2),
+      "utf8",
+    );
+    const task = await this.getTask(taskId);
+    if (task) this.emit("task-saved", { task });
+  }
+
+  /** Read workflow-runner settings sidecar, null when missing. */
+  async readRunConfig(taskId: string): Promise<Record<string, unknown> | null> {
+    const p = path.join(this.root, taskId, "RUN_CONFIG.json");
+    if (!existsSync(p)) return null;
+    const raw = await fs.readFile(p, "utf8");
+    return JSON.parse(raw) as Record<string, unknown>;
+  }
+
+  /**
+   * Read a task-linked agent artifact by its file name stem.
+   *
+   * Resolution rules:
+   *   - explicit cycle → `<stem>-c<cycle>.md`
+   *   - no cycle      → highest available cycle if any exist
+   *   - legacy        → `<stem>.md` when no cycled file exists
+   *
+   * Examples:
+   *   `taskId` for the base task file area
+   *   `<taskId>-p` for planner output
+   */
+  async readTaskFile(
+    taskId: string,
+    stem: string,
+    options: { cycle?: number } = {},
+  ): Promise<string | null> {
+    const folder = path.join(this.root, taskId);
+    const targetStem =
+      options.cycle !== undefined && stem !== taskId
+        ? `${stem}-c${options.cycle}`
+        : await this.resolveLatestTaskFileStem(taskId, stem);
+    const p = path.join(folder, `${targetStem}.md`);
     if (!existsSync(p)) return null;
     return fs.readFile(p, "utf8");
+  }
+
+  /** List all discovered cycle numbers for a given task artifact stem. */
+  async listTaskFileCycles(taskId: string, stem: string): Promise<number[]> {
+    const folder = path.join(this.root, taskId);
+    if (!existsSync(folder)) return [];
+    const entries = await fs.readdir(folder, { withFileTypes: true });
+    const re = new RegExp(`^${escapeRegExp(stem)}-c(\\d+)\\.md$`, "i");
+    const cycles: number[] = [];
+    for (const e of entries) {
+      if (!e.isFile()) continue;
+      const m = re.exec(e.name);
+      if (!m) continue;
+      cycles.push(Number.parseInt(m[1]!, 10));
+    }
+    return cycles.sort((a, b) => a - b);
   }
 
   /**
@@ -508,6 +564,13 @@ export class TaskStore extends EventEmitter {
     }
   }
 
+  private async resolveLatestTaskFileStem(taskId: string, stem: string): Promise<string> {
+    if (stem === taskId) return stem;
+    const cycles = await this.listTaskFileCycles(taskId, stem);
+    if (cycles.length > 0) return `${stem}-c${cycles[cycles.length - 1]}`;
+    return stem; // legacy non-cycled artifact name
+  }
+
   /** Parse manifest.json. Returns null on missing or corrupt files (doesn't throw). */
   private async readManifest(folder: string): Promise<Task | null> {
     const manifest = path.join(folder, "manifest.json");
@@ -539,4 +602,8 @@ export class TaskStore extends EventEmitter {
     const nnn = String(maxN + 1).padStart(3, "0");
     return `${prefix}-${nnn}${workflow}`;
   }
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

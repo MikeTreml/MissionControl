@@ -33,8 +33,8 @@ export function SelectedTaskPanel(): JSX.Element {
   const linkedFiles = [
     { name: active.id, note: "base manifest" },
     ...primaries.map((a) => ({
-      name: `${active.id}-${a.code}`,
-      note: `${a.name} output`,
+      name: `${active.id}-${a.code}-c${active.cycle}`,
+      note: `${a.name} output · current cycle`,
     })),
   ];
 
@@ -90,7 +90,7 @@ export function SelectedTaskPanel(): JSX.Element {
       <div>
         <h2>Task-linked Files</h2>
         <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-          One per enabled primary agent, suffix from agent code.
+          One per enabled primary agent, suffix from agent code and cycle.
         </p>
         <div style={{ marginTop: 12 }}>
           {linkedFiles.map((f) => (

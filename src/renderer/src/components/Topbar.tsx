@@ -11,6 +11,13 @@ export function Topbar(): JSX.Element {
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
         <button
           className="button ghost"
+          onClick={() => setView("library")}
+          title="Library Browser"
+        >
+          Library
+        </button>
+        <button
+          className="button ghost"
           onClick={() => setView("metrics")}
           title="Metrics"
         >

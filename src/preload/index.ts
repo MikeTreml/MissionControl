@@ -22,9 +22,13 @@ const api = {
     ipcRenderer.invoke("tasks:appendEvent", id, event),
   readTaskPrompt:  (id: string) => ipcRenderer.invoke("tasks:readPrompt", id),
   readTaskStatus:  (id: string) => ipcRenderer.invoke("tasks:readStatus", id),
-  readTaskFile:    (id: string, stem: string) =>
-    ipcRenderer.invoke("tasks:readFile", id, stem),
+  readTaskRunConfig: (id: string) => ipcRenderer.invoke("tasks:readRunConfig", id),
+  writeTaskRunConfig: (id: string, config: Record<string, unknown>) =>
+    ipcRenderer.invoke("tasks:writeRunConfig", id, config),
+  readTaskFile:    (id: string, stem: string, options?: { cycle?: number }) =>
+    ipcRenderer.invoke("tasks:readFile", id, stem, options),
   listTaskFiles:   (id: string) => ipcRenderer.invoke("tasks:listFiles", id),
+  listTaskFileCycles: (id: string, stem: string) => ipcRenderer.invoke("tasks:listFileCycles", id, stem),
   appendTaskStatus: (id: string, line: string) =>
     ipcRenderer.invoke("tasks:appendStatus", id, line),
   openTaskFolder: (id: string) => ipcRenderer.invoke("shell:openTaskFolder", id),
@@ -42,6 +46,9 @@ const api = {
   listAgents:      () => ipcRenderer.invoke("agents:list"),
   saveAgents:      (agents: unknown) => ipcRenderer.invoke("agents:save", agents),
   listWorkflows:   () => ipcRenderer.invoke("workflows:list"),
+  getLibraryIndex: () => ipcRenderer.invoke("library:index"),
+  readLibraryJsonSchema: (absPath: string | null | undefined) =>
+    ipcRenderer.invoke("library:readJsonSchema", absPath),
 
   // ── runs (Start/Pause/Resume/Stop) ───────────────────────────────────
   startRun:   (input: { taskId: string; agentSlug?: string; model?: string }) =>
@@ -67,6 +74,9 @@ const api = {
   // ── app settings (MC's own) ──────────────────────────────────────────
   getSettings:  () => ipcRenderer.invoke("settings:get"),
   saveSettings: (patch: unknown) => ipcRenderer.invoke("settings:save", patch),
+  listWorkflowRunTemplates: () => ipcRenderer.invoke("settings:listWorkflowRunTemplates"),
+  saveWorkflowRunTemplate: (input: unknown) => ipcRenderer.invoke("settings:saveWorkflowRunTemplate", input),
+  deleteWorkflowRunTemplate: (id: string) => ipcRenderer.invoke("settings:deleteWorkflowRunTemplate", id),
 
   // ── live events (main → renderer push) ───────────────────────────────
   // Each subscribe returns an unsubscribe function. The listener fires

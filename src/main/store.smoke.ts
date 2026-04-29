@@ -113,9 +113,20 @@ async function main(): Promise<void> {
 
   // ── taskFile helper (naming convention) ─────────────────────────────
   assert(taskFile("DA-015F") === "DA-015F", "base file should equal task id");
-  assert(taskFile("DA-015F", "p") === "DA-015F-p", "planner suffix");
-  assert(taskFile("DA-015F", "rmp") === "DA-015F-rmp", "subagent (2+ chars) suffix");
+  assert(taskFile("DA-015F", "p") === "DA-015F-p", "legacy planner suffix");
+  assert(taskFile("DA-015F", "p", 1) === "DA-015F-p-c1", "planner cycle suffix");
+  assert(taskFile("DA-015F", "rmp", 2) === "DA-015F-rmp-c2", "subagent cycle suffix");
   console.log(`[smoke] taskFile helper OK`);
+
+  // ── RUN_CONFIG.json sidecar ──────────────────────────────────────────
+  await store.writeRunConfig("DA-001F", {
+    kind: "library-workflow-run",
+    runSettings: { model: "openai:gpt-5.3", inputs: { topic: "x++ cost rollups" } },
+  });
+  const runConfig = await store.readRunConfig("DA-001F");
+  assert(runConfig !== null, "readRunConfig returns persisted sidecar");
+  assert((runConfig.runSettings as Record<string, unknown>).model === "openai:gpt-5.3", "runConfig model persisted");
+  console.log("[smoke] RUN_CONFIG.json read/write OK");
 
   // ── Phase 2: PROMPT.md + STATUS.md convention ──────────────────────
   // Every task is scaffolded with both files. PROMPT.md has an initial
@@ -170,13 +181,23 @@ async function main(): Promise<void> {
   assert(existsSync(folder), `folderFor points at an existing task folder`);
   console.log(`[smoke] folderFor OK`);
 
-  // readTaskFile returns null for missing artifacts (<taskId>-p.md etc.)
-  const plannerOutput = await store.readTaskFile("DA-001F", "DA-001F-p");
-  assert(
-    plannerOutput === null,
-    `readTaskFile returns null for not-yet-produced artifact`,
-  );
-  console.log(`[smoke] readTaskFile missing returns null`);
+  // readTaskFile resolves latest cycle when present and otherwise falls back
+  // to the legacy non-cycled artifact naming.
+  const plannerStem = taskFile("DA-001F", "p");
+  const plannerOutput = await store.readTaskFile("DA-001F", plannerStem);
+  assert(plannerOutput === null, `readTaskFile returns null for not-yet-produced artifact`);
+  await fs.writeFile(path.join(folder, `${taskFile("DA-001F", "p", 1)}.md`), "cycle 1", "utf8");
+  await fs.writeFile(path.join(folder, `${taskFile("DA-001F", "p", 2)}.md`), "cycle 2", "utf8");
+  const latestPlanner = await store.readTaskFile("DA-001F", plannerStem);
+  assert(latestPlanner === "cycle 2", `readTaskFile resolves latest cycle by default`);
+  const cycle1Planner = await store.readTaskFile("DA-001F", plannerStem, { cycle: 1 });
+  assert(cycle1Planner === "cycle 1", `readTaskFile resolves explicit cycle`);
+  const plannerCycles = await store.listTaskFileCycles("DA-001F", plannerStem);
+  assert(plannerCycles.join(",") === "1,2", `listTaskFileCycles returns discovered cycles`);
+  await fs.writeFile(path.join(folder, `${taskFile("DA-001F", "d")}.md`), "legacy dev", "utf8");
+  const legacyDev = await store.readTaskFile("DA-001F", taskFile("DA-001F", "d"));
+  assert(legacyDev === "legacy dev", `legacy non-cycled artifact still resolves`);
+  console.log(`[smoke] readTaskFile cycle resolution OK`);
 
   // ── crash recovery: reconcileInterruptedRuns ───────────────────────
   // Simulate a prior crash by manually rewriting a task's manifest with

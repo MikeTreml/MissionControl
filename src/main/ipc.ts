@@ -17,6 +17,7 @@ import type { AgentLoader } from "./agent-loader.ts";
 import type { RunManager } from "./run-manager.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { SettingsStore } from "./settings-store.ts";
+import type { LibraryIndexStore } from "./library-index.ts";
 import { detectGit } from "./git-detect.ts";
 import { AgentSchema, type Agent, type Project, type ProjectWithGit } from "../shared/models.ts";
 
@@ -62,6 +63,7 @@ export interface Stores {
   runs: RunManager;
   pi: PiSessionManager;
   settings: SettingsStore;
+  libraryIndex: LibraryIndexStore;
 }
 
 /** Log each IPC hit at debug level. Uncomment the call site to silence. */
@@ -93,8 +95,12 @@ export function registerIpc(stores: Stores): void {
   // missing so the renderer can distinguish "not produced yet" from empty.
   ipcMain.handle("tasks:readPrompt", (_e, id: string) => stores.tasks.readPromptFile(id));
   ipcMain.handle("tasks:readStatus", (_e, id: string) => stores.tasks.readStatusFile(id));
-  ipcMain.handle("tasks:readFile",   (_e, id: string, stem: string) => stores.tasks.readTaskFile(id, stem));
+  ipcMain.handle("tasks:readRunConfig", (_e, id: string) => stores.tasks.readRunConfig(id));
+  ipcMain.handle("tasks:writeRunConfig", (_e, id: string, config: Record<string, unknown>) =>
+    stores.tasks.writeRunConfig(id, config));
+  ipcMain.handle("tasks:readFile",   (_e, id: string, stem: string, options?: { cycle?: number }) => stores.tasks.readTaskFile(id, stem, options));
   ipcMain.handle("tasks:listFiles",  (_e, id: string) => stores.tasks.listTaskFiles(id));
+  ipcMain.handle("tasks:listFileCycles", (_e, id: string, stem: string) => stores.tasks.listTaskFileCycles(id, stem));
   ipcMain.handle("tasks:appendStatus",
     (_e, id: string, line: string) =>
       logged(`tasks:appendStatus ${id}`, () => stores.tasks.appendStatus(id, line)),
@@ -154,6 +160,9 @@ export function registerIpc(stores: Stores): void {
     return loadEffectiveAgents(stores);
   });
   ipcMain.handle("workflows:list", () => stores.workflows.loadAll());
+  ipcMain.handle("library:index", () => stores.libraryIndex.load());
+  ipcMain.handle("library:readJsonSchema", (_e, absPath: string | null | undefined) =>
+    stores.libraryIndex.readJsonSchema(absPath));
 
   // ── runs (Start/Pause/Resume/Stop state machine) ─────────────────────
   // RunManager owns the task state-machine; PiSessionManager owns the
@@ -192,6 +201,11 @@ export function registerIpc(stores: Stores): void {
   ipcMain.handle("settings:save", (_e, patch: Parameters<SettingsStore["save"]>[0]) =>
     stores.settings.save(patch),
   );
+  ipcMain.handle("settings:listWorkflowRunTemplates", () => stores.settings.listWorkflowRunTemplates());
+  ipcMain.handle("settings:saveWorkflowRunTemplate", (_e, input: Parameters<SettingsStore["saveWorkflowRunTemplate"]>[0]) =>
+    stores.settings.saveWorkflowRunTemplate(input));
+  ipcMain.handle("settings:deleteWorkflowRunTemplate", (_e, id: string) =>
+    stores.settings.deleteWorkflowRunTemplate(id));
 
   // ── shell convenience — reveal folders in the OS file UI ─────────────
   // Point the user at on-disk state: task folder, babysitter run dir, etc.

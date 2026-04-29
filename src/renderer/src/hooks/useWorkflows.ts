@@ -27,8 +27,24 @@ export function useWorkflows(): WorkflowsState {
       if (!window.mc) {
         // Default static-preview data — shape-match what loaders return.
         setWorkflows([
-          { code: "F", name: "Feature",    description: "Standard feature development." },
-          { code: "X", name: "Brainstorm", description: "Exploratory / ideation workflow." },
+          {
+            code: "F",
+            name: "Feature",
+            description: "Standard feature development.",
+            steps: [],
+            babysitter: { targetQuality: 80, maxIterations: 3, mode: "sequential", logLevel: "info", stopOnFirstFailure: false },
+            humanGates: [],
+            campaign: { iteratesItems: false, perItemMode: "sequential" },
+          },
+          {
+            code: "X",
+            name: "Brainstorm",
+            description: "Exploratory / ideation workflow.",
+            steps: [],
+            babysitter: { targetQuality: 80, maxIterations: 3, mode: "sequential", logLevel: "info", stopOnFirstFailure: false },
+            humanGates: [],
+            campaign: { iteratesItems: false, perItemMode: "sequential" },
+          },
         ]);
         return;
       }

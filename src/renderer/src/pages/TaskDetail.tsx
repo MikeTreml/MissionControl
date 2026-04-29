@@ -32,7 +32,7 @@ const LANE_LABEL: Record<Lane, string> = {
 
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
-  const { task, events, prompt, status, isDemo } = useTask(selectedTaskId);
+  const { task, events, prompt, status, runConfig, isDemo } = useTask(selectedTaskId);
   const pendingAsks = usePendingAsks(selectedTaskId);
   const [editOpen, setEditOpen] = useState(false);
 
@@ -92,6 +92,7 @@ export function TaskDetail(): JSX.Element {
 
       <div className="content">
         <Controls task={task} />
+        {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
 
         {!isDemo && pendingAsks.map((ask) => (
           <AskUserCard key={ask.toolCallId} taskId={task.id} ask={ask} />
@@ -125,6 +126,8 @@ export function TaskDetail(): JSX.Element {
           <LinkedFiles task={task} />
           <PerAgentNotes task={task} />
         </section>
+
+        {!isDemo && <RunConfigCard runConfig={runConfig} />}
       </div>
     </>
   );
@@ -1103,12 +1106,13 @@ function LinkedFiles({ task }: { task: Task }): JSX.Element {
     if (stem === task.id) return "task brief / manifest area";
     if (stem === "PROMPT") return "mission brief";
     if (stem === "STATUS") return "progress log";
-    const m = stem.match(new RegExp(`^${task.id}-([a-z0-9]{1,4})$`, "i"));
+    const m = stem.match(new RegExp(`^${task.id}-([a-z0-9]{1,4})(?:-c(\\d+))?$`, "i"));
     if (m) {
       const code = m[1]!.toLowerCase();
+      const cycle = m[2] ? Number.parseInt(m[2]!, 10) : undefined;
       const agent = agents.find((a) => a.code === code);
-      if (agent) return `${agent.name} output`;
-      return `agent code "${code}"`;
+      if (agent) return `${agent.name} output${cycle ? ` · cycle ${cycle}` : ""}`;
+      return `agent code "${code}"${cycle ? ` · cycle ${cycle}` : ""}`;
     }
     if (name.endsWith(".jsonl")) return "event journal";
     if (name.endsWith(".json"))  return "manifest";
@@ -1120,7 +1124,7 @@ function LinkedFiles({ task }: { task: Task }): JSX.Element {
   // expected vs what's there.
   const presentNames = new Set(files.map((f) => f.name));
   const expectedMissing = primaries
-    .map((a) => `${task.id}-${a.code}.md`)
+    .map((a) => `${task.id}-${a.code}-c${task.cycle}.md`)
     .filter((n) => !presentNames.has(n));
 
   return (
@@ -1128,7 +1132,7 @@ function LinkedFiles({ task }: { task: Task }): JSX.Element {
       <h3>Task-linked files</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
         Live listing of the task folder. Per-agent deliverables follow
-        the <code>&lt;taskId&gt;-&lt;code&gt;.md</code> convention; agents in
+        the <code>&lt;taskId&gt;-&lt;code&gt;-c&lt;cycle&gt;.md</code> convention; agents in
         babysitter mode are asked to honor it but may not always.
       </p>
       <div style={{ marginTop: 10 }}>
@@ -1201,6 +1205,170 @@ function PerAgentNotes({ task: _task }: { task: Task }): JSX.Element {
       </div>
     </div>
   );
+}
+
+function RunConfigCard({ runConfig }: { runConfig: Record<string, unknown> | null }): JSX.Element {
+  return (
+    <section className="card">
+      <h3>Run config</h3>
+      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+        Persisted pre-run settings from the workflow runner (`RUN_CONFIG.json`).
+      </p>
+      {!runConfig ? (
+        <div className="muted" style={{ fontSize: 12, padding: "10px 2px" }}>
+          No run config recorded for this task yet.
+        </div>
+      ) : (
+        <pre
+          style={{
+            margin: "10px 0 0",
+            padding: 10,
+            background: "var(--panel-2)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            fontSize: 12,
+            lineHeight: 1.5,
+            whiteSpace: "pre-wrap",
+            maxHeight: 320,
+            overflow: "auto",
+          }}
+        >
+          {JSON.stringify(runConfig, null, 2)}
+        </pre>
+      )}
+    </section>
+  );
+}
+
+function RunStatusCard({
+  task,
+  events,
+  runConfig,
+}: {
+  task: Task;
+  events: TaskEvent[];
+  runConfig: Record<string, unknown> | null;
+}): JSX.Element {
+  const summary = summarizeRunStatus(task, events);
+  const cfg = pickRunConfigHighlights(runConfig);
+  return (
+    <section className="card">
+      <h3>Run status</h3>
+      <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
+        <StatusPill label="Run state" value={task.runState} tone={task.runState === "running" ? "warn" : task.runState === "paused" ? "info" : "good"} />
+        <StatusPill label="Cycle" value={String(task.cycle)} tone="info" />
+        <StatusPill label="Lane" value={task.lane} tone="info" />
+      </div>
+      <div style={{ marginTop: 10, display: "grid", gap: 6, fontSize: 13 }}>
+        <div><strong>Current step:</strong> {summary.currentStep}</div>
+        <div><strong>Step progress:</strong> {summary.completed}/{summary.expected} completed · {summary.failed} failed</div>
+        <div><strong>Last transition:</strong> {summary.lastTransition}</div>
+      </div>
+      {(cfg.workflowPath || cfg.model || cfg.inputsCount !== null) && (
+        <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)", display: "grid", gap: 6, fontSize: 12 }}>
+          <div className="muted">Run config highlights</div>
+          {cfg.workflowPath && <div><strong>Workflow path:</strong> <code>{cfg.workflowPath}</code></div>}
+          {cfg.model && <div><strong>Model override:</strong> <code>{cfg.model}</code></div>}
+          {cfg.inputsCount !== null && <div><strong>Input fields:</strong> {cfg.inputsCount}</div>}
+        </div>
+      )}
+      {summary.recentEvents.length > 0 && (
+        <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+          <div className="muted" style={{ fontSize: 12, marginBottom: 6 }}>Recent run events</div>
+          <div style={{ display: "grid", gap: 4 }}>
+            {summary.recentEvents.map((line) => (
+              <div key={line} style={{ fontSize: 12 }}>{line}</div>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function StatusPill({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: "good" | "warn" | "info" | "bad";
+}): JSX.Element {
+  return (
+    <div style={{ background: "var(--panel-2)", border: "1px solid var(--border)", borderRadius: 10, padding: "8px 10px" }}>
+      <div className="muted" style={{ fontSize: 11, marginBottom: 4 }}>{label}</div>
+      <span className={`pill ${tone}`} style={{ marginRight: 0 }}>{value}</span>
+    </div>
+  );
+}
+
+function summarizeRunStatus(task: Task, events: TaskEvent[]): {
+  currentStep: string;
+  expected: number;
+  completed: number;
+  failed: number;
+  lastTransition: string;
+  recentEvents: string[];
+} {
+  let currentStep = task.currentStep || "(none)";
+  let expected = 0;
+  let completed = 0;
+  let failed = 0;
+  let lastTransition = "—";
+  const recent: string[] = [];
+
+  for (const event of events) {
+    const e = event as Record<string, unknown>;
+    const type = String(e["type"] ?? "");
+    if (type === "step:start") {
+      currentStep = String(e["stepId"] ?? currentStep);
+      expected = Number(e["expected"] ?? expected) || expected;
+      completed = 0;
+      failed = 0;
+      lastTransition = `${type} (${currentStep})`;
+    } else if (type === "step:agent-end") {
+      completed = Number(e["completed"] ?? completed) || completed;
+      failed = Number(e["failed"] ?? failed) || failed;
+      expected = Number(e["expected"] ?? expected) || expected;
+      lastTransition = `${type} (${String(e["agent"] ?? "?")})`;
+    } else if (type === "step:end" || type === "run-started" || type === "run-ended" || type === "run-paused" || type === "run-resumed") {
+      if (type === "step:end") {
+        completed = Number(e["completed"] ?? completed) || completed;
+        failed = Number(e["failed"] ?? failed) || failed;
+        expected = Number(e["expected"] ?? expected) || expected;
+      }
+      const suffix = typeof e["reason"] === "string" ? ` (${e["reason"]})` : "";
+      lastTransition = `${type}${suffix}`;
+    }
+    if (type.startsWith("run-") || type.startsWith("step:")) {
+      recent.push(`${fmt(String(e["timestamp"] ?? ""))} · ${type}`);
+    }
+  }
+  return {
+    currentStep,
+    expected,
+    completed,
+    failed,
+    lastTransition,
+    recentEvents: recent.slice(-5).reverse(),
+  };
+}
+
+function pickRunConfigHighlights(runConfig: Record<string, unknown> | null): {
+  workflowPath: string | null;
+  model: string | null;
+  inputsCount: number | null;
+} {
+  if (!runConfig) return { workflowPath: null, model: null, inputsCount: null };
+  const workflow = runConfig["libraryWorkflow"] as Record<string, unknown> | undefined;
+  const settings = runConfig["runSettings"] as Record<string, unknown> | undefined;
+  const inputs = (settings?.["inputs"] ?? null) as Record<string, unknown> | null;
+  return {
+    workflowPath: typeof workflow?.["logicalPath"] === "string" ? String(workflow["logicalPath"]) : null,
+    model: typeof settings?.["model"] === "string" ? String(settings["model"]) : null,
+    inputsCount: inputs ? Object.keys(inputs).length : null,
+  };
 }
 
 // ── helpers ────────────────────────────────────────────────────────────

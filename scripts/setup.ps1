@@ -24,6 +24,11 @@ Write-Host "`n→ typecheck" -ForegroundColor Cyan
 npm run typecheck
 if ($LASTEXITCODE -ne 0) { throw "typecheck failed" }
 
+# ── library index ─────────────────────────────────────────────────────────
+Write-Host "`n→ build library index" -ForegroundColor Cyan
+npm run build-library-index
+if ($LASTEXITCODE -ne 0) { throw "build-library-index failed" }
+
 # ── smokes — every file at src/main/*.smoke.ts ───────────────────────────
 Write-Host "`n→ smoke tests" -ForegroundColor Cyan
 $smokes = @(
@@ -31,8 +36,11 @@ $smokes = @(
   "src/main/project-store.smoke.ts",
   "src/main/workflows.smoke.ts",
   "src/main/agent-loader.smoke.ts",
-  "src/main/model-roster.smoke.ts",
-  "src/main/git-detect.smoke.ts"
+  "src/main/git-detect.smoke.ts",
+  "src/main/run-manager.smoke.ts",
+  "src/main/pi-session-manager.smoke.ts",
+  "src/main/settings-store.smoke.ts",
+  "src/main/library-walker.smoke.ts"
 )
 
 $allGreen = $true

@@ -13,6 +13,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { WorkflowLoader } from "./workflows.ts";
+import { mergeRunSettings, WorkflowSchema } from "../shared/models.ts";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, "..", "..");
@@ -27,6 +28,12 @@ async function main(): Promise<void> {
   assert(codes.includes("X"), `expected bundled workflows to include X, got ${codes.join(",")}`);
   assert(codes.join(",") === [...codes].sort().join(","), `expected workflows sorted alphabetically, got ${codes.join(",")}`);
   assert(loaded.find((w) => w.code === "F")!.name === "Feature", `expected workflow F to be named Feature`);
+  assert(loaded.find((w) => w.code === "F")!.steps.length > 0, `expected workflow F to have steps`);
+  const merged = mergeRunSettings(loaded.find((w) => w.code === "F")!, {
+    babysitter: { targetQuality: 90 },
+  });
+  assert(merged.babysitter.targetQuality === 90, `expected merged targetQuality 90, got ${merged.babysitter.targetQuality}`);
+  assert(merged.babysitter.mode === "sequential", `expected default mode preserved`);
   console.log(`[smoke] real workflows load: ${codes.join(", ")}`);
 
   // ── missing root → returns [] instead of throwing ───────────────────
@@ -65,6 +72,28 @@ async function main(): Promise<void> {
   );
   await fs.rm(dupTmp, { recursive: true, force: true });
   console.log(`[smoke] duplicate code throws`);
+
+  // ── invalid babysitter mode → schema rejects ───────────────────────
+  const invalidTmp = await fs.mkdtemp(path.join(os.tmpdir(), "mc-wf-invalid-"));
+  await fs.mkdir(path.join(invalidTmp, "F-feature"), { recursive: true });
+  await fs.writeFile(
+    path.join(invalidTmp, "F-feature", "workflow.json"),
+    JSON.stringify({ code: "F", name: "Feature", babysitter: { mode: "foo" } }),
+  );
+  await assertThrows(
+    () => new WorkflowLoader(invalidTmp).loadAll(),
+    /Invalid enum value|mode/,
+    "invalid babysitter mode should throw",
+  );
+  await fs.rm(invalidTmp, { recursive: true, force: true });
+  console.log(`[smoke] invalid babysitter mode throws`);
+
+  // ── schema defaults on minimal workflow ─────────────────────────────
+  const minimal = WorkflowSchema.parse({ code: "B", name: "Bug" });
+  assert(minimal.steps.length === 0, `expected default empty steps`);
+  assert(minimal.babysitter.targetQuality === 80, `expected default targetQuality 80`);
+  assert(minimal.campaign.iteratesItems === false, `expected campaign default false`);
+  console.log(`[smoke] workflow schema defaults apply`);
 
   console.log("GREEN");
 }

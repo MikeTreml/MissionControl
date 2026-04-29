@@ -2,5 +2,21 @@
   "code": "X",
   "name": "Brainstorm",
   "description": "Exploratory / ideation workflow. Less coding, more prompting and clustering.",
-  "lanes": ["plan", "develop", "done"]
+  "lanes": ["plan", "develop", "done"],
+  "steps": [
+    { "id": "explore", "agent": "brainstormer", "lane": "plan", "outputCode": "b", "breakpoint": true, "breakpointReason": "Review exploration direction." },
+    { "id": "synthesize", "agent": "writer", "lane": "develop", "outputCode": "w" }
+  ],
+  "babysitter": {
+    "targetQuality": 75,
+    "maxIterations": 2,
+    "mode": "sequential",
+    "logLevel": "info",
+    "stopOnFirstFailure": false
+  },
+  "humanGates": ["explore"],
+  "campaign": {
+    "iteratesItems": false,
+    "perItemMode": "sequential"
+  }
 }

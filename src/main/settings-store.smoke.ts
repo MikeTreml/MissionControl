@@ -45,6 +45,25 @@ async function main(): Promise<void> {
   const reverted = await store.get();
   assert(reverted.babysitterMode === "plan", "revert to plan works");
 
+  // Workflow run templates round-trip.
+  await store.saveWorkflowRunTemplate({
+    id: "wf-template-1",
+    name: "Default feature flow",
+    workflowLogicalPath: "workflows/core/tdd-quality-convergence",
+    workflowName: "TDD Quality Convergence",
+    projectId: "dogapp",
+    workflowCode: "F",
+    goal: "Implement feature with tests",
+    model: "openai:gpt-5.3",
+    inputs: { topic: "status panel", maxIterations: 3 },
+  });
+  const templates = await store.listWorkflowRunTemplates();
+  assert(templates.length === 1, "template list returns saved template");
+  assert(templates[0]!.name === "Default feature flow", "template fields persisted");
+  await store.deleteWorkflowRunTemplate("wf-template-1");
+  const afterDelete = await store.listWorkflowRunTemplates();
+  assert(afterDelete.length === 0, "deleteWorkflowRunTemplate removes entry");
+
   console.log("GREEN");
 }
 

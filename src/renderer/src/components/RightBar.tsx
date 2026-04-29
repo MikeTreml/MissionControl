@@ -46,6 +46,9 @@ const HIGHLIGHT_TYPES = new Set([
   "item-ended",
   "run-started",
   "run-ended",
+  "step:start",
+  "step:agent-end",
+  "step:end",
   "lane-changed",
   "interrupted",
   "blocker-changed",
@@ -260,8 +263,9 @@ function LiveRow({
 
 /** One-glyph icon hint for high-signal event types. */
 function iconForEvent(type: string): string {
-  if (type === "run-started"  || type === "item-started")  return "▶";
-  if (type === "run-ended"    || type === "item-ended")    return "■";
+  if (type === "run-started"  || type === "item-started" || type === "step:start") return "▶";
+  if (type === "run-ended"    || type === "item-ended"   || type === "step:end")   return "■";
+  if (type === "step:agent-end")                           return "⋯";
   if (type === "run-paused")                                return "⏸";
   if (type === "run-resumed")                               return "▷";
   if (type === "lane-changed")                              return "→";
@@ -320,6 +324,30 @@ function summarizePayload(event: TaskEvent): string {
   // Campaign item events
   if (typeof record.itemId === "string") {
     return String(record.itemId);
+  }
+
+  // Parallel step coordination events
+  if (typeof record.stepId === "string") {
+    const step = String(record.stepId);
+    if (event.type === "step:start") {
+      const expected = typeof record.expected === "number" ? ` · 0/${record.expected}` : "";
+      return `${step}${expected}`;
+    }
+    if (event.type === "step:agent-end") {
+      const agent = typeof record.agent === "string" ? ` · ${record.agent}` : "";
+      const progress = typeof record.completed === "number" && typeof record.failed === "number" && typeof record.expected === "number"
+        ? ` · ${record.completed + record.failed}/${record.expected}`
+        : "";
+      const status = typeof record.status === "string" ? ` · ${record.status}` : "";
+      return `${step}${agent}${progress}${status}`;
+    }
+    if (event.type === "step:end") {
+      const summary = typeof record.completed === "number" && typeof record.failed === "number" && typeof record.expected === "number"
+        ? ` · ${record.completed} ok / ${record.failed} failed / ${record.expected} total`
+        : "";
+      const status = typeof record.status === "string" ? ` · ${record.status}` : "";
+      return `${step}${status}${summary}`;
+    }
   }
 
   // Pi message events — pull model + role from the nested message.

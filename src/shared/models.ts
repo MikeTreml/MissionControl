@@ -197,6 +197,56 @@ export const ModelDefinitionSchema = z.object({
 });
 export type ModelDefinition = z.infer<typeof ModelDefinitionSchema>;
 
+/** Structured threshold a step's output should satisfy. */
+export const QualityGateSchema = z.object({
+  field: z.string().min(1),
+  minimum: z.number().optional(),
+  equals: z.union([z.string(), z.number(), z.boolean()]).optional(),
+  maximum: z.number().optional(),
+});
+export type QualityGate = z.infer<typeof QualityGateSchema>;
+
+/** Step failure policy. Runtime behavior lands incrementally later. */
+export const StepOnFailSchema = z.object({
+  action: z.enum(["loopBackTo", "escalate", "abort"]),
+  target: z.string().optional(),
+  maxCycles: z.number().int().min(1).default(3),
+});
+export type StepOnFail = z.infer<typeof StepOnFailSchema>;
+
+/** One workflow step template. */
+export const WorkflowStepSchema = z.object({
+  id: z.string().min(1),
+  agent: z.string().min(1),
+  lane: LaneSchema.optional(),
+  outputCode: z.string().min(1).max(4).regex(/^[a-z0-9]+$/, "outputCode must be lowercase alphanumeric, 1-4 chars"),
+  parallel: z.boolean().default(false),
+  modelOverride: z.string().nullable().default(null),
+  breakpoint: z.boolean().default(false),
+  breakpointReason: z.string().optional(),
+  qualityGate: QualityGateSchema.optional(),
+  onFail: StepOnFailSchema.optional(),
+  runWhen: z.string().optional(),
+});
+export type WorkflowStep = z.infer<typeof WorkflowStepSchema>;
+
+/** Workflow-level babysitter defaults; per-run overrides merge onto this. */
+export const WorkflowBabysitterSchema = z.object({
+  targetQuality: z.number().min(0).max(100).default(80),
+  maxIterations: z.number().int().min(1).max(10).default(3),
+  mode: z.enum(["sequential", "parallel", "pipeline"]).default("sequential"),
+  logLevel: z.enum(["info", "debug", "error"]).default("info"),
+  stopOnFirstFailure: z.boolean().default(false),
+});
+export type WorkflowBabysitter = z.infer<typeof WorkflowBabysitterSchema>;
+
+/** Campaign-specific defaults for workflows that iterate task.items[]. */
+export const WorkflowCampaignSchema = z.object({
+  iteratesItems: z.boolean().default(false),
+  perItemMode: z.enum(["sequential", "parallel"]).default("sequential"),
+});
+export type WorkflowCampaign = z.infer<typeof WorkflowCampaignSchema>;
+
 /**
  * A workflow — how a task moves through the board. Declared by workflow.json
  * under <root>/workflows/<CODE>-<slug>/workflow.json.
@@ -211,6 +261,10 @@ export const WorkflowSchema = z.object({
   name: z.string().min(1),                     // "Feature"
   description: z.string().default(""),
   lanes: z.array(LaneSchema).optional(),
+  steps: z.array(WorkflowStepSchema).default([]),
+  babysitter: WorkflowBabysitterSchema.default({}),
+  humanGates: z.array(z.string().min(1)).default([]),
+  campaign: WorkflowCampaignSchema.default({}),
 });
 export type Workflow = z.infer<typeof WorkflowSchema>;
 
@@ -221,6 +275,23 @@ export type Workflow = z.infer<typeof WorkflowSchema>;
 export function effectiveLanes(workflow: Workflow | undefined): readonly Lane[] {
   if (workflow?.lanes && workflow.lanes.length > 0) return workflow.lanes;
   return LANE_ORDER;
+}
+
+/** Merge one run's overrides onto a workflow template without mutating either. */
+export function mergeRunSettings(
+  workflow: Workflow,
+  overrides: {
+    babysitter?: Partial<WorkflowBabysitter>;
+    humanGates?: string[];
+    campaign?: Partial<WorkflowCampaign>;
+  },
+): Workflow {
+  return WorkflowSchema.parse({
+    ...workflow,
+    ...(overrides.humanGates ? { humanGates: overrides.humanGates } : {}),
+    babysitter: { ...workflow.babysitter, ...(overrides.babysitter ?? {}) },
+    campaign: { ...workflow.campaign, ...(overrides.campaign ?? {}) },
+  });
 }
 
 /**
@@ -368,12 +439,17 @@ export function makeTask(
 
 /**
  * Build a task-linked file stem from a base task id + optional agent code.
- *   taskFile("DA-015F")          === "DA-015F"       (base file)
- *   taskFile("DA-015F", "p")     === "DA-015F-p"     (planner output)
- *   taskFile("DA-015F", "rmp")   === "DA-015F-rmp"   (RepoMapper subagent)
+ * When `cycle` is provided, the cycled artifact form is used.
+ *
+ *   taskFile("DA-015F")                  === "DA-015F"         (base file)
+ *   taskFile("DA-015F", "p")           === "DA-015F-p"       (legacy / cycle-unspecified)
+ *   taskFile("DA-015F", "p", 1)        === "DA-015F-p-c1"    (planner output, cycle 1)
+ *   taskFile("DA-015F", "rmp", 2)      === "DA-015F-rmp-c2"  (RepoMapper subagent, cycle 2)
  */
-export function taskFile(taskId: string, agentCode?: string): string {
-  return agentCode ? `${taskId}-${agentCode}` : taskId;
+export function taskFile(taskId: string, agentCode?: string, cycle?: number): string {
+  if (!agentCode) return taskId;
+  if (cycle !== undefined) return `${taskId}-${agentCode}-c${cycle}`;
+  return `${taskId}-${agentCode}`;
 }
 
 /**
@@ -383,7 +459,8 @@ export function taskFile(taskId: string, agentCode?: string): string {
  * Activity feed and Task Detail timeline read from this file. Keeping the
  * payload free-form means new event types can be added without a schema
  * migration. Known types so far: "created", "saved", "lane-changed",
- * "cycle-changed", "run-started", "run-ended", "subagent-spawned".
+ * "cycle-changed", "run-started", "run-ended", "step:start",
+ * "step:agent-end", "step:end", "subagent-spawned".
  */
 export const TaskEventSchema = z
   .object({
@@ -392,6 +469,40 @@ export const TaskEventSchema = z
   })
   .passthrough();
 export type TaskEvent = z.infer<typeof TaskEventSchema>;
+
+export const StepStartEventSchema = TaskEventSchema.extend({
+  type: z.literal("step:start"),
+  stepId: z.string().min(1),
+  cycle: z.number().int().min(1),
+  expected: z.number().int().min(1),
+  agents: z.array(z.string().min(1)).min(1),
+});
+export type StepStartEvent = z.infer<typeof StepStartEventSchema>;
+
+export const StepAgentEndEventSchema = TaskEventSchema.extend({
+  type: z.literal("step:agent-end"),
+  stepId: z.string().min(1),
+  cycle: z.number().int().min(1),
+  agent: z.string().min(1),
+  status: z.enum(["ok", "failed"]),
+  completed: z.number().int().min(0),
+  failed: z.number().int().min(0),
+  expected: z.number().int().min(1),
+  outputPath: z.string().optional(),
+  error: z.string().optional(),
+});
+export type StepAgentEndEvent = z.infer<typeof StepAgentEndEventSchema>;
+
+export const StepEndEventSchema = TaskEventSchema.extend({
+  type: z.literal("step:end"),
+  stepId: z.string().min(1),
+  cycle: z.number().int().min(1),
+  status: z.enum(["ok", "partial", "aborted"]),
+  completed: z.number().int().min(0),
+  failed: z.number().int().min(0),
+  expected: z.number().int().min(1),
+});
+export type StepEndEvent = z.infer<typeof StepEndEventSchema>;
 
 /** True if an agent is a primary role (1-char code), false if subagent. */
 export function isPrimaryAgent(agent: Pick<Agent, "code">): boolean {
