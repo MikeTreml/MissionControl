@@ -192,7 +192,7 @@ task needs external code references.
 
 Web search (Exa / Perplexity / Gemini), content extraction (URL → markdown),
 video understanding (YouTube + local), GitHub repo cloning, code search.
-Smart provider fallbacks. Zero-config using Exa MCP; API keys optional for
+Smart provider defaults and redundancy. Zero-config using Exa MCP; API keys optional for
 more providers.
 
 **MC relevance:** Non-optional for any research-flavored work. Wire early;

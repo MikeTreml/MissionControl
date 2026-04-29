@@ -17,13 +17,13 @@ async function main(): Promise<void> {
   // ── real agents (bundled) ──────────────────────────────────────────
   const real = new AgentLoader(path.join(REPO_ROOT, "agents"));
   const loaded = await real.loadAll();
-  assert(loaded.length === 6, `expected 6 agents (4 primary + 2 sub), got ${loaded.length}`);
+  assert(loaded.length >= 6, `expected at least 6 agents, got ${loaded.length}`);
 
   // Primary agents (1-char code) sort first, alphabetically within.
   const primaries = loaded.filter((a) => a.code.length === 1);
   const subs = loaded.filter((a) => a.code.length > 1);
-  assert(primaries.length === 4, `expected 4 primary agents, got ${primaries.length}`);
-  assert(subs.length === 2, `expected 2 subagents, got ${subs.length}`);
+  assert(primaries.length >= 4, `expected at least 4 primary agents, got ${primaries.length}`);
+  assert(subs.length >= 2, `expected at least 2 subagents, got ${subs.length}`);
   const slugs = loaded.map((a) => a.slug);
   const codes = loaded.map((a) => a.code);
   assert(

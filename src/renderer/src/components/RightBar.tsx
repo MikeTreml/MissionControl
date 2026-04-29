@@ -6,8 +6,8 @@
  * as one row: taskId · type · (subtle detail).
  *
  * When window.mc is unavailable (e.g. static preview without preload)
- * we fall back to the canned mockRunActivity so the wireframe still
- * renders something meaningful.
+ * we use canned mockRunActivity data so the wireframe still renders
+ * something meaningful.
  */
 import { useEffect, useState } from "react";
 
@@ -110,8 +110,8 @@ export function RightBar(): JSX.Element {
  *   1. lane === "approval"   (waiting for review-then-ship sign-off)
  *   2. status === "failed"
  *   3. runState === "paused" (someone hit Pause and walked away)
- * Hidden when there are no real tasks; falls back to the canned mockQueue
- * so the wireframe still reads the same in static-preview mode.
+ * Hidden when there are no real tasks; uses the canned mockQueue so the
+ * wireframe still reads the same in static-preview mode.
  */
 function NeedsAttentionPanel({
   hasBridge,
@@ -134,7 +134,7 @@ function NeedsAttentionPanel({
   useEffect(() => { void load(); }, [hasBridge]);
   useSubscribe("tasks", () => { void load(); });
 
-  // Static-preview fallback — keeps the mock for the wireframe.
+  // Static-preview default — keeps the mock for the wireframe.
   if (!hasBridge) {
     return (
       <div className="group">

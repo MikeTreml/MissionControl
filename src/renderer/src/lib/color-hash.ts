@@ -6,7 +6,7 @@
  * are fixed so every chip reads well on the dark theme.
  */
 export function colorForKey(key: string): string {
-  if (!key) return "hsl(220, 15%, 45%)"; // neutral fallback
+  if (!key) return "hsl(220, 15%, 45%)"; // neutral default
   let hash = 0;
   for (let i = 0; i < key.length; i++) {
     hash = key.charCodeAt(i) + ((hash << 5) - hash);

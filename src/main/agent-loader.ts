@@ -11,7 +11,7 @@
  *     docrefresher/ code: "drf"
  *
  * Each folder has:
- *   agent.json       <- REQUIRED: { slug, code, name, title, description, primaryModel, fallbackModels, permissions, promptFile }
+ *   agent.json       <- REQUIRED: { slug, code, name, title, description, primaryModel, permissions, promptFile }
  *   prompt.md        <- optional system prompt/instructions (referenced by agent.json.promptFile)
  *
  * Rules enforced at boot:
@@ -28,9 +28,8 @@
  * read `.pi/agents/*.md` files in the user's project folder. The second
  * path lets project-scope agent overrides work. Decide later based on use.
  *
- * PI-WIRE: the values in each Agent (primaryModel, fallbackModels) become
- * the arguments to pi.createSession({ model, fallbacks, ... }) when a run
- * starts. See src/renderer/src/pages/TaskDetail.tsx for the call site.
+ * PI-WIRE: each Agent's `primaryModel` is passed to pi.createSession({ model, ... })
+ * when a run starts. See src/renderer/src/pages/TaskDetail.tsx for the call site.
  */
 import { promises as fs } from "node:fs";
 import { existsSync } from "node:fs";
@@ -90,7 +89,7 @@ export class AgentLoader {
   /**
    * Load the prompt.md (or whatever the agent's `promptFile` field points at)
    * content for a given slug. Returns null if the agent or file is missing
-   * — callers should fall back to pi's default system prompt.
+   * — callers should use pi's default system prompt.
    */
   async loadPrompt(slug: string): Promise<string | null> {
     if (!existsSync(this.root)) return null;

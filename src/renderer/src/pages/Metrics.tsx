@@ -3,7 +3,7 @@
  * useAllTaskEvents, derives per-run data with deriveRuns, and aggregates
  * into KPIs + a per-agent table.
  *
- * Demo fallback: when useTasks is in demo mode (no real tasks on disk),
+ * Demo default: when useTasks is in demo mode (no real tasks on disk),
  * the canned wireframe numbers still render so a fresh install has
  * something visible.
  */

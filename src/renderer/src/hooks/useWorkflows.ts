@@ -1,7 +1,7 @@
 /**
  * useWorkflows — calls window.mc.listWorkflows().
  *
- * No demo fallback: workflows are bundled with the app, so this should
+ * No demo default: workflows are bundled with the app, so this should
  * always return the 2 starter workflows (F-feature, X-brainstorm). Empty
  * result means the bundled folder is missing — surface as error.
  */
@@ -25,7 +25,7 @@ export function useWorkflows(): WorkflowsState {
     try {
       setLoading(true);
       if (!window.mc) {
-        // Fallback for the static preview — shape-match what loaders return.
+        // Default static-preview data — shape-match what loaders return.
         setWorkflows([
           { code: "F", name: "Feature",    description: "Standard feature development." },
           { code: "X", name: "Brainstorm", description: "Exploratory / ideation workflow." },

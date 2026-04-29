@@ -69,7 +69,7 @@ Zod schemas) — those probably want a single decision instead of 17.
 - Conflates "halt token spend" with "interrupt agent." If
   `session.steer()` queues a message but doesn't abort the in-flight
   HTTP stream to the model, you keep paying for the response that's
-  already streaming. No fallback in the plan.
+  already streaming. No backup path in the plan.
 - Doesn't say what happens to babysitter's own state machine when MC
   pauses. Babysitter has hooks (`PreToolUse`, `Stop`) that may or may
   not honor steer. Worst case: pi pauses, babysitter doesn't, you
@@ -389,8 +389,8 @@ Zod schemas) — those probably want a single decision instead of 17.
 - "Replace Failed Runs Today" is a value judgment buried in the plan.
   Different users want different KPI sets.
 - "Local day" sounds simple but DST transitions / timezone changes
-  give weird boundary effects (a run at 1am DST-fall-back gets
-  counted twice if "local midnight" rolls back).
+  give weird boundary effects (a run at 1am during the autumn clock change
+  can get counted twice if "local midnight" moves backward).
 
 ### Alternatives
 

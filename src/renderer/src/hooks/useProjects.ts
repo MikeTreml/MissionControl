@@ -5,7 +5,7 @@
  *   1. If `window.mc` isn't available (tests, static preview, first boot
  *      before preload), returns the mock list with `isDemo: true` so the
  *      wireframe stays alive.
- *   2. If the real store returns [], same fallback — otherwise every new
+ *   2. If the real store returns [], same demo default — otherwise every new
  *      user boots into an empty dashboard, which looks broken.
  *
  * When the user creates a real project, this re-fetches and the demo flag
@@ -64,7 +64,7 @@ function mockToUi(p: MockProject): UiProject {
 export interface ProjectsState {
   projects: UiProject[];
   loading: boolean;
-  isDemo: boolean;       // true when we fell back to mock data
+  isDemo: boolean;       // true when we used mock data
   error: Error | null;
   refresh: () => Promise<void>;
 }

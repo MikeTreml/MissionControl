@@ -8,7 +8,6 @@ import type {
   Task,
   TaskEvent,
   ProjectWithGit,
-  ModelDefinition,
   Workflow,
   Agent,
   Lane,
@@ -70,13 +69,9 @@ export interface McApi {
   ) => Promise<ProjectWithGit>;
   deleteProject: (id: string) => Promise<void>;
 
-  // models (the LLM roster)
-  listModels: () => Promise<ModelDefinition[]>;
-  saveModels: (models: ModelDefinition[]) => Promise<void>;
-  suggestedModels: () => Promise<ModelDefinition[]>;
-
-  // read-only loaders
+  // agents + workflows
   listAgents: () => Promise<Agent[]>;
+  saveAgents: (agents: Agent[]) => Promise<Agent[]>;
   listWorkflows: () => Promise<Workflow[]>;
 
   // runs (Start/Pause/Resume/Stop state machine; returns updated Task)

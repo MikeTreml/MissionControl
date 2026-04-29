@@ -38,13 +38,9 @@ const api = {
     ipcRenderer.invoke("projects:update", id, patch),
   deleteProject:   (id: string) => ipcRenderer.invoke("projects:delete", id),
 
-  // ── models (LLM roster) ──────────────────────────────────────────────
-  listModels:      () => ipcRenderer.invoke("models:list"),
-  saveModels:      (models: unknown) => ipcRenderer.invoke("models:save", models),
-  suggestedModels: () => ipcRenderer.invoke("models:suggested"),
-
-  // ── agents + workflows (read-only loaders) ───────────────────────────
+  // ── agents + workflows ───────────────────────────────────────────────
   listAgents:      () => ipcRenderer.invoke("agents:list"),
+  saveAgents:      (agents: unknown) => ipcRenderer.invoke("agents:save", agents),
   listWorkflows:   () => ipcRenderer.invoke("workflows:list"),
 
   // ── runs (Start/Pause/Resume/Stop) ───────────────────────────────────

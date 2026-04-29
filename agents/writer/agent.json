@@ -5,7 +5,6 @@
   "title": "Writer",
   "description": "Drafts narrative content — blog posts, release notes, pitches. Optimises for voice and flow. Pairs with Editor for polish, Critic for hard feedback.",
   "primaryModel": "claude-opus",
-  "fallbackModels": ["gpt-5-codex"],
   "permissions": { "inherit": true },
   "promptFile": "prompt.md"
 }

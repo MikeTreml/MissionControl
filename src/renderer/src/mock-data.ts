@@ -41,7 +41,7 @@ export interface MockProject {
 export interface MockAgent {
   role: "Planner" | "Developer" | "Reviewer" | "Surgeon";
   primary: string;
-  fallback: string;
+  secondary: string;
 }
 
 export interface MockTask {
@@ -116,10 +116,10 @@ export const mockProjects: MockProject[] = [
 ];
 
 export const mockAgents: MockAgent[] = [
-  { role: "Planner",   primary: "Claude", fallback: "Local" },
-  { role: "Developer", primary: "Codex",  fallback: "Claude" },
-  { role: "Reviewer",  primary: "Claude", fallback: "Codex" },
-  { role: "Surgeon",   primary: "Local",  fallback: "Claude" },
+  { role: "Planner",   primary: "Claude", secondary: "Local" },
+  { role: "Developer", primary: "Codex",  secondary: "Claude" },
+  { role: "Reviewer",  primary: "Claude", secondary: "Codex" },
+  { role: "Surgeon",   primary: "Local",  secondary: "Claude" },
 ];
 
 export const mockKpis: MockKpi[] = [

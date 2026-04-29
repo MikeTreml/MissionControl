@@ -11,8 +11,7 @@ export type ViewId =
   | "dashboard"
   | "project"
   | "task"
-  | "settings-models"      // LLM roster (editable)
-  | "settings-agents"      // unified list of primary roles + subagents (read-only)
+  | "settings-agents"      // unified list of primary roles + subagents
   | "settings-workflows"   // read-only workflow list
   | "settings-global"
   | "metrics";

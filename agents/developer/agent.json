@@ -5,7 +5,6 @@
   "title": "Developer",
   "description": "Generic implementation agent. Specialized variants (Python Dev, C# Dev, X++ Dev) share title \"Developer\".",
   "primaryModel": "gpt-5-codex",
-  "fallbackModels": ["claude-opus"],
   "permissions": { "inherit": true },
   "promptFile": "prompt.md"
 }

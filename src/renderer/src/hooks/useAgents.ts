@@ -1,38 +1,39 @@
 /**
  * useAgents — the unified agent list (primary roles + subagents) plus the
- * LLM model roster. Single source for anything that needs to know "what
- * agents exist and what models do they use?"
+ * pi-visible model list. Single source for anything that needs to know "what
+ * agents exist and what models can they use?"
  *
  * Consumers filter as needed:
- *   agents.filter((a) => a.code.length === 1)  → primary roles (sidebar runtime)
- *   agents.filter((a) => a.code.length > 1)    → subagents (settings page)
+ *   agents.filter((a) => a.code.length === 1 && a.enabled !== false) → active primary roles
+ *   agents.filter((a) => a.code.length > 1)                          → subagents
  *
- * Demo fallback: when no real data, returns a mock set with the four
+ * Demo default: when no real data, returns a mock set with the four
  * primary roles + two subagents (matches the mockup visually).
  */
 import { useEffect, useState } from "react";
 
 import { useSubscribe } from "./data-bus";
-import type { Agent, ModelDefinition } from "../../../shared/models";
+import type { Agent } from "../../../shared/models";
+import type { PiModelInfo } from "../global";
 
 const MOCK_AGENTS: Agent[] = [
-  { slug: "planner",      code: "p",   name: "Planner",      title: "Planner",   description: "", primaryModel: "claude-opus", fallbackModels: ["qwen-coder"], permissions: { inherit: true, readonly: false, allowedPaths: [] }, promptFile: "prompt.md" },
-  { slug: "developer",    code: "d",   name: "Developer",    title: "Developer", description: "", primaryModel: "gpt-5-codex", fallbackModels: ["claude-opus"], permissions: { inherit: true, readonly: false, allowedPaths: [] }, promptFile: "prompt.md" },
-  { slug: "reviewer",     code: "r",   name: "Reviewer",     title: "Reviewer",  description: "", primaryModel: "claude-opus", fallbackModels: [],              permissions: { inherit: true, readonly: true,  allowedPaths: [] }, promptFile: "prompt.md" },
-  { slug: "surgeon",      code: "s",   name: "Surgeon",      title: "Surgeon",   description: "", primaryModel: "qwen-coder",  fallbackModels: ["claude-opus"], permissions: { inherit: true, readonly: false, allowedPaths: [] }, promptFile: "prompt.md" },
-  { slug: "repomapper",   code: "rmp", name: "RepoMapper",   title: "Subagent",  description: "", primaryModel: "qwen-coder",  fallbackModels: [],              permissions: { inherit: false, readonly: true, allowedPaths: ["./"] }, promptFile: "prompt.md" },
-  { slug: "docrefresher", code: "drf", name: "DocRefresher", title: "Subagent",  description: "", primaryModel: "qwen-coder",  fallbackModels: [],              permissions: { inherit: true, readonly: false, allowedPaths: [] }, promptFile: "prompt.md" },
+  { slug: "planner",      code: "p",   name: "Planner",      title: "Planner",   description: "", enabled: true, primaryModel: "anthropic:claude-opus-4-7", permissions: { inherit: true, readonly: false, allowedPaths: [] }, promptFile: "prompt.md" },
+  { slug: "developer",    code: "d",   name: "Developer",    title: "Developer", description: "", enabled: true, primaryModel: "openai-codex:gpt-5.5", permissions: { inherit: true, readonly: false, allowedPaths: [] }, promptFile: "prompt.md" },
+  { slug: "reviewer",     code: "r",   name: "Reviewer",     title: "Reviewer",  description: "", enabled: true, primaryModel: "anthropic:claude-opus-4-7", permissions: { inherit: true, readonly: true,  allowedPaths: [] }, promptFile: "prompt.md" },
+  { slug: "surgeon",      code: "s",   name: "Surgeon",      title: "Surgeon",   description: "", enabled: true, primaryModel: "google:gemini-3.1-pro-preview", permissions: { inherit: true, readonly: false, allowedPaths: [] }, promptFile: "prompt.md" },
+  { slug: "repomapper",   code: "rmp", name: "RepoMapper",   title: "Subagent",  description: "", enabled: true, primaryModel: "google:gemini-3.1-pro-preview", permissions: { inherit: false, readonly: true, allowedPaths: ["./"] }, promptFile: "prompt.md" },
+  { slug: "docrefresher", code: "drf", name: "DocRefresher", title: "Subagent",  description: "", enabled: true, primaryModel: "google:gemini-3.1-pro-preview", permissions: { inherit: true, readonly: false, allowedPaths: [] }, promptFile: "prompt.md" },
 ];
 
-const MOCK_MODELS: ModelDefinition[] = [
-  { id: "claude-opus",  label: "Claude Opus 4.6", kind: "anthropic", model: "claude-opus-4-6", endpoint: "",                         notes: "" },
-  { id: "gpt-5-codex",  label: "GPT-5 Codex",     kind: "openai",    model: "gpt-5-codex",     endpoint: "",                         notes: "" },
-  { id: "qwen-coder",   label: "Qwen 2.5 Coder",  kind: "ollama",    model: "qwen2.5-coder",   endpoint: "http://localhost:11434",   notes: "local" },
+const MOCK_MODELS: PiModelInfo[] = [
+  { id: "claude-opus-4-7", name: "claude-opus-4-7", provider: "anthropic", api: "anthropic", contextWindow: 200000, maxTokens: 8192, costInputPerMTok: 15, costOutputPerMTok: 75, reasoning: true },
+  { id: "gpt-5.5", name: "gpt-5.5", provider: "openai-codex", api: "openai", contextWindow: 400000, maxTokens: 16384, costInputPerMTok: 1.25, costOutputPerMTok: 10, reasoning: true },
+  { id: "gemini-3.1-pro-preview", name: "gemini-3.1-pro-preview", provider: "google", api: "google", contextWindow: 1048576, maxTokens: 8192, costInputPerMTok: 1.25, costOutputPerMTok: 10, reasoning: true },
 ];
 
 export interface AgentsState {
-  agents: Agent[];                 // all agents, primary + sub
-  models: ModelDefinition[];       // the LLM roster
+  agents: Agent[];
+  models: PiModelInfo[];
   loading: boolean;
   isDemo: boolean;
   error: Error | null;
@@ -41,7 +42,7 @@ export interface AgentsState {
 
 export function useAgents(): AgentsState {
   const [agents, setAgents] = useState<Agent[]>([]);
-  const [models, setModels] = useState<ModelDefinition[]>([]);
+  const [models, setModels] = useState<PiModelInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isDemo, setIsDemo] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -57,7 +58,7 @@ export function useAgents(): AgentsState {
       }
       const [a, m] = await Promise.all([
         window.mc.listAgents(),
-        window.mc.listModels(),
+        window.mc.listPiModels(),
       ]);
       if (a.length === 0) {
         setAgents(MOCK_AGENTS);
@@ -66,8 +67,8 @@ export function useAgents(): AgentsState {
         setAgents(a);
         setIsDemo(false);
       }
-      // Model roster being empty is fine (user hasn't added any); no demo flag for it
       setModels(m.length === 0 ? MOCK_MODELS : m);
+      setError(null);
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
       setAgents(MOCK_AGENTS);
@@ -83,14 +84,14 @@ export function useAgents(): AgentsState {
   }, []);
 
   useSubscribe("agents", () => { void load(); });
-  useSubscribe("models", () => { void load(); });
 
   return { agents, models, loading, isDemo, error, refresh: load };
 }
 
-/** Resolve a model id to its display label (falls back to the raw id). */
-export function modelLabel(id: string, roster: ModelDefinition[]): string {
+/** Resolve a persisted provider:model id to a display label (uses the raw id when missing). */
+export function modelLabel(id: string, roster: PiModelInfo[]): string {
   if (!id) return "";
-  const m = roster.find((x) => x.id === id);
-  return m ? m.label : id;
+  const [provider, modelId] = id.includes(":") ? id.split(":", 2) : [undefined, id];
+  const m = roster.find((x) => x.id === modelId && (provider ? x.provider === provider : true));
+  return m ? `${m.provider}:${m.name}` : id;
 }

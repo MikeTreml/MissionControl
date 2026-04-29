@@ -10,7 +10,6 @@
  * Path layout:
  *   <userData>/tasks/<TP-NNN>/manifest.json · events.jsonl · notes.md per agent
  *   <userData>/projects/<slug>/project.json
- *   <userData>/models.json                 (LLM roster — user-editable)
  *   <appRoot>/agents/<slug>/agent.json     (bundled — primary roles + subagents)
  *   <appRoot>/workflows/<CODE>-<slug>/workflow.json  (bundled)
  *
@@ -28,7 +27,7 @@
  *
  * See docs/HANDOFF.md for the full orientation.
  */
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -39,7 +38,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { TaskStore } from "./store.ts";
 import { ProjectStore } from "./project-store.ts";
-import { ModelRosterStore } from "./model-roster.ts";
 import { WorkflowLoader } from "./workflows.ts";
 import { AgentLoader } from "./agent-loader.ts";
 import { PiSessionManager } from "./pi-session-manager.ts";
@@ -55,12 +53,11 @@ async function bootstrapStores(): Promise<void> {
 
   const tasks = new TaskStore(join(userData, "tasks"));
   const projects = new ProjectStore(join(userData, "projects"));
-  const models = new ModelRosterStore(userData);
   const workflows = new WorkflowLoader(join(appRoot, "workflows"));
   const agents = new AgentLoader(join(appRoot, "agents"));
   const settings = new SettingsStore(userData);
 
-  await Promise.all([tasks.init(), projects.init(), models.init(), settings.init()]);
+  await Promise.all([tasks.init(), projects.init(), settings.init()]);
 
   // PiSessionManager owns live pi sessions (via babysitter-sdk's
   // createPiSession wrapper). RunManager owns the task state machine
@@ -79,7 +76,7 @@ async function bootstrapStores(): Promise<void> {
 
   bootstrappedTasks = tasks;
 
-  registerIpc({ tasks, projects, models, workflows, agents, runs, pi, settings });
+  registerIpc({ tasks, projects, workflows, agents, runs, pi, settings });
   console.log("[main] IPC handlers registered");
 }
 
@@ -168,6 +165,7 @@ function createMainWindow(): void {
 let bootstrappedTasks: TaskStore | null = null;
 
 app.whenReady().then(async () => {
+  Menu.setApplicationMenu(null);
   await bootstrapStores();
   createMainWindow();
 

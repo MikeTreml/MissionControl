@@ -9,7 +9,7 @@
  *     the `icon` field on a project (emoji or short string).
  *   - Add Project is a single "+" icon button on the "Projects" header row.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useProjects } from "../hooks/useProjects";
 import { useTasks } from "../hooks/useTasks";
@@ -22,6 +22,20 @@ export function Sidebar(): JSX.Element {
   const { projects, isDemo } = useProjects();
   const { tasks } = useTasks();
   const [addProjectOpen, setAddProjectOpen] = useState(false);
+  const [bridgeOk, setBridgeOk] = useState<boolean>(Boolean(window.mc));
+  const [appVersion, setAppVersion] = useState<string>("");
+
+  useEffect(() => {
+    setBridgeOk(Boolean(window.mc));
+    void (async () => {
+      try {
+        if (!window.mc) return;
+        setAppVersion(await window.mc.appVersion());
+      } catch {
+        setAppVersion("");
+      }
+    })();
+  }, []);
 
   // Open-task count per project: anything not in the Done lane. Cheaper than
   // walking events; UiTask already carries the resolved lane label.
@@ -37,12 +51,7 @@ export function Sidebar(): JSX.Element {
         className="group"
         style={{ cursor: "pointer", marginBottom: 12 }}
         onClick={() => setView("dashboard")}
-      >
-        <h2>Mission Control</h2>
-        <p className="muted" style={{ marginTop: 6, fontSize: 12 }}>
-          Projects • Tasks • Runs
-        </p>
-      </div>
+      />
 
       {isDemo && (
         <div
@@ -110,6 +119,29 @@ export function Sidebar(): JSX.Element {
           </div>
         )}
       </div>
+
+      <div style={{ marginTop: 14, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span
+            title={bridgeOk ? "Connected to main process" : "Preload not loaded — check terminal"}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: bridgeOk ? "var(--good)" : "var(--bad)",
+              boxShadow: `0 0 0 2px ${bridgeOk ? "rgba(77,212,172,0.25)" : "rgba(255,123,123,0.25)"}`,
+            }}
+          />
+          <span className="muted" style={{ fontSize: 11 }}>
+            {bridgeOk ? "bridge ok" : "bridge offline"}
+          </span>
+          {appVersion && (
+            <span className="muted" style={{ fontSize: 11 }}>
+              v{appVersion}
+            </span>
+          )}
+        </div>
+      </div>
     </aside>
   );
 }
@@ -132,39 +164,36 @@ function ProjectRow({
       className={project.active ? "project active" : "project"}
       style={{
         cursor: "pointer",
-        padding: "6px 8px",
+        padding: "7px 9px",
         borderRadius: 8,
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
         background: "var(--panel-2)",
         border: "1px solid var(--border)",
-        position: "relative",
       }}
       title={`${project.name} — ${project.sourceHint}`}
     >
-      {/* Prefix chip (main visual anchor — colored by prefix) */}
-      <div
-        style={{
-          flex: "0 0 auto",
-          background: bg,
-          color: "#0b0d12",
-          border: `1px solid ${border}`,
-          borderRadius: 6,
-          padding: "2px 6px",
-          fontSize: 11,
-          fontWeight: 700,
-          lineHeight: 1.3,
-          minWidth: 28,
-          textAlign: "center",
-        }}
-      >
-        {project.prefix}
-      </div>
-
-      <div style={{ minWidth: 0, flex: 1, paddingRight: project.icon ? 22 : 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
         <div
           style={{
+            flex: "0 0 auto",
+            background: bg,
+            color: "#0b0d12",
+            border: `1px solid ${border}`,
+            borderRadius: 6,
+            padding: "2px 6px",
+            fontSize: 11,
+            fontWeight: 700,
+            lineHeight: 1.25,
+            minWidth: 28,
+            textAlign: "center",
+          }}
+        >
+          {project.prefix}
+        </div>
+
+        <div
+          style={{
+            minWidth: 0,
+            flex: 1,
             fontWeight: 600,
             fontSize: 13,
             whiteSpace: "nowrap",
@@ -174,56 +203,46 @@ function ProjectRow({
         >
           {project.name}
         </div>
-        <div
-          className="muted"
-          style={{
-            fontSize: 11,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {project.sourceHint}
-        </div>
+
+        {openCount > 0 && (
+          <div
+            aria-label={`${openCount} open task${openCount === 1 ? "" : "s"}`}
+            title={`${openCount} open task${openCount === 1 ? "" : "s"}`}
+            style={{
+              flex: "0 0 auto",
+              fontSize: 11,
+              fontWeight: 600,
+              color: "var(--accent)",
+              background: "rgba(110, 168, 254, 0.12)",
+              borderRadius: 999,
+              padding: "1px 6px",
+              lineHeight: 1.25,
+            }}
+          >
+            {openCount}
+          </div>
+        )}
+
+        {project.icon && (
+          <div style={{ flex: "0 0 auto", fontSize: 13, lineHeight: 1 }}>
+            {project.icon}
+          </div>
+        )}
       </div>
 
-      {/* Open-task count — only when > 0; subtle, sits at the right edge.
-          Skipped on demo rows (project.active comes from mock data). */}
-      {openCount > 0 && (
-        <div
-          aria-label={`${openCount} open task${openCount === 1 ? "" : "s"}`}
-          title={`${openCount} open task${openCount === 1 ? "" : "s"}`}
-          style={{
-            flex: "0 0 auto",
-            fontSize: 11,
-            fontWeight: 600,
-            color: "var(--accent)",
-            background: "rgba(110, 168, 254, 0.12)",
-            borderRadius: 999,
-            padding: "1px 7px",
-            lineHeight: 1.3,
-            marginLeft: 4,
-            marginRight: project.icon ? 18 : 0,
-          }}
-        >
-          {openCount}
-        </div>
-      )}
-
-      {/* Optional icon — accent in the upper-right */}
-      {project.icon && (
-        <div
-          style={{
-            position: "absolute",
-            top: 4,
-            right: 6,
-            fontSize: 14,
-            lineHeight: 1,
-          }}
-        >
-          {project.icon}
-        </div>
-      )}
+      <div
+        className="muted"
+        style={{
+          marginTop: 4,
+          marginLeft: 36,
+          fontSize: 11,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {project.sourceHint}
+      </div>
     </div>
   );
 }

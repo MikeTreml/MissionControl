@@ -1,7 +1,6 @@
 /**
- * Settings — shell with sub-tabs for Models / Agents / Workflows / Global.
+ * Settings — shell with sub-tabs for Agents / Workflows / Global.
  *
- * Models (editable)      → the LLM roster (<userData>/models.json).
  * Agents (read-only)     → list of every agent discovered in agents/, grouped
  *                          by `title`. Add an agent by dropping a folder.
  * Workflows (read-only)  → list from workflows/. Add by dropping a folder.
@@ -16,12 +15,11 @@ import { useAgents, modelLabel } from "../hooks/useAgents";
 import { useWorkflows } from "../hooks/useWorkflows";
 import { publish } from "../hooks/data-bus";
 import { useRoute, type ViewId } from "../router";
-import { effectiveLanes } from "../../../shared/models";
-import type { ModelDefinition, MCSettings } from "../../../shared/models";
+import { effectiveLanes, isPrimaryAgent } from "../../../shared/models";
+import type { Agent, MCSettings } from "../../../shared/models";
 
 const SUBTABS: ReadonlyArray<{ id: ViewId; label: string }> = [
   { id: "settings-agents",    label: "Agents" },
-  { id: "settings-models",    label: "Models" },
   { id: "settings-workflows", label: "Workflows" },
   { id: "settings-global",    label: "Global" },
 ];
@@ -71,23 +69,38 @@ function SubTabs(): JSX.Element {
   );
 }
 
-// ═══════════════ MODELS (editable — the LLM roster) ═══════════════
-export function SettingsModels(): JSX.Element {
-  const { models, refresh, isDemo } = useAgents();
-  const [draft, setDraft] = useState<ModelDefinition[] | null>(null);
+// ═══════════════ AGENTS (editable overlays on bundled manifests) ═══════════════
+export function SettingsAgents(): JSX.Element {
+  const { agents, models, refresh, isDemo } = useAgents();
+  const [draft, setDraft] = useState<Agent[] | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const source = draft ?? models;
+  const source = draft ?? agents;
+  const enabledPrimaries = source.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
+  const duplicateCodes = findDuplicateCodes(source);
+
+  useEffect(() => {
+    setDraft(null);
+    setError("");
+  }, [agents]);
+
+  function patchAgent(slug: string, patch: Partial<Agent>): void {
+    setDraft(source.map((a) => (a.slug === slug ? { ...a, ...patch } : a)));
+  }
 
   async function save(): Promise<void> {
     if (!window.mc) { setError("Not connected — run `npm run dev`"); return; }
-    setError("");
+    if (duplicateCodes.length > 0) {
+      setError(`Duplicate agent code(s): ${duplicateCodes.join(", ")}`);
+      return;
+    }
     setSaving(true);
+    setError("");
     try {
-      await window.mc.saveModels(source);
+      await window.mc.saveAgents(source);
       setDraft(null);
-      publish("models");
+      publish("agents");
       await refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -96,179 +109,99 @@ export function SettingsModels(): JSX.Element {
     }
   }
 
-  function addModel(): void {
-    setDraft([
-      ...source,
-      { id: "", label: "", kind: "anthropic", model: "", endpoint: "", notes: "" },
-    ]);
-  }
-  function removeModel(idx: number): void {
-    setDraft(source.filter((_, i) => i !== idx));
-  }
-  function patchModel(idx: number, patch: Partial<ModelDefinition>): void {
-    setDraft(source.map((m, i) => (i === idx ? { ...m, ...patch } : m)));
-  }
-
   return (
     <>
       <Header />
       <div className="content">
         <SubTabs />
-
         {isDemo && <DemoBanner />}
-
         {error && <ErrorBanner msg={error} />}
 
-        <div className="card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <h3>Model roster</h3>
-              <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-                Each agent references one of these by <code>id</code> as its primary or
-                fallback. Pi will auto-discover most once wired — add custom endpoints
-                (local LLMs, OpenAI-compat servers) here.
-              </p>
-            </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button
-                className="button ghost"
-                onClick={async () => {
-                  // CONFIRMED: populates draft from models-suggested.json
-                  // shipped in the repo root. User must still hit "Save roster"
-                  // to persist.
-                  if (!window.mc) return;
-                  const suggested = await window.mc.suggestedModels();
-                  console.log("[Settings/Models] loaded defaults:", suggested);
-                  // If there's already a draft/roster, append; otherwise replace.
-                  if (source.length === 0) {
-                    setDraft(suggested);
-                  } else {
-                    const existingIds = new Set(source.map((m) => m.id));
-                    const additions = suggested.filter((m) => !existingIds.has(m.id));
-                    setDraft([...source, ...additions]);
-                  }
-                }}
-                title="Load Codex + Ollama suggested defaults (you still need to Save)"
-              >
-                Load defaults
-              </button>
-              <button className="button ghost" onClick={addModel}>+ Add model</button>
-              <button className="button" onClick={save} disabled={saving}>
-                {saving ? "Saving…" : "Save roster"}
-              </button>
-            </div>
-          </div>
-          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 12, fontSize: 13 }}>
-            <thead>
-              <tr style={{ color: "var(--muted)", textAlign: "left" }}>
-                <th style={th}>ID</th>
-                <th style={th}>Label</th>
-                <th style={th}>Kind</th>
-                <th style={th}>Model</th>
-                <th style={th}>Endpoint</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {source.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="muted" style={{ padding: "12px 10px" }}>
-                    No models yet. Click "+ Add model" to start.
-                  </td>
-                </tr>
-              )}
-              {source.map((m, idx) => (
-                <tr key={idx} style={{ borderTop: "1px solid var(--border)" }}>
-                  <td style={cell}><TextInput value={m.id}       onChange={(v) => patchModel(idx, { id: v })}       placeholder="claude-opus" /></td>
-                  <td style={cell}><TextInput value={m.label}    onChange={(v) => patchModel(idx, { label: v })}    placeholder="Claude Opus 4.6" /></td>
-                  <td style={cell}><TextInput value={m.kind}     onChange={(v) => patchModel(idx, { kind: v })}     placeholder="anthropic" /></td>
-                  <td style={cell}><TextInput value={m.model}    onChange={(v) => patchModel(idx, { model: v })}    placeholder="claude-opus-4-6" /></td>
-                  <td style={cell}><TextInput value={m.endpoint} onChange={(v) => patchModel(idx, { endpoint: v })} placeholder="(optional)" /></td>
-                  <td style={cell}>
-                    <button className="button ghost" onClick={() => removeModel(idx)}>✕</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </>
-  );
-}
-
-// ═══════════════ AGENTS (read-only, unified primary + subagents) ═══════════════
-export function SettingsAgents(): JSX.Element {
-  const { agents, models } = useAgents();
-
-  // Group agents by title. Empty title ends up in "Other".
-  const grouped = new Map<string, typeof agents>();
-  for (const a of agents) {
-    const key = a.title || "Other";
-    const bucket = grouped.get(key) ?? [];
-    bucket.push(a);
-    grouped.set(key, bucket);
-  }
-
-  return (
-    <>
-      <Header />
-      <div className="content">
-        <SubTabs />
         <div className="card" style={{ borderStyle: "dashed" }}>
           <p className="muted" style={{ fontSize: 12 }}>
-            View-only. Add an agent by dropping a folder in{" "}
-            <code>agents/&lt;slug&gt;/</code>. See <code>agents/README.md</code>.
-            Primary roles have 1-char codes; subagents have 2-4 char codes.
+            Bundled agent manifests remain the base definition. Edits here are saved as Mission Control overrides,
+            so you can activate/deactivate agents, rename them, change suffix codes, and pick pi-discovered models without
+            hardcoding Planner/Developer/Reviewer/Surgeon conventions in the UI.
           </p>
         </div>
 
-        {agents.length === 0 && (
-          <div className="card">
-            <p className="muted">
-              No agents found. The <code>agents/</code> folder may be missing or
-              contain no <code>agent.json</code> files.
-            </p>
-          </div>
-        )}
-
-        {[...grouped.entries()].map(([title, list]) => (
-          <div key={title}>
-            <h3 style={{ marginBottom: 10, color: "var(--muted)" }}>{title}</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-              {list.map((a) => (
-                <div key={a.slug} className="card">
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <strong style={{ fontSize: 16 }}>{a.name}</strong>
-                    <span className="pill info" style={{ marginLeft: "auto" }}>{a.code}</span>
-                  </div>
-                  {a.description && (
-                    <p className="muted" style={{ marginTop: 8 }}>{a.description}</p>
-                  )}
-                  <div style={{ marginTop: 10, fontSize: 13 }}>
-                    <div>
-                      <strong>Primary model:</strong>{" "}
-                      {modelLabel(a.primaryModel, models) || "(caller chooses)"}
-                    </div>
-                    {a.fallbackModels.length > 0 && (
-                      <div>
-                        <strong>Fallbacks:</strong>{" "}
-                        {a.fallbackModels.map((id) => modelLabel(id, models)).join(", ")}
-                      </div>
-                    )}
-                    <div>
-                      <strong>Permissions:</strong>{" "}
-                      {permissionSummary(a.permissions)}
-                    </div>
-                    <div style={{ marginTop: 4, fontSize: 12 }} className="muted">
-                      File suffix example: <code>&lt;task-id&gt;-{a.code}</code>
-                    </div>
-                  </div>
-                </div>
-              ))}
+        <div className="card">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <div>
+              <h3>Agent roster</h3>
+              <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+                Enabled 1-char agents are the active primary roles used by task-linked file expectations and runtime pickers.
+              </p>
             </div>
+            <button className="button" onClick={() => void save()} disabled={saving || agents.length === 0}>
+              {saving ? "Saving…" : "Save agents"}
+            </button>
           </div>
-        ))}
+
+          {agents.length === 0 ? (
+            <p className="muted" style={{ marginTop: 12 }}>
+              No agents found. The <code>agents/</code> folder may be missing or contain no <code>agent.json</code> files.
+            </p>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 12, fontSize: 13 }}>
+              <thead>
+                <tr style={{ color: "var(--muted)", textAlign: "left" }}>
+                  <th style={th}>On</th>
+                  <th style={th}>Slug</th>
+                  <th style={th}>Name</th>
+                  <th style={th}>Title</th>
+                  <th style={th}>Code</th>
+                  <th style={th}>Primary model</th>
+                </tr>
+              </thead>
+              <tbody>
+                {source.map((a) => (
+                  <tr key={a.slug} style={{ borderTop: "1px solid var(--border)" }}>
+                    <td style={cell}>
+                      <input type="checkbox" checked={a.enabled !== false} onChange={(e) => patchAgent(a.slug, { enabled: e.target.checked })} />
+                    </td>
+                    <td style={cell}><code>{a.slug}</code></td>
+                    <td style={cell}><TextInput value={a.name} onChange={(v) => patchAgent(a.slug, { name: v })} placeholder="Display name" /></td>
+                    <td style={cell}><TextInput value={a.title} onChange={(v) => patchAgent(a.slug, { title: v })} placeholder="Developer / Reviewer / …" /></td>
+                    <td style={cell}><TextInput value={a.code} onChange={(v) => patchAgent(a.slug, { code: v.toLowerCase() })} placeholder="p" /></td>
+                    <td style={cell}>
+                      <select
+                        value={a.primaryModel}
+                        onChange={(e) => patchAgent(a.slug, { primaryModel: e.target.value })}
+                        style={selectStyle}
+                      >
+                        <option value="">(caller chooses)</option>
+                        {models.map((m) => {
+                          const value = `${m.provider}:${m.id}`;
+                          return <option key={value} value={value}>{m.provider}:{m.name}</option>;
+                        })}
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <div className="card">
+          <h3>Active primary agent suffixes</h3>
+          <div style={{ marginTop: 10, display: "grid", gap: 6 }}>
+            {enabledPrimaries.length === 0 ? (
+              <div className="muted" style={{ fontSize: 12 }}>No enabled primary agents.</div>
+            ) : enabledPrimaries.map((a) => (
+              <div key={a.slug} style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <strong>{a.name}</strong>
+                <span className="muted"><code>&lt;task-id&gt;-{a.code}.md</code></span>
+              </div>
+            ))}
+          </div>
+          {duplicateCodes.length > 0 && (
+            <p className="muted" style={{ marginTop: 10, color: "var(--bad)" }}>
+              Duplicate codes must be resolved before saving: {duplicateCodes.join(", ")}
+            </p>
+          )}
+        </div>
       </div>
     </>
   );
@@ -356,7 +289,6 @@ export function SettingsGlobal(): JSX.Element {
           <div style={{ marginTop: 10 }}>
             <PathRow label="Tasks"           value="(userData)/tasks" />
             <PathRow label="Projects"        value="(userData)/projects" />
-            <PathRow label="Model roster"    value="(userData)/models.json" />
             <PathRow label="App settings"    value="(userData)/settings.json" />
             <PathRow label="Agents"          value="(bundled)/agents" />
             <PathRow label="Workflows"       value="(bundled)/workflows" />
@@ -487,6 +419,16 @@ function BabysitterMode(): JSX.Element {
 
 const th: React.CSSProperties = { padding: "8px 10px", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 };
 const cell: React.CSSProperties = { padding: "6px 8px", verticalAlign: "top" };
+const selectStyle: React.CSSProperties = {
+  background: "var(--bg)",
+  color: "var(--text)",
+  border: "1px solid var(--border)",
+  borderRadius: 6,
+  padding: "6px 8px",
+  fontFamily: "inherit",
+  fontSize: 13,
+  width: "100%",
+};
 
 function TextInput({
   value, onChange, placeholder,
@@ -535,8 +477,7 @@ function DemoBanner(): JSX.Element {
     >
       <strong style={{ color: "var(--warn)" }}>Demo config</strong>
       <p className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-        No real data on disk yet. Anything you save here writes to{" "}
-        <code>(userData)/models.json</code>.
+        No real data on disk yet. Anything you save here writes to Mission Control's app data.
       </p>
     </div>
   );
@@ -557,10 +498,8 @@ function ErrorBanner({ msg }: { msg: string }): JSX.Element {
   );
 }
 
-function permissionSummary(p: { inherit?: boolean; readonly?: boolean; allowedPaths?: string[] }): string {
-  const parts: string[] = [];
-  if (p.readonly) parts.push("read-only");
-  if (p.inherit) parts.push("inherits from parent");
-  if (p.allowedPaths && p.allowedPaths.length > 0) parts.push(`scoped to ${p.allowedPaths.join(", ")}`);
-  return parts.length > 0 ? parts.join(" · ") : "default";
+function findDuplicateCodes(agents: Agent[]): string[] {
+  const counts = new Map<string, number>();
+  for (const agent of agents) counts.set(agent.code, (counts.get(agent.code) ?? 0) + 1);
+  return [...counts.entries()].filter(([, n]) => n > 1).map(([code]) => code).sort();
 }

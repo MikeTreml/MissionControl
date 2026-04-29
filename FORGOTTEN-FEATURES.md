@@ -55,8 +55,8 @@ Grouped by blast-radius. Top of the list = biggest implications for data shape.
 - Mockup Approval lane: `Blocked 18m` on a task.
 - Need a timestamp for when the task entered its current waiting state so we can render "Blocked Nm/h".
 
-## 10. Agent primary / fallback model pairs
-- Mockup sidebar: per-role pairing like "Codex • Claude fallback".
+## 10. Agent primary / secondary model pairs
+- Mockup sidebar: per-role pairing like "Codex • Claude secondary".
 - Already covered by `AgentSlotSchema` — **no gap here**, just confirming it's carried forward.
 
 ## 11. Project source integration
@@ -120,5 +120,5 @@ Still open:
 - **#8 Queue — what is being waited on** — still mocked. Approval lane
   gate is real now; "Waiting on build callback" / "Waiting on human"
   reasons aren't enumerated.
-- **#10 Agent primary / fallback model pairs** — already in
+- **#10 Agent primary / secondary model pairs** — already in
   `agent.json`. Good.

@@ -31,7 +31,7 @@ body {
 .app-shell {
   height: 100vh;
   display: grid;
-  grid-template-columns: 280px 1fr 360px;
+  grid-template-columns: 320px 1fr 360px;
 }
 
 .sidebar, .rightbar {
@@ -40,6 +40,13 @@ body {
   padding: 18px;
   overflow: auto;
 }
+
+.sidebar {
+  padding-top: 0;
+  padding-right: 8px;
+  padding-bottom: 2px;
+  padding-left: 8px;
+}
 .rightbar {
   border-right: none;
   border-left: 1px solid var(--border);
@@ -47,7 +54,7 @@ body {
 
 .main {
   display: grid;
-  grid-template-rows: 72px 1fr;
+  grid-template-rows: 58px 1fr;
   overflow: hidden;
 }
 
@@ -55,7 +62,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 22px;
+  padding: 10px 18px;
   border-bottom: 1px solid var(--border);
   background: rgba(23, 26, 33, 0.8);
 }
@@ -118,7 +125,8 @@ body {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
-.kpi { font-size: 24px; font-weight: 700; margin-top: 8px; }
+.compact-kpis { gap: 10px; }
+.kpi { font-size: 20px; font-weight: 700; margin-top: 8px; }
 
 .lane-wrap {
   display: grid;

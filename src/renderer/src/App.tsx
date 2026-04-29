@@ -16,7 +16,6 @@ import { ProjectDetail } from "./pages/ProjectDetail";
 import { TaskDetail } from "./pages/TaskDetail";
 import { Metrics } from "./pages/Metrics";
 import {
-  SettingsModels,
   SettingsAgents,
   SettingsWorkflows,
   SettingsGlobal,
@@ -32,7 +31,6 @@ function CurrentView({ view }: { view: ViewId }): JSX.Element {
     case "project":             return <ProjectDetail />;
     case "task":                return <TaskDetail />;
     case "metrics":             return <Metrics />;
-    case "settings-models":     return <SettingsModels />;
     case "settings-agents":     return <SettingsAgents />;
     case "settings-workflows":  return <SettingsWorkflows />;
     case "settings-global":     return <SettingsGlobal />;

@@ -388,9 +388,9 @@ function normalizeCommitType(value) {
   return "chore";
 }
 
-function normalizeCommitSummary(value, fallback) {
+function normalizeCommitSummary(value, defaultSummary) {
   const raw = typeof value === "string" ? value.trim() : "";
-  return raw.length > 0 ? raw : fallback;
+  return raw.length > 0 ? raw : defaultSummary;
 }
 
 function shellQuoteSingle(value) {

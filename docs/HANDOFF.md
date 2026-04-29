@@ -43,7 +43,7 @@ mc-v2-electron/
       App.tsx                       3-col shell + router
       router.ts                     ViewId + selectedTaskId/ProjectId
       global.d.ts                   window.mc types (single source of truth)
-      hooks/                        Data fetching + demo fallback pattern
+      hooks/                        Data fetching + demo-default pattern
       components/                   Sidebar, Topbar, Board, TaskCard, Modal, forms
       pages/                        Dashboard, ProjectDetail, TaskDetail, Settings, Metrics
       hooks/data-bus.ts             Pub/sub so mutations refresh all hook instances
@@ -136,7 +136,7 @@ check the dev terminal for `preload-error` — the most common cause is
 - Editable model roster (Settings → Models, with Load defaults button)
 - Workflow list (Settings → Workflows, read-only)
 - Router + page nav
-- Demo fallback (Sidebar empty → shows mock data with a yellow banner)
+- Demo default (Sidebar empty → shows mock data with a yellow banner)
 
 **Mocked / canned until pi wires:**
 - RightBar Run Activity
@@ -298,7 +298,7 @@ Addresses real failure modes that pure "agent says done" can't:
 
 Both MC's `events.jsonl` AND babysitter's `.a5c/runs/` journal are written
 on every transition. Intentional duplication — if one system fails, the
-other is the fallback source of truth. Michael explicitly wants this:
+other is the backup source of truth. Michael explicitly wants this:
 "I like redundant backup plans."
 
 ### Shape of integration

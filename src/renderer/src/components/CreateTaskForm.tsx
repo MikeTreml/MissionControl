@@ -38,7 +38,7 @@ export function CreateTaskForm({
   const [saving, setSaving] = useState(false);
 
   // Default project: the one currently being viewed (selectedProjectId from
-  // the router). Falls back to the first project only when nothing is
+  // the router). Uses the first project only when nothing is
   // selected — prevents silently assigning tasks to whichever project
   // sorts alphabetically first while the user has a different one open.
   useEffect(() => {

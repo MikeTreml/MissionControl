@@ -21,7 +21,7 @@ import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
-import { effectiveLanes } from "../../../shared/models";
+import { effectiveLanes, isPrimaryAgent } from "../../../shared/models";
 import type { Lane, LaneHistoryEntry, Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
 
@@ -195,7 +195,7 @@ function DeleteTaskButton({ taskId }: { taskId: string }): JSX.Element {
  */
 function Controls({ task }: { task: Task }): JSX.Element {
   const { agents } = useAgents();
-  const primaries = agents.filter((a) => a.code.length === 1);
+  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
   const { models: piModels, refresh: refreshPiModels } = usePiModels();
 
   const [busy, setBusy] = useState(false);
@@ -1083,7 +1083,7 @@ function pillForReason(reason: string | undefined): string {
 
 function LinkedFiles({ task }: { task: Task }): JSX.Element {
   const { agents } = useAgents();
-  const primaries = agents.filter((a) => a.code.length === 1);
+  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
   const [files, setFiles] = useState<Array<{ name: string; size: number; modifiedAt: string }>>([]);
 
   // Refetch the task folder listing on mount + every "tasks" topic publish
@@ -1178,13 +1178,13 @@ function fmtSize(bytes: number): string {
 
 function PerAgentNotes({ task: _task }: { task: Task }): JSX.Element {
   const { agents } = useAgents();
-  const primaries = agents.filter((a) => a.code.length === 1);
+  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
 
   return (
     <div>
       <h3>Per-agent notes</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-        Grows across cycles — each agent's running scratchpad. One file per agent slug.
+        Grows across cycles — each enabled primary agent's running scratchpad. One file per agent slug.
       </p>
       <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
         {primaries.map((a) => (

@@ -12,14 +12,13 @@ import path from "node:path";
 
 import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
-import type { ModelRosterStore } from "./model-roster.ts";
 import type { WorkflowLoader } from "./workflows.ts";
 import type { AgentLoader } from "./agent-loader.ts";
 import type { RunManager } from "./run-manager.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { SettingsStore } from "./settings-store.ts";
 import { detectGit } from "./git-detect.ts";
-import type { Project, ProjectWithGit } from "../shared/models.ts";
+import { AgentSchema, type Agent, type Project, type ProjectWithGit } from "../shared/models.ts";
 
 /** Parallel map: enrich each stored project with live git detection. */
 async function enrichProjects(projects: Project[]): Promise<ProjectWithGit[]> {
@@ -31,10 +30,33 @@ async function enrichProjects(projects: Project[]): Promise<ProjectWithGit[]> {
   );
 }
 
+async function loadEffectiveAgents(stores: Stores): Promise<Agent[]> {
+  const [baseAgents, settings] = await Promise.all([
+    stores.agents.loadAll(),
+    stores.settings.get(),
+  ]);
+  const overrides = settings.agentOverrides ?? {};
+  return baseAgents.map((base) => {
+    const merged = { ...base, ...(overrides[base.slug] ?? {}) };
+    return AgentSchema.parse(merged);
+  });
+}
+
+function validateAgentEdits(agents: Agent[]): void {
+  const seenCodes = new Map<string, string>();
+  for (const agent of agents) {
+    AgentSchema.parse(agent);
+    const owner = seenCodes.get(agent.code);
+    if (owner) {
+      throw new Error(`Duplicate agent code "${agent.code}" in ${owner} and ${agent.slug}`);
+    }
+    seenCodes.set(agent.code, agent.slug);
+  }
+}
+
 export interface Stores {
   tasks: TaskStore;
   projects: ProjectStore;
-  models: ModelRosterStore;
   workflows: WorkflowLoader;
   agents: AgentLoader;
   runs: RunManager;
@@ -103,34 +125,34 @@ export function registerIpc(stores: Stores): void {
     stores.projects.deleteProject(id),
   );
 
-  // ── models (the LLM roster) ──────────────────────────────────────────
-  ipcMain.handle("models:list", () => stores.models.listModels());
-  ipcMain.handle("models:save",
-    (_e, models: Parameters<ModelRosterStore["saveModels"]>[0]) =>
-      stores.models.saveModels(models),
-  );
-  /**
-   * Read models-suggested.json from the bundled app root. Used by the
-   * Settings → Models page's "Load defaults" button so a fresh install
-   * can be seeded without the user typing.
-   *
-   * PROPOSED: returning the raw JSON unparsed; the renderer parses it
-   * as ModelDefinition[]. If we later want to validate on the main side,
-   * wrap with ModelListSchema.parse().
-   */
-  ipcMain.handle("models:suggested", async () => {
-    const { app } = await import("electron");
-    const { readFile } = await import("node:fs/promises");
-    const { existsSync } = await import("node:fs");
-    const { join } = await import("node:path");
-    const p = join(app.getAppPath(), "models-suggested.json");
-    if (!existsSync(p)) return [];
-    const raw = await readFile(p, "utf8");
-    return JSON.parse(raw);
-  });
+  // ── agents + workflows ────────────────────────────────────────────────
+  ipcMain.handle("agents:list", () => loadEffectiveAgents(stores));
+  ipcMain.handle("agents:save", async (_e, agents: Agent[]) => {
+    const baseAgents = await stores.agents.loadAll();
+    const baseBySlug = new Map(baseAgents.map((a) => [a.slug, a] as const));
+    const nextBySlug = new Map(agents.map((a) => [a.slug, a] as const));
+    for (const slug of baseBySlug.keys()) {
+      if (!nextBySlug.has(slug)) throw new Error(`Missing agent "${slug}" in save payload`);
+    }
+    validateAgentEdits(agents);
 
-  // ── agents + workflows (read-only loaders) ───────────────────────────
-  ipcMain.handle("agents:list",    () => stores.agents.loadAll());
+    const overrides: Record<string, Partial<Agent>> = {};
+    for (const base of baseAgents) {
+      const next = nextBySlug.get(base.slug)!;
+      const patch: Partial<Agent> = {};
+      if (next.name !== base.name) patch.name = next.name;
+      if (next.title !== base.title) patch.title = next.title;
+      if (next.code !== base.code) patch.code = next.code;
+      if (next.description !== base.description) patch.description = next.description;
+      if ((next.enabled ?? true) !== (base.enabled ?? true)) patch.enabled = next.enabled;
+      if (next.primaryModel !== base.primaryModel) patch.primaryModel = next.primaryModel;
+      if (JSON.stringify(next.permissions) !== JSON.stringify(base.permissions)) patch.permissions = next.permissions;
+      if (next.promptFile !== base.promptFile) patch.promptFile = next.promptFile;
+      if (Object.keys(patch).length > 0) overrides[base.slug] = patch;
+    }
+    await stores.settings.save({ agentOverrides: overrides });
+    return loadEffectiveAgents(stores);
+  });
   ipcMain.handle("workflows:list", () => stores.workflows.loadAll());
 
   // ── runs (Start/Pause/Resume/Stop state machine) ─────────────────────
@@ -196,5 +218,20 @@ export function registerIpc(stores: Stores): void {
   });
 
   // ── app info ─────────────────────────────────────────────────────────
-  ipcMain.handle("app:version", () => process.env["npm_package_version"] ?? "dev");
+  ipcMain.handle("app:version", async () => {
+    const { app } = await import("electron");
+    const { readFile } = await import("node:fs/promises");
+    const { existsSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const version = process.env["npm_package_version"] ?? app.getVersion?.() ?? "dev";
+    const metaPath = join(app.getAppPath(), "build-meta.json");
+    if (!existsSync(metaPath)) return version;
+    try {
+      const raw = JSON.parse(await readFile(metaPath, "utf8"));
+      const build = Number(raw.buildNumber ?? 0);
+      return Number.isFinite(build) && build > 0 ? `${version} · b${build}` : version;
+    } catch {
+      return version;
+    }
+  });
 }

@@ -102,7 +102,7 @@ Then read the docs in this order:
                                   └ workflows/<CODE>-<slug>/
 ```
 
-- **Hooks** fetch via `window.mc.*`, fall back to mock data with `isDemo: true`.
+- **Hooks** fetch via `window.mc.*`, use mock data with `isDemo: true` when needed.
 - **Mutations** publish via `hooks/data-bus.ts` so every hook instance refetches.
 - **Shared models** (`src/shared/models.ts`) drive both sides — Zod schemas, TS types.
 
@@ -116,7 +116,7 @@ Then read the docs in this order:
 - Editable LLM roster with "Load defaults" button (ships Codex + Ollama stubs)
 - Workflow list (F-feature, X-brainstorm)
 - All pages route, all hooks wired
-- Demo fallback so fresh installs show something
+- Demo defaults so fresh installs show something
 
 **Real + live:**
 
@@ -129,7 +129,7 @@ Then read the docs in this order:
   — babysitter is deliberately paced.
 - **Workspace cwd**: `project.path` when set (babysitter writes
   `.a5c/processes/` + `.a5c/runs/` there — add `.a5c/` to that project's
-  `.gitignore`); fall back to `<userData>/tasks/<id>/workspace/` per-task
+  `.gitignore`); otherwise use `<userData>/tasks/<id>/workspace/` per-task
   scratch dir otherwise.
 - **Per-task files**: every task folder carries `PROMPT.md` (mission —
   overwritten on each Start with the current title/description) and

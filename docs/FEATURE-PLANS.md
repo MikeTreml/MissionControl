@@ -63,8 +63,8 @@ input than "loop back, no notes."
 - ✎ `src/renderer/src/global.d.ts` — type the new method.
 - ✎ `src/renderer/src/components/ApprovalGate.tsx` (currently inline in
   `TaskDetail.tsx` — extract while you're here) — replace the two
-  buttons with a primary "Open in Plannotator" button + a fallback
-  "Skip review (manual approve)" link.
+  buttons with a primary "Open in Plannotator" button + an
+  "Otherwise approve manually" link.
 - ✎ `src/main/store.ts` — `appendEvent` for two new event types:
   `plannotator-launched` and `plannotator-returned` (the latter
   carrying the parsed feedback).
@@ -917,7 +917,7 @@ unprofessional in the taskbar/dock and in the installer.
 
 - ✚ `build/icon.ico` (Windows)
 - ✚ `build/icon.icns` (Mac, optional)
-- ✚ `build/icon.png` (Linux + fallback)
+- ✚ `build/icon.png` (Linux + default)
 - ✎ `electron-builder.yml` — confirm `directories.buildResources:
   build` (default) or point at wherever you put them.
 - ✎ `src/main/index.ts` — `BrowserWindow({ icon: ... })` for the

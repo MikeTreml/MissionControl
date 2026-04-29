@@ -8,7 +8,7 @@ Layout:
 
 ```
 <slug>/
-  agent.json      <- REQUIRED: { slug, code, name, title, description, primaryModel, fallbackModels, permissions, promptFile }
+  agent.json      <- REQUIRED: { slug, code, name, title, description, primaryModel, permissions, promptFile }
   prompt.md       <- optional system prompt / instructions
 ```
 
@@ -29,7 +29,7 @@ Rules enforced at boot:
 
 Adding an agent: drop a folder, restart. No code change, no UI form.
 
-Model selection lives in each agent file (`primaryModel` + `fallbackModels`)
+Model selection lives in each agent file (`primaryModel`)
 and references entries from the model roster (`<userData>/models.json`).
 If a referenced model id isn't in the roster, pi will fail at run time
 with a clear error.

@@ -132,7 +132,7 @@ Full frontmatter field list:
 name: agent-name
 description: What it does
 model: claude-sonnet-4
-fallbackModels: openai/gpt-5-mini, anthropic/claude-haiku-4-5
+additionalModels: openai/gpt-5-mini, anthropic/claude-haiku-4-5
 thinking: high                  # off, minimal, low, medium, high, xhigh
 systemPromptMode: replace       # or append
 inheritProjectContext: false    # include project AGENTS.md etc.
@@ -262,7 +262,7 @@ branched from HEAD. Isolated in `<tmpdir>/pi-worktree-*/`. Optional setup hook
 
 - **Chain temp dir** — `<tmpdir>/pi-subagents-<scope>/chain-runs/<runId>/` for inter-step files
 - **Session logs** — JSONL per-run, resolved via explicit → config default → parent-derived
-- **Artifacts** — `{sessionDir}/subagent-artifacts/` — input/output/JSONL/metadata + fallback details
+- **Artifacts** — `{sessionDir}/subagent-artifacts/` — input/output/JSONL/metadata + defaulting details
 
 ### Agents Manager TUI
 

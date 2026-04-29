@@ -4,18 +4,19 @@
  * titles, roles, or file names.
  *
  * "Top of list" = the first running task, or the first task period, or the
- * fallback sample. Click through to Task Detail for the full view.
+ * sample task. Click through to Task Detail for the full view.
  */
 import { useTasks } from "../hooks/useTasks";
 import { useAgents } from "../hooks/useAgents";
 import { useRoute } from "../router";
+import { isPrimaryAgent } from "../../../shared/models";
 
 export function SelectedTaskPanel(): JSX.Element {
   const { tasks } = useTasks();
   const { agents } = useAgents();
   const { openTask } = useRoute();
 
-  const primaries = agents.filter((a) => a.code.length === 1);
+  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
   const active = tasks.find((t) => t.active) ?? tasks[0];
 
   if (!active) {
@@ -89,7 +90,7 @@ export function SelectedTaskPanel(): JSX.Element {
       <div>
         <h2>Task-linked Files</h2>
         <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-          One per primary agent, suffix from agent code.
+          One per enabled primary agent, suffix from agent code.
         </p>
         <div style={{ marginTop: 12 }}>
           {linkedFiles.map((f) => (

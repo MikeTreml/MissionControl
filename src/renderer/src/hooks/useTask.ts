@@ -1,5 +1,5 @@
 /**
- * useTask(id) — fetch one task + its event journal. Demo fallback synthesizes
+ * useTask(id) — fetch one task + its event journal. Demo mode synthesizes
  * a single task from the mock set when window.mc is unavailable.
  *
  * Live updates: refetches whenever the data-bus publishes "tasks" (fired
@@ -94,7 +94,7 @@ export function useTask(id: string | null): TaskState {
       }
       const real = await window.mc.getTask(id);
       if (!real) {
-        // Fall back to mock so the page isn't blank while wireframing
+        // Use mock data so the page isn't blank while wireframing
         setTask(mockTaskToTask(id));
         setEvents(mockEvents(id));
         setPrompt(null);

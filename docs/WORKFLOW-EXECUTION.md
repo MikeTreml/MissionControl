@@ -199,7 +199,7 @@ or spiral. Babysitter's mandatory-stop + code gates mean:
   code checks the output.
 - If output is wrong, the code retries with different instructions — or
   escalates to a frontier model (e.g. Codex) via the agent's
-  `fallbackModels` list.
+  additional model list.
 - Local LLM never decides workflow progression. It only produces
   artifacts. Code decides progression.
 
@@ -242,7 +242,7 @@ via pi-subagents' `worktree: true`.
 
 **PROPOSED:** SDK (`@a5c-ai/babysitter` as a dependency). Tighter
 integration, direct event access. CLI invocation (`npx babysitter run`)
-is a fallback if the SDK import doesn't play well with Electron.
+is an alternative if the SDK import doesn't play well with Electron.
 
 ## How to wire this (next concrete steps)
 

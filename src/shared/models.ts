@@ -181,24 +181,11 @@ export const KpiSchema = z.object({
 export type Kpi = z.infer<typeof KpiSchema>;
 
 /**
- * An entry in the user-editable MODEL roster (`models.json`). New LLMs drop
- * in here — agents reference these by `id`.
+ * Legacy model-roster entry.
  *
- * `kind` is a free string so new runtimes can be added without a code change.
- * The main process knows how to dispatch each known kind (anthropic, openai,
- * ollama, ...); unknown kinds throw at runtime with a clear error.
- *
- * ── PI-WIRE: DISPATCH BY KIND ──────────────────────────────────────────
- *
- * PROPOSED: the pi session manager has a `dispatch(kind, model, endpoint)`
- * switch. Known kinds map to pi's provider adapters:
- *   "anthropic" → pi uses ANTHROPIC_API_KEY + model id
- *   "openai"    → pi uses OPENAI_API_KEY + model id (Codex goes here)
- *   "ollama"    → pi talks to endpoint (defaults http://localhost:11434)
- *
- * OPEN: does pi already have all these adapters built in, or do we need
- * to configure them? See docs/PI-FEATURES.md — pi's /model picker suggests
- * auto-discovery. Verify during the wire-up.
+ * MC now prefers pi's discovered model list for UI pickers, but we keep this
+ * schema around for compatibility with older data and possible future custom
+ * model overlays.
  */
 export const ModelDefinitionSchema = z.object({
   id: z.string().min(1),                       // stable id referenced by agents, e.g. "claude-opus"
@@ -229,7 +216,7 @@ export type Workflow = z.infer<typeof WorkflowSchema>;
 
 /**
  * Resolve the lanes a workflow actually uses. Returns the workflow's
- * `lanes` if set, otherwise falls back to the project-wide LANE_ORDER.
+ * `lanes` if set, otherwise uses the project-wide LANE_ORDER.
  */
 export function effectiveLanes(workflow: Workflow | undefined): readonly Lane[] {
   if (workflow?.lanes && workflow.lanes.length > 0) return workflow.lanes;
@@ -261,9 +248,9 @@ export type AgentPermission = z.infer<typeof AgentPermissionSchema>;
  * This is how `DA-015F-p` (planner) and `DA-015F-rmp` (RepoMapper) are both
  * expressible in the same naming convention.
  *
- * `primaryModel` + `fallbackModels[]` reference ModelDefinition.id values from
- * the roster. The old `role-config.json` is gone — every agent declares its
- * own model directly.
+ * `primaryModel` stores the preferred pi model spec for this agent, usually in
+ * `provider:modelId` form. The old `role-config.json` is gone — every agent
+ * declares its own model directly.
  */
 export const AgentSchema = z.object({
   slug: z.string().min(1),                     // folder slug, e.g. "python-dev" or "repomapper"
@@ -278,8 +265,8 @@ export const AgentSchema = z.object({
   code: z.string().min(1).max(4)
     .regex(/^[a-z0-9]+$/, "code must be lowercase alphanumeric, 1-4 chars"),
   description: z.string().default(""),
-  primaryModel: z.string().default(""),        // ModelDefinition.id (or "" = caller chooses)
-  fallbackModels: z.array(z.string()).default([]), // ModelDefinition.id list
+  enabled: z.boolean().default(true),          // false = installed but inactive in MC UI/runtime
+  primaryModel: z.string().default(""),        // preferred pi model spec, e.g. "anthropic:claude-opus-4-7"
   permissions: AgentPermissionSchema.default({}),
   // Optional prompt file inside the agent folder — e.g. "prompt.md".
   promptFile: z.string().default("prompt.md"),
@@ -350,6 +337,10 @@ export type SubagentSpawn = z.infer<typeof SubagentSpawnSchema>;
  */
 export const MCSettingsSchema = z.object({
   babysitterMode: z.enum(["plan", "execute", "direct"]).default("plan"),
+  // Per-agent UI/runtime overrides layered on top of bundled agent.json.
+  // Lets MC activate/deactivate agents and tweak display/model metadata
+  // without editing shipped files in place.
+  agentOverrides: z.record(z.string(), AgentSchema.partial()).default({}),
 }).passthrough();
 export type MCSettings = z.infer<typeof MCSettingsSchema>;
 
@@ -405,4 +396,9 @@ export type TaskEvent = z.infer<typeof TaskEventSchema>;
 /** True if an agent is a primary role (1-char code), false if subagent. */
 export function isPrimaryAgent(agent: Pick<Agent, "code">): boolean {
   return agent.code.length === 1;
+}
+
+/** True if an agent participates in MC UI/runtime flows. */
+export function isEnabledAgent(agent: Pick<Agent, "enabled">): boolean {
+  return agent.enabled !== false;
 }

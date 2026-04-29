@@ -5,7 +5,6 @@
   "title": "Reviewer",
   "description": "Generic review agent. Specialized variants (X++ best-practice reviewer, etc.) share title \"Reviewer\".",
   "primaryModel": "claude-opus",
-  "fallbackModels": ["gpt-5-codex"],
   "permissions": { "inherit": true, "readonly": true },
   "promptFile": "prompt.md"
 }

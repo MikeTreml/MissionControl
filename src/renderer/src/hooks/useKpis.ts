@@ -1,6 +1,6 @@
 /**
  * useKpis — dashboard header numbers, derived from useTasks() + the
- * per-task event journals. Demo-fallback returns the wireframe's canned
+ * per-task event journals. Demo mode returns the wireframe's canned
  * numbers when no real tasks exist.
  *
  * "Failed Runs Today" = count of `run-ended` events with reason=failed
@@ -43,17 +43,17 @@ export function useKpis(): KpisState {
     }
   }
 
-  // When demo-fallback kicks in, use the canned numbers from the mockup —
+  // When demo mode kicks in, use the canned numbers from the mockup —
   // the demo set is too small to produce the familiar 12/3/5/1 counts.
   if (isDemo) {
     return {
       loading,
       isDemo,
       kpis: [
-        { label: "Active Tasks",      value: 12 },
-        { label: "Waiting Approval",  value: 3 },
-        { label: "Running Agents",    value: 5 },
-        { label: "Failed Runs Today", value: 1 },
+        { label: "Active",    value: 12 },
+        { label: "Attention", value: 3 },
+        { label: "Running",   value: 5 },
+        { label: "Failed",    value: 1 },
       ],
     };
   }
@@ -62,10 +62,10 @@ export function useKpis(): KpisState {
     loading,
     isDemo,
     kpis: [
-      { label: "Active Tasks",      value: active },
-      { label: "Waiting Approval",  value: waiting },
-      { label: "Running Agents",    value: running },
-      { label: "Failed Runs Today", value: failed },
+      { label: "Active",    value: active },
+      { label: "Attention", value: waiting },
+      { label: "Running",   value: running },
+      { label: "Failed",    value: failed },
     ],
   };
 }

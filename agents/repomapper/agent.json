@@ -5,7 +5,6 @@
   "title": "Subagent",
   "description": "Builds a map of files/symbols/imports when task scope is unclear. Spawned by Planner.",
   "primaryModel": "qwen-coder",
-  "fallbackModels": [],
   "permissions": {
     "inherit": false,
     "readonly": true,
