@@ -16,3 +16,6 @@ scripts/screenshots/
 # electron-builder output (packaged installers / portable builds)
 dist/
 release/
+nul
+.claude/worktrees/relaxed-leakey-6a9414
+.claude/worktrees/frosty-noyce-a76ff3
