@@ -1189,45 +1189,88 @@ function CustomEffectRow({ row }: { row: SdkPendingRow }): JSX.Element {
 function SubagentsPanel({ events }: { events: TaskEvent[] }): JSX.Element | null {
   const rows = deriveSubagents(events);
   if (rows.length === 0) return null;
+
+  // Split into two visual groups (#23 polish):
+  //   - "Active" rail at top: status=running, shown as a horizontal
+  //     wrap of richer chips so concurrent agents are scannable at a
+  //     glance. AutoGen Studio's per-agent surface is the visual analog.
+  //   - "Recent" list below: completed + failed, compact one-line rows.
+  // The two groups share the same data source (deriveSubagents); only
+  // their layout differs.
   const running = rows.filter((r) => r.status === "running");
+  const finished = rows.filter((r) => r.status !== "running");
+  const finishedShown = finished.slice(0, 25);
+  const finishedHidden = finished.length - finishedShown.length;
+
   return (
     <section className="card">
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
         <h3 style={{ margin: 0 }}>Subagents</h3>
         <span className="muted" style={{ fontSize: 12 }}>
-          {running.length > 0 ? `${running.length} running · ` : ""}
-          {rows.length} total
+          {running.length > 0 ? `${running.length} active · ` : ""}
+          {finished.length} finished
         </span>
       </div>
-      <div style={{ display: "grid", gap: 6 }}>
-        {rows.slice(0, 25).map((r) => (
-          <SubagentEntryRow key={r.id} entry={r} />
-        ))}
-        {rows.length > 25 && (
-          <div className="muted" style={{ fontSize: 11, padding: "4px 2px" }}>
-            …{rows.length - 25} more in the journal
+
+      {running.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 8,
+            padding: "8px 0 12px",
+            marginBottom: finished.length > 0 ? 8 : 0,
+            borderBottom: finished.length > 0 ? "1px solid var(--border)" : undefined,
+          }}
+        >
+          {running.map((r) => (
+            <ActiveSubagentChip key={r.id} entry={r} />
+          ))}
+        </div>
+      )}
+
+      {finished.length > 0 && (
+        <>
+          <div
+            className="muted"
+            style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}
+          >
+            Recent
           </div>
-        )}
-      </div>
+          <div style={{ display: "grid", gap: 4 }}>
+            {finishedShown.map((r) => (
+              <SubagentHistoryRow key={r.id} entry={r} />
+            ))}
+            {finishedHidden > 0 && (
+              <div className="muted" style={{ fontSize: 11, padding: "4px 2px" }}>
+                …{finishedHidden} more in the journal
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </section>
   );
 }
 
-function SubagentEntryRow({ entry }: { entry: SubagentEntry }): JSX.Element {
-  const tone =
-    entry.status === "failed" ? "var(--bad)" :
-    entry.status === "completed" ? "var(--good)" :
-    "var(--warn)";
+/**
+ * Big chip for an active subagent — sits in the top rail. Pulsing
+ * dot + label + subtitle + source + elapsed-since-start when known.
+ * Visual emphasis (warn-tinted bg) so the user can spot what's
+ * currently churning at a glance.
+ */
+function ActiveSubagentChip({ entry }: { entry: SubagentEntry }): JSX.Element {
   return (
     <div
       style={{
-        display: "flex",
+        display: "inline-flex",
         alignItems: "center",
-        gap: 10,
-        padding: "8px 10px",
-        border: "1px solid var(--border)",
-        borderRadius: 8,
-        background: "var(--panel-2)",
+        gap: 8,
+        padding: "6px 12px",
+        border: "1px solid var(--warn)",
+        borderRadius: 18,
+        background: "rgba(244,201,93,0.08)",
+        minHeight: 28,
       }}
     >
       <span
@@ -1235,22 +1278,60 @@ function SubagentEntryRow({ entry }: { entry: SubagentEntry }): JSX.Element {
           width: 8,
           height: 8,
           borderRadius: "50%",
-          background: tone,
-          ...(entry.status === "running"
-            ? { animation: "mc-pulse 1.4s ease-in-out infinite" }
-            : {}),
+          background: "var(--warn)",
+          animation: "mc-pulse 1.4s ease-in-out infinite",
           flex: "0 0 auto",
         }}
-        aria-label={entry.status}
+        aria-label="running"
       />
       <strong style={{ fontSize: 13 }}>{entry.label}</strong>
       {entry.subtitle && (
         <span className="muted" style={{ fontSize: 12 }}>{entry.subtitle}</span>
       )}
+      <span className="muted" style={{ fontSize: 11 }}>
+        {entry.source === "sdk" ? "SDK" : "pi"}
+        {entry.durationMs !== null && ` · ${(entry.durationMs / 1000).toFixed(1)}s`}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * Compact one-line row for completed/failed subagents — sits in the
+ * "Recent" list below the active rail. Tiny status dot (no animation),
+ * label, subtitle, source, duration.
+ */
+function SubagentHistoryRow({ entry }: { entry: SubagentEntry }): JSX.Element {
+  const tone = entry.status === "failed" ? "var(--bad)" : "var(--good)";
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        padding: "5px 10px",
+        borderRadius: 6,
+        fontSize: 12,
+      }}
+    >
+      <span
+        style={{
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          background: tone,
+          flex: "0 0 auto",
+        }}
+        aria-label={entry.status}
+      />
+      <span>{entry.label}</span>
+      {entry.subtitle && (
+        <span className="muted" style={{ fontSize: 11 }}>{entry.subtitle}</span>
+      )}
       <span className="muted" style={{ fontSize: 11, marginLeft: "auto" }}>
         {entry.source === "sdk" ? "SDK" : "pi"}
         {entry.durationMs !== null && ` · ${(entry.durationMs / 1000).toFixed(1)}s`}
-        {entry.status !== "running" && ` · ${entry.status}`}
+        {` · ${entry.status}`}
       </span>
     </div>
   );
