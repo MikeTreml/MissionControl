@@ -17,8 +17,10 @@
  * could pre-author a campaign-specific process.js (with cross-item
  * lessons + checkpoint-every-N) — see docs/IDEAS-WORTH-BORROWING.md.
  */
+import { spawn } from "node:child_process";
 import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 
 import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
@@ -27,6 +29,20 @@ import type { SettingsStore } from "./settings-store.ts";
 import { renderPromptFile } from "./render-prompt.ts";
 import { writeLatestRunMetricsArtifact } from "./run-cost-tracker.ts";
 import type { CampaignItem, MCSettings, RunState, Task } from "../shared/models.ts";
+
+/**
+ * Resolve the path to the babysitter SDK CLI (`bin/babysitter`).
+ * Goes through Node's resolver so it works in dev and packaged builds.
+ */
+function resolveBabysitterCliPath(): string | null {
+  try {
+    const require = createRequire(import.meta.url);
+    const pkgPath = require.resolve("@a5c-ai/babysitter-sdk/package.json");
+    return path.join(path.dirname(pkgPath), "dist/cli/main.js");
+  } catch {
+    return null;
+  }
+}
 
 export type StopReason = "user" | "completed" | "failed";
 
@@ -100,10 +116,103 @@ export class RunManager {
     // to the next campaign item without the renderer needing to re-send.
     if (input.model) this.activeModel.set(task.id, input.model);
 
+    // Curated library workflow takes precedence over the auto-gen
+    // /babysit path. The runConfig sidecar is written by RunWorkflowModal
+    // when the user picks a workflow from the library.
+    const curatedPath = await this.curatedWorkflowPath(task);
+    if (curatedPath) {
+      return this.startCuratedWorkflow(task, curatedPath, input);
+    }
+
     if (task.kind === "campaign") {
       return this.startCampaign(task, input);
     }
     return this.startSingle(task, input);
+  }
+
+  /**
+   * If the task's run config sidecar names a library workflow with a
+   * resolvable disk path, return that path. Otherwise null = take the
+   * legacy auto-gen path.
+   */
+  private async curatedWorkflowPath(task: Task): Promise<string | null> {
+    const cfg = await this.tasks.readRunConfig(task.id);
+    if (!cfg) return null;
+    const lw = (cfg as { libraryWorkflow?: { diskPath?: string } }).libraryWorkflow;
+    if (!lw?.diskPath) return null;
+    if (!existsSync(lw.diskPath)) return null;
+    return lw.diskPath;
+  }
+
+  /**
+   * Spawn `babysitter harness:create-run --process <path>` directly.
+   * Phase 1 (auto-gen) is skipped because we supply the workflow.js. The
+   * CLI emits JSON lines on stdout (phase markers, errors); we forward
+   * them into the task's events.jsonl as `bs:*` events so the live-
+   * events bridge picks them up.
+   */
+  private async startCuratedWorkflow(
+    task: Task,
+    processPath: string,
+    input: { model?: string },
+  ): Promise<Task> {
+    const cliPath = resolveBabysitterCliPath();
+    if (!cliPath) {
+      await this.tasks.appendStatus(task.id, "Curated workflow start failed: babysitter SDK not installed");
+      return task;
+    }
+
+    const cwd = await this.resolveCwd(task);
+    const runsDir = path.join(cwd, ".a5c", "runs");
+    await fs.mkdir(runsDir, { recursive: true });
+
+    const args = [
+      cliPath,
+      "harness:create-run",
+      "--process", processPath,
+      "--harness", "pi",
+      "--workspace", cwd,
+      "--runs-dir", runsDir,
+      "--non-interactive",
+      "--json",
+    ];
+    if (input.model) args.push("--model", input.model);
+
+    await this.tasks.appendEvent(task.id, {
+      type: "run-started",
+      mode: "curated",
+      processPath,
+      cwd,
+    });
+    await this.tasks.appendStatus(
+      task.id,
+      `Started — curated workflow ${path.basename(path.dirname(processPath))}`,
+    );
+
+    const child = spawn(process.execPath, args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+    const onLine = (chunk: Buffer | string, stream: "stdout" | "stderr"): void => {
+      const text = typeof chunk === "string" ? chunk : chunk.toString("utf8");
+      for (const raw of text.split(/\r?\n/)) {
+        const line = raw.trim();
+        if (!line) continue;
+        let parsed: unknown = null;
+        try { parsed = JSON.parse(line); } catch { /* not JSON */ }
+        void this.tasks.appendEvent(task.id, {
+          type: parsed && typeof parsed === "object" ? "bs:event" : `bs:${stream}`,
+          ...(parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : { line }),
+        });
+      }
+    };
+    child.stdout?.on("data", (c) => onLine(c, "stdout"));
+    child.stderr?.on("data", (c) => onLine(c, "stderr"));
+    child.on("exit", (code) => {
+      const reason: StopReason = code === 0 ? "completed" : "failed";
+      void this.completeRun(task.id, reason);
+    });
+
+    const next: Task = { ...task, runState: "running" };
+    await this.tasks.saveTask(next);
+    return next;
   }
 
   /** Single-task path: one /babysit run, agent_end flips task to idle. */
