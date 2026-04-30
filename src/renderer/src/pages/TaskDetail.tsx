@@ -1257,8 +1257,41 @@ function SubagentEntryRow({ entry }: { entry: SubagentEntry }): JSX.Element {
 }
 
 function PhaseChipStrip({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
-  const { phases, current, source } = derivePhases(task, events);
+  const { phases, current: derivedCurrent, source } = derivePhases(task, events);
+  // SDK-authoritative current marker (#20). The timeline shape stays
+  // journal-derived (we want the full history); but the "active"
+  // chip prefers what the SDK state cache reports via runs:status.
+  // Fall back to derivePhases.current when the SDK CLI is unreachable.
+  const [sdkCurrent, setSdkCurrent] = useState<string | null>(null);
+  useEffect(() => {
+    if (!window.mc?.runStatus) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await window.mc.runStatus(task.id);
+        if (cancelled || !res || typeof res !== "object") return;
+        const obj = res as Record<string, unknown>;
+        const cur =
+          typeof obj["currentPhase"] === "string" ? (obj["currentPhase"] as string)
+          : typeof obj["phase"] === "string" ? (obj["phase"] as string)
+          : null;
+        setSdkCurrent(cur);
+      } catch {
+        if (!cancelled) setSdkCurrent(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [task.id, events.length]);
+
   if (phases.length === 0) return null;
+
+  // Resolve which chip is "current": prefer the SDK answer when it
+  // matches a phase id we know about; otherwise trust the derive
+  // helper. Render annotation reflects which source we used so users
+  // can spot drift if both disagree.
+  const sdkMatches = sdkCurrent ? phases.some((p) => p.id === sdkCurrent) : false;
+  const current = sdkMatches ? sdkCurrent : derivedCurrent;
+  const currentSource: "sdk" | "journal" = sdkMatches ? "sdk" : "journal";
 
   const colorFor = (status: typeof phases[number]["status"]): { bg: string; fg: string } => {
     if (status === "active") return { bg: "rgba(244,201,93,0.15)", fg: "var(--warn)" };
@@ -1283,24 +1316,31 @@ function PhaseChipStrip({ task, events }: { task: Task; events: TaskEvent[] }): 
         Phase
       </span>
       {phases.map((p, idx) => {
-        const c = colorFor(p.status);
+        // SDK-authoritative override: when the SDK reports this chip
+        // as the current phase, render it as "active" even if
+        // derivePhases labeled it differently. The journal can lag
+        // the state cache, so this catches the brief window where
+        // they disagree.
+        const isCurrent = p.id === current;
+        const effectiveStatus = isCurrent ? "active" : p.status;
+        const c = colorFor(effectiveStatus);
         return (
           <span key={p.id} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
             <span
               style={{
                 background: c.bg,
                 color: c.fg,
-                border: `1px solid ${p.status === "active" ? c.fg : "var(--border)"}`,
+                border: `1px solid ${effectiveStatus === "active" ? c.fg : "var(--border)"}`,
                 borderRadius: 5,
                 padding: "3px 9px",
                 fontSize: 12,
-                fontWeight: p.status === "active" ? 600 : 400,
+                fontWeight: effectiveStatus === "active" ? 600 : 400,
                 whiteSpace: "nowrap",
               }}
-              title={p.status}
+              title={effectiveStatus}
             >
               {p.label}
-              {p.id === current && p.status === "active" && " ●"}
+              {isCurrent && " ●"}
               {p.status === "failed" && " ✕"}
             </span>
             {idx < phases.length - 1 && (
@@ -1310,10 +1350,19 @@ function PhaseChipStrip({ task, events }: { task: Task; events: TaskEvent[] }): 
         );
       })}
       <span style={{ flex: 1 }} />
-      <span className="muted" style={{ fontSize: 11, fontFamily: "monospace" }}>
+      <span
+        className="muted"
+        style={{ fontSize: 11, fontFamily: "monospace" }}
+        title={
+          currentSource === "sdk"
+            ? "Current phase reported by the SDK state cache"
+            : "Current phase derived from journal events (SDK CLI unreachable or no match)"
+        }
+      >
         cycle {task.cycle}
         {elapsed ? ` · ${elapsed}` : ""}
         {source !== "curated" ? ` · ${source}` : ""}
+        {currentSource === "sdk" ? " · sdk" : ""}
       </span>
     </div>
   );
