@@ -8,7 +8,6 @@ import type {
   Task,
   TaskEvent,
   ProjectWithGit,
-  Lane,
   TaskKind,
   CampaignItem,
   MCSettings,
@@ -34,7 +33,6 @@ export interface WorkflowRunTemplate {
   workflowLogicalPath: string;
   workflowName: string;
   projectId: string;
-  workflowCode: string;
   goal: string;
   model: string | null;
   inputs: Record<string, unknown>;
@@ -46,7 +44,6 @@ type CreateTaskInput = {
   projectId: string;
   projectPrefix: string;
   workflow?: string;
-  lane?: Lane;
   kind?: TaskKind;
   items?: CampaignItem[];
 };

@@ -283,7 +283,7 @@ function StuckTable({ tasks }: { tasks: UiTask[] }): JSX.Element {
   // Same definition as computeStats: approval / waiting / idle > 24h.
   const stuck = tasks.filter((t) =>
     t.lane !== "Done" &&
-    (t.lane === "Approval" || t.roleLabel === "Waiting" || idleHours(t) > 24),
+    (t.lane === "Waiting" || t.roleLabel === "Waiting" || idleHours(t) > 24),
   );
   const { openTask } = useRoute();
   if (stuck.length === 0) {
@@ -353,7 +353,7 @@ function computeStats(tasks: UiTask[]): ProjectStats {
   // idle for over 24h while still active. Both are operationally
   // useful signals; either alone misses real cases.
   const stuck = liveTasks.filter((t) =>
-    t.lane === "Approval" || t.roleLabel === "Waiting" || idleHours(t) > 24,
+    t.lane === "Waiting" || t.roleLabel === "Waiting" || idleHours(t) > 24,
   ).length;
 
   const avgCycles = total === 0

@@ -11,11 +11,10 @@
  * across the whole campaign; flips to "idle" only when every item is
  * done OR the user stops. Stop marks any "running" item as "failed".
  *
- * ── PI-WIRE: campaign prompting ─────────────────────────────────────────
- * Today every campaign item invokes /babysit with the item's description.
- * Babysitter generates its own per-item process.js. A future enhancement
- * could pre-author a campaign-specific process.js (with cross-item
- * lessons + checkpoint-every-N) — see docs/IDEAS-WORTH-BORROWING.md.
+ * Curated path (Phase 5): when a task has a libraryWorkflow.diskPath in
+ * its run config, RunManager spawns `babysitter harness:create-run
+ * --process <path>` directly via the SDK CLI (see
+ * `startCuratedWorkflow`), skipping babysitter's auto-gen Phase 1.
  */
 import { spawn } from "node:child_process";
 import { existsSync, promises as fs } from "node:fs";
@@ -195,11 +194,26 @@ export class RunManager {
       for (const raw of text.split(/\r?\n/)) {
         const line = raw.trim();
         if (!line) continue;
-        let parsed: unknown = null;
-        try { parsed = JSON.parse(line); } catch { /* not JSON */ }
+        let parsed: Record<string, unknown> | null = null;
+        try {
+          const obj = JSON.parse(line);
+          if (obj && typeof obj === "object") parsed = obj as Record<string, unknown>;
+        } catch { /* not JSON */ }
+        // Classify so RightBar / Live events can render decently:
+        //   bs:phase   — CLI progress markers ({phase, status, ...})
+        //   bs:error   — phase status === failed
+        //   bs:log     — anything else (raw text or unstructured JSON)
+        let type = `bs:${stream}`;
+        if (parsed) {
+          if (typeof parsed.phase === "string") {
+            type = parsed.status === "failed" ? "bs:error" : "bs:phase";
+          } else {
+            type = "bs:log";
+          }
+        }
         void this.tasks.appendEvent(task.id, {
-          type: parsed && typeof parsed === "object" ? "bs:event" : `bs:${stream}`,
-          ...(parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : { line }),
+          type,
+          ...(parsed ?? { line }),
         });
       }
     };

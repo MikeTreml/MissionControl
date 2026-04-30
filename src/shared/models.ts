@@ -23,18 +23,7 @@ import { z } from "zod";
 
 // ── enums ────────────────────────────────────────────────────────────────
 
-/** Kanban lanes on the board. Codes mirror role names where it makes sense. */
-export const LaneSchema = z.enum([
-  "plan",
-  "develop",
-  "review",
-  "surgery",
-  "approval",
-  "done",
-]);
-export type Lane = z.infer<typeof LaneSchema>;
-
-/** Task state independent of which lane it sits in. */
+/** Task lifecycle status independent of run state. */
 export const TaskStatusSchema = z.enum([
   "active",    // currently being worked by an agent
   "waiting",   // blocked (e.g. awaiting human approval)
@@ -74,17 +63,6 @@ export type CampaignItem = z.infer<typeof CampaignItemSchema>;
 
 // ── main models ──────────────────────────────────────────────────────────
 
-/**
- * One entry in a task's lane history. Missing `leftAt` = currently in this lane.
- * Lets the Project Detail / Task Detail pages render a timeline and compute
- * how long a task has been sitting in any given lane.
- */
-export const LaneHistoryEntrySchema = z.object({
-  lane: LaneSchema,
-  enteredAt: z.string().datetime(),
-  leftAt: z.string().datetime().optional(),
-});
-export type LaneHistoryEntry = z.infer<typeof LaneHistoryEntrySchema>;
 
 /** A unit of work moving through the pipeline. Serialized in manifest.json. */
 export const TaskSchema = z.object({
@@ -93,13 +71,9 @@ export const TaskSchema = z.object({
   description: z.string().default(""),
   project: z.string().default("default"),      // project id slug, e.g. "dogapp"
   kind: TaskKindSchema.default("single"),      // single-task vs campaign (N items)
-  lane: LaneSchema.default("plan"),
   status: TaskStatusSchema.default("active"),
   runState: RunStateSchema.default("idle"),    // live state for Start/Pause/Stop
   cycle: z.number().int().default(1),          // increments on reviewer loop-back
-  currentStep: z.string().default(""),         // short human-readable status line
-  lastEvent: z.string().default(""),           // most-recent event summary
-  laneHistory: z.array(LaneHistoryEntrySchema).default([]), // timeline data
   /**
    * Campaign items. Only populated when `kind === "campaign"`. Empty at
    * creation is fine — the Planner may generate them during its run.
@@ -161,59 +135,6 @@ export interface ProjectWithGit extends Project {
   gitInfo: GitInfo;
 }
 
-/** Header KPIs. Computed at render time from the task list. */
-export const KpiSchema = z.object({
-  activeTasks: z.number().int().default(0),
-  waitingApproval: z.number().int().default(0),
-  runningAgents: z.number().int().default(0),
-  failedRunsToday: z.number().int().default(0),
-});
-export type Kpi = z.infer<typeof KpiSchema>;
-
-/**
- * One agent session run, persisted under `tasks/<id>/runs/<runId>.json`.
- *
- * Captures the telemetry needed for the Run History and Metrics pages:
- * who ran, for how long, how many tokens, did it finish cleanly.
- */
-export const RunRecordSchema = z.object({
-  id: z.string().min(1),                       // unique, e.g. "<taskId>-<isoStart>"
-  taskId: z.string().min(1),
-  agentSlug: z.string().min(1),                // agent that ran
-  modelId: z.string().default(""),             // ModelDefinition.id used
-  startedAt: z.string().datetime(),
-  endedAt: z.string().datetime().optional(),   // unset = still running
-  tokensIn: z.number().int().default(0),
-  tokensOut: z.number().int().default(0),
-  costUSD: z.number().default(0),              // 0 if provider doesn't report
-  cycle: z.number().int().default(1),          // which Task.cycle this run belonged to
-  exitReason: z
-    .enum(["completed", "paused", "stopped", "failed", "ongoing"])
-    .default("ongoing"),
-  notes: z.string().default(""),
-});
-export type RunRecord = z.infer<typeof RunRecordSchema>;
-
-/**
- * One subagent spawn event, persisted under `tasks/<id>/spawns/<spawnId>.json`.
- * A subagent IS an agent — `parentAgentSlug` is usually a primary role (1-char
- * code) but nothing stops a subagent from spawning another subagent.
- */
-export const SubagentSpawnSchema = z.object({
-  id: z.string().min(1),
-  taskId: z.string().min(1),
-  parentAgentSlug: z.string().min(1),          // who spawned it
-  agentSlug: z.string().min(1),                // which agent was spawned
-  reason: z.string().default(""),              // short text — why was it spawned
-  startedAt: z.string().datetime(),
-  endedAt: z.string().datetime().optional(),
-  modelId: z.string().default(""),             // model used
-  exitReason: z
-    .enum(["completed", "stopped", "failed", "ongoing"])
-    .default("ongoing"),
-});
-export type SubagentSpawn = z.infer<typeof SubagentSpawnSchema>;
-
 // ── helpers ──────────────────────────────────────────────────────────────
 
 /**
@@ -239,15 +160,6 @@ export const MCSettingsSchema = z.object({
 }).passthrough();
 export type MCSettings = z.infer<typeof MCSettingsSchema>;
 
-/** Fixed lane render order for the board. Source of truth — don't hardcode elsewhere. */
-export const LANE_ORDER: readonly Lane[] = [
-  "plan",
-  "develop",
-  "review",
-  "surgery",
-  "approval",
-  "done",
-] as const;
 
 /** Create a new Task with sane defaults. Caller supplies id + title at minimum. */
 export function makeTask(
