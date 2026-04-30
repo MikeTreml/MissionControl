@@ -11,16 +11,54 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import { Modal } from "./Modal";
+import { InputsForm } from "./InputsForm";
 import { useProjects } from "../hooks/useProjects";
 import { useTasks } from "../hooks/useTasks";
 import { useLibraryIndex } from "../hooks/useLibraryIndex";
 import { useRoute } from "../router";
 import { publish } from "../hooks/data-bus";
 import type { LibraryIndexItem } from "../types/library";
+import type { WorkflowRunTemplate } from "../global";
 
 const DEFAULT_WORKFLOW_LETTER = "F";
 /** Sentinel for the "no curated workflow — auto-gen" choice. */
 const AUTO_GEN_VALUE = "__autogen__";
+
+/**
+ * Walk the workflow's inputs JSON Schema and return the first error message
+ * (or empty string if all required fields are filled correctly). Mirrors
+ * the validator in `RunWorkflowModal` so both Create surfaces enforce the
+ * same rules.
+ */
+function validateInputsAgainstSchema(
+  schema: Record<string, unknown> | null,
+  inputs: Record<string, unknown>,
+): string {
+  if (!schema) return "";
+  const root = schema as { type?: string; properties?: Record<string, { type?: string }>; required?: string[] };
+  if (root.type !== "object" || !root.properties) return "";
+  const required = root.required ?? [];
+  for (const key of required) {
+    const value = inputs[key];
+    if (value === undefined || value === null || value === "") {
+      return `Missing required field "${key}"`;
+    }
+  }
+  for (const [key, prop] of Object.entries(root.properties)) {
+    const value = inputs[key];
+    if (value === undefined || value === null || value === "") continue;
+    if ((prop.type === "number" || prop.type === "integer") && (typeof value !== "number" || Number.isNaN(value))) {
+      return `Field "${key}" must be a number`;
+    }
+    if (prop.type === "boolean" && typeof value !== "boolean") {
+      return `Field "${key}" must be true/false`;
+    }
+    if (prop.type === "string" && typeof value !== "string") {
+      return `Field "${key}" must be text`;
+    }
+  }
+  return "";
+}
 
 export function CreateTaskForm({
   open,
@@ -42,6 +80,10 @@ export function CreateTaskForm({
   // One item per line for campaigns. Blank lines ignored. Each becomes
   // a CampaignItem with description + auto-generated id.
   const [itemsText, setItemsText] = useState("");
+  const [inputs, setInputs] = useState<Record<string, unknown>>({});
+  const [schema, setSchema] = useState<Record<string, unknown> | null>(null);
+  const [templates, setTemplates] = useState<WorkflowRunTemplate[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [saving, setSaving] = useState(false);
 
@@ -77,6 +119,39 @@ export function CreateTaskForm({
     if (!open) setProjectId("");
   }, [open]);
 
+  // When the workflow choice changes (or the modal opens with a default),
+  // load the workflow's input schema + saved run templates. Both are
+  // fire-and-forget; failures just leave the panes empty.
+  useEffect(() => {
+    if (!open || !window.mc || !selectedWorkflow) {
+      setSchema(null);
+      setTemplates([]);
+      setInputs({});
+      setSelectedTemplateId("");
+      return;
+    }
+    const path = selectedWorkflow.inputsSchemaPath ?? null;
+    void window.mc.readLibraryJsonSchema(path).then(setSchema).catch(() => setSchema(null));
+    void window.mc
+      .listWorkflowRunTemplates()
+      .then((all) => setTemplates(all.filter((t) => t.workflowLogicalPath === selectedWorkflow.logicalPath)))
+      .catch(() => setTemplates([]));
+    setInputs({});
+    setSelectedTemplateId("");
+  }, [open, selectedWorkflow]);
+
+  function onLoadTemplate(id: string): void {
+    setSelectedTemplateId(id);
+    if (!id) {
+      setInputs({});
+      return;
+    }
+    const template = templates.find((t) => t.id === id);
+    if (!template) return;
+    if (!description && template.goal) setDescription(template.goal);
+    setInputs(template.inputs ?? {});
+  }
+
   const activeProject = projects.find((p) => p.id === projectId);
 
   /** Best-effort next ID preview — same algorithm as TaskStore.nextTaskId(). */
@@ -99,6 +174,10 @@ export function CreateTaskForm({
     setWorkflowLogicalPath(AUTO_GEN_VALUE);
     setItemsText("");
     setKind("single");
+    setInputs({});
+    setSchema(null);
+    setTemplates([]);
+    setSelectedTemplateId("");
     setError("");
     setSaving(false);
   };
@@ -149,6 +228,11 @@ export function CreateTaskForm({
       // RUN_CONFIG.json sidecar so RunManager.startNow dispatches the
       // curated path on Start. (Same shape RunWorkflowModal writes.)
       if (selectedWorkflow) {
+        const validationError = validateInputsAgainstSchema(schema, inputs);
+        if (validationError) {
+          setSaving(false);
+          return setError(validationError);
+        }
         await window.mc.writeTaskRunConfig(task.id, {
           kind: "library-workflow-run",
           createdAt: new Date().toISOString(),
@@ -164,7 +248,7 @@ export function CreateTaskForm({
             goal: description,
             projectId: activeProject.id,
           },
-          runSettings: { model: null, inputs: {} },
+          runSettings: { model: null, inputs },
         });
       }
 
@@ -227,6 +311,36 @@ export function CreateTaskForm({
                 : "Auto-gen: clicks Start fire /babysit; babysitter-pi extension authors a process.js per run."}
             </div>
           </div>
+
+          {selectedWorkflow && templates.length > 0 && (
+            <div className="field">
+              <label>Load template (optional)</label>
+              <select
+                value={selectedTemplateId}
+                onChange={(e) => onLoadTemplate(e.target.value)}
+              >
+                <option value="">— pick a saved template —</option>
+                {templates.map((t) => (
+                  <option key={t.id} value={t.id}>{t.name}</option>
+                ))}
+              </select>
+              <div className="hint">
+                Templates are saved from the Library workflow Run modal; loading one prefills the goal + inputs.
+              </div>
+            </div>
+          )}
+
+          {selectedWorkflow && (
+            <div className="field">
+              <label>Inputs {schema ? "(schema-driven)" : "(JSON)"}</label>
+              <InputsForm schema={schema} value={inputs} onChange={setInputs} />
+              <div className="hint">
+                {selectedWorkflow.inputsSchemaPath
+                  ? "Required fields from the workflow's inputs schema. Empty = workflow's first breakpoint will collect them."
+                  : "No schema published with this workflow. Free-form JSON; passed to the run as is."}
+              </div>
+            </div>
+          )}
           <div className="field">
             <label>Kind</label>
             <select value={kind} onChange={(e) => setKind(e.target.value as "single" | "campaign")}>
