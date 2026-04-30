@@ -24,7 +24,7 @@ export function Topbar(): JSX.Element {
   // later an IPC error knocks them into demo mode, we want a sticky
   // red signal — not the muted yellow "Demo" pill that's normal for
   // a fresh empty state.
-  const { isDemo: tasksDemo, loading: tasksLoading } = useTasks();
+  const { tasks, isDemo: tasksDemo, loading: tasksLoading } = useTasks();
   const { isDemo: projectsDemo, loading: projectsLoading } = useProjects();
   const isDemo = tasksDemo && projectsDemo;
   const settled = !tasksLoading && !projectsLoading;
@@ -33,6 +33,17 @@ export function Topbar(): JSX.Element {
     if (settled && !isDemo) setHasBeenReal(true);
   }, [settled, isDemo]);
   const demoRegressed = settled && isDemo && hasBeenReal;
+
+  // Input-needed pill (#38). Counts tasks the user needs to attend
+  // to: paused / waiting status / blocker set. boardStage="Attention"
+  // already encapsulates this in deriveBoardStage. v1 doesn't try to
+  // distinguish breakpoint vs mc_ask_user vs blocker — they all
+  // collapse into "this task wants you." Click navigates to the
+  // Board (Attention column is visible there).
+  const attentionTasks = tasks.filter(
+    (t) => !tasksDemo && t.boardStage === "Attention" && t.status !== "archived",
+  );
+  const attentionCount = attentionTasks.length;
 
   useEffect(() => {
     setBridgeOk(Boolean(window.mc));
@@ -57,6 +68,25 @@ export function Topbar(): JSX.Element {
         </span>
       </div>
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        {attentionCount > 0 && (
+          <button
+            className="pill warn"
+            onClick={() => setView("dashboard")}
+            title={
+              attentionCount === 1
+                ? `1 task awaiting input — ${attentionTasks[0]!.id}`
+                : `${attentionCount} tasks awaiting input`
+            }
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            ⚠ {attentionCount} awaiting input
+          </button>
+        )}
         {demoRegressed && (
           <span
             className="pill bad"
