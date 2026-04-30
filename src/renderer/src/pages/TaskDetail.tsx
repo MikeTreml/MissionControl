@@ -20,8 +20,7 @@ import { derivePhases } from "../lib/derive-phases";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
-import { LANE_ORDER } from "../../../shared/models";
-import type { Lane, Task, TaskEvent } from "../../../shared/models";
+import type { Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
 
 export function TaskDetail(): JSX.Element {
@@ -94,7 +93,6 @@ export function TaskDetail(): JSX.Element {
 
         {!isDemo && <BlockerField task={task} />}
 
-        {task.lane === "approval" && !isDemo && <ApprovalGate task={task} />}
 
         <section
           className="card"
@@ -877,96 +875,6 @@ function ModelPicker({
 }
 
 /**
- * Approval lane gate — only rendered when task.lane === "approval".
- * Offers Approve (advance to next lane in workflow.lanes) and Request
- * Changes (loop back to first lane, cycle++).
- *
- * PROPOSED integration: when `plannotator@claude-code-plugins` exposes
- * an invocation surface, replace these manual buttons with "Open in
- * plannotator" + read its approve/reject + annotation-feedback result.
- * Today the buttons are a direct human gate on the lane transition.
- */
-function ApprovalGate({ task }: { task: Task }): JSX.Element {
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-
-  // Lane progression uses the schema default lane order. The
-  // workflow-driven lane chips (per docs/UI-DESIGN.md) will replace this
-  // when the library-workflow runtime path lands.
-  const lanes = LANE_ORDER;
-  const currentIdx = lanes.indexOf(task.lane);
-  const nextLane: Lane | undefined = lanes[currentIdx + 1];
-  const firstLane: Lane = lanes[0] ?? "plan";
-
-  async function transition(next: Partial<Task>): Promise<void> {
-    if (!window.mc) { setError("Not connected"); return; }
-    setBusy(true);
-    setError("");
-    try {
-      await window.mc.saveTask({ ...task, ...next });
-      publish("tasks");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <section
-      className="card"
-      style={{
-        background: "rgba(244,201,93,0.08)",
-        borderColor: "var(--warn)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{ flex: 1 }}>
-          <h3 style={{ margin: 0 }}>⏸ Awaiting human approval</h3>
-          <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-            Review the planner's output and per-agent notes. Approve to
-            advance to <strong>{nextLane ?? "done"}</strong>, or request
-            changes to loop back to <strong>{firstLane}</strong> (cycle
-            {" "}{task.cycle + 1}).
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            className="button"
-            onClick={() => void transition({ lane: nextLane ?? "done" })}
-            disabled={busy}
-            title="Advance to the next lane in this workflow"
-          >
-            ✓ Approve
-          </button>
-          <button
-            className="button warn"
-            onClick={() =>
-              void transition({ lane: firstLane, cycle: task.cycle + 1 })
-            }
-            disabled={busy}
-            title="Loop back to the first lane with cycle+1"
-          >
-            ↺ Request changes
-          </button>
-        </div>
-      </div>
-      {error && (
-        <div
-          style={{
-            color: "var(--bad)",
-            fontSize: 12,
-            marginTop: 8,
-          }}
-        >
-          {error}
-        </div>
-      )}
-    </section>
-  );
-}
-
-/**
  * Mission card — renders the task's PROMPT.md. Not parsed as markdown
  * today (keeping the dep footprint minimal); shown as preformatted text
  * in a scrollable container. Empty/missing state is explicit so the
@@ -1169,7 +1077,7 @@ function RunStatusCard({
       <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
         <StatusPill label="Run state" value={task.runState} tone={task.runState === "running" ? "warn" : task.runState === "paused" ? "info" : "good"} />
         <StatusPill label="Cycle" value={String(task.cycle)} tone="info" />
-        <StatusPill label="Lane" value={task.lane} tone="info" />
+        <StatusPill label="Kind" value={task.kind} tone="info" />
       </div>
       <div style={{ marginTop: 10, display: "grid", gap: 6, fontSize: 13 }}>
         <div><strong>Current step:</strong> {summary.currentStep}</div>
