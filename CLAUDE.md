@@ -190,22 +190,30 @@ Then read the docs in this order:
 
 ## Dep notes
 
-- **Only pi is a direct dep.** MC depends on
-  `@mariozechner/pi-coding-agent`. We deliberately do NOT depend on
-  `@a5c-ai/babysitter` or `@a5c-ai/babysitter-sdk` — those live under
-  pi's extension directory (`~/.pi/agent/extensions/`), installed via
-  pi's own CLI. Keeping them out of our `node_modules` avoids version
-  skew where our copy drifts from the one pi actually loads.
+- **Two direct deps now.** `@mariozechner/pi-coding-agent` is the AI
+  agent runtime; `@a5c-ai/babysitter-sdk` is the orchestration layer that
+  knows how to drive workflow.js files via its built-in pi adapter
+  (`packages/sdk/src/harness/pi.ts`). RunManager spawns
+  `babysitter harness:create-run --process <path>` directly when a task
+  carries a curated workflow path — no slash command, no auto-gen.
+  (See `docs/UI-DESIGN.md` and the `feedback_no_hardcoded_values` /
+  `project_workflow_invocation_path` memories.)
 
-- **Babysitter is delivered as a pi extension.** If the user wants
-  babysitter orchestration inside pi sessions (the `/babysit`, `/plan`,
-  `/resume` slash commands), install once per user:
+- **Reversed from earlier:** previously this doc said "deliberately do
+  NOT depend on `@a5c-ai/babysitter-sdk`" — that was based on avoiding
+  version skew with pi's loaded copy. Now MC's curated-workflow path
+  needs the SDK locally to spawn the CLI and (eventually) read journal
+  events. Keep MC's SDK version compatible with whatever a user's pi
+  extension carries.
+
+- **`@a5c-ai/babysitter-pi` is optional.** It's a pi extension that
+  registers the `/babysit`, `/plan`, `/yolo` slash commands. Only
+  needed for the auto-gen fallback path (when a task has no curated
+  workflow selected). Install once per user:
   ```
   pi install npm:@a5c-ai/babysitter-pi
   ```
-  MC doesn't gate on this — it just means babysitter skills are
-  unavailable inside pi until installed. See
-  `github.com/a5c-ai/babysitter/tree/main/plugins/babysitter-pi`.
+  MC doesn't gate on it.
 
 ## Gotchas
 
