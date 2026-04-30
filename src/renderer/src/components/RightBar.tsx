@@ -167,8 +167,8 @@ function NeedsAttentionPanel({
     const blocker = (t.blocker ?? "").trim();
     if (t.status === "failed") {
       flagged.push({ task: t, reason: blocker || "failed", pill: "bad" });
-    } else if (t.lane === "approval") {
-      flagged.push({ task: t, reason: blocker || "awaiting approval", pill: "warn" });
+    } else if (t.status === "waiting") {
+      flagged.push({ task: t, reason: blocker || "awaiting input", pill: "warn" });
     } else if (t.runState === "paused") {
       flagged.push({ task: t, reason: blocker || "paused", pill: "warn" });
     } else if (blocker) {

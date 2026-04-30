@@ -13,20 +13,19 @@
 
 export type MockTaskType = "F" | "B" | "R" | "S"; // Feature / Bug / Refactor / Spike
 export type MockWorkflow = "Dev" | "Brainstorm" | "Fix";
+/** Run-state-derived label shown on board cards + lists. */
 export type MockLane =
-  | "Plan"
-  | "Develop"
-  | "Review"
-  | "Surgery"
-  | "Approval"
-  | "Done";
-export type MockRoleLabel =
-  | "Planner"
-  | "Developer"
-  | "Reviewer"
-  | "Surgeon"
+  | "Idle"
+  | "Running"
   | "Waiting"
-  | "Done";
+  | "Done"
+  | "Failed";
+export type MockRoleLabel =
+  | "Idle"
+  | "Running"
+  | "Waiting"
+  | "Done"
+  | "Failed";
 export type MockPill = "good" | "warn" | "bad" | "info";
 
 export interface MockProject {
@@ -129,62 +128,41 @@ export const mockKpis: MockKpi[] = [
   { label: "Failed Runs Today", value: 1 },
 ];
 
-/** One card per lane per the mockup. Keyed by lane for easy grouping. */
+/** Sample task cards for empty-state / demo display. */
 export const mockTasks: MockTask[] = [
   {
     id: "DA-015F",
     summary: "Add task-linked diff and doc registry",
-    lane: "Plan",
-    roleLabel: "Planner",
-    rolePill: "info",
-    stepLine: "Breaking work into substeps",
-    sub: "Subagents: RepoMapper, DocRefresher",
+    lane: "Running",
+    roleLabel: "Running",
+    rolePill: "warn",
+    stepLine: "Cycle 1",
     active: true,
   },
   {
     id: "DA-011F",
     summary: "Dashboard shell UI",
-    lane: "Develop",
-    roleLabel: "Developer",
-    rolePill: "warn",
-    stepLine: "Editing task list layout",
-    sub: "Model: Codex",
+    lane: "Idle",
+    roleLabel: "Idle",
+    rolePill: "info",
+    stepLine: "Cycle 1",
   },
   {
     id: "DA-012F",
     summary: "Task detail page",
-    lane: "Develop",
-    roleLabel: "Developer",
+    lane: "Running",
+    roleLabel: "Running",
     rolePill: "warn",
-    stepLine: "Hooking files tab",
-    sub: "Model: Codex",
+    stepLine: "Cycle 1",
   },
   {
     id: "DA-010F",
     summary: "Azure DevOps adapter",
-    lane: "Review",
-    roleLabel: "Reviewer",
-    rolePill: "info",
-    stepLine: "Checking callback contract",
-    sub: "Model: Claude",
-  },
-  {
-    id: "DA-014F",
-    summary: "File and doc registry",
-    lane: "Surgery",
-    roleLabel: "Surgeon",
-    rolePill: "good",
-    stepLine: "Writing artifact links",
-    sub: "Model: Local LLM",
-  },
-  {
-    id: "DA-016F",
-    summary: "Review gate flow",
-    lane: "Approval",
+    lane: "Waiting",
     roleLabel: "Waiting",
     rolePill: "warn",
-    stepLine: "Human approval needed",
-    sub: "Blocked 18m",
+    stepLine: "Cycle 1",
+    sub: "Awaiting human review",
   },
   {
     id: "DA-005F",
@@ -193,7 +171,6 @@ export const mockTasks: MockTask[] = [
     roleLabel: "Done",
     rolePill: "good",
     stepLine: "Merged and logged",
-    sub: "Diff report saved",
   },
 ];
 
@@ -234,10 +211,9 @@ export const mockQueue: MockQueueItem[] = [
 ];
 
 export const MOCK_LANES: readonly MockLane[] = [
-  "Plan",
-  "Develop",
-  "Review",
-  "Surgery",
-  "Approval",
+  "Idle",
+  "Running",
+  "Waiting",
   "Done",
+  "Failed",
 ] as const;

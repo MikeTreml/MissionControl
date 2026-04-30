@@ -8,7 +8,6 @@ import type {
   Task,
   TaskEvent,
   ProjectWithGit,
-  Lane,
   TaskKind,
   CampaignItem,
   MCSettings,
@@ -46,7 +45,6 @@ type CreateTaskInput = {
   projectId: string;
   projectPrefix: string;
   workflow?: string;
-  lane?: Lane;
   kind?: TaskKind;
   items?: CampaignItem[];
 };

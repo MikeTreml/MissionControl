@@ -26,8 +26,8 @@ export function useKpis(): KpisState {
 
   // For demo: counts happen to match the mock board (12/3/5/1) if we
   // extend the numbers beyond what's shown.
-  const active = tasks.filter((t) => t.lane !== "Done" && t.roleLabel !== "Waiting").length;
-  const waiting = tasks.filter((t) => t.lane === "Approval").length;
+  const active = tasks.filter((t) => t.lane !== "Done" && t.lane !== "Failed" && t.roleLabel !== "Waiting").length;
+  const waiting = tasks.filter((t) => t.lane === "Waiting").length;
   const running = tasks.filter((t) => t.active).length;
 
   // Failed runs today: walk every task's events, count run-ended with

@@ -22,7 +22,6 @@ function mockTaskToTask(id: string): Task | null {
     description: "",
     project: "dogapp",
     kind: "single",
-    lane: "plan",
     status: "active",
     runState: m.active ? "running" : "idle",
     cycle: 1,
