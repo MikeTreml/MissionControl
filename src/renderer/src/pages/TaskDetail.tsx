@@ -8,7 +8,7 @@
  * Controls are UI-only today. When pi is wired (baby step 14+), onClick
  * handlers call window.mc.startRun() etc.
  */
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { useRoute } from "../router";
 import { useTask } from "../hooks/useTask";
@@ -706,8 +706,8 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
           </thead>
           <tbody>
             {runs.map((r, idx) => (
-              <>
-                <tr key={`run-${idx}`} style={{ borderTop: "1px solid var(--border)" }}>
+              <Fragment key={`run-${idx}`}>
+                <tr style={{ borderTop: "1px solid var(--border)" }}>
                   <td style={cell}>{fmt(r.startedAt)}</td>
                   <td style={cell}>{r.agentSlug ?? "—"}</td>
                   <td style={cell}>{r.model ? `${r.provider ?? ""}${r.provider ? " · " : ""}${r.model}` : "—"}</td>
@@ -748,7 +748,7 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
                   </td>
                 </tr>
                 {expanded[idx] && r.subagents.length > 0 && (
-                  <tr key={`subagents-${idx}`} style={{ borderTop: "1px solid var(--border)" }}>
+                  <tr style={{ borderTop: "1px solid var(--border)" }}>
                     <td style={{ ...cell, paddingTop: 8, paddingBottom: 12 }} colSpan={9}>
                       <div style={{ display: "grid", gap: 8 }}>
                         {r.subagents.map((sub) => (
@@ -758,7 +758,7 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>
