@@ -25,7 +25,7 @@ export function renderPromptFile(task: Task, agentSlug: string | null): string {
     "",
     "## Done criteria",
     "",
-    "_(fill in as the Planner refines scope)_",
+    "_(fill in as the workflow's planning agent refines scope)_",
     "",
   ];
   return lines.join("\n");

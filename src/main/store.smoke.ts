@@ -57,13 +57,15 @@ async function main(): Promise<void> {
   console.log(`[smoke] per-prefix counter + workflow letter OK`);
 
   // ── folder scaffold ─────────────────────────────────────────────────
-  for (const role of ["planner", "developer", "reviewer", "surgeon"]) {
-    const note = path.join(tmp, a.id, role, "notes.md");
-    assert(existsSync(note), `missing ${role}/notes.md`);
-  }
-  assert(existsSync(path.join(tmp, a.id, "shared")), "shared/ should exist");
+  // Per-agent folders are intentionally NOT pre-created; the workflow's
+  // agents make their own folders/files at runtime. We only seed the
+  // task root, manifest, shared/, PROMPT.md, STATUS.md, events.jsonl.
+  assert(existsSync(path.join(tmp, a.id)), `task folder missing`);
   assert(existsSync(path.join(tmp, a.id, "manifest.json")), "manifest.json missing");
-  console.log(`[smoke] folder scaffold OK`);
+  assert(existsSync(path.join(tmp, a.id, "shared")), "shared/ should exist");
+  assert(existsSync(path.join(tmp, a.id, "PROMPT.md")), "PROMPT.md should exist");
+  assert(existsSync(path.join(tmp, a.id, "STATUS.md")), "STATUS.md should exist");
+  console.log(`[smoke] folder scaffold OK (no pre-allocated agent folders)`);
 
   // ── list ────────────────────────────────────────────────────────────
   const listed = await store.listTasks();
@@ -97,8 +99,10 @@ async function main(): Promise<void> {
   assert((events[1] as Record<string, unknown>).to === "test marker", `blocker-changed to should be "test marker"`);
   console.log(`[smoke] events.jsonl journal: ${events.map((e) => e.type).join(" → ")}`);
 
-  // Arbitrary caller can append events (pi runtime will use this later)
-  await store.appendEvent("DA-001F", { type: "run-started", role: "developer", model: "codex" });
+  // Arbitrary caller can append events (pi runtime will use this later).
+  // The agentSlug here is whatever the workflow declared at runtime; we
+  // pick a generic example here so this test doesn't carry a fixed roster.
+  await store.appendEvent("DA-001F", { type: "run-started", agentSlug: "agent-x", model: "codex" });
   const grown = await store.readEvents("DA-001F");
   assert(grown.length === 3, `expected 3 events after append, got ${grown.length}`);
   assert(grown[2]!.type === "run-started", `third event should be "run-started"`);
@@ -116,7 +120,7 @@ async function main(): Promise<void> {
 
   // ── artifacts JSON write helper ──────────────────────────────────────
   const artifactPath = await store.writeArtifactJson("DA-001F", "sample.metrics.json", {
-    step: "planner",
+    step: "phase-1",
     costUSD: 0.04,
   });
   assert(existsSync(artifactPath), "writeArtifactJson creates artifact file");
@@ -125,7 +129,7 @@ async function main(): Promise<void> {
   const artifacts = await store.listArtifacts("DA-001F");
   assert(artifacts.length >= 1, "listArtifacts returns persisted artifact files");
   const artifactJson = await store.readArtifactJson("DA-001F", "sample.metrics.json");
-  assert(artifactJson?.step === "planner", "readArtifactJson returns parsed payload");
+  assert(artifactJson?.step === "phase-1", "readArtifactJson returns parsed payload");
   console.log("[smoke] artifact JSON write helper OK");
 
   // ── project-level metrics rollup (artifacts/*.metrics.json) ─────────
@@ -174,12 +178,12 @@ async function main(): Promise<void> {
   const unsub = () => store.off("task-saved", listener);
   const listener = () => { gotEmission = true; };
   store.on("task-saved", listener);
-  await store.appendStatus("DA-001F", "Planner picked up task");
+  await store.appendStatus("DA-001F", "Agent picked up task");
   unsub();
   assert(gotEmission, `appendStatus emits task-saved for live refresh`);
   const afterAppend = await store.readStatusFile("DA-001F");
   assert(
-    afterAppend !== null && afterAppend.includes("Planner picked up task"),
+    afterAppend !== null && afterAppend.includes("Agent picked up task"),
     `appendStatus line landed in STATUS.md`,
   );
   console.log(`[smoke] appendStatus + task-saved emission OK`);
@@ -199,22 +203,23 @@ async function main(): Promise<void> {
   console.log(`[smoke] folderFor OK`);
 
   // readTaskFile resolves latest cycle when present and otherwise falls back
-  // to the non-cycled artifact naming. (File names are produced by callers —
-  // store.ts itself doesn't know about agent codes.)
-  const plannerStem = "DA-001F-p";
-  const plannerOutput = await store.readTaskFile("DA-001F", plannerStem);
-  assert(plannerOutput === null, `readTaskFile returns null for not-yet-produced artifact`);
-  await fs.writeFile(path.join(folder, `DA-001F-p-c1.md`), "cycle 1", "utf8");
-  await fs.writeFile(path.join(folder, `DA-001F-p-c2.md`), "cycle 2", "utf8");
-  const latestPlanner = await store.readTaskFile("DA-001F", plannerStem);
-  assert(latestPlanner === "cycle 2", `readTaskFile resolves latest cycle by default`);
-  const cycle1Planner = await store.readTaskFile("DA-001F", plannerStem, { cycle: 1 });
-  assert(cycle1Planner === "cycle 1", `readTaskFile resolves explicit cycle`);
-  const plannerCycles = await store.listTaskFileCycles("DA-001F", plannerStem);
-  assert(plannerCycles.join(",") === "1,2", `listTaskFileCycles returns discovered cycles`);
-  await fs.writeFile(path.join(folder, `DA-001F-d.md`), "legacy dev", "utf8");
-  const legacyDev = await store.readTaskFile("DA-001F", "DA-001F-d");
-  assert(legacyDev === "legacy dev", `non-cycled artifact still resolves`);
+  // to the non-cycled artifact naming. File names are produced by callers
+  // (the workflow's agents) — store.ts itself doesn't know agent codes;
+  // a generic stem is used here so this test doesn't carry a fixed roster.
+  const artifactStem = "DA-001F-a";
+  const missingArtifact = await store.readTaskFile("DA-001F", artifactStem);
+  assert(missingArtifact === null, `readTaskFile returns null for not-yet-produced artifact`);
+  await fs.writeFile(path.join(folder, `${artifactStem}-c1.md`), "cycle 1", "utf8");
+  await fs.writeFile(path.join(folder, `${artifactStem}-c2.md`), "cycle 2", "utf8");
+  const latestArtifact = await store.readTaskFile("DA-001F", artifactStem);
+  assert(latestArtifact === "cycle 2", `readTaskFile resolves latest cycle by default`);
+  const cycle1Artifact = await store.readTaskFile("DA-001F", artifactStem, { cycle: 1 });
+  assert(cycle1Artifact === "cycle 1", `readTaskFile resolves explicit cycle`);
+  const artifactCycles = await store.listTaskFileCycles("DA-001F", artifactStem);
+  assert(artifactCycles.join(",") === "1,2", `listTaskFileCycles returns discovered cycles`);
+  await fs.writeFile(path.join(folder, `DA-001F-legacy.md`), "legacy artifact", "utf8");
+  const legacyArtifact = await store.readTaskFile("DA-001F", "DA-001F-legacy");
+  assert(legacyArtifact === "legacy artifact", `non-cycled artifact still resolves`);
   console.log(`[smoke] readTaskFile cycle resolution OK`);
 
   // ── crash recovery: reconcileInterruptedRuns ───────────────────────

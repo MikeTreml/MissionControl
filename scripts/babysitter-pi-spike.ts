@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Spike — can MC drive Planner→Developer→Reviewer orchestration through
- * the `@a5c-ai/babysitter-pi` pi extension?
+ * Spike — can MC drive multi-agent orchestration (workflow-defined,
+ * agents drawn from library/) through the `@a5c-ai/babysitter-pi` pi
+ * extension?
  *
  * The pi extension (installed via `pi install npm:@a5c-ai/babysitter-pi`)
  * registers slash commands — `/babysit`, `/plan`, `/resume`, `/doctor`,

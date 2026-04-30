@@ -13,13 +13,14 @@ import { useTasks } from "../hooks/useTasks";
 import { useSubscribe } from "../hooks/data-bus";
 import { PageStub } from "./PageStub";
 import { AddProjectForm } from "../components/AddProjectForm";
+import { SkeletonLine, SkeletonBlock, SkeletonRows } from "../components/Skeleton";
 import type { UiTask } from "../hooks/useTasks";
 import type { ProjectWithGit } from "../../../shared/models";
 import type { ProjectRunMetricsRollup } from "../global";
 
 export function ProjectDetail(): JSX.Element {
   const { selectedProjectId, setView } = useRoute();
-  const { projects, isDemo: projectsDemo } = useProjects();
+  const { projects, isDemo: projectsDemo, loading: projectsLoading } = useProjects();
   const { tasks, isDemo: tasksDemo } = useTasks();
   const [editOpen, setEditOpen] = useState(false);
   const [runMetricsRollup, setRunMetricsRollup] = useState<ProjectRunMetricsRollup | null>(null);
@@ -43,6 +44,34 @@ export function ProjectDetail(): JSX.Element {
     }
   }, [project, selectedProjectId, projects.length, setView]);
 
+  // Skeleton while projects are still loading and we don't have a hit yet.
+  // Distinguishes "loading" from "really not found" — the former resolves
+  // shortly; the latter is final.
+  if (!project && projectsLoading) {
+    return (
+      <>
+        <div className="topbar">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <SkeletonLine width="35%" height="1.6em" marginBottom={6} />
+            <SkeletonLine width="20%" height="0.85em" />
+          </div>
+        </div>
+        <div className="content">
+          <section className="card-grid">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className="card">
+                <SkeletonLine width="50%" height="0.8em" marginBottom={6} />
+                <SkeletonLine width="80%" height="1.4em" />
+              </div>
+            ))}
+          </section>
+          <SkeletonBlock height={140} />
+          <SkeletonBlock height={180} />
+        </div>
+      </>
+    );
+  }
+
   if (!project) {
     return (
       <PageStub
@@ -55,9 +84,15 @@ export function ProjectDetail(): JSX.Element {
   // CONFIRMED: ProjectDetail is scoped to a single project. Tasks carry their
   // project slug on UiTask.projectId (added in useTasks). Demo tasks all share
   // projectId === "demo" so they still show when we're in demo mode.
-  const projectTasks = project
+  const allProjectTasks = project
     ? tasks.filter((t) => t.projectId === project.id || (tasksDemo && t.projectId === "demo"))
     : [];
+  const archivedCount = allProjectTasks.filter((t) => t.status === "archived").length;
+  const [showArchived, setShowArchived] = useState(false);
+  // Default: hide archived from stats and tables. Toggle includes them.
+  const projectTasks = showArchived
+    ? allProjectTasks
+    : allProjectTasks.filter((t) => t.status !== "archived");
 
   const stats = computeStats(projectTasks);
   const isDemo = projectsDemo || tasksDemo;
@@ -151,6 +186,24 @@ export function ProjectDetail(): JSX.Element {
       </div>
 
       <div className="content">
+        {projectTasks.length === 0 && !isDemo && (
+          <section
+            className="card"
+            style={{
+              border: "1px dashed var(--border)",
+              background: "var(--panel-2)",
+              display: "grid",
+              gap: 6,
+            }}
+          >
+            <div style={{ fontWeight: 500 }}>No tasks for this project yet.</div>
+            <div className="muted" style={{ fontSize: 12 }}>
+              Use the <strong>+ Create Task</strong> button in the topbar to add
+              one — pick this project from the picker so it lands here.
+            </div>
+          </section>
+        )}
+
         <section className="card-grid">
           <Kpi label="Tasks total" value={stats.total} />
           <Kpi label="Active" value={stats.active} />
@@ -194,10 +247,24 @@ export function ProjectDetail(): JSX.Element {
         )}
 
         <section className="card">
-          <h3>Tasks by lane</h3>
-          <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-            Snapshot of where work is sitting right now.
-          </p>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <div>
+              <h3 style={{ margin: 0 }}>Tasks by lane</h3>
+              <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+                Snapshot of where work is sitting right now.
+              </p>
+            </div>
+            {archivedCount > 0 && (
+              <button
+                className="button ghost"
+                onClick={() => setShowArchived((v) => !v)}
+                title={showArchived ? "Hide archived from stats and tables" : "Include archived in stats and tables"}
+                style={{ fontSize: 12 }}
+              >
+                {showArchived ? `Hide archived (${archivedCount})` : `Show archived (${archivedCount})`}
+              </button>
+            )}
+          </div>
           <LaneBars tasks={projectTasks} />
         </section>
 

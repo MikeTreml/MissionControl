@@ -8,26 +8,44 @@
  * Controls are UI-only today. When pi is wired (baby step 14+), onClick
  * handlers call window.mc.startRun() etc.
  */
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { useRoute } from "../router";
 import { useTask } from "../hooks/useTask";
+import { useTasks } from "../hooks/useTasks";
 import { usePiModels } from "../hooks/usePiModels";
 import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
+import { pushErrorToast } from "../hooks/useToasts";
 import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
 import { derivePhases } from "../lib/derive-phases";
+import { derivePendingBreakpoint } from "../lib/derive-pending-breakpoint";
+import { deriveSubagents, type SubagentEntry } from "../lib/derive-subagents";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
+import { ChangeWorkflowModal } from "../components/ChangeWorkflowModal";
+import { SkeletonLine, SkeletonBlock, SkeletonRows } from "../components/Skeleton";
+import { CreateTaskForm, type CreateTaskPreload } from "../components/CreateTaskForm";
 import { PageStub } from "./PageStub";
 import type { Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
 
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
-  const { task, events, prompt, status, runConfig, latestMetrics, metricsFileName, isDemo } = useTask(selectedTaskId);
+  const { task, events, prompt, status, runConfig, latestMetrics, metricsFileName, isDemo, loading } = useTask(selectedTaskId);
   const pendingAsks = usePendingAsks(selectedTaskId);
   const [editOpen, setEditOpen] = useState(false);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [rerunOpen, setRerunOpen] = useState(false);
+  const [doctorOpen, setDoctorOpen] = useState(false);
+
+  // Distinguish "task is loading" from "no task selected" — useTask
+  // resolves both into `task: null` initially. If we have a selected
+  // id and we're still fetching, render a skeleton instead of the
+  // "pick a task" stub.
+  if (!task && selectedTaskId && loading) {
+    return <TaskDetailSkeleton />;
+  }
 
   if (!task) {
     return (
@@ -64,12 +82,40 @@ export function TaskDetail(): JSX.Element {
           {!isDemo && (
             <button
               className="button ghost"
+              title="Re-assign or clear the curated library workflow used on the next Start"
+              onClick={() => setWorkflowOpen(true)}
+            >
+              Workflow…
+            </button>
+          )}
+          {!isDemo && (
+            <button
+              className="button ghost"
+              title="Create a new task pre-filled from this one — edit anything before saving"
+              onClick={() => setRerunOpen(true)}
+            >
+              ↻ Re-run…
+            </button>
+          )}
+          {!isDemo && (
+            <button
+              className="button ghost"
+              title="Spin off a doctor task — diagnose why this task is stuck without modifying it"
+              onClick={() => setDoctorOpen(true)}
+            >
+              ↳ Spin off doctor
+            </button>
+          )}
+          {!isDemo && (
+            <button
+              className="button ghost"
               title="Open the task's folder in your OS file explorer"
               onClick={() => { void window.mc?.openTaskFolder(task.id); }}
             >
               📁 Open folder
             </button>
           )}
+          {!isDemo && <ArchiveTaskButton task={task} />}
           {!isDemo && <DeleteTaskButton taskId={task.id} />}
           <BackToDashboard />
         </div>
@@ -83,8 +129,35 @@ export function TaskDetail(): JSX.Element {
         />
       )}
 
+      {!isDemo && (
+        <ChangeWorkflowModal
+          open={workflowOpen}
+          onClose={() => setWorkflowOpen(false)}
+          task={task}
+        />
+      )}
+
+      {!isDemo && (
+        <CreateTaskForm
+          open={rerunOpen}
+          onClose={() => setRerunOpen(false)}
+          preload={buildRerunPreload(task, runConfig)}
+        />
+      )}
+
+      {!isDemo && (
+        <CreateTaskForm
+          open={doctorOpen}
+          onClose={() => setDoctorOpen(false)}
+          preload={buildDoctorPreload(task, runConfig)}
+        />
+      )}
+
       <div className="content">
         <Controls task={task} />
+        <PhaseChipStrip task={task} events={events} />
+        {!isDemo && <RunMetadataChips task={task} events={events} />}
+        {!isDemo && <PendingEffectsPanel task={task} events={events} />}
         {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
 
         {!isDemo && pendingAsks.map((ask) => (
@@ -109,6 +182,10 @@ export function TaskDetail(): JSX.Element {
 
         {task.kind === "campaign" && <CampaignItems task={task} />}
 
+        {!isDemo && <SpawnedFromPanel task={task} />}
+
+        <SubagentsPanel events={events} />
+
         <RunHistory events={events} />
 
         <section
@@ -125,11 +202,351 @@ export function TaskDetail(): JSX.Element {
   );
 }
 
+/**
+ * Build a CreateTaskForm preload from the source task + its
+ * RUN_CONFIG.json. Used by the "↻ Re-run…" button to clone a task
+ * into a new one with editable fields. The new task records its
+ * lineage via parentTaskId.
+ *
+ * The shape of RUN_CONFIG (when present) follows what RunWorkflowModal
+ * and ChangeWorkflowModal write:
+ *   { kind: "library-workflow-run",
+ *     libraryWorkflow: { logicalPath, ... } | null,
+ *     runSettings: { model, inputs: {...} } }
+ *
+ * If runConfig is missing or shaped differently, we just preload the
+ * basics (title/description/projectId/kind) and let the user pick a
+ * workflow.
+ */
+function buildRerunPreload(
+  task: Task,
+  runConfig: Record<string, unknown> | null,
+): CreateTaskPreload {
+  const preload: CreateTaskPreload = {
+    title: task.title,
+    description: task.description,
+    projectId: task.project,
+    kind: task.kind,
+    parentTaskId: task.id,
+  };
+
+  // For campaigns, copy item descriptions back into the textarea
+  // format the form expects (one per line).
+  if (task.kind === "campaign" && task.items.length > 0) {
+    preload.itemsText = task.items.map((it) => it.description).join("\n");
+  }
+
+  // Curated workflow + inputs from RUN_CONFIG.
+  if (runConfig) {
+    const lw = runConfig["libraryWorkflow"] as
+      | { logicalPath?: unknown }
+      | null
+      | undefined;
+    if (lw && typeof lw.logicalPath === "string") {
+      preload.workflowLogicalPath = lw.logicalPath;
+    }
+    const rs = runConfig["runSettings"] as
+      | { inputs?: unknown }
+      | undefined;
+    if (rs && rs.inputs && typeof rs.inputs === "object") {
+      preload.inputs = rs.inputs as Record<string, unknown>;
+    }
+  }
+
+  return preload;
+}
+
+/**
+ * Build a CreateTaskForm preload for the "↳ Spin off doctor" flow
+ * (#37). Like buildRerunPreload but with a different intent: the new
+ * task's job is to *diagnose* the source, not redo it. We seed a
+ * starter prompt that points the doctor task at the source's
+ * STATUS.md / events.jsonl, force kind=single (campaigns don't
+ * doctor sensibly), and copy the workflow if any.
+ *
+ * Inputs from RUN_CONFIG are NOT carried — a doctor task is a fresh
+ * investigation, not a parameter sweep. The user can fill or change
+ * them in the form.
+ */
+function buildDoctorPreload(
+  task: Task,
+  runConfig: Record<string, unknown> | null,
+): CreateTaskPreload {
+  const lastPhase = task.runState !== "idle" ? `still ${task.runState}` : task.status;
+  const starter =
+    `Diagnose why ${task.id} is stuck (${lastPhase}). Read the source ` +
+    `task's STATUS.md and events.jsonl to identify the failure mode, ` +
+    `then propose a fix or a follow-up task. Do not modify the source ` +
+    `task's files.\n\n` +
+    `Source description:\n${task.description || "(no description)"}\n`;
+
+  const preload: CreateTaskPreload = {
+    title: `Doctor: ${task.title}`,
+    description: starter,
+    projectId: task.project,
+    kind: "single",
+    parentTaskId: task.id,
+  };
+
+  // Carry the workflow if the source had one curated. For auto-gen
+  // sources, leave the doctor task on auto-gen too — same path.
+  if (runConfig) {
+    const lw = runConfig["libraryWorkflow"] as { logicalPath?: unknown } | null | undefined;
+    if (lw && typeof lw.logicalPath === "string") {
+      preload.workflowLogicalPath = lw.logicalPath;
+    }
+  }
+
+  return preload;
+}
+
+/**
+ * Run-metadata chips — surfaces SDK-authoritative facts about the
+ * latest run: iteration count (#21) and completionProof token (#19).
+ *
+ * - Iteration count comes from the SDK state cache via
+ *   `babysitter run:status --json` (parsed into `runStatus` IPC).
+ *   We accept either `iterationCount` or `stateVersion` as the field
+ *   name since the SDK shape isn't fully nailed down (and either
+ *   gives us the same monotonically-increasing number).
+ * - completionProof is the unforgeable "this run finished" token the
+ *   SDK generates per run. When present, we render a "✓ verified
+ *   done" chip — distinct from the journal's `bs:phase finished`
+ *   signal because the proof can't be forged by hand-editing the
+ *   journal.
+ *
+ * Both are best-effort: if the SDK CLI is unreachable or the run
+ * hasn't started yet, we render nothing. The component re-fetches
+ * when the events stream length changes (live-events bridge tick),
+ * so values update as the run progresses.
+ */
+function RunMetadataChips({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const [iteration, setIteration] = useState<number | null>(null);
+  const [completionProof, setCompletionProof] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!window.mc?.runStatus) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await window.mc.runStatus(task.id);
+        if (cancelled || !res || typeof res !== "object") return;
+        const obj = res as Record<string, unknown>;
+        const iter =
+          typeof obj["iterationCount"] === "number" ? (obj["iterationCount"] as number)
+          : typeof obj["stateVersion"] === "number" ? (obj["stateVersion"] as number)
+          : null;
+        const proof = typeof obj["completionProof"] === "string"
+          ? (obj["completionProof"] as string)
+          : null;
+        setIteration(iter);
+        setCompletionProof(proof);
+      } catch {
+        // CLI unreachable / no run yet — leave both null and render nothing
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [task.id, events.length]);
+
+  if (iteration === null && !completionProof) return null;
+
+  return (
+    <div
+      className="muted"
+      style={{
+        display: "flex",
+        gap: 12,
+        marginTop: -4,
+        fontSize: 11,
+        alignItems: "center",
+      }}
+    >
+      {iteration !== null && (
+        <span title="SDK state cache reports this many iterations have completed">
+          Iteration {iteration}
+        </span>
+      )}
+      {completionProof && (
+        <span
+          title={`completionProof: ${completionProof}`}
+          style={{
+            color: "var(--good)",
+            fontWeight: 500,
+          }}
+        >
+          ✓ verified done
+        </span>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Lineage panel — shows where this task came from and what it spawned.
+ *
+ *   - Parent: rendered when task.parentTaskId !== "". Click → openTask.
+ *   - Children: any task whose parentTaskId equals THIS task's id.
+ *     Cheap O(N) scan over the full task list (no inverse index;
+ *     real-world counts are small enough).
+ *
+ * Returns null when neither side has anything — keeps Task Detail
+ * uncluttered for tasks that are root + childless.
+ *
+ * Same `parentTaskId` infrastructure feeds re-run/clone (#5),
+ * doctor / spin-off tasks (#37), and planning tasks that spawn
+ * children (#40). When those land, they each populate parent/child
+ * relationships that this panel surfaces.
+ */
+function SpawnedFromPanel({ task }: { task: Task }): JSX.Element | null {
+  const { tasks, isDemo: tasksDemo } = useTasks();
+  const { openTask } = useRoute();
+
+  // Don't try to render lineage from demo data — the IDs are
+  // synthetic and won't link to anything meaningful.
+  if (tasksDemo) return null;
+
+  const parent = task.parentTaskId
+    ? tasks.find((t) => t.id === task.parentTaskId)
+    : null;
+  const children = tasks.filter((t) => t.parentTaskId === task.id);
+
+  if (!parent && children.length === 0) return null;
+
+  return (
+    <section className="card" style={{ display: "grid", gap: 10 }}>
+      <h3 style={{ margin: 0 }}>Lineage</h3>
+
+      {parent && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
+          <span className="muted" style={{ minWidth: 100 }}>Spawned from</span>
+          <button
+            className="button ghost"
+            onClick={() => openTask(parent.id)}
+            style={{ fontSize: 12, padding: "3px 8px" }}
+            title={parent.summary}
+          >
+            ← {parent.id}
+          </button>
+          <span className="muted" style={{ fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {parent.summary}
+          </span>
+        </div>
+      )}
+
+      {task.parentTaskId && !parent && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
+          <span className="muted" style={{ minWidth: 100 }}>Spawned from</span>
+          <span className="muted" style={{ fontSize: 12, fontStyle: "italic" }}>
+            {task.parentTaskId} (deleted or not loaded)
+          </span>
+        </div>
+      )}
+
+      {children.length > 0 && (
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 13 }}>
+          <span className="muted" style={{ minWidth: 100, paddingTop: 4 }}>
+            Spawns ({children.length})
+          </span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {children.map((c) => (
+              <button
+                key={c.id}
+                className="button ghost"
+                onClick={() => openTask(c.id)}
+                style={{ fontSize: 12, padding: "3px 8px" }}
+                title={c.summary}
+              >
+                {c.id} →
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Loading shell shown while `useTask` is resolving a real task. Mirrors
+ * the live page's structure (header + chip strip + cards row + meta) so
+ * the layout doesn't shift when content swaps in. Pure presentation —
+ * no data dependencies.
+ */
+function TaskDetailSkeleton(): JSX.Element {
+  return (
+    <>
+      <div className="topbar">
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <SkeletonLine width="40%" height="1.6em" marginBottom={6} />
+          <SkeletonLine width="20%" height="0.85em" />
+        </div>
+      </div>
+      <div className="content">
+        <SkeletonBlock height={48} />
+        <SkeletonBlock height={56} />
+        <section className="card" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+          <SkeletonRows rows={6} />
+          <SkeletonRows rows={6} />
+        </section>
+        <section className="card" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 18 }}>
+          <SkeletonRows rows={4} />
+          <SkeletonRows rows={4} />
+        </section>
+      </div>
+    </>
+  );
+}
+
 function BackToDashboard(): JSX.Element {
   const { setView } = useRoute();
   return (
     <button className="button ghost" onClick={() => setView("dashboard")}>
       ← Dashboard
+    </button>
+  );
+}
+
+/**
+ * Archive button — toggles `task.status` between "archived" and a sane
+ * non-archived value. No confirm dialog: archive is fully reversible
+ * (Unarchive button shows up when the task IS archived).
+ *
+ * Unarchive behavior: we don't try to remember what status the task
+ * had before archiving. Instead we drop it back to "active" and let
+ * the user / next run advance it from there. The previous status is
+ * recoverable from the events.jsonl trail if it really matters.
+ */
+function ArchiveTaskButton({ task }: { task: Task }): JSX.Element {
+  const [busy, setBusy] = useState(false);
+  const archived = task.status === "archived";
+
+  async function onClick(): Promise<void> {
+    if (!window.mc) return;
+    try {
+      setBusy(true);
+      const next: Task = {
+        ...task,
+        status: archived ? "active" : "archived",
+        updatedAt: new Date().toISOString(),
+      };
+      await window.mc.saveTask(next);
+      publish("tasks");
+    } catch (err) {
+      console.error("[TaskDetail] saveTask (archive toggle) threw:", err);
+      pushErrorToast(archived ? "Unarchive failed" : "Archive failed", err, task.id);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <button
+      className="button ghost"
+      onClick={onClick}
+      disabled={busy}
+      title={archived ? "Restore this task to the active board" : "Archive this task — hides it from the default board"}
+    >
+      {busy ? "…" : archived ? "↩ Unarchive" : "📦 Archive"}
     </button>
   );
 }
@@ -154,6 +571,7 @@ function DeleteTaskButton({ taskId }: { taskId: string }): JSX.Element {
       setView("dashboard");
     } catch (err) {
       console.error("[TaskDetail] deleteTask threw:", err);
+      pushErrorToast("Delete failed", err, taskId);
       setConfirm(false);
     } finally {
       setBusy(false);
@@ -342,6 +760,7 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
       publish("tasks");
     } catch (err) {
       console.error("[TaskDetail] saveTask blocker failed:", err);
+      pushErrorToast("Couldn't save blocker", err, task.id);
       // Roll back local state so the UI doesn't lie about persisted value.
       setValue(task.blocker ?? "");
     } finally {
@@ -420,6 +839,631 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
  * legacy events) and falls back to a generic Draft/Active/Finished
  * skeleton if no events are present yet.
  */
+/**
+ * Pending Effects panel (item #7) — replaces the old breakpoint-only
+ * card. Drives off `runListPending` (SDK as primary list) and joins
+ * with `derivePendingBreakpoint` for the rich breakpoint payload
+ * (question, title, expert, tags) that the SDK CLI doesn't return.
+ *
+ * v1 supports breakpoint + sleep. Custom kinds (any other kind
+ * string) render read-only as forward-compat. See
+ * docs/SPEC-PENDING-EFFECTS.md for rationale, edge cases, and
+ * deferred items.
+ *
+ * Fallback behavior:
+ * - SDK list reachable: render rows from the SDK list. Breakpoint
+ *   rows enrich themselves via the derive helper when effectIds match.
+ *   If derive doesn't have a match (race: SDK ahead of journal),
+ *   the breakpoint row renders with SDK label only.
+ * - SDK list unreachable (CLI missing, child process errored): fall
+ *   back to derive-only for breakpoints. Sleep / custom rows are
+ *   hidden — we have no journal-derived equivalent. A small footer
+ *   warns the user.
+ */
+type SdkPendingRow = {
+  effectId: string;
+  kind: string;
+  label?: string;
+  status?: string;
+};
+
+function PendingEffectsPanel({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const derivedBreakpoint = derivePendingBreakpoint(events);
+  // null = not yet fetched / CLI unreachable. Otherwise a (possibly
+  // empty) array drives the panel.
+  const [sdkRows, setSdkRows] = useState<SdkPendingRow[] | null>(null);
+  const [cliUnreachable, setCliUnreachable] = useState(false);
+
+  // Refetch on mount, when events change (live-events bridge ticks),
+  // and when the task id flips. Cheap subprocess spawn; the bridge's
+  // debounce keeps it bounded.
+  useEffect(() => {
+    if (!window.mc?.runListPending) {
+      setSdkRows(null);
+      setCliUnreachable(true);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const result = await window.mc.runListPending(task.id);
+        if (cancelled) return;
+        const rows = (result?.tasks ?? []).filter(
+          (r) => !r.status || r.status === "requested",
+        );
+        setSdkRows(rows as SdkPendingRow[]);
+        setCliUnreachable(false);
+      } catch {
+        if (!cancelled) {
+          setSdkRows(null);
+          setCliUnreachable(true);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [task.id, events.length]);
+
+  // Offline fallback path — render derive helper's breakpoint only.
+  if (cliUnreachable) {
+    if (!derivedBreakpoint) return null;
+    return (
+      <section className="card" style={{ display: "grid", gap: 10 }}>
+        <BreakpointRow
+          taskId={task.id}
+          row={{ effectId: derivedBreakpoint.effectId, kind: "breakpoint" }}
+          derived={derivedBreakpoint}
+        />
+        <div className="muted" style={{ fontSize: 11 }}>
+          ⚠ SDK CLI unreachable — sleep / custom effects hidden.
+        </div>
+      </section>
+    );
+  }
+
+  // SDK list resolved (possibly empty). Empty → no panel at all.
+  if (!sdkRows || sdkRows.length === 0) return null;
+
+  // Sort: breakpoints first (need user action), others below in SDK order.
+  const sorted = [...sdkRows].sort((a, b) => {
+    const ap = a.kind === "breakpoint" ? 0 : 1;
+    const bp = b.kind === "breakpoint" ? 0 : 1;
+    return ap - bp;
+  });
+
+  const needsUserCount = sorted.filter((r) => r.kind === "breakpoint").length;
+  const totalCount = sorted.length;
+
+  return (
+    <section className="card" style={{ display: "grid", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <strong>Pending effects · {totalCount}</strong>
+        {totalCount > 1 && needsUserCount > 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>
+            ({needsUserCount} need{needsUserCount === 1 ? "s" : ""} you)
+          </span>
+        )}
+      </div>
+      {sorted.map((row, idx) => {
+        // Visual separator between rows when there's more than one.
+        const dividerStyle = idx === 0 ? {} : { borderTop: "1px solid var(--border)", paddingTop: 12 };
+        if (row.kind === "breakpoint") {
+          // Match the derive helper to this row by effectId so we can
+          // render the rich payload. If derive has nothing, the row
+          // still works with SDK label only.
+          const derived =
+            derivedBreakpoint && derivedBreakpoint.effectId === row.effectId
+              ? derivedBreakpoint
+              : null;
+          return (
+            <div key={row.effectId} style={dividerStyle}>
+              <BreakpointRow taskId={task.id} row={row} derived={derived} />
+            </div>
+          );
+        }
+        if (row.kind === "sleep") {
+          return (
+            <div key={row.effectId} style={dividerStyle}>
+              <SleepRow row={row} />
+            </div>
+          );
+        }
+        return (
+          <div key={row.effectId} style={dividerStyle}>
+            <CustomEffectRow row={row} />
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
+/**
+ * Breakpoint row — preserves the v0 BreakpointApprovalCard UI byte-for-byte
+ * (yellow tint, ⏸ icon, title/question, textarea, Approve / Request changes
+ * buttons, effect-id footer). Now joins the derive helper's rich payload
+ * with the SDK row by effectId. When derive has nothing for this row
+ * (rare: SDK ahead of journal), falls back to the SDK label.
+ *
+ * runPath comes from the derive helper. If derive is missing (race
+ * window), buttons disable and a hint explains why; the row still
+ * renders for visibility.
+ */
+function BreakpointRow({
+  taskId,
+  row,
+  derived,
+}: {
+  taskId: string;
+  row: SdkPendingRow;
+  derived: ReturnType<typeof derivePendingBreakpoint>;
+}): JSX.Element {
+  const [feedback, setFeedback] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const payload = derived?.payload ?? {};
+  const question = typeof payload.question === "string" ? payload.question : null;
+  const titleText = typeof payload.title === "string" ? payload.title : (row.label ?? null);
+  const expert = derived?.expert ?? null;
+  const tags = derived?.tags ?? [];
+  const runPath = derived?.runPath ?? null;
+
+  async function respond(approved: boolean): Promise<void> {
+    if (!window.mc) { setError("Not connected — run `npm run dev`"); return; }
+    if (!runPath) { setError("Run path unknown — wait a moment, then retry"); return; }
+    setBusy(true);
+    setError("");
+    try {
+      await window.mc.respondBreakpoint({
+        taskId,
+        runPath,
+        effectId: row.effectId,
+        approved,
+        ...(feedback.trim() ? (approved ? { response: feedback.trim() } : { feedback: feedback.trim() }) : {}),
+      });
+      publish("tasks");
+      setFeedback("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div
+      style={{
+        background: "rgba(244,201,93,0.08)",
+        border: "1px solid var(--warn)",
+        borderRadius: 8,
+        padding: 12,
+        display: "grid",
+        gap: 10,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ color: "var(--warn)", fontSize: 14 }}>⏸</span>
+        <strong>Awaiting human approval</strong>
+        {expert && expert !== "owner" && (
+          <span className="muted" style={{ fontSize: 12 }}>· expert: {expert}</span>
+        )}
+        {tags.length > 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>· {tags.join(" · ")}</span>
+        )}
+      </div>
+      {titleText && <div style={{ fontWeight: 500 }}>{titleText}</div>}
+      {question && (
+        <div className="muted" style={{ whiteSpace: "pre-wrap", fontSize: 13 }}>
+          {question}
+        </div>
+      )}
+      <textarea
+        rows={2}
+        value={feedback}
+        placeholder="Optional response or change request"
+        onChange={(e) => setFeedback(e.target.value)}
+        disabled={busy}
+        style={{
+          background: "var(--bg)",
+          color: "var(--text)",
+          border: "1px solid var(--border)",
+          borderRadius: 8,
+          padding: "8px 10px",
+          fontFamily: "inherit",
+          fontSize: 13,
+          width: "100%",
+          resize: "vertical",
+        }}
+      />
+      <div style={{ display: "flex", gap: 8 }}>
+        <button
+          className="button"
+          disabled={busy || !runPath}
+          onClick={() => void respond(true)}
+          title={runPath ? "Approve and continue the run" : "Run path not yet known — wait a moment"}
+        >
+          ✓ Approve
+        </button>
+        <button
+          className="button warn"
+          disabled={busy || !runPath}
+          onClick={() => void respond(false)}
+          title={runPath ? "Reject; the workflow's retry/refine loop picks this up" : "Run path not yet known — wait a moment"}
+        >
+          ↺ Request changes
+        </button>
+        <span className="muted" style={{ fontSize: 11, alignSelf: "center", marginLeft: 8 }}>
+          effect: <code>{row.effectId}</code>
+        </span>
+      </div>
+      {!runPath && (
+        <div className="muted" style={{ fontSize: 11 }}>
+          SDK reports this breakpoint pending but the journal hasn't surfaced its
+          run path yet — it will catch up shortly.
+        </div>
+      )}
+      {error && (
+        <div style={{ color: "var(--bad)", fontSize: 12 }}>
+          {error}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Sleep row — informational only in v1. The SDK index reports the
+ * effect as pending; we render kind, optional label, and effect id.
+ * No countdown until we know the SDK row carries `wakeAt` /
+ * `durationMs` (open Q in SPEC §1b). When the workflow's sleep
+ * resolves, the next runListPending tick removes the row.
+ */
+function SleepRow({ row }: { row: SdkPendingRow }): JSX.Element {
+  return (
+    <div
+      style={{
+        background: "var(--panel-2)",
+        border: "1px solid var(--border)",
+        borderRadius: 8,
+        padding: 12,
+        display: "grid",
+        gap: 6,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ fontSize: 14 }}>⏳</span>
+        <strong>Sleep</strong>
+        <span className="muted" style={{ fontSize: 12 }}>· sleeping…</span>
+      </div>
+      {row.label && <div style={{ fontWeight: 500 }}>{row.label}</div>}
+      <div className="muted" style={{ fontSize: 11 }}>
+        effect: <code>{row.effectId}</code>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Custom-kind row — read-only forward-compat (v1.1 will expose actions
+ * once the SDK row shape for arbitrary kinds is nailed down). For now
+ * we surface the kind + label + effect id so users can at least see
+ * the workflow is waiting on something.
+ */
+function CustomEffectRow({ row }: { row: SdkPendingRow }): JSX.Element {
+  return (
+    <div
+      style={{
+        background: "var(--panel-2)",
+        border: "1px solid var(--border)",
+        borderRadius: 8,
+        padding: 12,
+        display: "grid",
+        gap: 6,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ fontSize: 14 }}>☉</span>
+        <strong>Pending effect</strong>
+        <span className="muted" style={{ fontSize: 12 }}>· {row.kind}</span>
+      </div>
+      {row.label && <div style={{ fontWeight: 500 }}>{row.label}</div>}
+      <div className="muted" style={{ fontSize: 11 }}>
+        effect: <code>{row.effectId}</code>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Horizontal phase chip strip — sits at the top of Task Detail. Same data
+ * source as LaneTimeline (`derivePhases`); different layout. Mockup spec
+ * is `queued → plan → approval ● → build → verify` with the active chip
+ * highlighted and a `cycle 1 · 12m` summary on the right side.
+ */
+/**
+ * Active subagents panel — flat list of every effect_requested /
+ * pi:subagent_spawn the journal has surfaced. Running rows float to
+ * the top with a pulsing dot; completed/failed rows show duration.
+ * Hidden when there are no subagent rows at all.
+ */
+function SubagentsPanel({ events }: { events: TaskEvent[] }): JSX.Element | null {
+  const rows = deriveSubagents(events);
+  if (rows.length === 0) return null;
+
+  // Split into two visual groups (#23 polish):
+  //   - "Active" rail at top: status=running, shown as a horizontal
+  //     wrap of richer chips so concurrent agents are scannable at a
+  //     glance. AutoGen Studio's per-agent surface is the visual analog.
+  //   - "Recent" list below: completed + failed, compact one-line rows.
+  // The two groups share the same data source (deriveSubagents); only
+  // their layout differs.
+  const running = rows.filter((r) => r.status === "running");
+  const finished = rows.filter((r) => r.status !== "running");
+  const finishedShown = finished.slice(0, 25);
+  const finishedHidden = finished.length - finishedShown.length;
+
+  return (
+    <section className="card">
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+        <h3 style={{ margin: 0 }}>Subagents</h3>
+        <span className="muted" style={{ fontSize: 12 }}>
+          {running.length > 0 ? `${running.length} active · ` : ""}
+          {finished.length} finished
+        </span>
+      </div>
+
+      {running.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 8,
+            padding: "8px 0 12px",
+            marginBottom: finished.length > 0 ? 8 : 0,
+            borderBottom: finished.length > 0 ? "1px solid var(--border)" : undefined,
+          }}
+        >
+          {running.map((r) => (
+            <ActiveSubagentChip key={r.id} entry={r} />
+          ))}
+        </div>
+      )}
+
+      {finished.length > 0 && (
+        <>
+          <div
+            className="muted"
+            style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}
+          >
+            Recent
+          </div>
+          <div style={{ display: "grid", gap: 4 }}>
+            {finishedShown.map((r) => (
+              <SubagentHistoryRow key={r.id} entry={r} />
+            ))}
+            {finishedHidden > 0 && (
+              <div className="muted" style={{ fontSize: 11, padding: "4px 2px" }}>
+                …{finishedHidden} more in the journal
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Big chip for an active subagent — sits in the top rail. Pulsing
+ * dot + label + subtitle + source + elapsed-since-start when known.
+ * Visual emphasis (warn-tinted bg) so the user can spot what's
+ * currently churning at a glance.
+ */
+function ActiveSubagentChip({ entry }: { entry: SubagentEntry }): JSX.Element {
+  return (
+    <div
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "6px 12px",
+        border: "1px solid var(--warn)",
+        borderRadius: 18,
+        background: "rgba(244,201,93,0.08)",
+        minHeight: 28,
+      }}
+    >
+      <span
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          background: "var(--warn)",
+          animation: "mc-pulse 1.4s ease-in-out infinite",
+          flex: "0 0 auto",
+        }}
+        aria-label="running"
+      />
+      <strong style={{ fontSize: 13 }}>{entry.label}</strong>
+      {entry.subtitle && (
+        <span className="muted" style={{ fontSize: 12 }}>{entry.subtitle}</span>
+      )}
+      <span className="muted" style={{ fontSize: 11 }}>
+        {entry.source === "sdk" ? "SDK" : "pi"}
+        {entry.durationMs !== null && ` · ${(entry.durationMs / 1000).toFixed(1)}s`}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * Compact one-line row for completed/failed subagents — sits in the
+ * "Recent" list below the active rail. Tiny status dot (no animation),
+ * label, subtitle, source, duration.
+ */
+function SubagentHistoryRow({ entry }: { entry: SubagentEntry }): JSX.Element {
+  const tone = entry.status === "failed" ? "var(--bad)" : "var(--good)";
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        padding: "5px 10px",
+        borderRadius: 6,
+        fontSize: 12,
+      }}
+    >
+      <span
+        style={{
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          background: tone,
+          flex: "0 0 auto",
+        }}
+        aria-label={entry.status}
+      />
+      <span>{entry.label}</span>
+      {entry.subtitle && (
+        <span className="muted" style={{ fontSize: 11 }}>{entry.subtitle}</span>
+      )}
+      <span className="muted" style={{ fontSize: 11, marginLeft: "auto" }}>
+        {entry.source === "sdk" ? "SDK" : "pi"}
+        {entry.durationMs !== null && ` · ${(entry.durationMs / 1000).toFixed(1)}s`}
+        {` · ${entry.status}`}
+      </span>
+    </div>
+  );
+}
+
+function PhaseChipStrip({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const { phases, current: derivedCurrent, source } = derivePhases(task, events);
+  // SDK-authoritative current marker (#20). The timeline shape stays
+  // journal-derived (we want the full history); but the "active"
+  // chip prefers what the SDK state cache reports via runs:status.
+  // Fall back to derivePhases.current when the SDK CLI is unreachable.
+  const [sdkCurrent, setSdkCurrent] = useState<string | null>(null);
+  useEffect(() => {
+    if (!window.mc?.runStatus) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await window.mc.runStatus(task.id);
+        if (cancelled || !res || typeof res !== "object") return;
+        const obj = res as Record<string, unknown>;
+        const cur =
+          typeof obj["currentPhase"] === "string" ? (obj["currentPhase"] as string)
+          : typeof obj["phase"] === "string" ? (obj["phase"] as string)
+          : null;
+        setSdkCurrent(cur);
+      } catch {
+        if (!cancelled) setSdkCurrent(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [task.id, events.length]);
+
+  if (phases.length === 0) return null;
+
+  // Resolve which chip is "current": prefer the SDK answer when it
+  // matches a phase id we know about; otherwise trust the derive
+  // helper. Render annotation reflects which source we used so users
+  // can spot drift if both disagree.
+  const sdkMatches = sdkCurrent ? phases.some((p) => p.id === sdkCurrent) : false;
+  const current = sdkMatches ? sdkCurrent : derivedCurrent;
+  const currentSource: "sdk" | "journal" = sdkMatches ? "sdk" : "journal";
+
+  const colorFor = (status: typeof phases[number]["status"]): { bg: string; fg: string } => {
+    if (status === "active") return { bg: "rgba(244,201,93,0.15)", fg: "var(--warn)" };
+    if (status === "failed") return { bg: "rgba(255,123,123,0.12)", fg: "var(--bad)" };
+    if (status === "done")   return { bg: "rgba(74,222,128,0.10)", fg: "var(--good)" };
+    return { bg: "var(--panel-2)", fg: "var(--muted)" };
+  };
+
+  const elapsed = elapsedSinceLatestEvent(events) ?? "";
+  return (
+    <div
+      className="card"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "10px 14px",
+        flexWrap: "wrap",
+      }}
+    >
+      <span className="muted" style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 0.04, marginRight: 4 }}>
+        Phase
+      </span>
+      {phases.map((p, idx) => {
+        // SDK-authoritative override: when the SDK reports this chip
+        // as the current phase, render it as "active" even if
+        // derivePhases labeled it differently. The journal can lag
+        // the state cache, so this catches the brief window where
+        // they disagree.
+        const isCurrent = p.id === current;
+        const effectiveStatus = isCurrent ? "active" : p.status;
+        const c = colorFor(effectiveStatus);
+        return (
+          <span key={p.id} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <span
+              style={{
+                background: c.bg,
+                color: c.fg,
+                border: `1px solid ${effectiveStatus === "active" ? c.fg : "var(--border)"}`,
+                borderRadius: 5,
+                padding: "3px 9px",
+                fontSize: 12,
+                fontWeight: effectiveStatus === "active" ? 600 : 400,
+                whiteSpace: "nowrap",
+              }}
+              title={effectiveStatus}
+            >
+              {p.label}
+              {isCurrent && " ●"}
+              {p.status === "failed" && " ✕"}
+            </span>
+            {idx < phases.length - 1 && (
+              <span style={{ color: "var(--muted)", fontSize: 11 }}>→</span>
+            )}
+          </span>
+        );
+      })}
+      <span style={{ flex: 1 }} />
+      <span
+        className="muted"
+        style={{ fontSize: 11, fontFamily: "monospace" }}
+        title={
+          currentSource === "sdk"
+            ? "Current phase reported by the SDK state cache"
+            : "Current phase derived from journal events (SDK CLI unreachable or no match)"
+        }
+      >
+        cycle {task.cycle}
+        {elapsed ? ` · ${elapsed}` : ""}
+        {source !== "curated" ? ` · ${source}` : ""}
+        {currentSource === "sdk" ? " · sdk" : ""}
+      </span>
+    </div>
+  );
+}
+
+function elapsedSinceLatestEvent(events: TaskEvent[]): string | null {
+  const last = events[events.length - 1];
+  if (!last) return null;
+  const ts = (last as unknown as { timestamp?: string }).timestamp;
+  if (!ts) return null;
+  const ms = Date.now() - new Date(ts).getTime();
+  if (ms < 0 || !Number.isFinite(ms)) return null;
+  const s = Math.floor(ms / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  return `${h}h ${m % 60}m`;
+}
+
 function LaneTimeline({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element {
   const { phases, source } = derivePhases(task, events);
 
@@ -619,7 +1663,7 @@ function CampaignItems({ task }: { task: Task }): JSX.Element {
       <h3>Campaign items</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
         {items.length === 0
-          ? "No items yet. Paste items into the Create Task form or let the Planner generate them."
+          ? "No items yet. Paste items into the Create Task form or let the workflow's planning agent generate them."
           : `${done} done · ${failed} failed · ${running} running · ${pending} pending — ${finishedPct}% finished`}
       </p>
       {items.length > 0 && (
@@ -706,8 +1750,8 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
           </thead>
           <tbody>
             {runs.map((r, idx) => (
-              <>
-                <tr key={`run-${idx}`} style={{ borderTop: "1px solid var(--border)" }}>
+              <Fragment key={`run-${idx}`}>
+                <tr style={{ borderTop: "1px solid var(--border)" }}>
                   <td style={cell}>{fmt(r.startedAt)}</td>
                   <td style={cell}>{r.agentSlug ?? "—"}</td>
                   <td style={cell}>{r.model ? `${r.provider ?? ""}${r.provider ? " · " : ""}${r.model}` : "—"}</td>
@@ -748,7 +1792,7 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
                   </td>
                 </tr>
                 {expanded[idx] && r.subagents.length > 0 && (
-                  <tr key={`subagents-${idx}`} style={{ borderTop: "1px solid var(--border)" }}>
+                  <tr style={{ borderTop: "1px solid var(--border)" }}>
                     <td style={{ ...cell, paddingTop: 8, paddingBottom: 12 }} colSpan={9}>
                       <div style={{ display: "grid", gap: 8 }}>
                         {r.subagents.map((sub) => (
@@ -758,7 +1802,7 @@ function RunHistory({ events }: { events: TaskEvent[] }): JSX.Element {
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>

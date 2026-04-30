@@ -25,6 +25,7 @@ import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { SettingsStore } from "./settings-store.ts";
+import { JournalReader } from "./journal-reader.ts";
 import { renderPromptFile } from "./render-prompt.ts";
 import { writeLatestRunMetricsArtifact } from "./run-cost-tracker.ts";
 import type { CampaignItem, MCSettings, RunState, Task } from "../shared/models.ts";
@@ -62,6 +63,8 @@ export class RunManager {
   private readonly projects: ProjectStore | null;
   private readonly pi: PiSessionManager | null;
   private readonly settings: SettingsStore | null;
+  /** Active journal readers per task. Stopped on completeRun. */
+  private readonly journalReaders = new Map<string, JournalReader>();
 
   constructor(
     tasks: TaskStore,
@@ -74,6 +77,158 @@ export class RunManager {
     this.pi = pi ?? null;
     this.projects = projects ?? null;
     this.settings = settings ?? null;
+  }
+
+  /**
+   * Start streaming the SDK journal at <runPath>/journal/*.jsonl into
+   * the task's events.jsonl. Idempotent per task — calling twice with
+   * the same task replaces the prior reader. Stops automatically when
+   * `stopJournalReader(taskId)` is called from completeRun.
+   */
+  private startJournalReader(taskId: string, runPath: string): void {
+    this.stopJournalReader(taskId);
+    const reader = new JournalReader(runPath, (event) => {
+      // Forward every journal event to the task journal as
+      // `bs:journal:<lowercased-type>` so RightBar can dispatch on it.
+      const type = `bs:journal:${event.type.toLowerCase()}`;
+      void this.tasks.appendEvent(taskId, {
+        type,
+        ...(event.seq !== undefined ? { seq: event.seq } : {}),
+        ...(event.ulid ? { ulid: event.ulid } : {}),
+        ...(event.recordedAt ? { recordedAt: event.recordedAt } : {}),
+        ...(event.data ? { data: event.data } : {}),
+      });
+    });
+    this.journalReaders.set(taskId, reader);
+    reader.start();
+  }
+
+  private stopJournalReader(taskId: string): void {
+    const existing = this.journalReaders.get(taskId);
+    if (existing) {
+      existing.stop();
+      this.journalReaders.delete(taskId);
+    }
+  }
+
+  /**
+   * Latest `<runPath>` MC has detected for this task, derived from
+   * `babysitter-run-detected` events in events.jsonl. Returns null when
+   * the task hasn't started a curated run yet.
+   */
+  private async latestRunPath(taskId: string): Promise<string | null> {
+    const events = await this.tasks.readEvents(taskId);
+    for (let i = events.length - 1; i >= 0; i -= 1) {
+      const ev = events[i] as unknown as Record<string, unknown>;
+      if (ev.type === "babysitter-run-detected" && typeof ev.runPath === "string") {
+        return ev.runPath;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Run an SDK CLI sub-command and return its stdout as parsed JSON.
+   * Throws when the CLI exits non-zero or stdout isn't valid JSON.
+   */
+  private async runSdkCli(args: string[]): Promise<unknown> {
+    const cliPath = resolveBabysitterCliPath();
+    if (!cliPath) throw new Error("babysitter SDK not installed");
+    return await new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, [cliPath, ...args], { stdio: ["ignore", "pipe", "pipe"] });
+      let stdout = "";
+      let stderr = "";
+      child.stdout?.on("data", (c) => { stdout += c.toString(); });
+      child.stderr?.on("data", (c) => { stderr += c.toString(); });
+      child.on("error", reject);
+      child.on("exit", (code) => {
+        if (code !== 0) {
+          reject(new Error(`SDK CLI exited ${code}: ${stderr.trim() || stdout.trim()}`));
+          return;
+        }
+        try { resolve(JSON.parse(stdout)); }
+        catch (e) { reject(new Error(`SDK CLI returned non-JSON: ${(e as Error).message}\n${stdout.slice(0, 200)}`)); }
+      });
+    });
+  }
+
+  /**
+   * Authoritative run state from the SDK's state cache. Returns null
+   * when the task has no detected run path (auto-gen tasks before
+   * babysitter-pi spins up a run). See docs/SDK-PRIMITIVES.md.
+   */
+  async runStatus(taskId: string): Promise<unknown | null> {
+    const runPath = await this.latestRunPath(taskId);
+    if (!runPath) return null;
+    return await this.runSdkCli(["run:status", runPath, "--json"]);
+  }
+
+  /**
+   * Authoritative pending-effects list (breakpoints, sleeps, custom
+   * kinds) from the SDK's effect index. Replaces our event-pair walk
+   * for cases where MC needs the truth — most importantly the approval
+   * card and any future "this run is stuck" detection.
+   */
+  async listPendingEffects(taskId: string): Promise<unknown | null> {
+    const runPath = await this.latestRunPath(taskId);
+    if (!runPath) return null;
+    return await this.runSdkCli(["task:list", runPath, "--pending", "--json"]);
+  }
+
+  /**
+   * POST a breakpoint response to a running babysitter session via the
+   * SDK CLI: `babysitter task:post <runPath> <effectId> --status ok
+   * --value-inline '{"approved":<bool>,"response":"..."}'`. Per the SDK
+   * docs, breakpoint REJECTIONS still use `--status ok` (status=error
+   * signals task-execution failure, not user rejection).
+   */
+  async respondBreakpoint(input: {
+    taskId: string;
+    runPath: string;
+    effectId: string;
+    approved: boolean;
+    response?: string;
+    feedback?: string;
+  }): Promise<void> {
+    const cliPath = resolveBabysitterCliPath();
+    if (!cliPath) {
+      await this.tasks.appendStatus(input.taskId, "Breakpoint response failed: babysitter SDK not installed");
+      throw new Error("babysitter SDK not installed");
+    }
+    const valueInline = JSON.stringify({
+      approved: input.approved,
+      ...(input.response ? { response: input.response } : {}),
+      ...(input.feedback ? { feedback: input.feedback } : {}),
+    });
+    const args = [
+      cliPath,
+      "task:post",
+      input.runPath,
+      input.effectId,
+      "--status", "ok",
+      "--value-inline", valueInline,
+      "--json",
+    ];
+    await new Promise<void>((resolve, reject) => {
+      const child = spawn(process.execPath, args, { stdio: ["ignore", "pipe", "pipe"] });
+      let stderr = "";
+      child.stderr?.on("data", (c) => { stderr += c.toString(); });
+      child.on("error", reject);
+      child.on("exit", (code) => {
+        if (code === 0) resolve();
+        else reject(new Error(`task:post exited ${code}: ${stderr.trim()}`));
+      });
+    });
+    await this.tasks.appendEvent(input.taskId, {
+      type: "breakpoint-responded-by-user",
+      effectId: input.effectId,
+      approved: input.approved,
+      ...(input.response ? { response: input.response } : {}),
+    });
+    await this.tasks.appendStatus(
+      input.taskId,
+      `Breakpoint ${input.effectId} ${input.approved ? "approved" : "rejected"}${input.response ? `: ${input.response}` : ""}`,
+    );
   }
 
   async start(input: {
@@ -164,6 +319,7 @@ export class RunManager {
     const cwd = await this.resolveCwd(task);
     const runsDir = path.join(cwd, ".a5c", "runs");
     await fs.mkdir(runsDir, { recursive: true });
+    const beforeRuns = await snapshotBabysitterRuns(cwd);
 
     const args = [
       cliPath,
@@ -189,6 +345,9 @@ export class RunManager {
     );
 
     const child = spawn(process.execPath, args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+    // Once the SDK creates its run directory, start streaming the
+    // journal events into the task journal as bs:journal:* entries.
+    void this.detectBabysitterRun(task.id, cwd, beforeRuns);
     const onLine = (chunk: Buffer | string, stream: "stdout" | "stderr"): void => {
       const text = typeof chunk === "string" ? chunk : chunk.toString("utf8");
       for (const raw of text.split(/\r?\n/)) {
@@ -342,6 +501,7 @@ export class RunManager {
     await this.recordMetricsArtifact(task.id, "run", task.cycle);
     await this.tasks.appendStatus(task.id, `Run ended — cycle ${task.cycle} · ${reason}`);
     this.activeModel.delete(task.id);
+    this.stopJournalReader(taskId);
     await this.startQueuedIfCapacity();
   }
 
@@ -403,6 +563,7 @@ export class RunManager {
       `Campaign ended — cycle ${task.cycle} · ${done}/${task.items.length} done, ${failed} failed`,
     );
     this.activeModel.delete(task.id);
+    this.stopJournalReader(task.id);
     await this.startQueuedIfCapacity();
   }
 
@@ -481,6 +642,7 @@ export class RunManager {
     }
     this.activeModel.delete(task.id);
     this.parallelSteps.delete(task.id);
+    this.stopJournalReader(task.id);
     await this.startQueuedIfCapacity();
     return next;
   }
@@ -686,6 +848,7 @@ export class RunManager {
         runPath,
       });
       await this.tasks.appendStatus(taskId, `Babysitter run detected — ${newRunId}`);
+      this.startJournalReader(taskId, runPath);
       return;
     }
   }
@@ -713,9 +876,10 @@ function stepKey(stepId: string, cycle: number): string {
 /**
  * Build the `/babysit` prompt — a short task brief that babysitter-pi's
  * skill ingests and turns into an orchestrated multi-agent run
- * (Planner → Developer → Reviewer → Surgeon, with loopbacks and
- * mandatory stops). Babysitter generates its own process.js from this
- * brief and writes it to `.a5c/processes/` in the session's cwd.
+ * (workflow-defined, not a fixed roster — the babysitter SDK generates
+ * a process.js per task that may include any library agents and the
+ * shape of loopbacks / mandatory stops they declare). The generated
+ * process.js lands in `.a5c/processes/` in the session's cwd.
  *
  * Kept concise: babysitter reads `tasks/<id>/PROMPT.md` (written by
  * RunManager.start via writePromptFile) for the full mission, so we

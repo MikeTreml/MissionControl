@@ -58,6 +58,7 @@ The chip row reads the running workflow's phase list and renders one chip per ph
 - **No `LaneSchema` enum.** The phase list comes from the workflow.js metadata or the journal stream.
 - **Generic fallback** (acceptable but lower fidelity): `Draft / active / paused / error / finished`. Use this only if a task has no associated workflow, never for tasks that do.
 - Cycle counter + elapsed time on the right side of the chip row (`cycle 1 · 12m`).
+- **Implementation:** [`src/renderer/src/lib/derive-phases.ts`](../src/renderer/src/lib/derive-phases.ts) reads the events stream and returns `{ phases[], current, source }`. Source layering: curated `bs:phase`/`bs:error` events first → legacy `lane-changed` events second → generic runState/status fallback. The vertical timeline on Task Detail consumes this; a horizontal chip strip at the top of the page (per the mockup) reads the same data with different layout.
 
 ## Tasks list
 

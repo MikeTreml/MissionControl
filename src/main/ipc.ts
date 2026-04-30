@@ -63,8 +63,9 @@ export function registerIpc(stores: Stores): void {
       logged(`tasks:appendEvent ${id} ${event.type}`, () => stores.tasks.appendEvent(id, event)),
   );
   // Per-task file reads — PROMPT.md, STATUS.md, arbitrary task-linked .md
-  // (e.g. <taskId>-p for Planner output). Return null when the file is
-  // missing so the renderer can distinguish "not produced yet" from empty.
+  // (e.g. <taskId>-<suffix> where the suffix is whatever the workflow's
+  // agents declared at runtime). Return null when the file is missing
+  // so the renderer can distinguish "not produced yet" from empty.
   ipcMain.handle("tasks:readPrompt", (_e, id: string) => stores.tasks.readPromptFile(id));
   ipcMain.handle("tasks:readStatus", (_e, id: string) => stores.tasks.readStatusFile(id));
   ipcMain.handle("tasks:readRunConfig", (_e, id: string) => stores.tasks.readRunConfig(id));
@@ -112,6 +113,8 @@ export function registerIpc(stores: Stores): void {
   // ── agents + workflows ────────────────────────────────────────────────
   // library:index — source of truth for agents, skills, and workflows.
   ipcMain.handle("library:index", () => stores.libraryIndex.load());
+  ipcMain.handle("library:refresh", () =>
+    logged("library:refresh", () => stores.libraryIndex.refresh()));
   ipcMain.handle("library:readJsonSchema", (_e, absPath: string | null | undefined) =>
     stores.libraryIndex.readJsonSchema(absPath));
 
@@ -130,6 +133,18 @@ export function registerIpc(stores: Stores): void {
   );
   ipcMain.handle("runs:stop", (_e, input: Parameters<RunManager["stop"]>[0]) =>
     logged(`runs:stop ${input.taskId}`, () => stores.runs.stop(input)),
+  );
+  ipcMain.handle("runs:respondBreakpoint", (_e, input: Parameters<RunManager["respondBreakpoint"]>[0]) =>
+    logged(`runs:respondBreakpoint ${input.taskId}/${input.effectId} ${input.approved ? "approve" : "reject"}`,
+      () => stores.runs.respondBreakpoint(input)),
+  );
+  // SDK-authoritative run queries — wraps `babysitter run:status` and
+  // `babysitter task:list --pending`. See docs/SDK-PRIMITIVES.md.
+  ipcMain.handle("runs:status", (_e, taskId: string) =>
+    logged(`runs:status ${taskId}`, () => stores.runs.runStatus(taskId)),
+  );
+  ipcMain.handle("runs:listPending", (_e, taskId: string) =>
+    logged(`runs:listPending ${taskId}`, () => stores.runs.listPendingEffects(taskId)),
   );
 
   // ── pi meta (model registry from pi's own auth config) ────────────────

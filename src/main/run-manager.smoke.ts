@@ -33,7 +33,7 @@ async function main(): Promise<void> {
   const mgr = new RunManager(tasks);
 
   // start: idle → running
-  const started = await mgr.start({ taskId: task.id, agentSlug: "developer" });
+  const started = await mgr.start({ taskId: task.id, agentSlug: "agent-x" });
   assert(started.runState === "running", "start flips runState to running");
 
   // start again should fail
@@ -120,7 +120,7 @@ async function main(): Promise<void> {
     projectId: "runner",
     projectPrefix: "RN",
   });
-  await mgrWithPi.start({ taskId: piTask.id, agentSlug: "developer" });
+  await mgrWithPi.start({ taskId: piTask.id, agentSlug: "agent-x" });
   await tasks.saveTask({ ...(await tasks.getTask(piTask.id))!, blocker: "Build callback pending" });
   await mgrWithPi.pause({ taskId: piTask.id });
   await mgrWithPi.resume({ taskId: piTask.id });
