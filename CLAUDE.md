@@ -1,22 +1,21 @@
 # CLAUDE.md — orientation for Claude Code
 
 You're working in **mc-v2-electron**, the desktop app behind Mission Control.
-This file is the short-version orientation. **Read `docs/HANDOFF.md` for the
-full walkthrough** once you've skimmed this.
 
 ## What this project is
 
 An Electron + React + TypeScript desktop app that orchestrates AI coding
 agents. MC is the UI + state layer. Pi-mono (`@mariozechner/pi-coding-agent`)
-is the agent runtime — **wired and live**: clicking Start opens a real pi
-session and runs babysitter end-to-end. Remaining work is mostly polish
-(plannotator hand-off, pi-memory-md, pi-superpowers role prompts) — see
-"Not started" below.
+is the agent runtime; `@a5c-ai/babysitter-sdk` is the orchestration layer.
+Both are wired: clicking Start either spawns
+`babysitter harness:create-run --process <library workflow.js>` (curated
+path) or falls back to `pi.session.prompt('/babysit <brief>')` (auto-gen).
+Remaining work is mostly polish — see "Not started" below.
 
-**Note (2026-04-29):** agents and workflows are migrating to live under
-`library/` rather than the top-level `agents/` and `workflows/` folders.
-The loaders in `src/main/agent-loader.ts` and `src/main/workflows.ts`
-still read the old paths today — that's an open refactor, not done.
+**Library is the source of truth.** The catalog at `library/` (indexed
+into `library/_index.json` via `npm run build-library-index`) holds all
+agents, skills, and workflows. There's no separate `agents/` or
+`workflows/` folder anymore.
 
 ## Who's picking this up
 
@@ -32,14 +31,13 @@ Michael is the user / project owner. He:
 
 1. **Baby steps.** Smoke test or typecheck between changes. Don't commit 2000 LOC at once.
 2. **File-first.** JSON + markdown on disk, no SQLite. Inspect-friendly, git-friendly.
-3. **Don't hardcode labels.** If a value comes from a file (agent name, model id, project prefix), read it — don't bake it in.
-4. **Flexible over prescribed.** New agents/workflows/subagents = drop a folder, not a code change.
-5. **Pi owns the runtime.** Don't duplicate model dispatch, session management, event streaming — those come from pi. MC = orchestration + UI.
+3. **Don't hardcode labels.** If a value comes from a file (workflow name, model id, project prefix), read it — don't bake it in.
+4. **Library is the source of truth.** New agents/skills/workflows = add to `library/`, then rebuild the index with `npm run build-library-index`.
+5. **Pi + babysitter own the runtime.** Don't duplicate model dispatch, session management, event streaming, or workflow orchestration — those come from `@mariozechner/pi-coding-agent` and `@a5c-ai/babysitter-sdk`. MC = orchestration glue + UI.
 6. **Explicit certainty.** When you comment or doc something, mark it:
    - `// CONFIRMED:` = design decision Michael agreed to
-   - `// PROPOSED:` = your suggestion, not yet validated
+   - `// PROPOSED:` = suggestion, not yet validated
    - `// OPEN:` = unresolved, needs a decision
-   - `// PI-WIRE:` = spot pi integration lands
    - `// TODO:` = pending work
 
 ## Commands
@@ -60,24 +58,18 @@ npx tsc --noEmit -p tsconfig.web.json    # renderer
 ## Orientation — grep these first
 
 ```bash
-grep -rn "PI-WIRE"   src agents          # 13 spots — the integration map
-grep -rn "CONFIRMED" src docs            # 11 spots — locked decisions
-grep -rn "PROPOSED"  src docs agents     # 14 spots — your judgment calls welcome
-grep -rn "OPEN:"     src docs            # 4 spots — need Michael's input
+grep -rn "CONFIRMED" src docs            # locked design decisions
+grep -rn "PROPOSED"  src docs            # suggestions, not yet validated
+grep -rn "OPEN:"     src docs            # unresolved, need a decision
 ```
 
-Then read the docs in this order:
+Then read these in order:
 
-1. `docs/HANDOFF.md` — full orientation (do this before changing anything)
-2. `src/shared/models.ts` — domain types; single source of truth for schemas
+1. `docs/UI-DESIGN.md` — locked visual rules + "what's dead, do not reintroduce"
+2. `src/shared/models.ts` — domain types; single source of truth for persisted shapes
 3. `src/main/index.ts` — boot flow, where stores + IPC come together
-4. `docs/PI-FEATURES.md` — what pi-mono + pi-subagents provide
-5. `docs/WORKFLOW-EXECUTION.md` — **READ BEFORE WIRING PI.** Explains how tasks
-   move between agents, why we layer MC + babysitter + pi, and what the
-   per-workflow `process.js` file looks like
-6. `docs/PI-EXTENSIONS-SURVEY.md` — ecosystem verdicts (USE/WIRE/STUDY/SKIP)
-7. `docs/IDEAS-WORTH-BORROWING.md` — patterns (not tools) worth stealing
-8. `FORGOTTEN-FEATURES.md` — features from the mockup that aren't built yet
+4. `src/main/run-manager.ts` — task state machine, both Start paths (curated + auto-gen)
+5. `library/_index.json` — catalog of every agent, skill, and workflow available at runtime
 
 ## Architecture at a glance
 
@@ -88,12 +80,12 @@ Then read the docs in this order:
  │  components/*.tsx │ ◄───────►  │  store.ts             │
  │  pages/*.tsx      │            │  project-store.ts     │
  │  router.ts        │            │  settings-store.ts    │
- └───────────────────┘            │  agent-loader.ts      │
-           ▲                      │  workflows.ts         │
-           │                      │  git-detect.ts        │
-     preload/index.ts             │  pi-session-manager.ts│
-     (contextBridge)              │  run-manager.ts       │
-                                  │  library-index.ts     │
+ └───────────────────┘            │  pi-session-manager.ts│
+           ▲                      │  run-manager.ts       │
+           │                      │  library-index.ts     │
+     preload/index.ts             │  library-walker.ts    │
+     (contextBridge)              │  git-detect.ts        │
+                                  │  render-prompt.ts     │
                                   └───────────────────────┘
                                            │
                                            ▼
@@ -101,8 +93,6 @@ Then read the docs in this order:
                                   ├ <userData>/tasks/<id>/
                                   ├ <userData>/projects/<slug>/
                                   ├ <userData>/settings.json
-                                  ├ agents/<slug>/agent.json + prompt.md
-                                  ├ workflows/<CODE>-<slug>/
                                   └ library/_index.json (built artifact)
 ```
 
@@ -223,7 +213,11 @@ Then read the docs in this order:
 
 ## When you're uncertain
 
-- If it's about pi-mono behavior → check `docs/PI-FEATURES.md` first.
+- If it's about pi-mono behavior → check the SDK source under
+  `node_modules/@mariozechner/pi-coding-agent/` (or
+  `~/.claude/projects/.../memory/` for past notes).
+- If it's about babysitter behavior → check
+  `node_modules/@a5c-ai/babysitter-sdk/` or the upstream repo.
 - If it's about design intent → grep for `CONFIRMED` or ask Michael.
 - If you're about to hardcode a label → re-read rule #3.
 - If you're about to skip a smoke test → re-read rule #1.
@@ -240,8 +234,7 @@ Follow these conventions so files don't scatter:
 | A new React hook | `src/renderer/src/hooks/useXxx.ts` (one hook per file; re-exports via direct import) |
 | A new small UI component | `src/renderer/src/components/Xxx.tsx` |
 | A new top-level page / route | `src/renderer/src/pages/Xxx.tsx` + register in `App.tsx` `CurrentView` switch + add to `ViewId` in `router.ts` |
-| A new agent | Drop a folder at `agents/<slug>/` with `agent.json` + `prompt.md`. No code change. |
-| A new workflow | Drop a folder at `workflows/<CODE>-<slug>/` with `workflow.json`. No code change. |
+| A new agent / skill / workflow | Add it under `library/` (matching kind), then `npm run build-library-index` to refresh `_index.json`. No code change. |
 | A reusable renderer utility | `src/renderer/src/lib/<name>.ts` |
 | A main-process helper (no state) | `src/main/<name>.ts` + consider a smoke test |
 | Documentation | `docs/<NAME>.md` for long docs; inline JSDoc for anything code-adjacent |
@@ -253,19 +246,8 @@ Follow these conventions so files don't scatter:
 - **Zod schemas:** `XxxSchema` const; infer the type as `Xxx` via `z.infer<typeof XxxSchema>`
 - **Variables + functions:** `camelCase`
 - **Slugs (folder names, IDs, workflow/agent keys):** `kebab-case`, lowercase
-- **Task IDs:** `<PREFIX>-<NNN><W>` — `DA-001F`. CONFIRMED, don't deviate.
+- **Task IDs:** `<PREFIX>-<NNN><W>` — `DA-001F`. The `<W>` letter is encoded in the immutable id; no separate field on Task.
 - **Smoke tests:** co-locate beside source as `<name>.smoke.ts`; they run standalone via `node --experimental-strip-types`
-
-## Naming for agent-linked files
-
-Task-linked filenames follow the `<taskId>-<agentCode>` convention:
-
-- `DA-001F` — base manifest
-- `DA-001F-p` — Planner output (code: p)
-- `DA-001F-d` — Developer output (code: d)
-- `DA-001F-rmp` — RepoMapper subagent output (code: rmp)
-
-Use the `taskFile(taskId, agentCode?)` helper in `src/shared/models.ts`.
 
 ## STOP and ask Michael before these
 
@@ -362,21 +344,19 @@ Three separate systems, don't conflate them:
    applies across every project. Michael may or may not have one; don't
    assume content, but respect it if it exists.
 3. **Cowork auto-memory** (`/sessions/.../.auto-memory/`) — different tool
-   (Cowork mode). Not accessible from Claude Code. If you see references
-   to it in docs, they're historical — the relevant facts are mirrored
-   here or in `docs/HANDOFF.md`.
+   (Cowork mode). Not accessible from Claude Code.
 
 When you learn something worth persisting across sessions:
 
-- If it's a project-wide fact → update `CLAUDE.md` or `docs/HANDOFF.md`
+- If it's a project-wide fact → update this file
 - If it's a decision to lock in → add a `// CONFIRMED:` marker at the code site
+- If it's a visual rule → update `docs/UI-DESIGN.md`
 - If it's a gotcha → add to the Gotchas section above
 - If it's a pending question → `// OPEN:` marker at the code site
 
-## First task I'd suggest
+## UI smoke (Playwright)
 
-A Playwright skeleton is already in place at `scripts/verify-ui.mjs`. It
-covers Topbar + bridge + Add Project + disk persistence. To run:
+A Playwright skeleton is in place at `scripts/verify-ui.mjs`. To run:
 
 ```bash
 npm run build          # produces out/ which Playwright launches
@@ -384,12 +364,8 @@ npm run verify-ui      # or: node scripts/verify-ui.mjs
 ```
 
 Extend the `TODO(CC)` block at the bottom of that file with assertions
-for Edit, Delete, Create Task, Settings → Models → Load defaults, and
-(once pi wires) Start/Pause/Stop. Each new flow = a few more assertions +
-a screenshot step. Keep the script one file until it really needs to split.
-
-After the UI smoke is ergonomic, the real work is `PI-WIRE` stop by stop,
-starting with `src/main/index.ts` → new `src/main/pi-session-manager.ts`.
+for new flows (Create Task, Library workflow Run, Start/Pause/Stop).
+Each new flow = a few more assertions + a screenshot step.
 
 ## One-shot project setup
 
