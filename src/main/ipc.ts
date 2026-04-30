@@ -135,6 +135,14 @@ export function registerIpc(stores: Stores): void {
     logged(`runs:respondBreakpoint ${input.taskId}/${input.effectId} ${input.approved ? "approve" : "reject"}`,
       () => stores.runs.respondBreakpoint(input)),
   );
+  // SDK-authoritative run queries — wraps `babysitter run:status` and
+  // `babysitter task:list --pending`. See docs/SDK-PRIMITIVES.md.
+  ipcMain.handle("runs:status", (_e, taskId: string) =>
+    logged(`runs:status ${taskId}`, () => stores.runs.runStatus(taskId)),
+  );
+  ipcMain.handle("runs:listPending", (_e, taskId: string) =>
+    logged(`runs:listPending ${taskId}`, () => stores.runs.listPendingEffects(taskId)),
+  );
 
   // ── pi meta (model registry from pi's own auth config) ────────────────
   ipcMain.handle("pi:listModels", () => stores.pi.listModels());

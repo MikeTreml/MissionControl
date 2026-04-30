@@ -112,6 +112,70 @@ export class RunManager {
   }
 
   /**
+   * Latest `<runPath>` MC has detected for this task, derived from
+   * `babysitter-run-detected` events in events.jsonl. Returns null when
+   * the task hasn't started a curated run yet.
+   */
+  private async latestRunPath(taskId: string): Promise<string | null> {
+    const events = await this.tasks.readEvents(taskId);
+    for (let i = events.length - 1; i >= 0; i -= 1) {
+      const ev = events[i] as unknown as Record<string, unknown>;
+      if (ev.type === "babysitter-run-detected" && typeof ev.runPath === "string") {
+        return ev.runPath;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Run an SDK CLI sub-command and return its stdout as parsed JSON.
+   * Throws when the CLI exits non-zero or stdout isn't valid JSON.
+   */
+  private async runSdkCli(args: string[]): Promise<unknown> {
+    const cliPath = resolveBabysitterCliPath();
+    if (!cliPath) throw new Error("babysitter SDK not installed");
+    return await new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, [cliPath, ...args], { stdio: ["ignore", "pipe", "pipe"] });
+      let stdout = "";
+      let stderr = "";
+      child.stdout?.on("data", (c) => { stdout += c.toString(); });
+      child.stderr?.on("data", (c) => { stderr += c.toString(); });
+      child.on("error", reject);
+      child.on("exit", (code) => {
+        if (code !== 0) {
+          reject(new Error(`SDK CLI exited ${code}: ${stderr.trim() || stdout.trim()}`));
+          return;
+        }
+        try { resolve(JSON.parse(stdout)); }
+        catch (e) { reject(new Error(`SDK CLI returned non-JSON: ${(e as Error).message}\n${stdout.slice(0, 200)}`)); }
+      });
+    });
+  }
+
+  /**
+   * Authoritative run state from the SDK's state cache. Returns null
+   * when the task has no detected run path (auto-gen tasks before
+   * babysitter-pi spins up a run). See docs/SDK-PRIMITIVES.md.
+   */
+  async runStatus(taskId: string): Promise<unknown | null> {
+    const runPath = await this.latestRunPath(taskId);
+    if (!runPath) return null;
+    return await this.runSdkCli(["run:status", runPath, "--json"]);
+  }
+
+  /**
+   * Authoritative pending-effects list (breakpoints, sleeps, custom
+   * kinds) from the SDK's effect index. Replaces our event-pair walk
+   * for cases where MC needs the truth — most importantly the approval
+   * card and any future "this run is stuck" detection.
+   */
+  async listPendingEffects(taskId: string): Promise<unknown | null> {
+    const runPath = await this.latestRunPath(taskId);
+    if (!runPath) return null;
+    return await this.runSdkCli(["task:list", runPath, "--pending", "--json"]);
+  }
+
+  /**
    * POST a breakpoint response to a running babysitter session via the
    * SDK CLI: `babysitter task:post <runPath> <effectId> --status ok
    * --value-inline '{"approved":<bool>,"response":"..."}'`. Per the SDK

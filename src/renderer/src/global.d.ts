@@ -118,6 +118,19 @@ export interface McApi {
     response?: string;
     feedback?: string;
   }) => Promise<void>;
+  /**
+   * SDK-authoritative run state. Wraps `babysitter run:status --json`.
+   * Returns null when the task has no detected run path yet (auto-gen
+   * tasks before babysitter-pi spins one up).
+   */
+  runStatus: (taskId: string) => Promise<unknown | null>;
+  /**
+   * SDK-authoritative pending-effects list. Wraps
+   * `babysitter task:list --pending --json`. The shape is the SDK's
+   * `{ tasks: Array<{ effectId, kind, label?, status }> }`. Use this
+   * for breakpoint/approval detection instead of walking events.
+   */
+  runListPending: (taskId: string) => Promise<{ tasks?: Array<{ effectId: string; kind: string; label?: string; status?: string }> } | null>;
 
   // pi meta
   listPiModels: () => Promise<PiModelInfo[]>;

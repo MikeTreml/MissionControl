@@ -68,6 +68,10 @@ const api = {
     response?: string;
     feedback?: string;
   }) => ipcRenderer.invoke("runs:respondBreakpoint", input),
+  /** Authoritative run state from the SDK's state cache. */
+  runStatus: (taskId: string) => ipcRenderer.invoke("runs:status", taskId),
+  /** Authoritative pending-effects list (breakpoints, sleeps, etc.). */
+  runListPending: (taskId: string) => ipcRenderer.invoke("runs:listPending", taskId),
 
   // ── pi meta ──────────────────────────────────────────────────────────
   listPiModels: () => ipcRenderer.invoke("pi:listModels"),
