@@ -12,16 +12,14 @@ import { useEffect, useState } from "react";
 
 import { useRoute } from "../router";
 import { useTask } from "../hooks/useTask";
-import { useAgents } from "../hooks/useAgents";
 import { usePiModels } from "../hooks/usePiModels";
-import { useWorkflows } from "../hooks/useWorkflows";
 import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
-import { effectiveLanes, isPrimaryAgent } from "../../../shared/models";
+import { effectiveLanes } from "../../../shared/models";
 import type { Lane, LaneHistoryEntry, Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
 
@@ -124,7 +122,6 @@ export function TaskDetail(): JSX.Element {
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}
         >
           <LinkedFiles task={task} />
-          <PerAgentNotes task={task} />
         </section>
 
         {!isDemo && <RunConfigCard runConfig={runConfig} />}
@@ -197,21 +194,17 @@ function DeleteTaskButton({ taskId }: { taskId: string }): JSX.Element {
  * Start opens a real pi session and prompts babysitter; Stop ends it.
  */
 function Controls({ task }: { task: Task }): JSX.Element {
-  const { agents } = useAgents();
-  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
   const { models: piModels, refresh: refreshPiModels } = usePiModels();
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [agentSlug, setAgentSlug] = useState(task.currentAgentSlug ?? "");
   // Empty string = use pi's default (no model override).
   const [modelId, setModelId] = useState<string>("");
 
   // Resync local selection when navigating to a different task — useState's
   // initial value is only honored on first mount; without this, a re-used
-  // Controls instance would keep the previous task's agent/model.
+  // Controls instance would keep the previous task's model selection.
   useEffect(() => {
-    setAgentSlug(task.currentAgentSlug ?? "");
     setModelId("");
     setError("");
   }, [task.id]);
@@ -220,12 +213,6 @@ function Controls({ task }: { task: Task }): JSX.Element {
   const canPause   = task.runState === "running";
   const canResume  = task.runState === "paused";
   const canStop    = task.runState !== "idle";
-
-  // Active agent label — resolved from the agents list, not hardcoded.
-  const activeAgent = task.currentAgentSlug
-    ? agents.find((a) => a.slug === task.currentAgentSlug)
-    : null;
-  const activeLabel = activeAgent ? activeAgent.name : "(none)";
 
   async function callRun(
     op: "start" | "pause" | "resume" | "stop",
@@ -238,7 +225,6 @@ function Controls({ task }: { task: Task }): JSX.Element {
         case "start":
           await window.mc.startRun({
             taskId: task.id,
-            agentSlug: agentSlug || undefined,
             model: modelId || undefined,
           });
           break;
@@ -261,34 +247,12 @@ function Controls({ task }: { task: Task }): JSX.Element {
           <>
             <button
               className="button"
-              title="Start this task's current agent"
+              title="Start this task"
               onClick={() => void callRun("start")}
               disabled={busy}
             >
               Start
             </button>
-            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-              <span className="muted" style={{ fontSize: 12 }}>Set active agent</span>
-              <select
-                value={agentSlug}
-                onChange={(e) => setAgentSlug(e.target.value)}
-                disabled={busy}
-                style={{
-                  background: "var(--bg)",
-                  color: "var(--text)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  padding: "6px 10px",
-                }}
-              >
-                {primaries.map((a) => (
-                  <option key={a.slug} value={a.slug}>
-                    {a.name}
-                  </option>
-                ))}
-                {primaries.length === 0 && <option value="">(no agents loaded)</option>}
-              </select>
-            </div>
             <ModelPicker
               value={modelId}
               onChange={setModelId}
@@ -337,7 +301,7 @@ function Controls({ task }: { task: Task }): JSX.Element {
             {task.runState}
           </span>
           <span className="muted" style={{ fontSize: 12, marginLeft: 8 }}>
-            Cycle {task.cycle} · {activeLabel}
+            Cycle {task.cycle}
           </span>
         </div>
       </div>
@@ -916,12 +880,13 @@ function ModelPicker({
  * Today the buttons are a direct human gate on the lane transition.
  */
 function ApprovalGate({ task }: { task: Task }): JSX.Element {
-  const { workflows } = useWorkflows();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const workflow = workflows.find((w) => w.code === task.workflow);
-  const lanes = effectiveLanes(workflow);
+  // Lane progression uses the schema default lane order. The
+  // workflow-driven lane chips (per docs/UI-DESIGN.md) will replace this
+  // when the library-workflow runtime path lands.
+  const lanes = effectiveLanes(undefined);
   const currentIdx = lanes.indexOf(task.lane);
   const nextLane: Lane | undefined = lanes[currentIdx + 1];
   const firstLane: Lane = lanes[0] ?? "plan";
@@ -1085,8 +1050,6 @@ function pillForReason(reason: string | undefined): string {
 }
 
 function LinkedFiles({ task }: { task: Task }): JSX.Element {
-  const { agents } = useAgents();
-  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
   const [files, setFiles] = useState<Array<{ name: string; size: number; modifiedAt: string }>>([]);
 
   // Refetch the task folder listing on mount + every "tasks" topic publish
@@ -1098,42 +1061,21 @@ function LinkedFiles({ task }: { task: Task }): JSX.Element {
   }
   useEffect(() => { void load(); }, [task.id]);
 
-  // Map known agent-code suffix → friendly note. Files written by
-  // babysitter that don't match the convention show as "(babysitter)"
-  // so the user can tell them apart from agent deliverables.
   const noteFor = (name: string): string => {
     const stem = name.replace(/\.md$/, "");
     if (stem === task.id) return "task brief / manifest area";
     if (stem === "PROMPT") return "mission brief";
     if (stem === "STATUS") return "progress log";
-    const m = stem.match(new RegExp(`^${task.id}-([a-z0-9]{1,4})(?:-c(\\d+))?$`, "i"));
-    if (m) {
-      const code = m[1]!.toLowerCase();
-      const cycle = m[2] ? Number.parseInt(m[2]!, 10) : undefined;
-      const agent = agents.find((a) => a.code === code);
-      if (agent) return `${agent.name} output${cycle ? ` · cycle ${cycle}` : ""}`;
-      return `agent code "${code}"${cycle ? ` · cycle ${cycle}` : ""}`;
-    }
     if (name.endsWith(".jsonl")) return "event journal";
-    if (name.endsWith(".json"))  return "manifest";
+    if (name.endsWith(".json")) return "manifest";
     return "(other)";
   };
-
-  // Expected-but-not-yet-produced placeholders, only for primary agents
-  // whose code-suffix file doesn't exist yet. Helps the user see what's
-  // expected vs what's there.
-  const presentNames = new Set(files.map((f) => f.name));
-  const expectedMissing = primaries
-    .map((a) => `${task.id}-${a.code}-c${task.cycle}.md`)
-    .filter((n) => !presentNames.has(n));
 
   return (
     <div>
       <h3>Task-linked files</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-        Live listing of the task folder. Per-agent deliverables follow
-        the <code>&lt;taskId&gt;-&lt;code&gt;-c&lt;cycle&gt;.md</code> convention; agents in
-        babysitter mode are asked to honor it but may not always.
+        Live listing of the task folder.
       </p>
       <div style={{ marginTop: 10 }}>
         {files.map((f) => (
@@ -1159,16 +1101,6 @@ function LinkedFiles({ task }: { task: Task }): JSX.Element {
             No files yet.
           </div>
         )}
-        {expectedMissing.length > 0 && (
-          <div style={{ marginTop: 12, fontSize: 12 }}>
-            <div className="muted" style={{ marginBottom: 4 }}>Expected (not yet produced):</div>
-            {expectedMissing.map((n) => (
-              <div key={n} style={{ fontFamily: "monospace", color: "var(--muted)", padding: "2px 0" }}>
-                · {n}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -1178,33 +1110,6 @@ function fmtSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-}
-
-function PerAgentNotes({ task: _task }: { task: Task }): JSX.Element {
-  const { agents } = useAgents();
-  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
-
-  return (
-    <div>
-      <h3>Per-agent notes</h3>
-      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-        Grows across cycles — each enabled primary agent's running scratchpad. One file per agent slug.
-      </p>
-      <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
-        {primaries.map((a) => (
-          <div key={a.slug}>
-            <strong>{a.name}</strong>
-            <p className="muted" style={{ marginTop: 4, fontSize: 13 }}>
-              Notes file: <code>{a.slug}/notes.md</code>
-            </p>
-          </div>
-        ))}
-        {primaries.length === 0 && (
-          <div className="muted" style={{ fontSize: 12 }}>No agents loaded.</div>
-        )}
-      </div>
-    </div>
-  );
 }
 
 function RunConfigCard({ runConfig }: { runConfig: Record<string, unknown> | null }): JSX.Element {

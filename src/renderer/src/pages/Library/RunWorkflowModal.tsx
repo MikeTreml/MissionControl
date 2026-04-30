@@ -4,13 +4,13 @@ import type { CSSProperties } from "react";
 import { Modal } from "../../components/Modal";
 import { InputsForm } from "../../components/InputsForm";
 import { useProjects } from "../../hooks/useProjects";
-import { useWorkflows } from "../../hooks/useWorkflows";
 import { usePiModels } from "../../hooks/usePiModels";
 import { useRoute } from "../../router";
 import { publish } from "../../hooks/data-bus";
-import { effectiveLanes } from "../../../../shared/models";
 import type { LibraryIndexItem } from "../../types/library";
 import type { WorkflowRunTemplate } from "../../global";
+
+const DEFAULT_WORKFLOW_LETTER = "F";
 
 export function RunWorkflowModal({
   open,
@@ -22,12 +22,10 @@ export function RunWorkflowModal({
   onClose: () => void;
 }): JSX.Element {
   const { projects } = useProjects();
-  const { workflows } = useWorkflows();
   const { models } = usePiModels();
   const { openTask } = useRoute();
 
   const [projectId, setProjectId] = useState<string>("");
-  const [workflowCode, setWorkflowCode] = useState<string>("F");
   const [title, setTitle] = useState<string>("");
   const [goal, setGoal] = useState<string>("");
   const [model, setModel] = useState<string>("");
@@ -40,8 +38,6 @@ export function RunWorkflowModal({
   const [error, setError] = useState("");
 
   const selectedProject = projects.find((p) => p.id === projectId);
-  const selectedWorkflow = workflows.find((w) => w.code === workflowCode);
-  const startLane = selectedWorkflow ? effectiveLanes(selectedWorkflow)[0] : "plan";
 
   useEffect(() => {
     if (!open) return;
@@ -49,10 +45,9 @@ export function RunWorkflowModal({
     setTitle(`Run ${workflowItem.name}`);
     setGoal(workflowItem.description ?? "");
     if (projects.length > 0) setProjectId((prev) => prev || projects[0]!.id);
-    if (workflows.length > 0) setWorkflowCode((prev) => prev || workflows[0]!.code);
     void loadSchema(workflowItem.inputsSchemaPath ?? null);
     void loadTemplates(workflowItem.logicalPath);
-  }, [open, workflowItem, projects, workflows]);
+  }, [open, workflowItem, projects]);
 
   async function loadTemplates(logicalPath: string): Promise<void> {
     if (!window.mc) return;
@@ -100,8 +95,7 @@ export function RunWorkflowModal({
         description: runDescription,
         projectId: selectedProject.id,
         projectPrefix: selectedProject.prefix,
-        workflow: workflowCode,
-        lane: startLane,
+        workflow: DEFAULT_WORKFLOW_LETTER,
       });
       await window.mc.writeTaskRunConfig(task.id, {
         kind: "library-workflow-run",
@@ -117,8 +111,6 @@ export function RunWorkflowModal({
           title: title.trim(),
           goal: goal.trim(),
           projectId: selectedProject.id,
-          workflowCode,
-          startLane,
         },
         runSettings: {
           model: model || null,
@@ -153,7 +145,7 @@ export function RunWorkflowModal({
       workflowLogicalPath: workflowItem.logicalPath,
       workflowName: workflowItem.name,
       projectId: projectId || "",
-      workflowCode,
+      workflowCode: DEFAULT_WORKFLOW_LETTER,
       goal,
       model: model || null,
       inputs,
@@ -168,7 +160,6 @@ export function RunWorkflowModal({
     const template = templates.find((t) => t.id === id);
     if (!template) return;
     setProjectId(template.projectId || projectId);
-    setWorkflowCode(template.workflowCode || workflowCode);
     setGoal(template.goal || "");
     setModel(template.model ?? "");
     setInputs(template.inputs ?? {});
@@ -233,14 +224,6 @@ export function RunWorkflowModal({
                 <option key={p.id} value={p.id}>
                   {p.name} ({p.prefix})
                 </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ display: "grid", gap: 4 }}>
-            <label className="muted" style={{ fontSize: 12 }}>MC lane workflow</label>
-            <select value={workflowCode} onChange={(e) => setWorkflowCode(e.target.value)} style={inputStyle}>
-              {workflows.map((w) => (
-                <option key={w.code} value={w.code}>{w.code} · {w.name}</option>
               ))}
             </select>
           </div>

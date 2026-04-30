@@ -16,11 +16,7 @@ import { LibraryBrowser } from "./pages/Library";
 import { ProjectDetail } from "./pages/ProjectDetail";
 import { TaskDetail } from "./pages/TaskDetail";
 import { Metrics } from "./pages/Metrics";
-import {
-  SettingsAgents,
-  SettingsWorkflows,
-  SettingsGlobal,
-} from "./pages/Settings";
+import { SettingsGlobal } from "./pages/Settings";
 
 import { RouteContext, type ViewId } from "./router";
 
@@ -33,8 +29,6 @@ function CurrentView({ view }: { view: ViewId }): JSX.Element {
     case "project":             return <ProjectDetail />;
     case "task":                return <TaskDetail />;
     case "metrics":             return <Metrics />;
-    case "settings-agents":     return <SettingsAgents />;
-    case "settings-workflows":  return <SettingsWorkflows />;
     case "settings-global":     return <SettingsGlobal />;
   }
 }

@@ -46,10 +46,7 @@ const api = {
   aggregateProjectRunMetrics: (projectId: string) =>
     ipcRenderer.invoke("projects:aggregateRunMetrics", projectId),
 
-  // ── agents + workflows ───────────────────────────────────────────────
-  listAgents:      () => ipcRenderer.invoke("agents:list"),
-  saveAgents:      (agents: unknown) => ipcRenderer.invoke("agents:save", agents),
-  listWorkflows:   () => ipcRenderer.invoke("workflows:list"),
+  // ── library catalog ──────────────────────────────────────────────────
   getLibraryIndex: () => ipcRenderer.invoke("library:index"),
   readLibraryJsonSchema: (absPath: string | null | undefined) =>
     ipcRenderer.invoke("library:readJsonSchema", absPath),

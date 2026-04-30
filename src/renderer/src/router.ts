@@ -12,8 +12,6 @@ export type ViewId =
   | "library"
   | "project"
   | "task"
-  | "settings-agents"      // unified list of primary roles + subagents
-  | "settings-workflows"   // read-only workflow list
   | "settings-global"
   | "metrics";
 

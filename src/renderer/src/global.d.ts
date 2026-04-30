@@ -101,10 +101,7 @@ export interface McApi {
   deleteProject: (id: string) => Promise<void>;
   aggregateProjectRunMetrics: (projectId: string) => Promise<ProjectRunMetricsRollup>;
 
-  // agents + workflows
-  listAgents: () => Promise<Agent[]>;
-  saveAgents: (agents: Agent[]) => Promise<Agent[]>;
-  listWorkflows: () => Promise<Workflow[]>;
+  // library catalog
   getLibraryIndex: () => Promise<LibraryIndex>;
   readLibraryJsonSchema: (absPath: string | null | undefined) => Promise<Record<string, unknown> | null>;
 

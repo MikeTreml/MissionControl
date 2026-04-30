@@ -110,11 +110,7 @@ export function registerIpc(stores: Stores): void {
   );
 
   // ── agents + workflows ────────────────────────────────────────────────
-  // agents:list / workflows:list — legacy roster channels. Now stubbed
-  // to return []. The library index (channel "library:index") is the
-  // source of truth for agents, skills, and workflows.
-  ipcMain.handle("agents:list", () => []);
-  ipcMain.handle("workflows:list", () => []);
+  // library:index — source of truth for agents, skills, and workflows.
   ipcMain.handle("library:index", () => stores.libraryIndex.load());
   ipcMain.handle("library:readJsonSchema", (_e, absPath: string | null | undefined) =>
     stores.libraryIndex.readJsonSchema(absPath));
