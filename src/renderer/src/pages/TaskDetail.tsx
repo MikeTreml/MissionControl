@@ -138,7 +138,7 @@ export function TaskDetail(): JSX.Element {
       <div className="content">
         <Controls task={task} />
         <PhaseChipStrip task={task} events={events} />
-        {!isDemo && <BreakpointApprovalCard task={task} events={events} />}
+        {!isDemo && <PendingEffectsPanel task={task} events={events} />}
         {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
 
         {!isDemo && pendingAsks.map((ask) => (
@@ -696,42 +696,47 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
  * skeleton if no events are present yet.
  */
 /**
- * Approval card — rendered on Task Detail when the journal shows a
- * pending babysitter breakpoint (BREAKPOINT_OPENED with no matching
- * BREAKPOINT_RESPONDED yet). Approve / Request changes POST through
- * `runs:respondBreakpoint`, which spawns
- * `babysitter task:post --status ok --value-inline '{"approved":...}'`.
+ * Pending Effects panel (item #7) — replaces the old breakpoint-only
+ * card. Drives off `runListPending` (SDK as primary list) and joins
+ * with `derivePendingBreakpoint` for the rich breakpoint payload
+ * (question, title, expert, tags) that the SDK CLI doesn't return.
  *
- * Per the SDK docs, REJECTIONS use --status ok with approved:false.
- * --status error signals a task-execution failure and would trigger
- * RUN_FAILED, requiring manual journal surgery to recover.
+ * v1 supports breakpoint + sleep. Custom kinds (any other kind
+ * string) render read-only as forward-compat. See
+ * docs/SPEC-PENDING-EFFECTS.md for rationale, edge cases, and
+ * deferred items.
  *
- * Hybrid data path:
- *  - `derivePendingBreakpoint(events)` is the *primary* source — it
- *    has the rich payload (question, title, expert, tags) the SDK's
- *    pending-list IPC doesn't return.
- *  - `window.mc.runListPending(taskId)` is the *gate* — before we show
- *    Approve / Request changes, we confirm the SDK still considers
- *    this effectId pending. Catches the rare race where a journal
- *    rotation drops the close event but the SDK has already resolved
- *    it; without the gate the user could double-resolve.
- *  - If the SDK CLI is unreachable (offline / not installed), we fall
- *    back to derive-only behavior — the card still renders.
+ * Fallback behavior:
+ * - SDK list reachable: render rows from the SDK list. Breakpoint
+ *   rows enrich themselves via the derive helper when effectIds match.
+ *   If derive doesn't have a match (race: SDK ahead of journal),
+ *   the breakpoint row renders with SDK label only.
+ * - SDK list unreachable (CLI missing, child process errored): fall
+ *   back to derive-only for breakpoints. Sleep / custom rows are
+ *   hidden — we have no journal-derived equivalent. A small footer
+ *   warns the user.
  */
-function BreakpointApprovalCard({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
-  const pending = derivePendingBreakpoint(events);
-  const [feedback, setFeedback] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  // null = unknown (loading or CLI unreachable → trust derive helper).
-  // true = SDK confirms pending. false = SDK says resolved → hide buttons.
-  const [sdkConfirms, setSdkConfirms] = useState<boolean | null>(null);
+type SdkPendingRow = {
+  effectId: string;
+  kind: string;
+  label?: string;
+  status?: string;
+};
 
-  const effectId = pending?.effectId ?? null;
+function PendingEffectsPanel({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const derivedBreakpoint = derivePendingBreakpoint(events);
+  // null = not yet fetched / CLI unreachable. Otherwise a (possibly
+  // empty) array drives the panel.
+  const [sdkRows, setSdkRows] = useState<SdkPendingRow[] | null>(null);
+  const [cliUnreachable, setCliUnreachable] = useState(false);
 
+  // Refetch on mount, when events change (live-events bridge ticks),
+  // and when the task id flips. Cheap subprocess spawn; the bridge's
+  // debounce keeps it bounded.
   useEffect(() => {
-    if (!effectId || !window.mc?.runListPending) {
-      setSdkConfirms(null);
+    if (!window.mc?.runListPending) {
+      setSdkRows(null);
+      setCliUnreachable(true);
       return;
     }
     let cancelled = false;
@@ -739,38 +744,136 @@ function BreakpointApprovalCard({ task, events }: { task: Task; events: TaskEven
       try {
         const result = await window.mc.runListPending(task.id);
         if (cancelled) return;
-        const tasks = result?.tasks ?? [];
-        const stillPending = tasks.some(
-          (t) => t.effectId === effectId && (!t.status || t.status === "requested"),
+        const rows = (result?.tasks ?? []).filter(
+          (r) => !r.status || r.status === "requested",
         );
-        setSdkConfirms(stillPending);
+        setSdkRows(rows as SdkPendingRow[]);
+        setCliUnreachable(false);
       } catch {
-        // CLI unreachable — fall back to derive-only.
-        if (!cancelled) setSdkConfirms(null);
+        if (!cancelled) {
+          setSdkRows(null);
+          setCliUnreachable(true);
+        }
       }
     })();
     return () => { cancelled = true; };
-  }, [task.id, effectId]);
+  }, [task.id, events.length]);
 
-  if (!pending) return null;
-  // SDK explicitly said this effect is no longer pending — hide the
-  // card to avoid double-resolve. Renders again automatically on the
-  // next breakpoint_opened event.
-  if (sdkConfirms === false) return null;
+  // Offline fallback path — render derive helper's breakpoint only.
+  if (cliUnreachable) {
+    if (!derivedBreakpoint) return null;
+    return (
+      <section className="card" style={{ display: "grid", gap: 10 }}>
+        <BreakpointRow
+          taskId={task.id}
+          row={{ effectId: derivedBreakpoint.effectId, kind: "breakpoint" }}
+          derived={derivedBreakpoint}
+        />
+        <div className="muted" style={{ fontSize: 11 }}>
+          ⚠ SDK CLI unreachable — sleep / custom effects hidden.
+        </div>
+      </section>
+    );
+  }
 
-  const payload = pending.payload ?? {};
+  // SDK list resolved (possibly empty). Empty → no panel at all.
+  if (!sdkRows || sdkRows.length === 0) return null;
+
+  // Sort: breakpoints first (need user action), others below in SDK order.
+  const sorted = [...sdkRows].sort((a, b) => {
+    const ap = a.kind === "breakpoint" ? 0 : 1;
+    const bp = b.kind === "breakpoint" ? 0 : 1;
+    return ap - bp;
+  });
+
+  const needsUserCount = sorted.filter((r) => r.kind === "breakpoint").length;
+  const totalCount = sorted.length;
+
+  return (
+    <section className="card" style={{ display: "grid", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <strong>Pending effects · {totalCount}</strong>
+        {totalCount > 1 && needsUserCount > 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>
+            ({needsUserCount} need{needsUserCount === 1 ? "s" : ""} you)
+          </span>
+        )}
+      </div>
+      {sorted.map((row, idx) => {
+        // Visual separator between rows when there's more than one.
+        const dividerStyle = idx === 0 ? {} : { borderTop: "1px solid var(--border)", paddingTop: 12 };
+        if (row.kind === "breakpoint") {
+          // Match the derive helper to this row by effectId so we can
+          // render the rich payload. If derive has nothing, the row
+          // still works with SDK label only.
+          const derived =
+            derivedBreakpoint && derivedBreakpoint.effectId === row.effectId
+              ? derivedBreakpoint
+              : null;
+          return (
+            <div key={row.effectId} style={dividerStyle}>
+              <BreakpointRow taskId={task.id} row={row} derived={derived} />
+            </div>
+          );
+        }
+        if (row.kind === "sleep") {
+          return (
+            <div key={row.effectId} style={dividerStyle}>
+              <SleepRow row={row} />
+            </div>
+          );
+        }
+        return (
+          <div key={row.effectId} style={dividerStyle}>
+            <CustomEffectRow row={row} />
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
+/**
+ * Breakpoint row — preserves the v0 BreakpointApprovalCard UI byte-for-byte
+ * (yellow tint, ⏸ icon, title/question, textarea, Approve / Request changes
+ * buttons, effect-id footer). Now joins the derive helper's rich payload
+ * with the SDK row by effectId. When derive has nothing for this row
+ * (rare: SDK ahead of journal), falls back to the SDK label.
+ *
+ * runPath comes from the derive helper. If derive is missing (race
+ * window), buttons disable and a hint explains why; the row still
+ * renders for visibility.
+ */
+function BreakpointRow({
+  taskId,
+  row,
+  derived,
+}: {
+  taskId: string;
+  row: SdkPendingRow;
+  derived: ReturnType<typeof derivePendingBreakpoint>;
+}): JSX.Element {
+  const [feedback, setFeedback] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const payload = derived?.payload ?? {};
   const question = typeof payload.question === "string" ? payload.question : null;
-  const titleText = typeof payload.title === "string" ? payload.title : null;
+  const titleText = typeof payload.title === "string" ? payload.title : (row.label ?? null);
+  const expert = derived?.expert ?? null;
+  const tags = derived?.tags ?? [];
+  const runPath = derived?.runPath ?? null;
 
   async function respond(approved: boolean): Promise<void> {
     if (!window.mc) { setError("Not connected — run `npm run dev`"); return; }
+    if (!runPath) { setError("Run path unknown — wait a moment, then retry"); return; }
     setBusy(true);
     setError("");
     try {
       await window.mc.respondBreakpoint({
-        taskId: task.id,
-        runPath: pending!.runPath,
-        effectId: pending!.effectId,
+        taskId,
+        runPath,
+        effectId: row.effectId,
         approved,
         ...(feedback.trim() ? (approved ? { response: feedback.trim() } : { feedback: feedback.trim() }) : {}),
       });
@@ -784,11 +887,12 @@ function BreakpointApprovalCard({ task, events }: { task: Task; events: TaskEven
   }
 
   return (
-    <section
-      className="card"
+    <div
       style={{
         background: "rgba(244,201,93,0.08)",
-        borderColor: "var(--warn)",
+        border: "1px solid var(--warn)",
+        borderRadius: 8,
+        padding: 12,
         display: "grid",
         gap: 10,
       }}
@@ -796,11 +900,11 @@ function BreakpointApprovalCard({ task, events }: { task: Task; events: TaskEven
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span style={{ color: "var(--warn)", fontSize: 14 }}>⏸</span>
         <strong>Awaiting human approval</strong>
-        {pending.expert && pending.expert !== "owner" && (
-          <span className="muted" style={{ fontSize: 12 }}>· expert: {pending.expert}</span>
+        {expert && expert !== "owner" && (
+          <span className="muted" style={{ fontSize: 12 }}>· expert: {expert}</span>
         )}
-        {pending.tags.length > 0 && (
-          <span className="muted" style={{ fontSize: 12 }}>· {pending.tags.join(" · ")}</span>
+        {tags.length > 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>· {tags.join(" · ")}</span>
         )}
       </div>
       {titleText && <div style={{ fontWeight: 500 }}>{titleText}</div>}
@@ -830,30 +934,99 @@ function BreakpointApprovalCard({ task, events }: { task: Task; events: TaskEven
       <div style={{ display: "flex", gap: 8 }}>
         <button
           className="button"
-          disabled={busy}
+          disabled={busy || !runPath}
           onClick={() => void respond(true)}
-          title="Approve and continue the run"
+          title={runPath ? "Approve and continue the run" : "Run path not yet known — wait a moment"}
         >
           ✓ Approve
         </button>
         <button
           className="button warn"
-          disabled={busy}
+          disabled={busy || !runPath}
           onClick={() => void respond(false)}
-          title="Reject; the workflow's retry/refine loop picks this up"
+          title={runPath ? "Reject; the workflow's retry/refine loop picks this up" : "Run path not yet known — wait a moment"}
         >
           ↺ Request changes
         </button>
         <span className="muted" style={{ fontSize: 11, alignSelf: "center", marginLeft: 8 }}>
-          effect: <code>{pending.effectId}</code>
+          effect: <code>{row.effectId}</code>
         </span>
       </div>
+      {!runPath && (
+        <div className="muted" style={{ fontSize: 11 }}>
+          SDK reports this breakpoint pending but the journal hasn't surfaced its
+          run path yet — it will catch up shortly.
+        </div>
+      )}
       {error && (
         <div style={{ color: "var(--bad)", fontSize: 12 }}>
           {error}
         </div>
       )}
-    </section>
+    </div>
+  );
+}
+
+/**
+ * Sleep row — informational only in v1. The SDK index reports the
+ * effect as pending; we render kind, optional label, and effect id.
+ * No countdown until we know the SDK row carries `wakeAt` /
+ * `durationMs` (open Q in SPEC §1b). When the workflow's sleep
+ * resolves, the next runListPending tick removes the row.
+ */
+function SleepRow({ row }: { row: SdkPendingRow }): JSX.Element {
+  return (
+    <div
+      style={{
+        background: "var(--panel-2)",
+        border: "1px solid var(--border)",
+        borderRadius: 8,
+        padding: 12,
+        display: "grid",
+        gap: 6,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ fontSize: 14 }}>⏳</span>
+        <strong>Sleep</strong>
+        <span className="muted" style={{ fontSize: 12 }}>· sleeping…</span>
+      </div>
+      {row.label && <div style={{ fontWeight: 500 }}>{row.label}</div>}
+      <div className="muted" style={{ fontSize: 11 }}>
+        effect: <code>{row.effectId}</code>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Custom-kind row — read-only forward-compat (v1.1 will expose actions
+ * once the SDK row shape for arbitrary kinds is nailed down). For now
+ * we surface the kind + label + effect id so users can at least see
+ * the workflow is waiting on something.
+ */
+function CustomEffectRow({ row }: { row: SdkPendingRow }): JSX.Element {
+  return (
+    <div
+      style={{
+        background: "var(--panel-2)",
+        border: "1px solid var(--border)",
+        borderRadius: 8,
+        padding: 12,
+        display: "grid",
+        gap: 6,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ fontSize: 14 }}>☉</span>
+        <strong>Pending effect</strong>
+        <span className="muted" style={{ fontSize: 12 }}>· {row.kind}</span>
+      </div>
+      {row.label && <div style={{ fontWeight: 500 }}>{row.label}</div>}
+      <div className="muted" style={{ fontSize: 11 }}>
+        effect: <code>{row.effectId}</code>
+      </div>
+    </div>
   );
 }
 
