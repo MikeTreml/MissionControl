@@ -70,17 +70,15 @@ mc-v2-electron/
 
 ## 3. Grep recipes — find my notes
 
-Inline markers are scattered throughout the code. Use these to navigate:
+The legacy `PI-WIRE` map is gone (pi + babysitter SDK are wired; see Phase
+5 of the cleanup branch). What remains worth grepping:
 
 ```bash
-# Where pi plugs in — ALL onClick stubs and data shapes waiting for it
-grep -rn "PI-WIRE" src agents
-
-# Design decisions Michael and I locked in
+# Design decisions locked in
 grep -rn "CONFIRMED" src docs
 
-# My suggestions, not yet validated with real data
-grep -rn "PROPOSED" src docs agents
+# Suggestions not yet validated with real data
+grep -rn "PROPOSED" src docs
 
 # Open questions — need a decision before building further
 grep -rn "OPEN:" src docs
@@ -88,8 +86,6 @@ grep -rn "OPEN:" src docs
 # Pending work
 grep -rn "TODO" src
 ```
-
-Start with `grep -rn "PI-WIRE" src` — that's the map for the next work.
 
 ## 4. Smoke tests — run before + after any backend change
 

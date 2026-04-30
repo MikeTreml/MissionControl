@@ -11,11 +11,10 @@
  * across the whole campaign; flips to "idle" only when every item is
  * done OR the user stops. Stop marks any "running" item as "failed".
  *
- * ── PI-WIRE: campaign prompting ─────────────────────────────────────────
- * Today every campaign item invokes /babysit with the item's description.
- * Babysitter generates its own per-item process.js. A future enhancement
- * could pre-author a campaign-specific process.js (with cross-item
- * lessons + checkpoint-every-N) — see docs/IDEAS-WORTH-BORROWING.md.
+ * Curated path (Phase 5): when a task has a libraryWorkflow.diskPath in
+ * its run config, RunManager spawns `babysitter harness:create-run
+ * --process <path>` directly via the SDK CLI (see
+ * `startCuratedWorkflow`), skipping babysitter's auto-gen Phase 1.
  */
 import { spawn } from "node:child_process";
 import { existsSync, promises as fs } from "node:fs";
