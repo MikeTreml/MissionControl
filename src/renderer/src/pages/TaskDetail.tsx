@@ -83,6 +83,7 @@ export function TaskDetail(): JSX.Element {
               📁 Open folder
             </button>
           )}
+          {!isDemo && <ArchiveTaskButton task={task} />}
           {!isDemo && <DeleteTaskButton taskId={task.id} />}
           <BackToDashboard />
         </div>
@@ -155,6 +156,50 @@ function BackToDashboard(): JSX.Element {
   return (
     <button className="button ghost" onClick={() => setView("dashboard")}>
       ← Dashboard
+    </button>
+  );
+}
+
+/**
+ * Archive button — toggles `task.status` between "archived" and a sane
+ * non-archived value. No confirm dialog: archive is fully reversible
+ * (Unarchive button shows up when the task IS archived).
+ *
+ * Unarchive behavior: we don't try to remember what status the task
+ * had before archiving. Instead we drop it back to "active" and let
+ * the user / next run advance it from there. The previous status is
+ * recoverable from the events.jsonl trail if it really matters.
+ */
+function ArchiveTaskButton({ task }: { task: Task }): JSX.Element {
+  const [busy, setBusy] = useState(false);
+  const archived = task.status === "archived";
+
+  async function onClick(): Promise<void> {
+    if (!window.mc) return;
+    try {
+      setBusy(true);
+      const next: Task = {
+        ...task,
+        status: archived ? "active" : "archived",
+        updatedAt: new Date().toISOString(),
+      };
+      await window.mc.saveTask(next);
+      publish("tasks");
+    } catch (err) {
+      console.error("[TaskDetail] saveTask (archive toggle) threw:", err);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <button
+      className="button ghost"
+      onClick={onClick}
+      disabled={busy}
+      title={archived ? "Restore this task to the active board" : "Archive this task — hides it from the default board"}
+    >
+      {busy ? "…" : archived ? "↩ Unarchive" : "📦 Archive"}
     </button>
   );
 }

@@ -55,9 +55,15 @@ export function ProjectDetail(): JSX.Element {
   // CONFIRMED: ProjectDetail is scoped to a single project. Tasks carry their
   // project slug on UiTask.projectId (added in useTasks). Demo tasks all share
   // projectId === "demo" so they still show when we're in demo mode.
-  const projectTasks = project
+  const allProjectTasks = project
     ? tasks.filter((t) => t.projectId === project.id || (tasksDemo && t.projectId === "demo"))
     : [];
+  const archivedCount = allProjectTasks.filter((t) => t.status === "archived").length;
+  const [showArchived, setShowArchived] = useState(false);
+  // Default: hide archived from stats and tables. Toggle includes them.
+  const projectTasks = showArchived
+    ? allProjectTasks
+    : allProjectTasks.filter((t) => t.status !== "archived");
 
   const stats = computeStats(projectTasks);
   const isDemo = projectsDemo || tasksDemo;
@@ -194,10 +200,24 @@ export function ProjectDetail(): JSX.Element {
         )}
 
         <section className="card">
-          <h3>Tasks by lane</h3>
-          <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-            Snapshot of where work is sitting right now.
-          </p>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <div>
+              <h3 style={{ margin: 0 }}>Tasks by lane</h3>
+              <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+                Snapshot of where work is sitting right now.
+              </p>
+            </div>
+            {archivedCount > 0 && (
+              <button
+                className="button ghost"
+                onClick={() => setShowArchived((v) => !v)}
+                title={showArchived ? "Hide archived from stats and tables" : "Include archived in stats and tables"}
+                style={{ fontSize: 12 }}
+              >
+                {showArchived ? `Hide archived (${archivedCount})` : `Show archived (${archivedCount})`}
+              </button>
+            )}
+          </div>
           <LaneBars tasks={projectTasks} />
         </section>
 

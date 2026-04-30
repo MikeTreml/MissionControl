@@ -20,7 +20,7 @@ import type { Task, TaskEvent, TaskStatus, RunState } from "../../../shared/mode
  * CONFIRMED: `projectId` is the Project.id slug, not the prefix. Tasks
  * reference projects by slug; the prefix is encoded in the task id itself.
  */
-export type BoardStage = "Draft" | "Active" | "Attention" | "Failed" | "Complete";
+export type BoardStage = "Draft" | "Active" | "Attention" | "Failed" | "Complete" | "Archived";
 
 export type UiTask = MockTask & {
   projectId: string;
@@ -79,6 +79,9 @@ function toUiTask(t: Task, projectIcon: string, currentModel: string): UiTask {
 }
 
 function deriveBoardStage(t: Task): BoardStage {
+  // Archived takes precedence over any other status — once archived,
+  // a task is hidden from default Board / ProjectDetail views.
+  if (t.status === "archived") return "Archived";
   if (t.status === "done") return "Complete";
   if (t.status === "failed") return "Failed";
   if (t.blocker.trim() || t.status === "waiting" || t.runState === "paused") return "Attention";
