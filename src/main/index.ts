@@ -10,8 +10,7 @@
  * Path layout:
  *   <userData>/tasks/<TP-NNN>/manifest.json · events.jsonl · notes.md per agent
  *   <userData>/projects/<slug>/project.json
- *   <appRoot>/agents/<slug>/agent.json     (bundled — primary roles + subagents)
- *   <appRoot>/workflows/<CODE>-<slug>/workflow.json  (bundled)
+ *   <appRoot>/library/                      (bundled — agents/skills/workflows catalog)
  *
  * CONFIRMED: PiSessionManager + RunManager are instantiated below in
  * bootstrapStores(); IPC for runs:start/pause/resume/stop is registered
@@ -29,8 +28,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { TaskStore } from "./store.ts";
 import { ProjectStore } from "./project-store.ts";
-import { WorkflowLoader } from "./workflows.ts";
-import { AgentLoader } from "./agent-loader.ts";
 import { PiSessionManager } from "./pi-session-manager.ts";
 import { RunManager } from "./run-manager.ts";
 import { SettingsStore } from "./settings-store.ts";
@@ -45,31 +42,28 @@ async function bootstrapStores(): Promise<void> {
 
   const tasks = new TaskStore(join(userData, "tasks"));
   const projects = new ProjectStore(join(userData, "projects"));
-  const workflows = new WorkflowLoader(join(appRoot, "workflows"));
-  const agents = new AgentLoader(join(appRoot, "agents"));
   const settings = new SettingsStore(userData);
   const libraryIndex = new LibraryIndexStore(join(appRoot, "library"));
 
   await Promise.all([tasks.init(), projects.init(), settings.init()]);
 
-  // PiSessionManager owns live pi sessions (via babysitter-sdk's
-  // createPiSession wrapper). RunManager owns the task state machine
-  // and the prompt-building logic. On Start, RunManager tells
-  // PiSessionManager to create a session and prompt it. When pi's
-  // turn resolves, PiSessionManager calls back into RunManager to flip
-  // the task to idle.
+  // PiSessionManager owns live pi sessions. RunManager owns the task
+  // state machine. On Start, RunManager tells PiSessionManager to
+  // create a session and prompt it. When pi's turn resolves,
+  // PiSessionManager calls back into RunManager to flip the task to
+  // idle.
   //
   // Pi inherits auth from the environment: OPENAI_API_KEY,
   // ANTHROPIC_API_KEY, etc. Set them in the shell that launched `npm run dev`.
   const pi = new PiSessionManager(tasks);
-  const runs = new RunManager(tasks, pi, agents, projects, settings);
+  const runs = new RunManager(tasks, pi, null, projects, settings);
   pi.setOnSessionEnd((taskId, result) =>
     runs.completeRun(taskId, result.reason),
   );
 
   bootstrappedTasks = tasks;
 
-  registerIpc({ tasks, projects, workflows, agents, runs, pi, settings, libraryIndex });
+  registerIpc({ tasks, projects, runs, pi, settings, libraryIndex });
   console.log("[main] IPC handlers registered");
 }
 

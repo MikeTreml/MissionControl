@@ -25,7 +25,7 @@ export function Topbar(): JSX.Element {
         </button>
         <button
           className="button ghost"
-          onClick={() => setView("settings-agents")}
+          onClick={() => setView("settings-global")}
           title="Settings"
         >
           Settings

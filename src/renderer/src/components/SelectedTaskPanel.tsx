@@ -7,16 +7,12 @@
  * sample task. Click through to Task Detail for the full view.
  */
 import { useTasks } from "../hooks/useTasks";
-import { useAgents } from "../hooks/useAgents";
 import { useRoute } from "../router";
-import { isPrimaryAgent } from "../../../shared/models";
 
 export function SelectedTaskPanel(): JSX.Element {
   const { tasks } = useTasks();
-  const { agents } = useAgents();
   const { openTask } = useRoute();
 
-  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
   const active = tasks.find((t) => t.active) ?? tasks[0];
 
   if (!active) {
@@ -30,13 +26,7 @@ export function SelectedTaskPanel(): JSX.Element {
     );
   }
 
-  const linkedFiles = [
-    { name: active.id, note: "base manifest" },
-    ...primaries.map((a) => ({
-      name: `${active.id}-${a.code}-c${active.cycle}`,
-      note: `${a.name} output · current cycle`,
-    })),
-  ];
+  const linkedFiles = [{ name: active.id, note: "base manifest" }];
 
   return (
     <section
@@ -90,7 +80,7 @@ export function SelectedTaskPanel(): JSX.Element {
       <div>
         <h2>Task-linked Files</h2>
         <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-          One per enabled primary agent, suffix from agent code and cycle.
+          Open Task Detail for the full file listing produced during the run.
         </p>
         <div style={{ marginTop: 12 }}>
           {linkedFiles.map((f) => (

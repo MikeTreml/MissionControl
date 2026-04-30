@@ -423,21 +423,6 @@ export function makeTask(
 }
 
 /**
- * Build a task-linked file stem from a base task id + optional agent code.
- * When `cycle` is provided, the cycled artifact form is used.
- *
- *   taskFile("DA-015F")                  === "DA-015F"         (base file)
- *   taskFile("DA-015F", "p")           === "DA-015F-p"       (legacy / cycle-unspecified)
- *   taskFile("DA-015F", "p", 1)        === "DA-015F-p-c1"    (planner output, cycle 1)
- *   taskFile("DA-015F", "rmp", 2)      === "DA-015F-rmp-c2"  (RepoMapper subagent, cycle 2)
- */
-export function taskFile(taskId: string, agentCode?: string, cycle?: number): string {
-  if (!agentCode) return taskId;
-  if (cycle !== undefined) return `${taskId}-${agentCode}-c${cycle}`;
-  return `${taskId}-${agentCode}`;
-}
-
-/**
  * One line in a task's events.jsonl — the append-only journal.
  *
  * Kept intentionally open: a `type` string + arbitrary payload. The Run
