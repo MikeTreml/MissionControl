@@ -455,14 +455,58 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
  * Per the SDK docs, REJECTIONS use --status ok with approved:false.
  * --status error signals a task-execution failure and would trigger
  * RUN_FAILED, requiring manual journal surgery to recover.
+ *
+ * Hybrid data path:
+ *  - `derivePendingBreakpoint(events)` is the *primary* source — it
+ *    has the rich payload (question, title, expert, tags) the SDK's
+ *    pending-list IPC doesn't return.
+ *  - `window.mc.runListPending(taskId)` is the *gate* — before we show
+ *    Approve / Request changes, we confirm the SDK still considers
+ *    this effectId pending. Catches the rare race where a journal
+ *    rotation drops the close event but the SDK has already resolved
+ *    it; without the gate the user could double-resolve.
+ *  - If the SDK CLI is unreachable (offline / not installed), we fall
+ *    back to derive-only behavior — the card still renders.
  */
 function BreakpointApprovalCard({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
   const pending = derivePendingBreakpoint(events);
   const [feedback, setFeedback] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  // null = unknown (loading or CLI unreachable → trust derive helper).
+  // true = SDK confirms pending. false = SDK says resolved → hide buttons.
+  const [sdkConfirms, setSdkConfirms] = useState<boolean | null>(null);
+
+  const effectId = pending?.effectId ?? null;
+
+  useEffect(() => {
+    if (!effectId || !window.mc?.runListPending) {
+      setSdkConfirms(null);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const result = await window.mc.runListPending(task.id);
+        if (cancelled) return;
+        const tasks = result?.tasks ?? [];
+        const stillPending = tasks.some(
+          (t) => t.effectId === effectId && (!t.status || t.status === "requested"),
+        );
+        setSdkConfirms(stillPending);
+      } catch {
+        // CLI unreachable — fall back to derive-only.
+        if (!cancelled) setSdkConfirms(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [task.id, effectId]);
 
   if (!pending) return null;
+  // SDK explicitly said this effect is no longer pending — hide the
+  // card to avoid double-resolve. Renders again automatically on the
+  // next breakpoint_opened event.
+  if (sdkConfirms === false) return null;
 
   const payload = pending.payload ?? {};
   const question = typeof payload.question === "string" ? payload.question : null;
