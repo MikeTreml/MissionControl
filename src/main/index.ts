@@ -13,19 +13,10 @@
  *   <appRoot>/agents/<slug>/agent.json     (bundled — primary roles + subagents)
  *   <appRoot>/workflows/<CODE>-<slug>/workflow.json  (bundled)
  *
- * ── HANDOFF POINTERS (for whoever picks this up next) ──────────────────
- *
- * PI-WIRE: this file is where the pi-coding-agent SDK gets booted.
- *   After bootstrapStores(), add:
- *     1. new PiSessionManager({ modelsStore, agentsLoader, tasksStore })
- *     2. pass it to registerIpc() alongside the existing stores
- *     3. in ipc.ts, add handlers for: runs:start, runs:pause, runs:resume,
- *        runs:stop, runs:list (per task)
- *   The manager holds live pi.Session instances keyed by `<taskId>:<agentSlug>`
- *   and forwards session events to the renderer via webContents.send("event",
- *   payload) — subscribed in the renderer with an EventBus hook (not built yet).
- *
- * See docs/HANDOFF.md for the full orientation.
+ * CONFIRMED: PiSessionManager + RunManager are instantiated below in
+ * bootstrapStores(); IPC for runs:start/pause/resume/stop is registered
+ * in ipc.ts; live events are forwarded to the renderer via
+ * lib/live-events-bridge.ts.
  */
 import { app, BrowserWindow, Menu } from "electron";
 import { dirname, join } from "node:path";

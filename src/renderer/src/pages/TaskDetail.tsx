@@ -193,9 +193,8 @@ function DeleteTaskButton({ taskId }: { taskId: string }): JSX.Element {
  *   paused   → Resume · Stop
  *
  * Click handlers call window.mc.startRun / pauseRun / resumeRun / stopRun
- * which route through RunManager. Today that only flips Task.runState and
- * appends events; when pi lands the same methods drive a real session.
- * See src/main/run-manager.ts for the PI-WIRE seam.
+ * which route through RunManager → PiSessionManager. CONFIRMED wired:
+ * Start opens a real pi session and prompts babysitter; Stop ends it.
  */
 function Controls({ task }: { task: Task }): JSX.Element {
   const { agents } = useAgents();

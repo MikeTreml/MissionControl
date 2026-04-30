@@ -303,24 +303,17 @@ export class TaskStore extends EventEmitter {
 
   /**
    * Append one event to `<taskId>/events.jsonl`. Fire-and-forget; any caller
-   * (not just save) can log events: "run-started", "subagent-spawned", etc.
+   * (not just save) can log events.
    *
-   * ── PI-WIRE: EVENT TYPES FOR THE FUTURE ────────────────────────────────
+   * CONFIRMED event types in use:
+   *   "created", "saved", "lane-changed", "cycle-changed" (store.ts)
+   *   "run-started", "run-ended", "run-paused", "run-resumed",
+   *   "item-started", "item-ended" (run-manager.ts)
+   *   pi forwards (e.g. "pi:agent_end", "pi:tool_execution") via
+   *   live-events-bridge.ts
    *
-   * CONFIRMED today: "created", "saved", "lane-changed", "cycle-changed".
-   *   (emitted by store.ts on state transitions — no pi involvement)
-   *
-   * PROPOSED once pi is wired:
-   *   "run-started"      { role, modelId, sessionFile }
-   *   "run-ended"        { role, exit: "completed"|"paused"|"stopped"|"failed",
-   *                        tokensIn, tokensOut, costUSD, durationMs }
-   *   "subagent-spawned" { parentRole, subagentSlug, reason }
-   *   "subagent-ended"   { subagentSlug, exit, tokensIn, tokensOut }
-   *   "human-approval"   { decision: "approve"|"reject", by: "human" }
-   *
-   * The renderer's Run History (TaskDetail) + Run Activity (RightBar) will
-   * reconstruct their views from this stream. Keep payloads flat and JSON-
-   * friendly so pi-messenger interop stays possible.
+   * Run History (TaskDetail) + Run Activity (RightBar) reconstruct from
+   * this stream. Payloads are flat + JSON-friendly.
    */
   async appendEvent(
     taskId: string,
