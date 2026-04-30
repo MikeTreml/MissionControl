@@ -225,12 +225,12 @@ export class TaskStore extends EventEmitter {
     description?: string;
     projectId: string;
     projectPrefix: string;
-    workflow?: string;
     /**
-     * Initial lane — defaults to "plan". Callers that know the workflow
-     * (e.g. via `effectiveLanes(workflow)[0]`) should pass it explicitly
-     * so tasks start in a lane their workflow actually uses.
+     * Workflow letter for the task ID suffix (e.g. "F" -> DA-015F). Stored
+     * only as part of the immutable id; not a separate task field.
      */
+    workflow?: string;
+    /** Initial lane — defaults to "plan". */
     lane?: Task["lane"];
     /** "single" (default) or "campaign". Campaigns carry an items list. */
     kind?: Task["kind"];
@@ -243,7 +243,6 @@ export class TaskStore extends EventEmitter {
       title: input.title,
       description: input.description ?? "",
       project: input.projectId,
-      workflow,
       ...(input.lane ? { lane: input.lane } : {}),
       ...(input.kind ? { kind: input.kind } : {}),
       ...(input.items ? { items: input.items } : {}),

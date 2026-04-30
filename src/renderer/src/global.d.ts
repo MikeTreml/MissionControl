@@ -8,8 +8,6 @@ import type {
   Task,
   TaskEvent,
   ProjectWithGit,
-  Workflow,
-  Agent,
   Lane,
   TaskKind,
   CampaignItem,
