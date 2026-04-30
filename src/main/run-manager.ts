@@ -23,7 +23,6 @@ import path from "node:path";
 import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
-import type { AgentLoader } from "./agent-loader.ts";
 import type { SettingsStore } from "./settings-store.ts";
 import { renderPromptFile } from "./render-prompt.ts";
 import { writeLatestRunMetricsArtifact } from "./run-cost-tracker.ts";
@@ -47,19 +46,17 @@ export class RunManager {
   private readonly tasks: TaskStore;
   private readonly projects: ProjectStore | null;
   private readonly pi: PiSessionManager | null;
-  private readonly agents: AgentLoader | null;
   private readonly settings: SettingsStore | null;
 
   constructor(
     tasks: TaskStore,
     pi?: PiSessionManager | null,
-    agents?: AgentLoader | null,
+    _legacyAgents?: unknown,
     projects?: ProjectStore | null,
     settings?: SettingsStore | null,
   ) {
     this.tasks = tasks;
     this.pi = pi ?? null;
-    this.agents = agents ?? null;
     this.projects = projects ?? null;
     this.settings = settings ?? null;
   }
@@ -535,12 +532,11 @@ export class RunManager {
   }
 
   private async loadEffectiveAgents(): Promise<Agent[]> {
-    const base = this.agents ? await this.agents.loadAll() : [];
-    const overrides = (await this.settings?.get())?.agentOverrides ?? {};
-    return base.map((agent) => {
-      const merged = { ...agent, ...(overrides[agent.slug] ?? {}) };
-      return AgentSchema.parse(merged);
-    });
+    // Legacy: returned the merged agent roster from agents/ + settings overrides.
+    // The roster is dead — runtime agents are now defined inline per task in
+    // workflow.js files. Returns [] to keep callers compiling until they're
+    // rewritten against the library-workflow path.
+    return [];
   }
 
   /**

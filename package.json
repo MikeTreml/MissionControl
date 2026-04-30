@@ -14,7 +14,7 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
-    "smoke": "node --experimental-strip-types src/main/store.smoke.ts && node --experimental-strip-types src/main/project-store.smoke.ts && node --experimental-strip-types src/main/workflows.smoke.ts && node --experimental-strip-types src/main/agent-loader.smoke.ts && node --experimental-strip-types src/main/git-detect.smoke.ts && node --experimental-strip-types src/main/run-manager.smoke.ts && node --experimental-strip-types src/main/pi-session-manager.smoke.ts && node --experimental-strip-types src/main/settings-store.smoke.ts && node --experimental-strip-types src/main/library-walker.smoke.ts",
+    "smoke": "node --experimental-strip-types src/main/store.smoke.ts && node --experimental-strip-types src/main/project-store.smoke.ts && node --experimental-strip-types src/main/git-detect.smoke.ts && node --experimental-strip-types src/main/run-manager.smoke.ts && node --experimental-strip-types src/main/pi-session-manager.smoke.ts && node --experimental-strip-types src/main/settings-store.smoke.ts && node --experimental-strip-types src/main/library-walker.smoke.ts",
     "verify-ui": "node scripts/verify-ui.mjs",
     "doctor": "npm run typecheck && npm run smoke && npm run build && npm run verify-ui",
     "prepackage:dir": "node scripts/bump-build-number.mjs",
