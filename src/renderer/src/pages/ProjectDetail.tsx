@@ -239,7 +239,9 @@ function formatDurationSeconds(totalSeconds: number): string {
 }
 
 function LaneBars({ tasks }: { tasks: UiTask[] }): JSX.Element {
-  const lanes = ["Plan", "Develop", "Review", "Surgery", "Approval", "Done"] as const;
+  // Match the post-Phase-10 UiTask.lane axis (run-state / status derived
+  // in useTasks.deriveLaneStyle), not the old kanban-lane vocabulary.
+  const lanes = ["Idle", "Running", "Waiting", "Done", "Failed"] as const;
   const counts = lanes.map((lane) => ({
     lane,
     count: tasks.filter((t) => t.lane === lane).length,
@@ -280,9 +282,11 @@ function StuckTable({ tasks }: { tasks: UiTask[] }): JSX.Element {
   const now = Date.now();
   const idleHours = (t: UiTask): number =>
     Math.max(0, (now - new Date(t.updatedAt).getTime()) / 3_600_000);
-  // Same definition as computeStats: approval / waiting / idle > 24h.
+  // Same definition as computeStats: lane=Waiting (paused / blocker /
+  // status=waiting derived in useTasks) or idle > 24h while still live.
   const stuck = tasks.filter((t) =>
     t.lane !== "Done" &&
+    t.lane !== "Failed" &&
     (t.lane === "Waiting" || t.roleLabel === "Waiting" || idleHours(t) > 24),
   );
   const { openTask } = useRoute();
@@ -347,11 +351,11 @@ function computeStats(tasks: UiTask[]): ProjectStats {
   const now = Date.now();
   const idleHours = (t: UiTask): number =>
     Math.max(0, (now - new Date(t.updatedAt).getTime()) / 3_600_000);
-  const liveTasks = tasks.filter((t) => t.lane !== "Done");
+  const liveTasks = tasks.filter((t) => t.lane !== "Done" && t.lane !== "Failed");
 
-  // "Stuck" = blocked on a human (approval lane or waiting/paused) OR
-  // idle for over 24h while still active. Both are operationally
-  // useful signals; either alone misses real cases.
+  // "Stuck" = lane=Waiting (paused, status=waiting, or has a blocker —
+  // see deriveLaneStyle in useTasks) OR idle > 24h while still live.
+  // Both are operationally useful; either alone misses real cases.
   const stuck = liveTasks.filter((t) =>
     t.lane === "Waiting" || t.roleLabel === "Waiting" || idleHours(t) > 24,
   ).length;
