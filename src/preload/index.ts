@@ -48,6 +48,7 @@ const api = {
 
   // ── library catalog ──────────────────────────────────────────────────
   getLibraryIndex: () => ipcRenderer.invoke("library:index"),
+  refreshLibraryIndex: () => ipcRenderer.invoke("library:refresh"),
   readLibraryJsonSchema: (absPath: string | null | undefined) =>
     ipcRenderer.invoke("library:readJsonSchema", absPath),
 

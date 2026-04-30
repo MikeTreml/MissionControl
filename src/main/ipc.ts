@@ -113,6 +113,8 @@ export function registerIpc(stores: Stores): void {
   // ── agents + workflows ────────────────────────────────────────────────
   // library:index — source of truth for agents, skills, and workflows.
   ipcMain.handle("library:index", () => stores.libraryIndex.load());
+  ipcMain.handle("library:refresh", () =>
+    logged("library:refresh", () => stores.libraryIndex.refresh()));
   ipcMain.handle("library:readJsonSchema", (_e, absPath: string | null | undefined) =>
     stores.libraryIndex.readJsonSchema(absPath));
 

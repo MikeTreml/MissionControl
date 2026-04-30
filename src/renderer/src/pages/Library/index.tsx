@@ -30,6 +30,8 @@ export function LibraryBrowser(): JSX.Element {
     toggleTag,
     facets,
     filteredItems,
+    rebuild,
+    rebuilding,
   } = useLibraryIndex();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -83,6 +85,14 @@ export function LibraryBrowser(): JSX.Element {
           </div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
+          <button
+            className="button ghost"
+            onClick={() => void rebuild()}
+            disabled={rebuilding}
+            title="Walk the library/ tree and rebuild _index.json — picks up any agents/skills/workflows added on disk"
+          >
+            {rebuilding ? "Refreshing…" : "↻ Refresh"}
+          </button>
           <button
             className="button"
             onClick={() => setRunOpen(true)}

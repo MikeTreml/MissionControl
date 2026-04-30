@@ -100,6 +100,8 @@ export interface McApi {
 
   // library catalog
   getLibraryIndex: () => Promise<LibraryIndex>;
+  /** Walk the library tree in-process, write `_index.json`, return fresh index. */
+  refreshLibraryIndex: () => Promise<LibraryIndex>;
   readLibraryJsonSchema: (absPath: string | null | undefined) => Promise<Record<string, unknown> | null>;
 
   // runs (Start/Pause/Resume/Stop state machine; returns updated Task)

@@ -27,6 +27,13 @@ export interface LibraryIndexState {
   };
   filteredItems: LibraryIndexItem[];
   refresh: () => Promise<void>;
+  /**
+   * Re-walk the library tree in-process via the main-side
+   * LibraryWalker, write back `_index.json`, and update local state.
+   * Distinct from `refresh` which only re-reads the cached file.
+   */
+  rebuild: () => Promise<void>;
+  rebuilding: boolean;
 }
 
 export function useLibraryIndex(): LibraryIndexState {
@@ -40,6 +47,7 @@ export function useLibraryIndex(): LibraryIndexState {
   const [sourceFilter, setSourceFilter] = useState<Set<string>>(new Set());
   const [containerKindFilter, setContainerKindFilter] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
+  const [rebuilding, setRebuilding] = useState<boolean>(false);
 
   async function load(): Promise<void> {
     try {
@@ -63,6 +71,29 @@ export function useLibraryIndex(): LibraryIndexState {
   useEffect(() => {
     void load();
   }, []);
+
+  /**
+   * Re-walk the library tree in-process via the main-side
+   * LibraryWalker, write back `_index.json`, and update local state
+   * with the fresh result. Distinct from `refresh` (which only
+   * re-reads the cached file) — call this when items have been
+   * added or removed on disk and we want them to surface in MC
+   * without restarting the app.
+   */
+  async function rebuild(): Promise<void> {
+    if (!window.mc?.refreshLibraryIndex) return;
+    try {
+      setRebuilding(true);
+      setError(null);
+      const next = await window.mc.refreshLibraryIndex();
+      setIndex(next);
+      setItems(next.items ?? []);
+    } catch (e) {
+      setError(e instanceof Error ? e : new Error(String(e)));
+    } finally {
+      setRebuilding(false);
+    }
+  }
 
   function toggleKind(kind: LibraryItemKind): void {
     setKindFilter((prev) => {
@@ -145,6 +176,8 @@ export function useLibraryIndex(): LibraryIndexState {
     facets,
     filteredItems,
     refresh: load,
+    rebuild,
+    rebuilding,
   };
 }
 
