@@ -295,11 +295,23 @@ export class TaskStore extends EventEmitter {
    * (not just save) can log events.
    *
    * CONFIRMED event types in use:
-   *   "created", "saved", "lane-changed", "cycle-changed" (store.ts)
-   *   "run-started", "run-ended", "run-paused", "run-resumed",
-   *   "item-started", "item-ended" (run-manager.ts)
-   *   pi forwards (e.g. "pi:agent_end", "pi:tool_execution") via
-   *   live-events-bridge.ts
+   *   - store.ts itself: "created", "cycle-changed", "blocker-changed"
+   *   - run-manager.ts: "run-started", "run-ended", "run-paused",
+   *     "run-resumed", "run-queued", "item-started", "item-ended",
+   *     "step:start", "step:agent-end", "step:end", "metrics:error"
+   *   - run-manager.ts curated path: "bs:phase", "bs:error", "bs:log"
+   *     (CLI JSON lines from `babysitter harness:create-run --process`)
+   *   - pi-session-manager.ts: forwards pi session events directly via
+   *     this method, e.g. "pi:agent_end", "pi:tool_execution_start"
+   *
+   * Forwarding chain:
+   *   appendEvent writes events.jsonl AND emits "event-appended" on
+   *   this store. attachStoreForwarders() in main/index.ts subscribes
+   *   and pushes `webContents.send("task:event", ...)`. The renderer's
+   *   lib/live-events-bridge.ts is the last-mile: it debounces the
+   *   IPC (~400ms leading+trailing) and publishes to the data-bus so
+   *   hooks refetch. RightBar / Task Detail also subscribe to the raw
+   *   IPC for unthrottled per-event rendering.
    *
    * Run History (TaskDetail) + Run Activity (RightBar) reconstruct from
    * this stream. Payloads are flat + JSON-friendly.
