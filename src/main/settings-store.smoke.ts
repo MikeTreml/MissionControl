@@ -52,6 +52,7 @@ async function main(): Promise<void> {
     workflowLogicalPath: "workflows/core/tdd-quality-convergence",
     workflowName: "TDD Quality Convergence",
     projectId: "dogapp",
+    workflowCode: "F",
     goal: "Implement feature with tests",
     model: "openai:gpt-5.3",
     inputs: { topic: "status panel", maxIterations: 3 },

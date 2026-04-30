@@ -16,12 +16,17 @@ import { usePiModels } from "../hooks/usePiModels";
 import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
-import { derivePhases } from "../lib/derive-phases";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
-import type { Task, TaskEvent } from "../../../shared/models";
+import { LANE_ORDER } from "../../../shared/models";
+import type { Lane, LaneHistoryEntry, Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
+
+const LANE_LABEL: Record<Lane, string> = {
+  plan: "Plan", develop: "Develop", review: "Review",
+  surgery: "Surgery", approval: "Approval", done: "Done",
+};
 
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
@@ -93,6 +98,7 @@ export function TaskDetail(): JSX.Element {
 
         {!isDemo && <BlockerField task={task} />}
 
+        {task.lane === "approval" && !isDemo && <ApprovalGate task={task} />}
 
         <section
           className="card"
@@ -103,7 +109,7 @@ export function TaskDetail(): JSX.Element {
         </section>
 
         <section className="card" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 18 }}>
-          <LaneTimeline task={task} events={events} />
+          <LaneTimeline task={task} />
           <TaskMeta task={task} events={events} />
         </section>
 
@@ -414,30 +420,15 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
   );
 }
 
-/**
- * Vertical phase timeline, oldest at the top. Driven by `derivePhases`,
- * which reads journal events (curated workflow phases or lane-changed
- * legacy events) and falls back to a generic Draft/Active/Finished
- * skeleton if no events are present yet.
- */
-function LaneTimeline({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element {
-  const { phases, source } = derivePhases(task, events);
-
-  const colorFor = (status: typeof phases[number]["status"]): string => {
-    if (status === "active") return "var(--warn)";
-    if (status === "failed") return "var(--bad)";
-    if (status === "done") return "var(--good)";
-    return "var(--muted)";
-  };
+/** Vertical timeline of lane transitions, oldest at the top. */
+function LaneTimeline({ task }: { task: Task }): JSX.Element {
+  const entries: LaneHistoryEntry[] = task.laneHistory.length > 0
+    ? task.laneHistory
+    : [{ lane: task.lane, enteredAt: task.createdAt }];
 
   return (
     <div>
-      <h3>Phase timeline</h3>
-      <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>
-        {source === "curated" && "From workflow journal"}
-        {source === "lane" && "From lane transitions"}
-        {source === "generic" && "Generic phases — no run data yet"}
-      </div>
+      <h3>Lane timeline</h3>
       <div
         style={{
           display: "grid",
@@ -457,11 +448,11 @@ function LaneTimeline({ task, events }: { task: Task; events: TaskEvent[] }): JS
             background: "var(--border)",
           }}
         />
-        {phases.map((p) => {
-          const dotColor = colorFor(p.status);
+        {entries.map((e, idx) => {
+          const isCurrent = !e.leftAt;
           return (
             <div
-              key={p.id}
+              key={`${e.lane}-${e.enteredAt}`}
               style={{ position: "relative", padding: "6px 0 14px" }}
             >
               <div
@@ -472,25 +463,27 @@ function LaneTimeline({ task, events }: { task: Task; events: TaskEvent[] }): JS
                   width: 12,
                   height: 12,
                   borderRadius: "50%",
-                  background: dotColor,
-                  border: `2px solid ${dotColor}`,
-                  boxShadow: p.status === "active" ? "0 0 0 4px rgba(244,201,93,0.2)" : undefined,
+                  background: isCurrent ? "var(--warn)" : "var(--good)",
+                  border: `2px solid ${isCurrent ? "var(--warn)" : "var(--good)"}`,
+                  boxShadow: isCurrent ? "0 0 0 4px rgba(244,201,93,0.2)" : undefined,
                 }}
               />
               <h4 style={{ margin: "0 0 2px", fontSize: 14 }}>
-                {p.label}
-                {p.status === "active" && " — current"}
-                {p.status === "failed" && " — failed"}
+                {LANE_LABEL[e.lane]}
+                {isCurrent && " — current"}
               </h4>
-              {(p.enteredAt || p.leftAt) && (
-                <div className="sub">
-                  {p.enteredAt && `Entered ${fmt(p.enteredAt)}`}
-                  {p.leftAt && ` · left ${fmt(p.leftAt)}`}
-                </div>
-              )}
+              <div className="sub">
+                Entered {fmt(e.enteredAt)}
+                {e.leftAt && ` · left ${fmt(e.leftAt)}`}
+              </div>
             </div>
           );
         })}
+        {entries.length === 1 && entries[0]!.leftAt === undefined && (
+          <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
+            No history yet — task hasn't moved between lanes.
+          </div>
+        )}
       </div>
     </div>
   );
@@ -875,6 +868,96 @@ function ModelPicker({
 }
 
 /**
+ * Approval lane gate — only rendered when task.lane === "approval".
+ * Offers Approve (advance to next lane in workflow.lanes) and Request
+ * Changes (loop back to first lane, cycle++).
+ *
+ * PROPOSED integration: when `plannotator@claude-code-plugins` exposes
+ * an invocation surface, replace these manual buttons with "Open in
+ * plannotator" + read its approve/reject + annotation-feedback result.
+ * Today the buttons are a direct human gate on the lane transition.
+ */
+function ApprovalGate({ task }: { task: Task }): JSX.Element {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  // Lane progression uses the schema default lane order. The
+  // workflow-driven lane chips (per docs/UI-DESIGN.md) will replace this
+  // when the library-workflow runtime path lands.
+  const lanes = LANE_ORDER;
+  const currentIdx = lanes.indexOf(task.lane);
+  const nextLane: Lane | undefined = lanes[currentIdx + 1];
+  const firstLane: Lane = lanes[0] ?? "plan";
+
+  async function transition(next: Partial<Task>): Promise<void> {
+    if (!window.mc) { setError("Not connected"); return; }
+    setBusy(true);
+    setError("");
+    try {
+      await window.mc.saveTask({ ...task, ...next });
+      publish("tasks");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section
+      className="card"
+      style={{
+        background: "rgba(244,201,93,0.08)",
+        borderColor: "var(--warn)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ flex: 1 }}>
+          <h3 style={{ margin: 0 }}>⏸ Awaiting human approval</h3>
+          <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+            Review the planner's output and per-agent notes. Approve to
+            advance to <strong>{nextLane ?? "done"}</strong>, or request
+            changes to loop back to <strong>{firstLane}</strong> (cycle
+            {" "}{task.cycle + 1}).
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            className="button"
+            onClick={() => void transition({ lane: nextLane ?? "done" })}
+            disabled={busy}
+            title="Advance to the next lane in this workflow"
+          >
+            ✓ Approve
+          </button>
+          <button
+            className="button warn"
+            onClick={() =>
+              void transition({ lane: firstLane, cycle: task.cycle + 1 })
+            }
+            disabled={busy}
+            title="Loop back to the first lane with cycle+1"
+          >
+            ↺ Request changes
+          </button>
+        </div>
+      </div>
+      {error && (
+        <div
+          style={{
+            color: "var(--bad)",
+            fontSize: 12,
+            marginTop: 8,
+          }}
+        >
+          {error}
+        </div>
+      )}
+    </section>
+  );
+}
+
+/**
  * Mission card — renders the task's PROMPT.md. Not parsed as markdown
  * today (keeping the dep footprint minimal); shown as preformatted text
  * in a scrollable container. Empty/missing state is explicit so the
@@ -1077,7 +1160,7 @@ function RunStatusCard({
       <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
         <StatusPill label="Run state" value={task.runState} tone={task.runState === "running" ? "warn" : task.runState === "paused" ? "info" : "good"} />
         <StatusPill label="Cycle" value={String(task.cycle)} tone="info" />
-        <StatusPill label="Kind" value={task.kind} tone="info" />
+        <StatusPill label="Lane" value={task.lane} tone="info" />
       </div>
       <div style={{ marginTop: 10, display: "grid", gap: 6, fontSize: 13 }}>
         <div><strong>Current step:</strong> {summary.currentStep}</div>
@@ -1168,7 +1251,7 @@ function summarizeRunStatus(task: Task, events: TaskEvent[]): {
   lastTransition: string;
   recentEvents: string[];
 } {
-  let currentStep = "(none)";
+  let currentStep = task.currentStep || "(none)";
   let expected = 0;
   let completed = 0;
   let failed = 0;

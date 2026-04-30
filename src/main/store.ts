@@ -230,6 +230,8 @@ export class TaskStore extends EventEmitter {
      * only as part of the immutable id; not a separate task field.
      */
     workflow?: string;
+    /** Initial lane — defaults to "plan". */
+    lane?: Task["lane"];
     /** "single" (default) or "campaign". Campaigns carry an items list. */
     kind?: Task["kind"];
     items?: Task["items"];
@@ -241,6 +243,7 @@ export class TaskStore extends EventEmitter {
       title: input.title,
       description: input.description ?? "",
       project: input.projectId,
+      ...(input.lane ? { lane: input.lane } : {}),
       ...(input.kind ? { kind: input.kind } : {}),
       ...(input.items ? { items: input.items } : {}),
     });
@@ -269,7 +272,13 @@ export class TaskStore extends EventEmitter {
       "utf8",
     );
 
-    if (prior && prior.cycle !== validated.cycle) {
+    if (prior && prior.lane !== validated.lane) {
+      await this.appendEvent(validated.id, {
+        type: "lane-changed",
+        from: prior.lane,
+        to: validated.lane,
+      });
+    } else if (prior && prior.cycle !== validated.cycle) {
       await this.appendEvent(validated.id, {
         type: "cycle-changed",
         from: prior.cycle,

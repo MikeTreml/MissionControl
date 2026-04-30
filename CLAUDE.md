@@ -114,65 +114,79 @@ Then read the docs in this order:
 
 **Works end-to-end:**
 
-- Project + Task CRUD (persists to `<userData>/projects/` and `tasks/`,
-  git auto-detect on project paths, icon picker, immutable prefix)
-- All pages route, all hooks wired, demo defaults for empty state
+- CRUD on Projects (create/edit/delete, git auto-detect, icon picker)
+- Create + delete Tasks (persists to `<userData>/tasks/`)
+- Unified agent list (6 starter agents, drop-folder extensible)
+- Editable LLM roster with "Load defaults" button (ships Codex + Ollama stubs)
+- Workflow list (F-feature, X-brainstorm)
+- All pages route, all hooks wired
+- Demo defaults so fresh installs show something
 
 **Real + live:**
 
-- **Start has two paths:**
-  1. **Curated library workflow.** When a task's `RUN_CONFIG.json`
-     names a `libraryWorkflow.diskPath` (set by the Library page's Run
-     Workflow modal), `RunManager.startCuratedWorkflow` spawns
-     `babysitter harness:create-run --process <path> --harness pi --workspace <cwd> --runs-dir <cwd>/.a5c/runs --non-interactive --json` directly. Phase 1 (auto-gen) is skipped; the SDK loads the curated `workflow.js` and runs Phase 2 against the pi adapter. CLI JSON output is appended to the task journal as `bs:phase` / `bs:error` / `bs:log` events.
-  2. **Auto-gen fallback.** When no curated workflow is set, RunManager
-     fires `pi.session.prompt('/babysit <brief>')` (requires the
-     `@a5c-ai/babysitter-pi` extension installed at
-     `~/.pi/agent/extensions/`). Babysitter generates a fresh
-     `process.js` per task and drives the run.
+- **Start button runs a full babysitter-orchestrated pipeline.** Clicking
+  Start invokes `/babysit <task brief>` inside a pi session. Babysitter-pi
+  (installed via `pi install npm:@a5c-ai/babysitter-pi`) generates a
+  `process.js` per task and drives Planner → Developer → Reviewer →
+  Surgeon with loopbacks + mandatory stops. When babysitter's final
+  `agent_end` fires, the task flips to idle. Expect runs to take minutes
+  — babysitter is deliberately paced.
 - **Workspace cwd**: `project.path` when set (babysitter writes
   `.a5c/processes/` + `.a5c/runs/` there — add `.a5c/` to that project's
-  `.gitignore`); otherwise `<userData>/tasks/<id>/workspace/`.
+  `.gitignore`); otherwise use `<userData>/tasks/<id>/workspace/` per-task
+  scratch dir otherwise.
 - **Per-task files**: every task folder carries `PROMPT.md` (mission —
-  overwritten on each Start) and `STATUS.md` (append-only progress
-  log). Task Detail renders both as scrollable cards above the phase
-  timeline. "📁 Open folder" button reveals the folder in the OS file
-  explorer.
-- **Phase timeline (Task Detail)**: chip-style timeline driven by
-  `lib/derive-phases.ts`, which reads journal events. Curated runs
-  show `Phase 1`/`Phase 2`/etc. from the SDK CLI; legacy lane-changed
-  events serve as a fallback; brand-new tasks show a generic
-  `Draft → Active → Finished` skeleton based on `runState`.
+  overwritten on each Start with the current title/description) and
+  `STATUS.md` (append-only progress log, seeded at createTask, updated
+  by RunManager on each lifecycle transition — Started, Paused, Resumed,
+  Stopped, Run ended). Task Detail renders both as scrollable cards
+  above the lane timeline. "📁 Open folder" button reveals the task
+  folder in the OS file explorer.
+- **Approval lane gate**: when `task.lane === "approval"`, Task Detail
+  renders an amber banner with ✓ Approve / ↺ Request changes buttons.
+  Approve advances to the workflow's next lane (or "done"); request
+  changes loops back to the first lane and increments `cycle`.
+  PROPOSED integration: swap buttons for a plannotator launch when the
+  plugin exposes an invocation surface.
 - **Live events** (debounced): TaskStore emits → main forwards via
   `webContents.send` → `lib/live-events-bridge.ts` republishes to the
-  data-bus with a 400 ms leading+trailing debounce. RightBar renders
-  pi session events + curated `bs:*` CLI signals with type-specific
-  icons and one-line summaries.
+  data-bus with a 400 ms leading+trailing debounce (pi emits 20–50
+  events/sec during babysitter runs — raw republish was an IPC storm).
+  RightBar shows real pi events, suppressing `pi:message_update` and
+  `pi:tool_execution_update` streaming-token noise. RunHistory +
+  Metrics derive tokens/cost from the journal.
 - **Model picker** on Task Detail pulls from pi's `ModelRegistry` via
-  `pi:listModels` IPC. Empty value = pi default. Per-task; not bound
-  to any role.
+  `pi:listModels` IPC. Empty value = let pi use its default.
 - **Campaign task kind** end-to-end: kind selector + items textarea +
-  per-item runtime iteration. RunManager opens one session per item,
-  marks items done/failed/running as it progresses.
+  Campaign Items table with progress bar. **Runtime iteration is wired**
+  — RunManager dispatches single vs campaign on `task.kind`, opens one
+  pi session per item, marks items done/failed/running as it
+  progresses. Stop marks any running item failed; failed items don't
+  halt the campaign. Per-item /babysit prompt includes "item N of M"
+  context. State-machine fully smoke-tested.
+- **Per-workflow lanes**: `workflow.json` accepts optional `lanes[]`.
+  Settings → Workflows shows per-workflow lane sequence with
+  default/custom label. X-brainstorm uses `[plan, develop, done]`.
 - Pi inherits auth from the environment — `OPENAI_API_KEY` /
   `ANTHROPIC_API_KEY` in the shell, or `pi` CLI login populating
   `~/.pi/agent/auth.json`.
 
 **Not started:**
 
-- **Plannotator hand-off** — when plannotator exposes an invocation
-  surface, drive an approval workflow against journal `BREAKPOINT_OPENED`
-  events instead of the dropped manual gate.
+- **Plannotator hand-off** — current Approval gate is manual
+  buttons. When plannotator exposes an invocation surface, open it
+  pointed at the planner's artifact, consume approve/reject +
+  annotations as structured feedback.
 - **pi-memory-md wire-up** — per-project memory at `~/.pi/memory-md/<project>/`.
+  Agents gain memory tools automatically once set up.
+- **pi-superpowers role prompts** — swap hand-rolled `agents/<slug>/prompt.md`
+  for pi-superpowers skill references (brainstorming, planning, TDD,
+  code-review, etc.).
 - **Pause/Resume affecting pi** — currently MC-state only. pi's
   `session.steer()` / `session.followUp()` could interrupt mid-turn.
-- **Subagent spawn tracking** — surface `EFFECT_REQUESTED` /
-  `EFFECT_RESOLVED_OK` from `.a5c/runs/<runId>/journal/*.jsonl` as
-  first-class subagent rows in RightBar.
-- **Lane redesign** — Board still groups by run-state-derived bands
-  (Idle / Running / Waiting / Done / Failed). Phase chips on Task Detail
-  give the workflow-specific view; the kanban shell could be replaced
-  by a flat list grouped by state per the mockup.
+- **Subagent spawn tracking** — install pi-finder + pi-librarian; capture
+  `subagent_spawn` / `subagent_complete` events in RightBar as
+  first-class rows (per wireframe spec).
 
 ## Dep notes
 

@@ -167,8 +167,8 @@ function NeedsAttentionPanel({
     const blocker = (t.blocker ?? "").trim();
     if (t.status === "failed") {
       flagged.push({ task: t, reason: blocker || "failed", pill: "bad" });
-    } else if (t.status === "waiting") {
-      flagged.push({ task: t, reason: blocker || "awaiting input", pill: "warn" });
+    } else if (t.lane === "approval") {
+      flagged.push({ task: t, reason: blocker || "awaiting approval", pill: "warn" });
     } else if (t.runState === "paused") {
       flagged.push({ task: t, reason: blocker || "paused", pill: "warn" });
     } else if (blocker) {
@@ -275,10 +275,6 @@ function iconForEvent(type: string): string {
   if (type === "pi:tool_execution_end")                     return "✓";
   if (type === "interrupted")                               return "⚠";
   if (type === "blocker-changed")                           return "🚧";
-  // Curated-workflow CLI signals (spawned babysitter harness:create-run)
-  if (type === "bs:phase")                                  return "◇";
-  if (type === "bs:error")                                  return "✕";
-  if (type === "bs:log" || type === "bs:stdout" || type === "bs:stderr") return "·";
   return "";
 }
 
@@ -299,21 +295,6 @@ function iconForEvent(type: string): string {
  */
 function summarizePayload(event: TaskEvent): string {
   const record = event as unknown as Record<string, unknown>;
-
-  // Curated-workflow CLI events from RunManager.startCuratedWorkflow.
-  if (event.type === "bs:phase" || event.type === "bs:error") {
-    const phase = typeof record.phase === "string" ? `phase ${record.phase}` : "";
-    const status = typeof record.status === "string" ? ` · ${record.status}` : "";
-    const harness = typeof record.harness === "string" ? ` · ${record.harness}` : "";
-    const err = typeof record.error === "string" ? ` · ${record.error}` : "";
-    return `${phase}${status}${harness}${err}`.trim() || "(no detail)";
-  }
-  if (event.type === "bs:log" || event.type === "bs:stdout" || event.type === "bs:stderr") {
-    if (typeof record.line === "string") {
-      return record.line.length > 80 ? `${record.line.slice(0, 77)}…` : record.line;
-    }
-    if (typeof record.message === "string") return record.message;
-  }
 
   // Structural: lane + run events
   if (typeof record.from === "string" && typeof record.to === "string") {

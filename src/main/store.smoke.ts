@@ -28,6 +28,7 @@ async function main(): Promise<void> {
     projectPrefix: "DA",
   });
   assert(a.id === "DA-001F", `expected DA-001F, got ${a.id}`);
+  assert(a.lane === "plan", `new task should start in plan lane`);
   console.log(`[smoke] created ${a.id} (${a.title})`);
 
   const b = await store.createTask({
@@ -82,19 +83,21 @@ async function main(): Promise<void> {
   // ── save bumps updatedAt ────────────────────────────────────────────
   const before = got!.updatedAt;
   await new Promise((r) => setTimeout(r, 10)); // ensure timestamp changes
-  await store.saveTask({ ...got!, blocker: "test marker" });
+  await store.saveTask({ ...got!, lane: "develop", currentStep: "coding" });
   const after = await store.getTask("DA-001F");
-  assert(after!.blocker === "test marker", "blocker should be updated");
+  assert(after!.lane === "develop", "lane should be updated");
+  assert(after!.currentStep === "coding", "currentStep should be updated");
   assert(after!.updatedAt > before, "updatedAt should advance");
   console.log(`[smoke] saveTask updates + bumps updatedAt`);
 
   // ── event journal (events.jsonl) ────────────────────────────────────
   const events = await store.readEvents("DA-001F");
-  // DA-001F: 1 created event + 1 blocker-changed event (from the saveTask above)
+  // DA-001F: 1 created event + 1 lane-changed event (from the saveTask above)
   assert(events.length === 2, `expected 2 events, got ${events.length}`);
   assert(events[0]!.type === "created", `first event should be "created", got ${events[0]!.type}`);
-  assert(events[1]!.type === "blocker-changed", `second event should be "blocker-changed", got ${events[1]!.type}`);
-  assert((events[1] as Record<string, unknown>).to === "test marker", `blocker-changed to should be "test marker"`);
+  assert(events[1]!.type === "lane-changed", `second event should be "lane-changed", got ${events[1]!.type}`);
+  assert((events[1] as Record<string, unknown>).from === "plan", `lane-changed from should be "plan"`);
+  assert((events[1] as Record<string, unknown>).to === "develop", `lane-changed to should be "develop"`);
   console.log(`[smoke] events.jsonl journal: ${events.map((e) => e.type).join(" → ")}`);
 
   // Arbitrary caller can append events (pi runtime will use this later)

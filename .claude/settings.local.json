@@ -4,17 +4,7 @@
       "Bash(npx -y @a5c-ai/babysitter-sdk@0.0.187 harness:call --harness claude-code --prompt \"implement user authentication with TDD\")",
       "Bash(npm view *)",
       "Bash(npx -y -p @a5c-ai/babysitter-sdk@0.0.187 babysitter harness:call --harness claude-code --prompt \"implement user authentication with TDD\")",
-      "Bash(npx -y -p @a5c-ai/babysitter-sdk@0.0.187 babysitter harness:call --help)",
-      "Bash(git commit -m ' *)",
-      "Bash(gh auth *)"
-    ],
-    "additionalDirectories": [
-      "C:\\Users\\Treml\\source\\repos\\babysitter\\scripts",
-      "C:\\Users\\Treml\\source\\repos\\babysitter\\docs",
-      "C:\\Users\\Treml\\source\\repos\\babysitter\\e2e-artifacts",
-      "C:\\Users\\Treml\\source\\repos\\babysitter\\e2e-tests",
-      "C:\\Users\\Treml\\source\\repos\\babysitter\\packages",
-      "C:\\Users\\Treml\\source\\repos\\babysitter\\plugins"
+      "Bash(npx -y -p @a5c-ai/babysitter-sdk@0.0.187 babysitter harness:call --help)"
     ]
   }
 }
