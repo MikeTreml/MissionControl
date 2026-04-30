@@ -876,9 +876,10 @@ function stepKey(stepId: string, cycle: number): string {
 /**
  * Build the `/babysit` prompt — a short task brief that babysitter-pi's
  * skill ingests and turns into an orchestrated multi-agent run
- * (Planner → Developer → Reviewer → Surgeon, with loopbacks and
- * mandatory stops). Babysitter generates its own process.js from this
- * brief and writes it to `.a5c/processes/` in the session's cwd.
+ * (workflow-defined, not a fixed roster — the babysitter SDK generates
+ * a process.js per task that may include any library agents and the
+ * shape of loopbacks / mandatory stops they declare). The generated
+ * process.js lands in `.a5c/processes/` in the session's cwd.
  *
  * Kept concise: babysitter reads `tasks/<id>/PROMPT.md` (written by
  * RunManager.start via writePromptFile) for the full mission, so we
