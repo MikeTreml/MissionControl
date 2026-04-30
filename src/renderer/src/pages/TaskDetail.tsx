@@ -138,6 +138,7 @@ export function TaskDetail(): JSX.Element {
       <div className="content">
         <Controls task={task} />
         <PhaseChipStrip task={task} events={events} />
+        {!isDemo && <RunMetadataChips task={task} events={events} />}
         {!isDemo && <PendingEffectsPanel task={task} events={events} />}
         {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
 
@@ -235,6 +236,87 @@ function buildRerunPreload(
   }
 
   return preload;
+}
+
+/**
+ * Run-metadata chips — surfaces SDK-authoritative facts about the
+ * latest run: iteration count (#21) and completionProof token (#19).
+ *
+ * - Iteration count comes from the SDK state cache via
+ *   `babysitter run:status --json` (parsed into `runStatus` IPC).
+ *   We accept either `iterationCount` or `stateVersion` as the field
+ *   name since the SDK shape isn't fully nailed down (and either
+ *   gives us the same monotonically-increasing number).
+ * - completionProof is the unforgeable "this run finished" token the
+ *   SDK generates per run. When present, we render a "✓ verified
+ *   done" chip — distinct from the journal's `bs:phase finished`
+ *   signal because the proof can't be forged by hand-editing the
+ *   journal.
+ *
+ * Both are best-effort: if the SDK CLI is unreachable or the run
+ * hasn't started yet, we render nothing. The component re-fetches
+ * when the events stream length changes (live-events bridge tick),
+ * so values update as the run progresses.
+ */
+function RunMetadataChips({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const [iteration, setIteration] = useState<number | null>(null);
+  const [completionProof, setCompletionProof] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!window.mc?.runStatus) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await window.mc.runStatus(task.id);
+        if (cancelled || !res || typeof res !== "object") return;
+        const obj = res as Record<string, unknown>;
+        const iter =
+          typeof obj["iterationCount"] === "number" ? (obj["iterationCount"] as number)
+          : typeof obj["stateVersion"] === "number" ? (obj["stateVersion"] as number)
+          : null;
+        const proof = typeof obj["completionProof"] === "string"
+          ? (obj["completionProof"] as string)
+          : null;
+        setIteration(iter);
+        setCompletionProof(proof);
+      } catch {
+        // CLI unreachable / no run yet — leave both null and render nothing
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [task.id, events.length]);
+
+  if (iteration === null && !completionProof) return null;
+
+  return (
+    <div
+      className="muted"
+      style={{
+        display: "flex",
+        gap: 12,
+        marginTop: -4,
+        fontSize: 11,
+        alignItems: "center",
+      }}
+    >
+      {iteration !== null && (
+        <span title="SDK state cache reports this many iterations have completed">
+          Iteration {iteration}
+        </span>
+      )}
+      {completionProof && (
+        <span
+          title={`completionProof: ${completionProof}`}
+          style={{
+            color: "var(--good)",
+            fontWeight: 500,
+          }}
+        >
+          ✓ verified done
+        </span>
+      )}
+    </div>
+  );
 }
 
 /**
