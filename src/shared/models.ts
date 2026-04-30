@@ -180,153 +180,6 @@ export const KpiSchema = z.object({
 });
 export type Kpi = z.infer<typeof KpiSchema>;
 
-/** Structured threshold a step's output should satisfy. */
-export const QualityGateSchema = z.object({
-  field: z.string().min(1),
-  minimum: z.number().optional(),
-  equals: z.union([z.string(), z.number(), z.boolean()]).optional(),
-  maximum: z.number().optional(),
-});
-export type QualityGate = z.infer<typeof QualityGateSchema>;
-
-/** Step failure policy. Runtime behavior lands incrementally later. */
-export const StepOnFailSchema = z.object({
-  action: z.enum(["loopBackTo", "escalate", "abort"]),
-  target: z.string().optional(),
-  maxCycles: z.number().int().min(1).default(3),
-});
-export type StepOnFail = z.infer<typeof StepOnFailSchema>;
-
-/** One workflow step template. */
-export const WorkflowStepSchema = z.object({
-  id: z.string().min(1),
-  agent: z.string().min(1),
-  lane: LaneSchema.optional(),
-  outputCode: z.string().min(1).max(4).regex(/^[a-z0-9]+$/, "outputCode must be lowercase alphanumeric, 1-4 chars"),
-  parallel: z.boolean().default(false),
-  modelOverride: z.string().nullable().default(null),
-  breakpoint: z.boolean().default(false),
-  breakpointReason: z.string().optional(),
-  qualityGate: QualityGateSchema.optional(),
-  onFail: StepOnFailSchema.optional(),
-  runWhen: z.string().optional(),
-});
-export type WorkflowStep = z.infer<typeof WorkflowStepSchema>;
-
-/** Workflow-level babysitter defaults; per-run overrides merge onto this. */
-export const WorkflowBabysitterSchema = z.object({
-  targetQuality: z.number().min(0).max(100).default(80),
-  maxIterations: z.number().int().min(1).max(10).default(3),
-  mode: z.enum(["sequential", "parallel", "pipeline"]).default("sequential"),
-  logLevel: z.enum(["info", "debug", "error"]).default("info"),
-  stopOnFirstFailure: z.boolean().default(false),
-});
-export type WorkflowBabysitter = z.infer<typeof WorkflowBabysitterSchema>;
-
-/** Campaign-specific defaults for workflows that iterate task.items[]. */
-export const WorkflowCampaignSchema = z.object({
-  iteratesItems: z.boolean().default(false),
-  perItemMode: z.enum(["sequential", "parallel"]).default("sequential"),
-});
-export type WorkflowCampaign = z.infer<typeof WorkflowCampaignSchema>;
-
-/**
- * A workflow — how a task moves through the board. Declared by workflow.json
- * under <root>/workflows/<CODE>-<slug>/workflow.json.
- *
- * `lanes` is an optional subset of LaneSchema values that this workflow
- * uses, in order. Omit to use the full LANE_ORDER. X-brainstorm, for
- * example, might only use ["plan", "develop", "done"] since it doesn't
- * need review/surgery/approval gates.
- */
-export const WorkflowSchema = z.object({
-  code: WorkflowLetterSchema,                  // "F"
-  name: z.string().min(1),                     // "Feature"
-  description: z.string().default(""),
-  lanes: z.array(LaneSchema).optional(),
-  steps: z.array(WorkflowStepSchema).default([]),
-  babysitter: WorkflowBabysitterSchema.default({}),
-  humanGates: z.array(z.string().min(1)).default([]),
-  campaign: WorkflowCampaignSchema.default({}),
-});
-export type Workflow = z.infer<typeof WorkflowSchema>;
-
-/**
- * Resolve the lanes a workflow actually uses. Returns the workflow's
- * `lanes` if set, otherwise uses the project-wide LANE_ORDER.
- */
-export function effectiveLanes(workflow: Workflow | undefined): readonly Lane[] {
-  if (workflow?.lanes && workflow.lanes.length > 0) return workflow.lanes;
-  return LANE_ORDER;
-}
-
-/** Merge one run's overrides onto a workflow template without mutating either. */
-export function mergeRunSettings(
-  workflow: Workflow,
-  overrides: {
-    babysitter?: Partial<WorkflowBabysitter>;
-    humanGates?: string[];
-    campaign?: Partial<WorkflowCampaign>;
-  },
-): Workflow {
-  return WorkflowSchema.parse({
-    ...workflow,
-    ...(overrides.humanGates ? { humanGates: overrides.humanGates } : {}),
-    babysitter: { ...workflow.babysitter, ...(overrides.babysitter ?? {}) },
-    campaign: { ...workflow.campaign, ...(overrides.campaign ?? {}) },
-  });
-}
-
-/**
- * Permission scope for an agent. Intentionally open-ended (.passthrough) —
- * the runtime interprets fields it knows about and ignores the rest, so this
- * can grow without a schema migration.
- *
- *   inherit      = start from parent's access, then apply further restrictions
- *   readonly     = no writes (overrides inherit)
- *   allowedPaths = restrict file access to these paths/globs
- */
-export const AgentPermissionSchema = z
-  .object({
-    inherit: z.boolean().default(true),
-    readonly: z.boolean().default(false),
-    allowedPaths: z.array(z.string()).default([]),
-  })
-  .passthrough();
-export type AgentPermission = z.infer<typeof AgentPermissionSchema>;
-
-/**
- * An agent. One folder per agent at `agents/<slug>/agent.json`.
- *
- * The `code` distinguishes primary role (1 char) from subagent (2-4 chars).
- * This is how `DA-015F-p` (planner) and `DA-015F-rmp` (RepoMapper) are both
- * expressible in the same naming convention.
- *
- * `primaryModel` stores the preferred pi model spec for this agent, usually in
- * `provider:modelId` form. The old `role-config.json` is gone — every agent
- * declares its own model directly.
- */
-export const AgentSchema = z.object({
-  slug: z.string().min(1),                     // folder slug, e.g. "python-dev" or "repomapper"
-  name: z.string().min(1),                     // specific display name, e.g. "Python Dev" or "X++ Reviewer"
-  /**
-   * Soft category / role this agent plays. Multiple agents can share a title
-   * (e.g. "Developer" covers both "Python Dev" and "C# Dev"; "Reviewer" covers
-   * both generic and "Best-practice X++ reviewer"). Title groups agents in the
-   * UI but isn't enforced — empty is fine.
-   */
-  title: z.string().default(""),
-  code: z.string().min(1).max(4)
-    .regex(/^[a-z0-9]+$/, "code must be lowercase alphanumeric, 1-4 chars"),
-  description: z.string().default(""),
-  enabled: z.boolean().default(true),          // false = installed but inactive in MC UI/runtime
-  primaryModel: z.string().default(""),        // preferred pi model spec, e.g. "anthropic:claude-opus-4-7"
-  permissions: AgentPermissionSchema.default({}),
-  // Optional prompt file inside the agent folder — e.g. "prompt.md".
-  promptFile: z.string().default("prompt.md"),
-});
-export type Agent = z.infer<typeof AgentSchema>;
-
 /**
  * One agent session run, persisted under `tasks/<id>/runs/<runId>.json`.
  *
@@ -393,10 +246,6 @@ export const MCSettingsSchema = z.object({
   babysitterMode: z.enum(["plan", "execute", "direct"]).default("plan"),
   // Max number of tasks MC should actively run at once.
   runConcurrencyCap: z.number().int().min(1).max(50).default(10),
-  // Per-agent UI/runtime overrides layered on top of bundled agent.json.
-  // Lets MC activate/deactivate agents and tweak display/model metadata
-  // without editing shipped files in place.
-  agentOverrides: z.record(z.string(), AgentSchema.partial()).default({}),
 }).passthrough();
 export type MCSettings = z.infer<typeof MCSettingsSchema>;
 
@@ -474,12 +323,3 @@ export const StepEndEventSchema = TaskEventSchema.extend({
 });
 export type StepEndEvent = z.infer<typeof StepEndEventSchema>;
 
-/** True if an agent is a primary role (1-char code), false if subagent. */
-export function isPrimaryAgent(agent: Pick<Agent, "code">): boolean {
-  return agent.code.length === 1;
-}
-
-/** True if an agent participates in MC UI/runtime flows. */
-export function isEnabledAgent(agent: Pick<Agent, "enabled">): boolean {
-  return agent.enabled !== false;
-}

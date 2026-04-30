@@ -19,7 +19,7 @@ import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
-import { effectiveLanes } from "../../../shared/models";
+import { LANE_ORDER } from "../../../shared/models";
 import type { Lane, LaneHistoryEntry, Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
 
@@ -886,7 +886,7 @@ function ApprovalGate({ task }: { task: Task }): JSX.Element {
   // Lane progression uses the schema default lane order. The
   // workflow-driven lane chips (per docs/UI-DESIGN.md) will replace this
   // when the library-workflow runtime path lands.
-  const lanes = effectiveLanes(undefined);
+  const lanes = LANE_ORDER;
   const currentIdx = lanes.indexOf(task.lane);
   const nextLane: Lane | undefined = lanes[currentIdx + 1];
   const firstLane: Lane = lanes[0] ?? "plan";

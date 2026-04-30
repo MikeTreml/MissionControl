@@ -26,7 +26,7 @@ import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { SettingsStore } from "./settings-store.ts";
 import { renderPromptFile } from "./render-prompt.ts";
 import { writeLatestRunMetricsArtifact } from "./run-cost-tracker.ts";
-import { AgentSchema, isPrimaryAgent, type Agent, type CampaignItem, type MCSettings, type RunState, type Task } from "../shared/models.ts";
+import type { CampaignItem, MCSettings, RunState, Task } from "../shared/models.ts";
 
 export type StopReason = "user" | "completed" | "failed";
 
@@ -108,15 +108,14 @@ export class RunManager {
 
   /** Single-task path: one /babysit run, agent_end flips task to idle. */
   private async startSingle(task: Task, input: { agentSlug?: string; model?: string }): Promise<Task> {
-    const agents = await this.loadEffectiveAgents();
-    const chosenAgent = pickStartAgent(input.agentSlug ?? task.currentAgentSlug, agents);
+    const chosenAgent = input.agentSlug ?? task.currentAgentSlug ?? null;
     if (this.pi) {
       const cwd = await this.resolveCwd(task);
       const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
       await this.tasks.writePromptFile(task.id, renderPromptFile(task, chosenAgent));
       const beforeRuns = await snapshotBabysitterRuns(cwd);
       await this.pi.start(task.id, {
-        prompt: buildBabysitPrompt(task, chosenAgent, mode, agents),
+        prompt: buildBabysitPrompt(task, chosenAgent, mode),
         cwd,
         ...(input.model ? { model: input.model } : {}),
       });
@@ -145,8 +144,7 @@ export class RunManager {
    * runState="running" across the whole campaign.
    */
   private async startCampaign(task: Task, input: { agentSlug?: string; model?: string }): Promise<Task> {
-    const agents = await this.loadEffectiveAgents();
-    const chosenAgent = pickStartAgent(input.agentSlug ?? task.currentAgentSlug, agents);
+    const chosenAgent = input.agentSlug ?? task.currentAgentSlug ?? null;
     const pendingIdx = task.items.findIndex((i) => i.status === "pending");
     if (pendingIdx === -1) {
       // Nothing to do — flip to idle so the UI doesn't get stuck.
@@ -182,13 +180,12 @@ export class RunManager {
     const cwd = await this.resolveCwd(task);
     const m = model ?? this.activeModel.get(task.id);
     const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
-    const agents = await this.loadEffectiveAgents();
-    const agentSlug = pickStartAgent(task.currentAgentSlug, agents);
+    const agentSlug = task.currentAgentSlug ?? null;
     await this.tasks.writePromptFile(task.id, renderPromptFile(task, agentSlug));
     await this.tasks.appendEvent(task.id, { type: "item-started", itemId: item.id });
     await this.tasks.appendStatus(task.id, `Item ${item.id} started — cycle ${task.cycle} · ${item.description}`);
     await this.pi.start(task.id, {
-      prompt: buildItemBabysitPrompt(task, item, mode, agents),
+      prompt: buildItemBabysitPrompt(task, item, mode),
       cwd,
       ...(m ? { model: m } : {}),
     });
@@ -531,13 +528,6 @@ export class RunManager {
     return task;
   }
 
-  private async loadEffectiveAgents(): Promise<Agent[]> {
-    // Legacy: returned the merged agent roster from agents/ + settings overrides.
-    // The roster is dead — runtime agents are now defined inline per task in
-    // workflow.js files. Returns [] to keep callers compiling until they're
-    // rewritten against the library-workflow path.
-    return [];
-  }
 
   /**
    * Resolve workspace cwd. Prefer project.path when set so pi can see
@@ -615,7 +605,6 @@ function buildBabysitPrompt(
   task: Task,
   agentSlug: string | null,
   mode: MCSettings["babysitterMode"] = "plan",
-  agents: Agent[] = [],
 ): string {
   // Per babysitter-pi's skill files (read 2026-04-26):
   //   /plan    — author process.js, do NOT execute it
@@ -648,7 +637,7 @@ function buildBabysitPrompt(
     `task-id + agent-code suffix convention so Mission Control's UI can`,
     `link them automatically:`,
     "",
-    ...artifactExampleLines(task.id, task.cycle, agents),
+    ...artifactExampleLines(task.id, task.cycle),
     "",
     `Babysitter's own scaffolding (process.js, run journals) can stay`,
     `under .a5c/ — that's expected. The convention applies to per-agent`,
@@ -667,7 +656,6 @@ function buildItemBabysitPrompt(
   task: Task,
   item: CampaignItem,
   mode: MCSettings["babysitterMode"] = "plan",
-  agents: Agent[] = [],
 ): string {
   const prefix =
     mode === "execute" ? "/yolo " :
@@ -685,26 +673,17 @@ function buildItemBabysitPrompt(
     `Campaign workflow: ${task.workflow}`,
     `Item index: ${idx + 1} of ${total}`,
     "",
-    ...artifactExampleLines(task.id, task.cycle, agents),
+    ...artifactExampleLines(task.id, task.cycle),
     "",
     "Process this single item. When done, summarize what you produced.",
     "The orchestrator iterates the remaining items after this one ends.",
   ].join("\n");
 }
 
-function artifactExampleLines(taskId: string, cycle: number, agents: Agent[]): string[] {
-  const primaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
-  if (primaries.length === 0) {
-    return ["  - Per-agent output → <task-id>-<1-char primary code>-c<cycle>.md"];
-  }
-  const lines = primaries.map((agent) => `  - ${agent.name} output  → ${taskId}-${agent.code}-c${cycle}.md`);
-  lines.push("  - Subagent output   → <task-id>-<2-4 char code>-c<cycle>.md");
-  return lines;
-}
-
-function pickStartAgent(requestedSlug: string | null | undefined, agents: Agent[]): string | null {
-  const enabledPrimaries = agents.filter((a) => isPrimaryAgent(a) && a.enabled !== false);
-  if (requestedSlug && enabledPrimaries.some((a) => a.slug === requestedSlug)) return requestedSlug;
-  return enabledPrimaries[0]?.slug ?? requestedSlug ?? null;
+function artifactExampleLines(_taskId: string, _cycle: number): string[] {
+  return [
+    "  - Per-agent output → <task-id>-<agent-code>-c<cycle>.md",
+    "  - Subagent output  → <task-id>-<2-4 char code>-c<cycle>.md",
+  ];
 }
 
