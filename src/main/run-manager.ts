@@ -195,11 +195,26 @@ export class RunManager {
       for (const raw of text.split(/\r?\n/)) {
         const line = raw.trim();
         if (!line) continue;
-        let parsed: unknown = null;
-        try { parsed = JSON.parse(line); } catch { /* not JSON */ }
+        let parsed: Record<string, unknown> | null = null;
+        try {
+          const obj = JSON.parse(line);
+          if (obj && typeof obj === "object") parsed = obj as Record<string, unknown>;
+        } catch { /* not JSON */ }
+        // Classify so RightBar / Live events can render decently:
+        //   bs:phase   — CLI progress markers ({phase, status, ...})
+        //   bs:error   — phase status === failed
+        //   bs:log     — anything else (raw text or unstructured JSON)
+        let type = `bs:${stream}`;
+        if (parsed) {
+          if (typeof parsed.phase === "string") {
+            type = parsed.status === "failed" ? "bs:error" : "bs:phase";
+          } else {
+            type = "bs:log";
+          }
+        }
         void this.tasks.appendEvent(task.id, {
-          type: parsed && typeof parsed === "object" ? "bs:event" : `bs:${stream}`,
-          ...(parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : { line }),
+          type,
+          ...(parsed ?? { line }),
         });
       }
     };
