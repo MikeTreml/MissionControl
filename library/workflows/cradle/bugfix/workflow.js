@@ -19,7 +19,7 @@
  */
 
 import { defineTask } from '@a5c-ai/babysitter-sdk';
-import { rootCauseDiagnosisTask, diagnosisBreakpointQuestion } from '../methodologies/shared/root-cause-diagnosis.js';
+import { rootCauseDiagnosisTask, diagnosisBreakpointQuestion } from '../../../methodologies/shared/workflows/root-cause-diagnosis.js';
 
 export async function process(inputs, ctx) {
   const {

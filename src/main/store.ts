@@ -23,7 +23,6 @@ import path from "node:path";
 
 import {
   makeTask,
-  taskFile,
   TaskSchema,
   type Task,
   type TaskEvent,

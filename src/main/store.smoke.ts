@@ -12,7 +12,6 @@ import { existsSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { taskFile } from "../shared/models.ts";
 import { TaskStore } from "./store.ts";
 
 async function main(): Promise<void> {
@@ -111,13 +110,6 @@ async function main(): Promise<void> {
   assert(grown[2]!.type === "run-started", `third event should be "run-started"`);
   console.log(`[smoke] appendEvent works for arbitrary event types`);
 
-  // ── taskFile helper (naming convention) ─────────────────────────────
-  assert(taskFile("DA-015F") === "DA-015F", "base file should equal task id");
-  assert(taskFile("DA-015F", "p") === "DA-015F-p", "legacy planner suffix");
-  assert(taskFile("DA-015F", "p", 1) === "DA-015F-p-c1", "planner cycle suffix");
-  assert(taskFile("DA-015F", "rmp", 2) === "DA-015F-rmp-c2", "subagent cycle suffix");
-  console.log(`[smoke] taskFile helper OK`);
-
   // ── RUN_CONFIG.json sidecar ──────────────────────────────────────────
   await store.writeRunConfig("DA-001F", {
     kind: "library-workflow-run",
@@ -213,21 +205,22 @@ async function main(): Promise<void> {
   console.log(`[smoke] folderFor OK`);
 
   // readTaskFile resolves latest cycle when present and otherwise falls back
-  // to the legacy non-cycled artifact naming.
-  const plannerStem = taskFile("DA-001F", "p");
+  // to the non-cycled artifact naming. (File names are produced by callers —
+  // store.ts itself doesn't know about agent codes.)
+  const plannerStem = "DA-001F-p";
   const plannerOutput = await store.readTaskFile("DA-001F", plannerStem);
   assert(plannerOutput === null, `readTaskFile returns null for not-yet-produced artifact`);
-  await fs.writeFile(path.join(folder, `${taskFile("DA-001F", "p", 1)}.md`), "cycle 1", "utf8");
-  await fs.writeFile(path.join(folder, `${taskFile("DA-001F", "p", 2)}.md`), "cycle 2", "utf8");
+  await fs.writeFile(path.join(folder, `DA-001F-p-c1.md`), "cycle 1", "utf8");
+  await fs.writeFile(path.join(folder, `DA-001F-p-c2.md`), "cycle 2", "utf8");
   const latestPlanner = await store.readTaskFile("DA-001F", plannerStem);
   assert(latestPlanner === "cycle 2", `readTaskFile resolves latest cycle by default`);
   const cycle1Planner = await store.readTaskFile("DA-001F", plannerStem, { cycle: 1 });
   assert(cycle1Planner === "cycle 1", `readTaskFile resolves explicit cycle`);
   const plannerCycles = await store.listTaskFileCycles("DA-001F", plannerStem);
   assert(plannerCycles.join(",") === "1,2", `listTaskFileCycles returns discovered cycles`);
-  await fs.writeFile(path.join(folder, `${taskFile("DA-001F", "d")}.md`), "legacy dev", "utf8");
-  const legacyDev = await store.readTaskFile("DA-001F", taskFile("DA-001F", "d"));
-  assert(legacyDev === "legacy dev", `legacy non-cycled artifact still resolves`);
+  await fs.writeFile(path.join(folder, `DA-001F-d.md`), "legacy dev", "utf8");
+  const legacyDev = await store.readTaskFile("DA-001F", "DA-001F-d");
+  assert(legacyDev === "legacy dev", `non-cycled artifact still resolves`);
   console.log(`[smoke] readTaskFile cycle resolution OK`);
 
   // ── crash recovery: reconcileInterruptedRuns ───────────────────────
