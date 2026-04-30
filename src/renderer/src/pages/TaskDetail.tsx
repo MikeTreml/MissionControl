@@ -18,8 +18,10 @@ import { publish, useSubscribe } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
 import { derivePhases } from "../lib/derive-phases";
 import { derivePendingBreakpoint } from "../lib/derive-pending-breakpoint";
+import { deriveSubagents, type SubagentEntry } from "../lib/derive-subagents";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
+import { ChangeWorkflowModal } from "../components/ChangeWorkflowModal";
 import { PageStub } from "./PageStub";
 import type { Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
@@ -29,6 +31,7 @@ export function TaskDetail(): JSX.Element {
   const { task, events, prompt, status, runConfig, latestMetrics, metricsFileName, isDemo } = useTask(selectedTaskId);
   const pendingAsks = usePendingAsks(selectedTaskId);
   const [editOpen, setEditOpen] = useState(false);
+  const [workflowOpen, setWorkflowOpen] = useState(false);
 
   if (!task) {
     return (
@@ -65,6 +68,15 @@ export function TaskDetail(): JSX.Element {
           {!isDemo && (
             <button
               className="button ghost"
+              title="Re-assign or clear the curated library workflow used on the next Start"
+              onClick={() => setWorkflowOpen(true)}
+            >
+              Workflow…
+            </button>
+          )}
+          {!isDemo && (
+            <button
+              className="button ghost"
               title="Open the task's folder in your OS file explorer"
               onClick={() => { void window.mc?.openTaskFolder(task.id); }}
             >
@@ -80,6 +92,14 @@ export function TaskDetail(): JSX.Element {
         <EditTaskForm
           open={editOpen}
           onClose={() => setEditOpen(false)}
+          task={task}
+        />
+      )}
+
+      {!isDemo && (
+        <ChangeWorkflowModal
+          open={workflowOpen}
+          onClose={() => setWorkflowOpen(false)}
           task={task}
         />
       )}
@@ -111,6 +131,8 @@ export function TaskDetail(): JSX.Element {
         </section>
 
         {task.kind === "campaign" && <CampaignItems task={task} />}
+
+        <SubagentsPanel events={events} />
 
         <RunHistory events={events} />
 
@@ -547,6 +569,82 @@ function BreakpointApprovalCard({ task, events }: { task: Task; events: TaskEven
  * is `queued → plan → approval ● → build → verify` with the active chip
  * highlighted and a `cycle 1 · 12m` summary on the right side.
  */
+/**
+ * Active subagents panel — flat list of every effect_requested /
+ * pi:subagent_spawn the journal has surfaced. Running rows float to
+ * the top with a pulsing dot; completed/failed rows show duration.
+ * Hidden when there are no subagent rows at all.
+ */
+function SubagentsPanel({ events }: { events: TaskEvent[] }): JSX.Element | null {
+  const rows = deriveSubagents(events);
+  if (rows.length === 0) return null;
+  const running = rows.filter((r) => r.status === "running");
+  return (
+    <section className="card">
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+        <h3 style={{ margin: 0 }}>Subagents</h3>
+        <span className="muted" style={{ fontSize: 12 }}>
+          {running.length > 0 ? `${running.length} running · ` : ""}
+          {rows.length} total
+        </span>
+      </div>
+      <div style={{ display: "grid", gap: 6 }}>
+        {rows.slice(0, 25).map((r) => (
+          <SubagentEntryRow key={r.id} entry={r} />
+        ))}
+        {rows.length > 25 && (
+          <div className="muted" style={{ fontSize: 11, padding: "4px 2px" }}>
+            …{rows.length - 25} more in the journal
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function SubagentEntryRow({ entry }: { entry: SubagentEntry }): JSX.Element {
+  const tone =
+    entry.status === "failed" ? "var(--bad)" :
+    entry.status === "completed" ? "var(--good)" :
+    "var(--warn)";
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        padding: "8px 10px",
+        border: "1px solid var(--border)",
+        borderRadius: 8,
+        background: "var(--panel-2)",
+      }}
+    >
+      <span
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          background: tone,
+          ...(entry.status === "running"
+            ? { animation: "mc-pulse 1.4s ease-in-out infinite" }
+            : {}),
+          flex: "0 0 auto",
+        }}
+        aria-label={entry.status}
+      />
+      <strong style={{ fontSize: 13 }}>{entry.label}</strong>
+      {entry.subtitle && (
+        <span className="muted" style={{ fontSize: 12 }}>{entry.subtitle}</span>
+      )}
+      <span className="muted" style={{ fontSize: 11, marginLeft: "auto" }}>
+        {entry.source === "sdk" ? "SDK" : "pi"}
+        {entry.durationMs !== null && ` · ${(entry.durationMs / 1000).toFixed(1)}s`}
+        {entry.status !== "running" && ` · ${entry.status}`}
+      </span>
+    </div>
+  );
+}
+
 function PhaseChipStrip({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
   const { phases, current, source } = derivePhases(task, events);
   if (phases.length === 0) return null;
