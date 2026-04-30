@@ -13,9 +13,33 @@ import type { UiTask } from "../hooks/useTasks";
 import { shortModelLabel } from "../lib/derive-runs";
 import { useRoute } from "../router";
 
+/**
+ * "idle 3h" / "idle 2d" muted line shown for tasks that haven't been
+ * touched recently and aren't actively running. Hidden when idle < 1h
+ * (too noisy) and for tasks in terminal stages (Complete / Failed) or
+ * archived. Anything < 1d shows hours; anything ≥ 1d shows days.
+ */
+function formatIdleSince(updatedAt: string): string | null {
+  const ms = Date.now() - new Date(updatedAt).getTime();
+  if (!Number.isFinite(ms) || ms < 0) return null;
+  const hours = ms / 3_600_000;
+  if (hours < 1) return null;
+  if (hours < 24) return `idle ${Math.round(hours)}h`;
+  return `idle ${Math.round(hours / 24)}d`;
+}
+
 export function TaskCard({ task }: { task: UiTask }): JSX.Element {
   const { openTask } = useRoute();
   const modelLabel = shortModelLabel(task.currentModel);
+  // Only show the idle indicator for tasks where it's actionable —
+  // running tasks have their own "active" affordance, terminal stages
+  // don't need an idle clock, and archived tasks are out of view.
+  const showIdle =
+    task.boardStage !== "Complete" &&
+    task.boardStage !== "Failed" &&
+    task.boardStage !== "Archived" &&
+    task.runState !== "running";
+  const idleLabel = showIdle ? formatIdleSince(task.updatedAt) : null;
   return (
     <div
       className={task.active ? "task active" : "task"}
@@ -51,6 +75,15 @@ export function TaskCard({ task }: { task: UiTask }): JSX.Element {
           title={`Model: ${task.currentModel}`}
         >
           Model: {modelLabel}
+        </div>
+      )}
+      {idleLabel && (
+        <div
+          className="muted"
+          style={{ fontSize: 11, marginTop: 2 }}
+          title={`Last updated ${new Date(task.updatedAt).toLocaleString()}`}
+        >
+          {idleLabel}
         </div>
       )}
     </div>

@@ -157,6 +157,24 @@ export function ProjectDetail(): JSX.Element {
       </div>
 
       <div className="content">
+        {projectTasks.length === 0 && !isDemo && (
+          <section
+            className="card"
+            style={{
+              border: "1px dashed var(--border)",
+              background: "var(--panel-2)",
+              display: "grid",
+              gap: 6,
+            }}
+          >
+            <div style={{ fontWeight: 500 }}>No tasks for this project yet.</div>
+            <div className="muted" style={{ fontSize: 12 }}>
+              Use the <strong>+ Create Task</strong> button in the topbar to add
+              one — pick this project from the picker so it lands here.
+            </div>
+          </section>
+        )}
+
         <section className="card-grid">
           <Kpi label="Tasks total" value={stats.total} />
           <Kpi label="Active" value={stats.active} />

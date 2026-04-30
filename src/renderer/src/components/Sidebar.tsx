@@ -114,8 +114,25 @@ export function Sidebar(): JSX.Element {
           />
         ))}
         {projects.length === 0 && !isDemo && (
-          <div className="muted" style={{ fontSize: 12, padding: "6px 2px" }}>
-            No projects yet.
+          <div
+            style={{
+              fontSize: 12,
+              padding: "10px",
+              border: "1px dashed var(--border)",
+              borderRadius: 8,
+              background: "var(--panel-2)",
+              display: "grid",
+              gap: 6,
+            }}
+          >
+            <div className="muted">No projects yet.</div>
+            <button
+              className="button ghost"
+              onClick={() => setAddProjectOpen(true)}
+              style={{ fontSize: 12, padding: "4px 8px", justifySelf: "start" }}
+            >
+              + Add your first project
+            </button>
           </div>
         )}
       </div>
