@@ -8,7 +8,7 @@
  * Controls are UI-only today. When pi is wired (baby step 14+), onClick
  * handlers call window.mc.startRun() etc.
  */
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import { useRoute } from "../router";
 import { useTask } from "../hooks/useTask";
@@ -100,23 +100,25 @@ export function TaskDetail(): JSX.Element {
           {!isDemo && (
             <button
               className="button ghost"
-              title="Spin off a doctor task — diagnose why this task is stuck without modifying it"
-              onClick={() => setDoctorOpen(true)}
-            >
-              ↳ Spin off doctor
-            </button>
-          )}
-          {!isDemo && (
-            <button
-              className="button ghost"
               title="Open the task's folder in your OS file explorer"
               onClick={() => { void window.mc?.openTaskFolder(task.id); }}
             >
               📁 Open folder
             </button>
           )}
-          {!isDemo && <ArchiveTaskButton task={task} />}
-          {!isDemo && <DeleteTaskButton taskId={task.id} />}
+          {!isDemo && (
+            <TaskActionsMenu>
+              <button
+                className="button ghost"
+                title="Spin off a doctor task — diagnose why this task is stuck without modifying it"
+                onClick={() => setDoctorOpen(true)}
+              >
+                ↳ Spin off doctor
+              </button>
+              <ArchiveTaskButton task={task} />
+              <DeleteTaskButton taskId={task.id} />
+            </TaskActionsMenu>
+          )}
           <BackToDashboard />
         </div>
       </div>
@@ -494,6 +496,61 @@ function TaskDetailSkeleton(): JSX.Element {
         </section>
       </div>
     </>
+  );
+}
+
+/**
+ * Overflow / kebab menu — wraps less-frequent or destructive actions
+ * so the Task Detail header stays readable. Click ⋯ to open; click
+ * any item or anywhere else to close. Children render as menu items
+ * via the `.task-actions-menu` rules in styles.css (auto-styled
+ * full-width left-aligned rows).
+ */
+function TaskActionsMenu({ children }: { children: React.ReactNode }): JSX.Element {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e: MouseEvent): void => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onEsc = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [open]);
+
+  return (
+    <div ref={wrapRef} style={{ position: "relative" }}>
+      <button
+        className="button ghost"
+        onClick={() => setOpen((v) => !v)}
+        title="More actions"
+        aria-label="More actions"
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        ⋯
+      </button>
+      {open && (
+        <div
+          className="task-actions-menu"
+          role="menu"
+          // Click-anywhere-inside collapses the menu after the action
+          // fires; the action itself runs first because button onClick
+          // happens at the target before bubbling here.
+          onClick={() => setOpen(false)}
+        >
+          {children}
+        </div>
+      )}
+    </div>
   );
 }
 
