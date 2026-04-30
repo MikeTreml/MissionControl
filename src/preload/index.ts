@@ -60,6 +60,14 @@ const api = {
     ipcRenderer.invoke("runs:resume", input),
   stopRun:    (input: { taskId: string; reason?: "user" | "completed" | "failed" }) =>
     ipcRenderer.invoke("runs:stop", input),
+  respondBreakpoint: (input: {
+    taskId: string;
+    runPath: string;
+    effectId: string;
+    approved: boolean;
+    response?: string;
+    feedback?: string;
+  }) => ipcRenderer.invoke("runs:respondBreakpoint", input),
 
   // ── pi meta ──────────────────────────────────────────────────────────
   listPiModels: () => ipcRenderer.invoke("pi:listModels"),

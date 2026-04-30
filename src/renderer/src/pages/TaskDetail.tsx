@@ -17,6 +17,7 @@ import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
 import { derivePhases } from "../lib/derive-phases";
+import { derivePendingBreakpoint } from "../lib/derive-pending-breakpoint";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
@@ -86,6 +87,7 @@ export function TaskDetail(): JSX.Element {
       <div className="content">
         <Controls task={task} />
         <PhaseChipStrip task={task} events={events} />
+        {!isDemo && <BreakpointApprovalCard task={task} events={events} />}
         {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
 
         {!isDemo && pendingAsks.map((ask) => (
@@ -421,6 +423,124 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
  * legacy events) and falls back to a generic Draft/Active/Finished
  * skeleton if no events are present yet.
  */
+/**
+ * Approval card — rendered on Task Detail when the journal shows a
+ * pending babysitter breakpoint (BREAKPOINT_OPENED with no matching
+ * BREAKPOINT_RESPONDED yet). Approve / Request changes POST through
+ * `runs:respondBreakpoint`, which spawns
+ * `babysitter task:post --status ok --value-inline '{"approved":...}'`.
+ *
+ * Per the SDK docs, REJECTIONS use --status ok with approved:false.
+ * --status error signals a task-execution failure and would trigger
+ * RUN_FAILED, requiring manual journal surgery to recover.
+ */
+function BreakpointApprovalCard({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const pending = derivePendingBreakpoint(events);
+  const [feedback, setFeedback] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  if (!pending) return null;
+
+  const payload = pending.payload ?? {};
+  const question = typeof payload.question === "string" ? payload.question : null;
+  const titleText = typeof payload.title === "string" ? payload.title : null;
+
+  async function respond(approved: boolean): Promise<void> {
+    if (!window.mc) { setError("Not connected — run `npm run dev`"); return; }
+    setBusy(true);
+    setError("");
+    try {
+      await window.mc.respondBreakpoint({
+        taskId: task.id,
+        runPath: pending!.runPath,
+        effectId: pending!.effectId,
+        approved,
+        ...(feedback.trim() ? (approved ? { response: feedback.trim() } : { feedback: feedback.trim() }) : {}),
+      });
+      publish("tasks");
+      setFeedback("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section
+      className="card"
+      style={{
+        background: "rgba(244,201,93,0.08)",
+        borderColor: "var(--warn)",
+        display: "grid",
+        gap: 10,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ color: "var(--warn)", fontSize: 14 }}>⏸</span>
+        <strong>Awaiting human approval</strong>
+        {pending.expert && pending.expert !== "owner" && (
+          <span className="muted" style={{ fontSize: 12 }}>· expert: {pending.expert}</span>
+        )}
+        {pending.tags.length > 0 && (
+          <span className="muted" style={{ fontSize: 12 }}>· {pending.tags.join(" · ")}</span>
+        )}
+      </div>
+      {titleText && <div style={{ fontWeight: 500 }}>{titleText}</div>}
+      {question && (
+        <div className="muted" style={{ whiteSpace: "pre-wrap", fontSize: 13 }}>
+          {question}
+        </div>
+      )}
+      <textarea
+        rows={2}
+        value={feedback}
+        placeholder="Optional response or change request"
+        onChange={(e) => setFeedback(e.target.value)}
+        disabled={busy}
+        style={{
+          background: "var(--bg)",
+          color: "var(--text)",
+          border: "1px solid var(--border)",
+          borderRadius: 8,
+          padding: "8px 10px",
+          fontFamily: "inherit",
+          fontSize: 13,
+          width: "100%",
+          resize: "vertical",
+        }}
+      />
+      <div style={{ display: "flex", gap: 8 }}>
+        <button
+          className="button"
+          disabled={busy}
+          onClick={() => void respond(true)}
+          title="Approve and continue the run"
+        >
+          ✓ Approve
+        </button>
+        <button
+          className="button warn"
+          disabled={busy}
+          onClick={() => void respond(false)}
+          title="Reject; the workflow's retry/refine loop picks this up"
+        >
+          ↺ Request changes
+        </button>
+        <span className="muted" style={{ fontSize: 11, alignSelf: "center", marginLeft: 8 }}>
+          effect: <code>{pending.effectId}</code>
+        </span>
+      </div>
+      {error && (
+        <div style={{ color: "var(--bad)", fontSize: 12 }}>
+          {error}
+        </div>
+      )}
+    </section>
+  );
+}
+
 /**
  * Horizontal phase chip strip — sits at the top of Task Detail. Same data
  * source as LaneTimeline (`derivePhases`); different layout. Mockup spec

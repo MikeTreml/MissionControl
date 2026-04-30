@@ -131,6 +131,10 @@ export function registerIpc(stores: Stores): void {
   ipcMain.handle("runs:stop", (_e, input: Parameters<RunManager["stop"]>[0]) =>
     logged(`runs:stop ${input.taskId}`, () => stores.runs.stop(input)),
   );
+  ipcMain.handle("runs:respondBreakpoint", (_e, input: Parameters<RunManager["respondBreakpoint"]>[0]) =>
+    logged(`runs:respondBreakpoint ${input.taskId}/${input.effectId} ${input.approved ? "approve" : "reject"}`,
+      () => stores.runs.respondBreakpoint(input)),
+  );
 
   // ── pi meta (model registry from pi's own auth config) ────────────────
   ipcMain.handle("pi:listModels", () => stores.pi.listModels());

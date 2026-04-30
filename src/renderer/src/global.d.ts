@@ -105,6 +105,19 @@ export interface McApi {
   pauseRun: (input: { taskId: string }) => Promise<Task>;
   resumeRun: (input: { taskId: string }) => Promise<Task>;
   stopRun: (input: { taskId: string; reason?: "user" | "completed" | "failed" }) => Promise<Task>;
+  /**
+   * POST a response back to a babysitter SDK breakpoint via
+   * `babysitter task:post --status ok --value-inline '{...}'`. Used by
+   * the journal-driven approval card on Task Detail.
+   */
+  respondBreakpoint: (input: {
+    taskId: string;
+    runPath: string;
+    effectId: string;
+    approved: boolean;
+    response?: string;
+    feedback?: string;
+  }) => Promise<void>;
 
   // pi meta
   listPiModels: () => Promise<PiModelInfo[]>;

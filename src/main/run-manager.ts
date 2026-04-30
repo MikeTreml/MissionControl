@@ -111,6 +111,62 @@ export class RunManager {
     }
   }
 
+  /**
+   * POST a breakpoint response to a running babysitter session via the
+   * SDK CLI: `babysitter task:post <runPath> <effectId> --status ok
+   * --value-inline '{"approved":<bool>,"response":"..."}'`. Per the SDK
+   * docs, breakpoint REJECTIONS still use `--status ok` (status=error
+   * signals task-execution failure, not user rejection).
+   */
+  async respondBreakpoint(input: {
+    taskId: string;
+    runPath: string;
+    effectId: string;
+    approved: boolean;
+    response?: string;
+    feedback?: string;
+  }): Promise<void> {
+    const cliPath = resolveBabysitterCliPath();
+    if (!cliPath) {
+      await this.tasks.appendStatus(input.taskId, "Breakpoint response failed: babysitter SDK not installed");
+      throw new Error("babysitter SDK not installed");
+    }
+    const valueInline = JSON.stringify({
+      approved: input.approved,
+      ...(input.response ? { response: input.response } : {}),
+      ...(input.feedback ? { feedback: input.feedback } : {}),
+    });
+    const args = [
+      cliPath,
+      "task:post",
+      input.runPath,
+      input.effectId,
+      "--status", "ok",
+      "--value-inline", valueInline,
+      "--json",
+    ];
+    await new Promise<void>((resolve, reject) => {
+      const child = spawn(process.execPath, args, { stdio: ["ignore", "pipe", "pipe"] });
+      let stderr = "";
+      child.stderr?.on("data", (c) => { stderr += c.toString(); });
+      child.on("error", reject);
+      child.on("exit", (code) => {
+        if (code === 0) resolve();
+        else reject(new Error(`task:post exited ${code}: ${stderr.trim()}`));
+      });
+    });
+    await this.tasks.appendEvent(input.taskId, {
+      type: "breakpoint-responded-by-user",
+      effectId: input.effectId,
+      approved: input.approved,
+      ...(input.response ? { response: input.response } : {}),
+    });
+    await this.tasks.appendStatus(
+      input.taskId,
+      `Breakpoint ${input.effectId} ${input.approved ? "approved" : "rejected"}${input.response ? `: ${input.response}` : ""}`,
+    );
+  }
+
   async start(input: {
     taskId: string;
     agentSlug?: string;
