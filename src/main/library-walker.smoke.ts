@@ -48,6 +48,15 @@ async function main(): Promise<void> {
 
   assert(sampleWorkflow.readmeMdPath === null, "workflow uses companionDoc, not readmeMdPath");
 
+  const yamlSkill = index.items.find(
+    (i) => i.logicalPath === "specializations/web-development/skills/yaml",
+  );
+  assert(!!yamlSkill, "web-development yaml skill");
+  assert(
+    yamlSkill.languages.map((x) => x.toLowerCase()).includes("yaml"),
+    "languages infer yaml from path / frontmatter name",
+  );
+
   console.log(
     `[smoke] index counts: agents=${index.summary.agents}, ` +
       `skills=${index.summary.skills}, workflows=${index.summary.workflows}, ` +
