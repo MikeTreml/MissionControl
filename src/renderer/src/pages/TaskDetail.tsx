@@ -15,6 +15,7 @@ import { useTask } from "../hooks/useTask";
 import { usePiModels } from "../hooks/usePiModels";
 import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
+import { pushErrorToast } from "../hooks/useToasts";
 import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
 import { derivePhases } from "../lib/derive-phases";
 import { derivePendingBreakpoint } from "../lib/derive-pending-breakpoint";
@@ -187,6 +188,7 @@ function ArchiveTaskButton({ task }: { task: Task }): JSX.Element {
       publish("tasks");
     } catch (err) {
       console.error("[TaskDetail] saveTask (archive toggle) threw:", err);
+      pushErrorToast(archived ? "Unarchive failed" : "Archive failed", err, task.id);
     } finally {
       setBusy(false);
     }
@@ -224,6 +226,7 @@ function DeleteTaskButton({ taskId }: { taskId: string }): JSX.Element {
       setView("dashboard");
     } catch (err) {
       console.error("[TaskDetail] deleteTask threw:", err);
+      pushErrorToast("Delete failed", err, taskId);
       setConfirm(false);
     } finally {
       setBusy(false);
@@ -412,6 +415,7 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
       publish("tasks");
     } catch (err) {
       console.error("[TaskDetail] saveTask blocker failed:", err);
+      pushErrorToast("Couldn't save blocker", err, task.id);
       // Roll back local state so the UI doesn't lie about persisted value.
       setValue(task.blocker ?? "");
     } finally {

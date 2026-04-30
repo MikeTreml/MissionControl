@@ -4,6 +4,7 @@ import type { TaskEvent } from "../../../shared/models";
 
 export interface ToastItem {
   id: string;
+  /** Empty string when the toast isn't tied to a task. */
   taskId: string;
   title: string;
   detail: string;
@@ -14,6 +15,39 @@ const MAX_VISIBLE = 3;
 const DEFAULT_MS = 5000;
 const LONG_MS = 8000;
 
+// ── ad-hoc toast bus ────────────────────────────────────────────────
+// Components anywhere in the renderer can call `pushToast({...})` to
+// surface an error / info / success without going through the
+// task-event stream. Used by mutation error paths (saveTask, delete,
+// archive, etc.) so the user actually sees when something failed.
+const adhocSubscribers = new Set<(toast: ToastItem) => void>();
+
+/**
+ * Push a one-off toast from anywhere in the renderer. Returns the
+ * generated id (component can dismiss via that id if it wants to).
+ * Safe to call before the Toaster mounts — fires synchronously into
+ * any current subscribers; if there are none, the toast is dropped.
+ */
+export function pushToast(input: Omit<ToastItem, "id"> & { id?: string }): string {
+  const id = input.id ?? `adhoc:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+  const toast: ToastItem = { ...input, id };
+  adhocSubscribers.forEach((fn) => {
+    try { fn(toast); } catch (err) {
+      console.error("[useToasts] adhoc subscriber threw:", err);
+    }
+  });
+  return id;
+}
+
+/**
+ * Convenience: push a "bad" tone toast from a thrown error. Title is
+ * the short label (component name); detail is the error message.
+ */
+export function pushErrorToast(title: string, err: unknown, taskId = ""): string {
+  const detail = err instanceof Error ? err.message : String(err ?? "Unknown error");
+  return pushToast({ taskId, title, detail, tone: "bad" });
+}
+
 export function useToasts(): {
   toasts: ToastItem[];
   dismiss: (id: string) => void;
@@ -22,20 +56,38 @@ export function useToasts(): {
   const timers = useRef(new Map<string, number>());
 
   useEffect(() => {
-    if (!window.mc) return;
-    const unsubscribe = window.mc.onTaskEvent(({ taskId, event }) => {
-      const next = toToast(taskId, event);
-      if (!next) return;
-      setToasts((prev) => [next, ...prev].slice(0, MAX_VISIBLE));
-      const ms = next.tone === "bad" || event.type === "pi:awaiting_input" ? LONG_MS : DEFAULT_MS;
+    // Helper: stage a toast + arm its dismiss timer.
+    const stage = (next: ToastItem, ms: number): void => {
+      setToasts((prev) => [next, ...prev.filter((t) => t.id !== next.id)].slice(0, MAX_VISIBLE));
       const timer = window.setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== next.id));
         timers.current.delete(next.id);
       }, ms);
+      const prior = timers.current.get(next.id);
+      if (prior) window.clearTimeout(prior);
       timers.current.set(next.id, timer);
-    });
+    };
+
+    // Source 1: live task events from main → toast where appropriate.
+    const unsubEvent = window.mc?.onTaskEvent
+      ? window.mc.onTaskEvent(({ taskId, event }) => {
+          const next = toToast(taskId, event);
+          if (!next) return;
+          const ms = next.tone === "bad" || event.type === "pi:awaiting_input" ? LONG_MS : DEFAULT_MS;
+          stage(next, ms);
+        })
+      : null;
+
+    // Source 2: ad-hoc pushes from anywhere in the renderer.
+    const adhoc = (toast: ToastItem) => {
+      const ms = toast.tone === "bad" ? LONG_MS : DEFAULT_MS;
+      stage(toast, ms);
+    };
+    adhocSubscribers.add(adhoc);
+
     return () => {
-      unsubscribe();
+      if (unsubEvent) unsubEvent();
+      adhocSubscribers.delete(adhoc);
       for (const timer of timers.current.values()) window.clearTimeout(timer);
       timers.current.clear();
     };
