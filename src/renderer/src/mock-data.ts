@@ -1,18 +1,13 @@
 /**
- * Hardcoded mock data — mirrors mission_control_saved_mock_v2.html exactly.
+ * Demo / empty-state seed data for the renderer.
  *
- * This is the wireframe's data source. Once IPC + TaskStore are wired up,
- * the renderer will swap this out for window.mc.listTasks() etc.
- *
- * IMPORTANT: Some fields here DON'T exist in src/shared/models.ts yet
- * (taskType, subagents, linkedFiles, model, blockedFor, projectStats).
- * That gap is intentional — it's the "forgotten features" checklist.
+ * Used when window.mc is unavailable (running in static preview) or when
+ * the real stores return zero records. Real data flows through
+ * `window.mc.listTasks()` etc. via the hooks.
  */
 
-// ── types only used by the wireframe (not yet in shared/models.ts) ──────
+// ── types ───────────────────────────────────────────────────────────────
 
-export type MockTaskType = "F" | "B" | "R" | "S"; // Feature / Bug / Refactor / Spike
-export type MockWorkflow = "Dev" | "Brainstorm" | "Fix";
 /** Run-state-derived label shown on board cards + lists. */
 export type MockLane =
   | "Idle"
@@ -20,12 +15,7 @@ export type MockLane =
   | "Waiting"
   | "Done"
   | "Failed";
-export type MockRoleLabel =
-  | "Idle"
-  | "Running"
-  | "Waiting"
-  | "Done"
-  | "Failed";
+export type MockRoleLabel = MockLane;
 export type MockPill = "good" | "warn" | "bad" | "info";
 
 export interface MockProject {
@@ -37,26 +27,20 @@ export interface MockProject {
   active?: boolean;
 }
 
-export interface MockAgent {
-  role: "Planner" | "Developer" | "Reviewer" | "Surgeon";
-  primary: string;
-  secondary: string;
-}
-
 export interface MockTask {
   id: string;                 // "DA-015F"
   summary: string;            // "Add task-linked diff and doc registry"
   lane: MockLane;
   roleLabel: MockRoleLabel;
   rolePill: MockPill;
-  stepLine: string;           // "Breaking work into substeps"
-  sub?: string;               // "Subagents: RepoMapper, DocRefresher" or "Model: Codex"
+  stepLine: string;
+  sub?: string;
   active?: boolean;
 }
 
 export interface MockRunEvent {
-  label: string;              // "Planner" / "RepoMapper"
-  detail: string;             // "Started 10:18 PM • Claude"
+  label: string;
+  detail: string;
 }
 
 export interface MockQueueItem {
@@ -64,30 +48,7 @@ export interface MockQueueItem {
   detail: string;
 }
 
-export interface MockKpi {
-  label: string;
-  value: number;
-}
-
-export interface MockLinkedFile {
-  name: string;
-  note: string;
-}
-
-export interface MockSelectedTask {
-  id: string;
-  taskType: "Feature" | "Bug" | "Refactor" | "Spike";
-  workflow: MockWorkflow;
-  project: string;
-  pills: Array<{ label: string; tone: MockPill }>;
-  currentStep: string;
-  subagents: string[];
-  nextStep: string;
-  lastEvent: string;
-  linkedFiles: MockLinkedFile[];
-}
-
-// ── actual data ──────────────────────────────────────────────────────────
+// ── data ─────────────────────────────────────────────────────────────────
 
 export const mockProjects: MockProject[] = [
   {
@@ -114,21 +75,6 @@ export const mockProjects: MockProject[] = [
   },
 ];
 
-export const mockAgents: MockAgent[] = [
-  { role: "Planner",   primary: "Claude", secondary: "Local" },
-  { role: "Developer", primary: "Codex",  secondary: "Claude" },
-  { role: "Reviewer",  primary: "Claude", secondary: "Codex" },
-  { role: "Surgeon",   primary: "Local",  secondary: "Claude" },
-];
-
-export const mockKpis: MockKpi[] = [
-  { label: "Active Tasks",      value: 12 },
-  { label: "Waiting Approval",  value: 3 },
-  { label: "Running Agents",    value: 5 },
-  { label: "Failed Runs Today", value: 1 },
-];
-
-/** Sample task cards for empty-state / demo display. */
 export const mockTasks: MockTask[] = [
   {
     id: "DA-015F",
@@ -174,30 +120,6 @@ export const mockTasks: MockTask[] = [
   },
 ];
 
-export const mockSelected: MockSelectedTask = {
-  id: "DA-015F",
-  taskType: "Feature",
-  workflow: "Dev",
-  project: "DogApp",
-  pills: [
-    { label: "Planner", tone: "info" },
-    { label: "Active",  tone: "warn" },
-    { label: "Claude",  tone: "info" },
-  ],
-  currentStep:
-    "Break task into implementation units and confirm artifact rules",
-  subagents: ["RepoMapper", "DocRefresher"],
-  nextStep: "Builder",
-  lastEvent: "Prompt completed • waiting for transition",
-  linkedFiles: [
-    { name: "DA-015F__spec.md",         note: "Current working feature spec" },
-    { name: "DA-015F__decision-log.md", note: "Decision history and constraint notes" },
-    { name: "DA-015F__diff-report.md",  note: "Generated after repo compare" },
-    { name: "api/tasks/files.http",     note: "Task file endpoint contract" },
-    { name: "ui/task-detail.tsx",       note: "Task detail page work" },
-  ],
-};
-
 export const mockRunActivity: MockRunEvent[] = [
   { label: "Planner",      detail: "Started 10:18 PM • Claude" },
   { label: "RepoMapper",   detail: "Spawned 10:19 PM • Local" },
@@ -209,11 +131,3 @@ export const mockQueue: MockQueueItem[] = [
   { taskId: "DA-010F", detail: "Review in progress" },
   { taskId: "DX-008F", detail: "Azure build callback pending" },
 ];
-
-export const MOCK_LANES: readonly MockLane[] = [
-  "Idle",
-  "Running",
-  "Waiting",
-  "Done",
-  "Failed",
-] as const;
