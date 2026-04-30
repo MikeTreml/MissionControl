@@ -2,13 +2,14 @@
 
 You're picking up an Electron+TypeScript desktop app called **Mission
 Control**. It's an orchestration+UI layer on top of `pi-coding-agent` (the
-pi-mono SDK). The foundation, data model, IPC, and 90% of the renderer
-wireframe are built. What's missing is the actual pi integration — the
-buttons that would start/pause/stop agent runs are UI-only today.
+pi-mono SDK) and `@a5c-ai/babysitter-pi` (delivered as a pi extension).
+Foundation, data model, IPC, renderer, **and pi integration** are all
+built — clicking Start runs a real babysitter pipeline end-to-end. Open
+work is polish: plannotator hand-off, pi-memory-md, pi-superpowers
+prompts, subagent spawn tracking. See "State of play" below.
 
 This doc gets you oriented in ~10 minutes. Longer background in
-`docs/PI-FEATURES.md`, `docs/PI-EXTENSIONS-SURVEY.md`, and
-`docs/IDEAS-WORTH-BORROWING.md`.
+`docs/PI-FEATURES.md` and `docs/IDEAS-WORTH-BORROWING.md`.
 
 ## 1. Mental model in 6 lines
 
@@ -17,7 +18,7 @@ This doc gets you oriented in ~10 minutes. Longer background in
 - **Workflows** define how tasks move (today just code+name+description).
 - **Agents** (primary + subagent) live in `agents/<slug>/agent.json` — 1-char code = primary role, 2-4 chars = subagent.
 - **Models** are the LLM roster (`<userData>/models.json`). Agents reference model ids.
-- **Tasks run by** spawning a pi session per agent per cycle. **Not wired yet.**
+- **Tasks run** via babysitter-pi: Start opens one pi session, prompts `/babysit <brief>`, and babysitter drives Planner → Developer → Reviewer → Surgeon with loopbacks + mandatory stops.
 
 ## 2. Repo tour
 
@@ -33,11 +34,21 @@ mc-v2-electron/
       ipc.ts                        One place for every ipcMain.handle()
       store.ts                      TaskStore (+ events.jsonl journal)
       project-store.ts              ProjectStore (CRUD)
-      model-roster.ts               ModelRosterStore (models.json)
+      settings-store.ts             SettingsStore (settings.json + run templates)
       agent-loader.ts               Reads agents/<slug>/agent.json
       workflows.ts                  Reads workflows/<CODE>-<slug>/workflow.json
+      pi-session-manager.ts         Owns live pi sessions, forwards events
+      run-manager.ts                Task state machine (start/pause/resume/stop, single + campaign)
+      library-index.ts              Serves library/_index.json to renderer
+      library-walker.ts             Build-time walker that emits the index
       git-detect.ts                 Parses .git/config → GitHub/ADO/GitLab
+      render-prompt.ts              Builds /babysit prompt from task + PROMPT.md
+      run-cost-tracker.ts           Per-run metrics artifact
+      ask-user-tool.ts              Pi custom tool for human-decision pauses
       *.smoke.ts                    Standalone runners — see "Smoke tests" below
+
+      NOTE (2026-04-29): agents/ and workflows/ at the repo root are being
+      migrated under library/. Loaders still read the old paths today.
     preload/index.ts                contextBridge — exposes window.mc
     renderer/src/
       App.tsx                       3-col shell + router
@@ -83,19 +94,11 @@ Start with `grep -rn "PI-WIRE" src` — that's the map for the next work.
 ## 4. Smoke tests — run before + after any backend change
 
 ```bash
-cd mc-v2-electron
+# Single command — runs every smoke (see package.json `smoke` script for the list)
+npm run smoke
 
-# All six green. Each is standalone, <2s.
-node --experimental-strip-types src/main/store.smoke.ts
-node --experimental-strip-types src/main/project-store.smoke.ts
-node --experimental-strip-types src/main/workflows.smoke.ts
-node --experimental-strip-types src/main/agent-loader.smoke.ts
-node --experimental-strip-types src/main/model-roster.smoke.ts
-node --experimental-strip-types src/main/git-detect.smoke.ts
-
-# TypeScript is the other safety net
-npx tsc --noEmit -p tsconfig.node.json
-npx tsc --noEmit -p tsconfig.web.json
+# Typecheck both sides
+npm run typecheck
 ```
 
 No integration/e2e tests exist yet. **If you're in Claude Code**, the
@@ -127,67 +130,62 @@ check the dev terminal for `preload-error` — the most common cause is
 
 ## 6. State of play — what works, what doesn't
 
-**Works end-to-end:**
-- Create / edit / delete Projects (persists to `<userData>/projects/`)
-- Create / delete Tasks (persists to `<userData>/tasks/`, events.jsonl
-  updated on lane/cycle changes)
-- Git auto-detect on project path
-- Unified agent list (Settings → Agents)
-- Editable model roster (Settings → Models, with Load defaults button)
-- Workflow list (Settings → Workflows, read-only)
-- Router + page nav
-- Demo default (Sidebar empty → shows mock data with a yellow banner)
-
-**Mocked / canned until pi wires:**
-- RightBar Run Activity
-- Metrics page numbers
-- Task Detail run history (reads from events.jsonl but synthesizes when empty)
-- Start/Pause/Resume/Stop buttons on Task Detail — UI-only
+**Works end-to-end (real, live, persistent):**
+- Project CRUD (create/edit/delete, git auto-detect, icon picker)
+- Task CRUD with `<userData>/tasks/<id>/` folder, `PROMPT.md` (mission),
+  `STATUS.md` (append-only), `events.jsonl` journal
+- Workflow list with per-workflow lanes (`workflow.json` `lanes[]`)
+- Settings: Agents, Workflows, run templates
+- Library browser (drives the Library page; index built via
+  `npm run build-library-index`)
+- **Start runs the full babysitter pipeline.** Click Start → MC opens a
+  pi session and prompts `/babysit <brief>`. Babysitter drives Planner
+  → Developer → Reviewer → Surgeon with loopbacks + mandatory stops.
+  Runs take minutes — pacing is deliberate.
+- Workspace cwd: `project.path` when set (babysitter writes
+  `.a5c/processes/` + `.a5c/runs/` there); else
+  `<userData>/tasks/<id>/workspace/` per-task scratch dir.
+- Approval lane gate: Task Detail shows Approve / Request changes
+  buttons that advance or loop the lane and bump cycle.
+- Live events bridge debounces pi's 20–50 events/sec down to the data
+  bus; RightBar shows real session activity; Metrics + Run History
+  derive tokens/cost from the journal.
+- Model picker (per-task) reads pi's `ModelRegistry` via `pi:listModels`.
+- **Campaign task kind** end-to-end: kind selector + items table +
+  per-item runtime iteration. RunManager opens one pi session per item
+  and marks items done/failed/running as it progresses.
+- Pi inherits auth from env (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) or
+  `pi` CLI login (`~/.pi/agent/auth.json`).
 
 **Not started:**
-- pi SDK wire-in (step 14 — biggest remaining work; see next section)
-- Workflow lane customization (F uses all 6 lanes, X uses the same — OPEN
-  question whether workflow should override the default lane set)
-- Campaign task kind (schema field `kind: "campaign"` is there, UI isn't)
-- Playwright smoke tests
-- Packaging (electron-builder)
+- Plannotator hand-off (current Approval gate is manual buttons).
+- pi-memory-md per-project memory wire-up.
+- pi-superpowers role prompts (replace hand-rolled `agents/<slug>/prompt.md`).
+- Pause/Resume actually steering pi mid-turn (currently MC-state only).
+- Subagent spawn tracking as first-class RightBar rows.
+- Migrating agents/ and workflows/ under library/ (loaders still read
+  the top-level dirs).
+- Packaging (electron-builder smoke beyond `--dir`).
 
-## 7. Next concrete work — pi wire-in
+## 7. Next concrete work
 
-See every `PI-WIRE` marker in the code. The shortest path:
+The pi wire-in plan that used to live in this section is **done**.
+Useful next bites, smallest first:
 
-1. **Install pi**  
-   `npm install @mariozechner/pi-coding-agent`
-
-2. **Create `src/main/pi-session-manager.ts`** — owns a Map<string, pi.Session>
-   keyed by `<taskId>:<agentSlug>`. Methods: `start`, `pause`, `resume`, `stop`,
-   `list`. On every session event, it:
-   - appends to `<taskId>/events.jsonl`
-   - broadcasts via `win.webContents.send("task-event", taskId, event)`
-
-3. **Register IPC handlers** in `ipc.ts` (new section):
-   - `runs:start` → `pi.start(taskId, agentSlug?)`
-   - `runs:pause` / `runs:resume` / `runs:stop`
-
-4. **Expose on preload** + declare in `global.d.ts`.
-
-5. **Renderer: wire the TaskDetail Controls** — the onClick stubs are
-   already in the right shape. See the PI-WIRE block in that file.
-
-6. **Renderer: subscribe to `task-event`** in the RightBar Run Activity
-   feed via `ipcRenderer.on("task-event", ...)`. Use the existing
-   `data-bus.ts` pattern — publish after each event so hooks re-fetch.
-
-7. **Hello-world test:** add a project with a real git path, create a
-   task with workflow F, click Start. Watch events.jsonl tick up.
-
-8. **Models to validate:**
-   - **Codex** via `gpt-5-codex` (needs OPENAI_API_KEY set in env before
-     launching Electron)
-   - **Local** via Ollama + `qwen2.5-coder` (needs `ollama pull qwen2.5-coder`
-     and Ollama running on localhost:11434)
-
-   Click **Load defaults** in Settings → Models to populate these.
+1. **Plannotator hand-off** — when plannotator exposes an invocation
+   surface, swap the manual Approve/Request-changes buttons for a
+   plannotator launch pointed at the planner artifact. Consume
+   approve/reject + annotations as structured feedback.
+2. **pi-memory-md** — install + initialize per-project memory at
+   `~/.pi/memory-md/<project>/`. Agents pick up memory tools
+   automatically once it's set up.
+3. **pi-superpowers role prompts** — replace hand-rolled prompts
+   under `agents/<slug>/prompt.md` with skill references.
+4. **Subagent spawn tracking** — install pi-finder + pi-librarian;
+   capture `subagent_spawn` / `subagent_complete` events in RightBar.
+5. **Library-based loaders** — point AgentLoader and WorkflowLoader at
+   `library/` instead of the top-level `agents/` and `workflows/`
+   folders.
 
 ## 8. Gotchas Michael and I hit
 

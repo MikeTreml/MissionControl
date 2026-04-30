@@ -113,8 +113,8 @@ export const TaskSchema = z.object({
   /**
    * Campaign items. Only populated when `kind === "campaign"`. Empty at
    * creation is fine — the Planner may generate them during its run.
-   * Runtime iteration (one session per item) is PROPOSED and not wired
-   * yet — see docs/WORKFLOW-EXECUTION.md for the babysitter plan.
+   * CONFIRMED: RunManager opens one pi session per item; Stop marks any
+   * running item failed; failed items don't halt the campaign.
    */
   items: z.array(CampaignItemSchema).default([]),
   /**
@@ -179,23 +179,6 @@ export const KpiSchema = z.object({
   failedRunsToday: z.number().int().default(0),
 });
 export type Kpi = z.infer<typeof KpiSchema>;
-
-/**
- * Legacy model-roster entry.
- *
- * MC now prefers pi's discovered model list for UI pickers, but we keep this
- * schema around for compatibility with older data and possible future custom
- * model overlays.
- */
-export const ModelDefinitionSchema = z.object({
-  id: z.string().min(1),                       // stable id referenced by agents, e.g. "claude-opus"
-  label: z.string().min(1),                    // human-readable, e.g. "Claude Opus 4.6"
-  kind: z.string().min(1),                     // "anthropic" | "openai" | "ollama" | "other" | future kinds
-  model: z.string().default(""),               // provider-specific model id, e.g. "claude-opus-4-6"
-  endpoint: z.string().default(""),            // optional override, e.g. "http://localhost:11434"
-  notes: z.string().default(""),
-});
-export type ModelDefinition = z.infer<typeof ModelDefinitionSchema>;
 
 /** Structured threshold a step's output should satisfy. */
 export const QualityGateSchema = z.object({
