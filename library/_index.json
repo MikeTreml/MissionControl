@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T01:42:30.369Z",
+  "generatedAt": "2026-04-30T01:52:05.515Z",
   "summary": {
     "agents": 1329,
     "skills": 2013,
@@ -68922,7 +68922,7 @@
       "container": "game-development",
       "containerKind": "specialization",
       "domainGroup": null,
-      "description": "Ad mediation skill for rewarded video.",
+      "description": "Integrate and optimize mobile ads (rewarded, interstitial, banner) with mediation, analytics, and UX-safe pacing.",
       "role": null,
       "expertise": [],
       "languages": [
@@ -68931,8 +68931,8 @@
       "tags": [],
       "originalSource": null,
       "version": null,
-      "sizeBytes": 191,
-      "modifiedAt": "2026-04-04T03:54:42.000Z",
+      "sizeBytes": 700,
+      "modifiedAt": "2026-04-30T01:51:59.254Z",
       "descriptionMdPath": null,
       "readmeMdPath": "C:\\Users\\Treml\\source\\repos\\MissionControl\\library\\specializations\\game-development\\skills\\mobile-ads\\README.md",
       "containerReadmePath": "C:\\Users\\Treml\\source\\repos\\MissionControl\\library\\specializations\\game-development\\README.md"
@@ -68946,7 +68946,7 @@
       "container": "game-development",
       "containerKind": "specialization",
       "domainGroup": null,
-      "description": "Mobile GPU optimization skill for thermal management.",
+      "description": "Optimize mobile game performance for stable frame times, low thermal load, and battery-aware quality scaling.",
       "role": null,
       "expertise": [],
       "languages": [
@@ -68955,8 +68955,8 @@
       "tags": [],
       "originalSource": null,
       "version": null,
-      "sizeBytes": 222,
-      "modifiedAt": "2026-04-04T03:54:42.000Z",
+      "sizeBytes": 711,
+      "modifiedAt": "2026-04-30T01:51:54.841Z",
       "descriptionMdPath": null,
       "readmeMdPath": "C:\\Users\\Treml\\source\\repos\\MissionControl\\library\\specializations\\game-development\\skills\\mobile-optimization\\README.md",
       "containerReadmePath": "C:\\Users\\Treml\\source\\repos\\MissionControl\\library\\specializations\\game-development\\README.md"

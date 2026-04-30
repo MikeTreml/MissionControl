@@ -2,6 +2,10 @@
  * Map MC library language strings to Devicon folder/slug names.
  * CDN: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/{slug}/{slug}-original.svg
  * @see https://devicon.dev/
+ *
+ * After explicit aliases, unknown slugs that look like tool/package names
+ * (e.g. zod, vite, eslint) are passed through as-is so matching icons load
+ * when Devicon ships them; otherwise the chip falls back to text-only.
  */
 const LANG_TO_DEVICON: Record<string, string> = {
   typescript: "typescript",
@@ -88,11 +92,26 @@ const LANG_TO_DEVICON: Record<string, string> = {
 };
 
 export function languageToDeviconSlug(raw: string): string | null {
-  const key = raw.trim().toLowerCase().replace(/\s+/g, "");
-  if (!key) return null;
+  const trimmed = raw.trim().toLowerCase();
+  if (!trimmed) return null;
+
+  const key = trimmed.replace(/\s+/g, "");
   if (LANG_TO_DEVICON[key]) return LANG_TO_DEVICON[key];
   const alnum = key.replace(/[^a-z0-9+#.]/g, "");
   if (LANG_TO_DEVICON[alnum]) return LANG_TO_DEVICON[alnum];
+
+  const dashed = trimmed
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-+#.]/g, "");
+  if (dashed && LANG_TO_DEVICON[dashed]) return LANG_TO_DEVICON[dashed];
+  const dashedCompact = dashed.replace(/-/g, "");
+  if (dashedCompact && LANG_TO_DEVICON[dashedCompact]) return LANG_TO_DEVICON[dashedCompact];
+
+  // Pass-through: kebab-case or single-token slugs (library folder names, npm-style).
+  const pass = dashed.replace(/\.+$/, "");
+  if (pass.length >= 1 && pass.length <= 48 && /^[a-z0-9][a-z0-9-]*$/.test(pass)) {
+    return pass;
+  }
   return null;
 }
 

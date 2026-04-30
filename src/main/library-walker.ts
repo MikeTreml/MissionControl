@@ -233,8 +233,9 @@ function toLogicalPath(relPath: string): string {
 }
 
 /**
- * When frontmatter omits languages:, infer labels from card name and path.
- * e.g. specializations/.../skills/yaml → "yaml"; name: zustand in YAML → "zustand".
+ * When frontmatter omits languages:, infer labels from card `name` and path
+ * (skills: folder after `skills/`, else leaf; examples: filename stem).
+ * Applies to any tech slug — not specific to YAML.
  */
 function inferLanguagesFromContext(
   logicalPath: string,
