@@ -274,3 +274,34 @@ body {
   opacity: 0.5;
   cursor: wait;
 }
+
+/* ── Task Detail overflow menu (kebab) ── */
+.task-actions-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  display: grid;
+  gap: 2px;
+  min-width: 220px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  z-index: 100;
+}
+
+.task-actions-menu > button {
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  padding: 7px 10px !important;
+  font-size: 13px;
+  background: transparent !important;
+}
+
+.task-actions-menu > button:hover:not(:disabled) {
+  background: var(--panel-2) !important;
+  border-color: var(--border) !important;
+}
