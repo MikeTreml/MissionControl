@@ -19,8 +19,7 @@ export function Tree({
   templateWorkflowId,
   onToggleTemplateWorkflow,
   onCopyLogicalPath,
-  onOpenSource,
-  onViewRawJson,
+  onOpenFile,
 }: {
   items: LibraryIndexItem[];
   selectedId: string | null;
@@ -30,8 +29,7 @@ export function Tree({
   templateWorkflowId: string | null;
   onToggleTemplateWorkflow: (workflowId: string) => void;
   onCopyLogicalPath: (item: LibraryIndexItem) => void;
-  onOpenSource: (item: LibraryIndexItem) => void;
-  onViewRawJson: (item: LibraryIndexItem) => void;
+  onOpenFile: (item: LibraryIndexItem) => void;
 }): JSX.Element {
   const grouped = groupByKind(items);
   const [menu, setMenu] = useState<{ x: number; y: number; item: LibraryIndexItem } | null>(null);
@@ -85,11 +83,8 @@ export function Tree({
           <button className="button ghost" style={{ textAlign: "left" }} onClick={() => onCopyLogicalPath(menu.item)}>
             Copy logical path
           </button>
-          <button className="button ghost" style={{ textAlign: "left" }} onClick={() => onOpenSource(menu.item)}>
-            Open source
-          </button>
-          <button className="button ghost" style={{ textAlign: "left" }} onClick={() => onViewRawJson(menu.item)}>
-            View raw JSON
+          <button className="button ghost" style={{ textAlign: "left" }} onClick={() => onOpenFile(menu.item)}>
+            Open file
           </button>
         </div>
       )}

@@ -26,6 +26,7 @@ import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { AgentLoader } from "./agent-loader.ts";
 import type { SettingsStore } from "./settings-store.ts";
 import { renderPromptFile } from "./render-prompt.ts";
+import { writeLatestRunMetricsArtifact } from "./run-cost-tracker.ts";
 import { AgentSchema, isPrimaryAgent, type Agent, type CampaignItem, type MCSettings, type RunState, type Task } from "../shared/models.ts";
 
 export type StopReason = "user" | "completed" | "failed";
@@ -71,6 +72,33 @@ export class RunManager {
     const task = await this.requireTask(input.taskId);
     this.assertTransition(task.runState, "idle", "start");
 
+    const queueState = await this.shouldQueueStart(task.id);
+    if (queueState.shouldQueue) {
+      if (!this.queuedTaskIds.has(task.id)) {
+        this.startQueue.push({ ...input });
+        this.queuedTaskIds.add(task.id);
+      }
+      const position = this.startQueue.findIndex((q) => q.taskId === task.id) + 1;
+      await this.tasks.appendEvent(task.id, {
+        type: "run-queued",
+        position,
+        cap: queueState.cap,
+        running: queueState.running,
+      });
+      await this.tasks.appendStatus(task.id, `Queued — waiting for open run slot (${queueState.running}/${queueState.cap} running)`);
+      return task;
+    }
+    return this.startNow(task, input);
+  }
+
+  private async startNow(
+    task: Task,
+    input: {
+      taskId: string;
+      agentSlug?: string;
+      model?: string;
+    },
+  ): Promise<Task> {
     // Per-task active model — held in memory so completeRun can pass it
     // to the next campaign item without the renderer needing to re-send.
     if (input.model) this.activeModel.set(task.id, input.model);
@@ -197,8 +225,10 @@ export class RunManager {
       type: "run-ended",
       reason,
     });
+    await this.recordMetricsArtifact(task.id, task.currentAgentSlug ?? "run", task.cycle);
     await this.tasks.appendStatus(task.id, `Run ended — cycle ${task.cycle} · ${reason}`);
     this.activeModel.delete(task.id);
+    await this.startQueuedIfCapacity();
   }
 
   private async completeCampaignItem(task: Task, reason: StopReason): Promise<void> {
@@ -253,11 +283,13 @@ export class RunManager {
     const next: Task = { ...task, runState: "idle" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-ended", reason: finalReason });
+    await this.recordMetricsArtifact(task.id, task.currentAgentSlug ?? "run", task.cycle);
     await this.tasks.appendStatus(
       task.id,
       `Campaign ended — cycle ${task.cycle} · ${done}/${task.items.length} done, ${failed} failed`,
     );
     this.activeModel.delete(task.id);
+    await this.startQueuedIfCapacity();
   }
 
   async pause(input: { taskId: string }): Promise<Task> {
@@ -277,6 +309,7 @@ export class RunManager {
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-paused" });
     await this.tasks.appendStatus(task.id, `Paused — cycle ${task.cycle}`);
+    await this.startQueuedIfCapacity();
     return next;
   }
 
@@ -324,6 +357,7 @@ export class RunManager {
       type: "run-ended",
       reason: input.reason ?? "user",
     });
+    await this.recordMetricsArtifact(task.id, task.currentAgentSlug ?? "run", task.cycle);
     await this.tasks.appendStatus(task.id, `Stopped — cycle ${task.cycle} (${input.reason ?? "user"})`);
 
     // Best-effort pi cleanup — don't let a dispose failure undo the state
@@ -333,6 +367,7 @@ export class RunManager {
     }
     this.activeModel.delete(task.id);
     this.parallelSteps.delete(task.id);
+    await this.startQueuedIfCapacity();
     return next;
   }
 
@@ -436,6 +471,62 @@ export class RunManager {
   /** Per-task model selection, kept in memory across campaign items. */
   private readonly activeModel = new Map<string, string>();
   private readonly parallelSteps = new Map<string, Map<string, ParallelStepState>>();
+  private readonly startQueue: Array<{ taskId: string; agentSlug?: string; model?: string }> = [];
+  private readonly queuedTaskIds = new Set<string>();
+
+  private async shouldQueueStart(taskId: string): Promise<{ shouldQueue: boolean; running: number; cap: number }> {
+    const cap = await this.getRunConcurrencyCap();
+    const running = await this.countRunningTasks();
+    const alreadyQueued = this.queuedTaskIds.has(taskId);
+    return { shouldQueue: !alreadyQueued && running >= cap, running, cap };
+  }
+
+  private async startQueuedIfCapacity(): Promise<void> {
+    // Start as many queued tasks as free slots allow.
+    while (this.startQueue.length > 0) {
+      const running = await this.countRunningTasks();
+      const cap = await this.getRunConcurrencyCap();
+      if (running >= cap) return;
+      const next = this.startQueue.shift();
+      if (!next) return;
+      this.queuedTaskIds.delete(next.taskId);
+      try {
+        await this.start(next);
+      } catch (error) {
+        await this.tasks.appendEvent(next.taskId, {
+          type: "run-queue-error",
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+  }
+
+  private async countRunningTasks(): Promise<number> {
+    const all = await this.tasks.listTasks();
+    return all.filter((t) => t.runState === "running").length;
+  }
+
+  private async getRunConcurrencyCap(): Promise<number> {
+    const cap = (await this.settings?.get())?.runConcurrencyCap;
+    return typeof cap === "number" && Number.isFinite(cap) ? Math.max(1, Math.floor(cap)) : 10;
+  }
+
+  private async recordMetricsArtifact(taskId: string, fallbackStep: string, cycle: number): Promise<void> {
+    try {
+      const absPath = await writeLatestRunMetricsArtifact(this.tasks, taskId, fallbackStep, cycle);
+      if (absPath) {
+        await this.tasks.appendEvent(taskId, {
+          type: "metrics:recorded",
+          path: absPath,
+        });
+      }
+    } catch (error) {
+      await this.tasks.appendEvent(taskId, {
+        type: "metrics:error",
+        message: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
 
   private async requireTask(id: string): Promise<Task> {
     const task = await this.tasks.getTask(id);

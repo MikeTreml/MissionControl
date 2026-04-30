@@ -35,7 +35,6 @@ export function LibraryBrowser(): JSX.Element {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedSet, setSelectedSet] = useState<Set<string>>(() => loadStoredSet());
   const [templateWorkflowId, setTemplateWorkflowId] = useState<string | null>(() => loadStoredTemplate());
-  const [rawJsonItem, setRawJsonItem] = useState<LibraryIndexItem | null>(null);
   const [runOpen, setRunOpen] = useState(false);
   const itemById = useMemo(
     () => new Map(filteredItems.map((item) => [item.id, item] as const)),
@@ -136,10 +135,9 @@ export function LibraryBrowser(): JSX.Element {
                 setTemplateWorkflowId((prev) => (prev === workflowId ? null : workflowId))
               }
               onCopyLogicalPath={(item) => void navigator.clipboard?.writeText(item.logicalPath)}
-              onOpenSource={(item) => void window.mc?.openPath(item.diskPath)}
-              onViewRawJson={setRawJsonItem}
+              onOpenFile={(item) => void window.mc?.openPath(item.diskPath)}
             />
-            <DetailPanel item={selectedItem} onRawJson={setRawJsonItem} />
+            <DetailPanel item={selectedItem} />
           </div>
         )}
         <SelectionBag
@@ -150,30 +148,6 @@ export function LibraryBrowser(): JSX.Element {
             setTemplateWorkflowId(null);
           }}
         />
-        {rawJsonItem && (
-          <div className="card">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <h3>Raw metadata</h3>
-              <button className="button ghost" onClick={() => setRawJsonItem(null)}>
-                Close
-              </button>
-            </div>
-            <pre
-              style={{
-                margin: 0,
-                fontSize: 12,
-                lineHeight: 1.45,
-                overflow: "auto",
-                background: "var(--bg)",
-                border: "1px solid var(--border)",
-                borderRadius: 8,
-                padding: 10,
-              }}
-            >
-              {JSON.stringify(rawJsonItem, null, 2)}
-            </pre>
-          </div>
-        )}
       </div>
       <RunWorkflowModal
         open={runOpen}

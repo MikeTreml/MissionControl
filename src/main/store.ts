@@ -30,6 +30,19 @@ import {
 } from "../shared/models.ts";
 import { renderPromptFile } from "./render-prompt.ts";
 
+/** Rollup of persisted `artifacts/*.metrics.json` for tasks in one project. */
+export interface ProjectRunMetricsRollup {
+  projectId: string;
+  /** Distinct tasks that had at least one `*.metrics.json` artifact. */
+  tasksWithArtifacts: number;
+  /** Total metrics artifact files summed (one per completed run snapshot). */
+  metricsArtifactCount: number;
+  tokensIn: number;
+  tokensOut: number;
+  costUSD: number;
+  wallTimeSeconds: number;
+}
+
 /**
  * Events emitted by TaskStore. Consumers (the main process event
  * forwarder) subscribe via `.on("event-appended", ...)` / `.on("task-saved", ...)`.
@@ -429,6 +442,92 @@ export class TaskStore extends EventEmitter {
     return JSON.parse(raw) as Record<string, unknown>;
   }
 
+  /** Write JSON artifact under `<taskId>/artifacts/`. Returns absolute path. */
+  async writeArtifactJson(taskId: string, fileName: string, payload: Record<string, unknown>): Promise<string> {
+    const folder = path.join(this.root, taskId, "artifacts");
+    await fs.mkdir(folder, { recursive: true });
+    const safeName = fileName.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_");
+    const abs = path.join(folder, safeName);
+    await fs.writeFile(abs, JSON.stringify(payload, null, 2), "utf8");
+    return abs;
+  }
+
+  /** List artifact files under `<taskId>/artifacts/` (non-recursive). */
+  async listArtifacts(taskId: string): Promise<Array<{ name: string; size: number; modifiedAt: string }>> {
+    const folder = path.join(this.root, taskId, "artifacts");
+    if (!existsSync(folder)) return [];
+    const entries = await fs.readdir(folder, { withFileTypes: true });
+    const out: Array<{ name: string; size: number; modifiedAt: string }> = [];
+    for (const e of entries) {
+      if (!e.isFile()) continue;
+      const stat = await fs.stat(path.join(folder, e.name));
+      out.push({ name: e.name, size: stat.size, modifiedAt: stat.mtime.toISOString() });
+    }
+    out.sort((a, b) => b.modifiedAt.localeCompare(a.modifiedAt));
+    return out;
+  }
+
+  /** Read one JSON artifact by file name from `<taskId>/artifacts/`. */
+  async readArtifactJson(taskId: string, fileName: string): Promise<Record<string, unknown> | null> {
+    const safeName = fileName.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_");
+    const p = path.join(this.root, taskId, "artifacts", safeName);
+    if (!existsSync(p)) return null;
+    const raw = await fs.readFile(p, "utf8");
+    return JSON.parse(raw) as Record<string, unknown>;
+  }
+
+  /**
+   * Sum metrics from every `artifacts/*.metrics.json` under tasks whose
+   * `project` field matches `projectId`. Ignores malformed files.
+   */
+  async aggregateProjectRunMetrics(projectId: string): Promise<ProjectRunMetricsRollup> {
+    const empty: ProjectRunMetricsRollup = {
+      projectId,
+      tasksWithArtifacts: 0,
+      metricsArtifactCount: 0,
+      tokensIn: 0,
+      tokensOut: 0,
+      costUSD: 0,
+      wallTimeSeconds: 0,
+    };
+    if (!projectId) return empty;
+
+    const tasks = await this.listTasks();
+    const inProject = tasks.filter((t) => t.project === projectId);
+    let tasksWithArtifacts = 0;
+    let metricsArtifactCount = 0;
+    let tokensIn = 0;
+    let tokensOut = 0;
+    let costUSD = 0;
+    let wallTimeSeconds = 0;
+
+    for (const t of inProject) {
+      const arts = await this.listArtifacts(t.id);
+      const metricFiles = arts.filter((a) => a.name.endsWith(".metrics.json"));
+      if (metricFiles.length === 0) continue;
+      tasksWithArtifacts += 1;
+      for (const f of metricFiles) {
+        const row = await this.readArtifactJson(t.id, f.name);
+        if (!row) continue;
+        metricsArtifactCount += 1;
+        tokensIn += numericArtifactField(row, "tokensIn");
+        tokensOut += numericArtifactField(row, "tokensOut");
+        costUSD += numericArtifactField(row, "costUSD");
+        wallTimeSeconds += numericArtifactField(row, "wallTimeSeconds");
+      }
+    }
+
+    return {
+      projectId,
+      tasksWithArtifacts,
+      metricsArtifactCount,
+      tokensIn,
+      tokensOut,
+      costUSD,
+      wallTimeSeconds,
+    };
+  }
+
   /**
    * Read a task-linked agent artifact by its file name stem.
    *
@@ -602,6 +701,11 @@ export class TaskStore extends EventEmitter {
     const nnn = String(maxN + 1).padStart(3, "0");
     return `${prefix}-${nnn}${workflow}`;
   }
+}
+
+function numericArtifactField(row: Record<string, unknown>, key: string): number {
+  const v = row[key];
+  return typeof v === "number" && Number.isFinite(v) ? v : 0;
 }
 
 function escapeRegExp(value: string): string {

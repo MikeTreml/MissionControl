@@ -283,6 +283,7 @@ export function SettingsGlobal(): JSX.Element {
         <SubTabs />
 
         <BabysitterMode />
+        <RunQueueSettings />
 
         <div className="card">
           <h3>Paths</h3>
@@ -314,6 +315,73 @@ export function SettingsGlobal(): JSX.Element {
         </div>
       </div>
     </>
+  );
+}
+
+function RunQueueSettings(): JSX.Element {
+  const [settings, setSettings] = useState<MCSettings | null>(null);
+  const [draftCap, setDraftCap] = useState("10");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!window.mc) return;
+    void window.mc.getSettings().then((next) => {
+      setSettings(next);
+      setDraftCap(String(next.runConcurrencyCap ?? 10));
+    }).catch((e) => setError(String(e)));
+  }, []);
+
+  async function saveCap(): Promise<void> {
+    if (!window.mc) return;
+    const parsed = Number(draftCap);
+    if (!Number.isFinite(parsed) || parsed < 1 || parsed > 50) {
+      setError("Concurrency cap must be an integer between 1 and 50.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    try {
+      const next = await window.mc.saveSettings({ runConcurrencyCap: Math.floor(parsed) });
+      setSettings(next);
+      setDraftCap(String(next.runConcurrencyCap ?? 10));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="card">
+      <h3>Run queue</h3>
+      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+        Caps how many tasks can run simultaneously. Additional starts are queued and launch automatically as slots free up.
+      </p>
+      <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 10, flexWrap: "wrap" }}>
+        <label className="muted" style={{ fontSize: 12 }}>Concurrency cap</label>
+        <input
+          type="number"
+          min={1}
+          max={50}
+          step={1}
+          value={draftCap}
+          onChange={(e) => setDraftCap(e.target.value)}
+          style={{ width: 110 }}
+        />
+        <button className="button" onClick={() => void saveCap()} disabled={saving}>
+          {saving ? "Saving…" : "Save"}
+        </button>
+        <span className="muted" style={{ fontSize: 12 }}>
+          Current: {settings?.runConcurrencyCap ?? 10}
+        </span>
+      </div>
+      {error && (
+        <div className="muted" style={{ color: "var(--bad)", marginTop: 10, fontSize: 12 }}>
+          {error}
+        </div>
+      )}
+    </div>
   );
 }
 

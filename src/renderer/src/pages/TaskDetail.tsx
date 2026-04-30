@@ -32,7 +32,7 @@ const LANE_LABEL: Record<Lane, string> = {
 
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
-  const { task, events, prompt, status, runConfig, isDemo } = useTask(selectedTaskId);
+  const { task, events, prompt, status, runConfig, latestMetrics, metricsFileName, isDemo } = useTask(selectedTaskId);
   const pendingAsks = usePendingAsks(selectedTaskId);
   const [editOpen, setEditOpen] = useState(false);
 
@@ -128,6 +128,7 @@ export function TaskDetail(): JSX.Element {
         </section>
 
         {!isDemo && <RunConfigCard runConfig={runConfig} />}
+        {!isDemo && <RunMetricsCard metrics={latestMetrics} fileName={metricsFileName} />}
       </div>
     </>
   );
@@ -1280,6 +1281,43 @@ function RunStatusCard({
               <div key={line} style={{ fontSize: 12 }}>{line}</div>
             ))}
           </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function RunMetricsCard({
+  metrics,
+  fileName,
+}: {
+  metrics: Record<string, unknown> | null;
+  fileName: string | null;
+}): JSX.Element {
+  const val = (k: string): string => {
+    const v = metrics?.[k];
+    if (typeof v === "number") return Number.isInteger(v) ? String(v) : v.toFixed(4);
+    if (typeof v === "string") return v;
+    return "—";
+  };
+  return (
+    <section className="card">
+      <h3>Run metrics artifact</h3>
+      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+        Latest persisted metrics snapshot from <code>artifacts/*.metrics.json</code>.
+      </p>
+      {!metrics ? (
+        <div className="muted" style={{ fontSize: 12, padding: "10px 2px" }}>
+          No metrics artifact yet.
+        </div>
+      ) : (
+        <div style={{ marginTop: 10, display: "grid", gap: 6, fontSize: 13 }}>
+          <div><strong>File:</strong> <code>{fileName ?? "(unknown)"}</code></div>
+          <div><strong>Step:</strong> {val("step")} · <strong>Cycle:</strong> {val("cycle")}</div>
+          <div><strong>Model:</strong> {val("provider")} {val("model")}</div>
+          <div><strong>Tokens:</strong> {val("tokensIn")} in / {val("tokensOut")} out</div>
+          <div><strong>Cost:</strong> ${val("costUSD")} · <strong>Wall time:</strong> {val("wallTimeSeconds")}s</div>
+          <div><strong>Reason:</strong> {val("reason")}</div>
         </div>
       )}
     </section>

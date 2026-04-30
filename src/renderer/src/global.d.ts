@@ -17,6 +17,17 @@ import type {
 } from "../../shared/models";
 import type { LibraryIndex } from "./types/library";
 
+/** Summed run metrics from per-task `artifacts/*.metrics.json` files. */
+export interface ProjectRunMetricsRollup {
+  projectId: string;
+  tasksWithArtifacts: number;
+  metricsArtifactCount: number;
+  tokensIn: number;
+  tokensOut: number;
+  costUSD: number;
+  wallTimeSeconds: number;
+}
+
 export interface WorkflowRunTemplate {
   id: string;
   name: string;
@@ -71,6 +82,8 @@ export interface McApi {
   writeTaskRunConfig: (id: string, config: Record<string, unknown>) => Promise<void>;
   readTaskFile: (id: string, stem: string, options?: { cycle?: number }) => Promise<string | null>;
   listTaskFiles: (id: string) => Promise<Array<{ name: string; size: number; modifiedAt: string }>>;
+  listTaskArtifacts: (id: string) => Promise<Array<{ name: string; size: number; modifiedAt: string }>>;
+  readTaskArtifactJson: (id: string, fileName: string) => Promise<Record<string, unknown> | null>;
   listTaskFileCycles: (id: string, stem: string) => Promise<number[]>;
   appendTaskStatus: (id: string, line: string) => Promise<void>;
   openTaskFolder: (id: string) => Promise<{ ok: boolean; reason?: "not-found" }>;
@@ -86,6 +99,7 @@ export interface McApi {
     patch: Partial<Omit<CreateProjectInput, "id" | "prefix">>,
   ) => Promise<ProjectWithGit>;
   deleteProject: (id: string) => Promise<void>;
+  aggregateProjectRunMetrics: (projectId: string) => Promise<ProjectRunMetricsRollup>;
 
   // agents + workflows
   listAgents: () => Promise<Agent[]>;

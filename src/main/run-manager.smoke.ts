@@ -75,7 +75,9 @@ async function main(): Promise<void> {
 
   // events journal recorded every transition
   const events = await tasks.readEvents(task.id);
-  const types = events.map((e) => e.type);
+  const types = events
+    .map((e) => e.type)
+    .filter((t) => t !== "metrics:recorded" && t !== "metrics:error");
   const expected = [
     "created",
     "run-started",
@@ -90,6 +92,12 @@ async function main(): Promise<void> {
     types.length === expected.length &&
     expected.every((t, i) => types[i] === t);
   assert(matches, `events.jsonl records transitions (got ${types.join(",")})`);
+  const fullEvents = await tasks.readEvents(task.id);
+  const metricRecorded = fullEvents.find((e) => e.type === "metrics:recorded") as (Record<string, unknown> | undefined);
+  assert(
+    typeof metricRecorded?.path === "string",
+    "run manager emits metrics:recorded with artifact path",
+  );
 
   // missing task id
   threw = false;
@@ -125,6 +133,7 @@ async function main(): Promise<void> {
   const piEvents = await tasks.readEvents(piTask.id);
   const detected = piEvents.find((e) => e.type === "babysitter-run-detected") as ({ babysitterRunId?: string } & Record<string, unknown>) | undefined;
   assert(Boolean(detected?.babysitterRunId), "run manager detects newly created babysitter run directories");
+  await mgrWithPi.stop({ taskId: piTask.id });
 
   // ── Campaign iteration ──────────────────────────────────────────────
   // pi is null → start/completeRun follow the state-machine paths only,
@@ -236,6 +245,21 @@ async function main(): Promise<void> {
   assert(abortResult.done === true && abortResult.status === "aborted", "parallel step aborts immediately on first failure when configured");
   const abortEvents = (await tasks.readEvents(abortTask.id)).filter((e) => e.type.startsWith("step:"));
   assert(abortEvents.length === 3, "abort path emits step:start, step:agent-end, step:end only");
+
+  // ── Concurrency cap queueing ────────────────────────────────────────
+  const queueMgr = new RunManager(tasks, null, null, null, {
+    get: async () => ({ babysitterMode: "plan", runConcurrencyCap: 1, agentOverrides: {} }),
+  } as any);
+  const q1 = await tasks.createTask({ title: "Queue task 1", projectId: "runner", projectPrefix: "RN" });
+  const q2 = await tasks.createTask({ title: "Queue task 2", projectId: "runner", projectPrefix: "RN" });
+  await queueMgr.start({ taskId: q1.id });
+  const q2Start = await queueMgr.start({ taskId: q2.id });
+  assert(q2Start.runState === "idle", "second task stays idle when cap is reached and gets queued");
+  const q2Events = await tasks.readEvents(q2.id);
+  assert(q2Events.some((e) => e.type === "run-queued"), "queued task emits run-queued event");
+  await queueMgr.stop({ taskId: q1.id });
+  const q2AfterDrain = (await tasks.getTask(q2.id))!;
+  assert(q2AfterDrain.runState === "running", "queued task auto-starts when slot opens");
 
   console.log("GREEN");
 }

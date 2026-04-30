@@ -100,6 +100,9 @@ export function registerIpc(stores: Stores): void {
     stores.tasks.writeRunConfig(id, config));
   ipcMain.handle("tasks:readFile",   (_e, id: string, stem: string, options?: { cycle?: number }) => stores.tasks.readTaskFile(id, stem, options));
   ipcMain.handle("tasks:listFiles",  (_e, id: string) => stores.tasks.listTaskFiles(id));
+  ipcMain.handle("tasks:listArtifacts", (_e, id: string) => stores.tasks.listArtifacts(id));
+  ipcMain.handle("tasks:readArtifactJson", (_e, id: string, fileName: string) =>
+    stores.tasks.readArtifactJson(id, fileName));
   ipcMain.handle("tasks:listFileCycles", (_e, id: string, stem: string) => stores.tasks.listTaskFileCycles(id, stem));
   ipcMain.handle("tasks:appendStatus",
     (_e, id: string, line: string) =>
@@ -129,6 +132,9 @@ export function registerIpc(stores: Stores): void {
   });
   ipcMain.handle("projects:delete", (_e, id: string) =>
     stores.projects.deleteProject(id),
+  );
+  ipcMain.handle("projects:aggregateRunMetrics", (_e, projectId: string) =>
+    stores.tasks.aggregateProjectRunMetrics(projectId),
   );
 
   // ── agents + workflows ────────────────────────────────────────────────

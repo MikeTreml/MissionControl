@@ -28,6 +28,8 @@ const api = {
   readTaskFile:    (id: string, stem: string, options?: { cycle?: number }) =>
     ipcRenderer.invoke("tasks:readFile", id, stem, options),
   listTaskFiles:   (id: string) => ipcRenderer.invoke("tasks:listFiles", id),
+  listTaskArtifacts: (id: string) => ipcRenderer.invoke("tasks:listArtifacts", id),
+  readTaskArtifactJson: (id: string, fileName: string) => ipcRenderer.invoke("tasks:readArtifactJson", id, fileName),
   listTaskFileCycles: (id: string, stem: string) => ipcRenderer.invoke("tasks:listFileCycles", id, stem),
   appendTaskStatus: (id: string, line: string) =>
     ipcRenderer.invoke("tasks:appendStatus", id, line),
@@ -41,6 +43,8 @@ const api = {
   updateProject:   (id: string, patch: unknown) =>
     ipcRenderer.invoke("projects:update", id, patch),
   deleteProject:   (id: string) => ipcRenderer.invoke("projects:delete", id),
+  aggregateProjectRunMetrics: (projectId: string) =>
+    ipcRenderer.invoke("projects:aggregateRunMetrics", projectId),
 
   // ── agents + workflows ───────────────────────────────────────────────
   listAgents:      () => ipcRenderer.invoke("agents:list"),

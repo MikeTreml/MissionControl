@@ -49,6 +49,12 @@ export type LibraryIndexItem = {
   estimatedSteps?: number;
   hasParallel?: boolean;
   hasBreakpoints?: boolean;
+  /** Co-located long-form prose; same directory as the entry file (AGENT.md, SKILL.md, workflow.js). */
+  descriptionMdPath: string | null;
+  /** README.md in the same folder as the entry (standard for skills/agents); null for workflows (use companionDoc). */
+  readmeMdPath: string | null;
+  /** First README.md found walking up from the entry's parent folder, stopping at the library root. */
+  containerReadmePath: string | null;
 };
 
 export type LibraryIndex = {
@@ -115,7 +121,8 @@ export class LibraryWalker {
     const name = logicalPath.split("/").at(-1) ?? path.basename(filePath);
     const text = await fs.readFile(filePath, "utf8");
     const frontmatter = parseFrontmatter(text);
-    const nearestMeta = await this.findNearestMeta(path.dirname(filePath));
+    const itemDir = path.dirname(filePath);
+    const nearestMeta = await this.findNearestMeta(itemDir);
     const inferred = inferContainerContext(logicalPath);
     const languages = uniq([
       ...toStringArray(frontmatter.languages),
@@ -123,11 +130,17 @@ export class LibraryWalker {
       ...toStringArray(frontmatter.languagePrimary),
       ...toStringArray(nearestMeta?.languagesSupported),
       ...toStringArray(nearestMeta?.languagePrimary),
+      ...inferLanguagesFromContext(logicalPath, kind, frontmatter),
     ]);
     const tags = uniq([
       ...toStringArray(frontmatter.tags),
       ...toStringArray(nearestMeta?.tags),
     ]);
+
+    const descriptionMdPath = await existingPath(path.join(itemDir, "DESCRIPTION.md"));
+    const readmeMdPath =
+      kind === "workflow" ? null : await existingPath(path.join(itemDir, "README.md"));
+    const containerReadmePath = await resolveContainerReadme(this.root, filePath);
 
     const base: LibraryIndexItem = {
       kind,
@@ -151,6 +164,9 @@ export class LibraryWalker {
       version: toString(frontmatter.version) ?? null,
       sizeBytes: stat.size,
       modifiedAt: stat.mtime.toISOString(),
+      descriptionMdPath,
+      readmeMdPath,
+      containerReadmePath,
     };
 
     if (kind === "workflow") {
@@ -214,6 +230,39 @@ function toLogicalPath(relPath: string): string {
   if (posix.endsWith("/SKILL.md")) return posix.slice(0, -"/SKILL.md".length);
   if (posix.endsWith("/workflow.js")) return posix.slice(0, -"/workflow.js".length);
   return posix.replace(/\.[^./]+$/, "");
+}
+
+/**
+ * When frontmatter omits languages:, infer labels from card name and path.
+ * e.g. specializations/.../skills/yaml → "yaml"; name: zustand in YAML → "zustand".
+ */
+function inferLanguagesFromContext(
+  logicalPath: string,
+  kind: LibraryItemKind,
+  frontmatter: Record<string, unknown>,
+): string[] {
+  const out: string[] = [];
+  const fmName = toString(frontmatter.name);
+  if (fmName) out.push(fmName);
+
+  if (kind === "workflow") return out;
+
+  const parts = logicalPath.split("/").filter(Boolean);
+
+  if (kind === "skill") {
+    const si = parts.indexOf("skills");
+    if (si >= 0 && parts[si + 1]) {
+      out.push(parts[si + 1]!);
+    } else {
+      const leaf = parts.at(-1);
+      if (leaf) out.push(leaf);
+    }
+  } else if (kind === "example") {
+    const leaf = parts.at(-1)?.replace(/\.[^.]+$/, "");
+    if (leaf) out.push(leaf);
+  }
+
+  return out;
 }
 
 function inferContainerContext(logicalPath: string): {
@@ -286,10 +335,29 @@ async function existingPath(candidate: string, asDir = false): Promise<string | 
     const stat = await fs.stat(candidate);
     if (asDir && !stat.isDirectory()) return null;
     if (!asDir && !stat.isFile()) return null;
-    return candidate;
+    return path.resolve(candidate);
   } catch {
     return null;
   }
+}
+
+function isLibraryDescendantOrSelf(libraryRoot: string, dir: string): boolean {
+  const rel = path.relative(path.resolve(libraryRoot), path.resolve(dir));
+  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
+}
+
+/** README in an ancestor of the entry folder, excluding the entry's own directory (use DESCRIPTION.md there). */
+async function resolveContainerReadme(libraryRoot: string, filePath: string): Promise<string | null> {
+  const itemDir = path.dirname(path.resolve(filePath));
+  let d = path.dirname(itemDir);
+  while (isLibraryDescendantOrSelf(libraryRoot, d)) {
+    const found = await existingPath(path.join(d, "README.md"));
+    if (found) return found;
+    const parent = path.dirname(d);
+    if (parent === d) break;
+    d = parent;
+  }
+  return null;
 }
 
 function matchRefs(text: string, pattern: RegExp): string[] {

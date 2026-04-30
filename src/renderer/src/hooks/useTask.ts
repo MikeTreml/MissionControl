@@ -61,6 +61,9 @@ export interface TaskState {
   status: string | null;
   /** RUN_CONFIG.json content; null when missing. */
   runConfig: Record<string, unknown> | null;
+  /** Latest metrics artifact from artifacts/*.metrics.json */
+  latestMetrics: Record<string, unknown> | null;
+  metricsFileName: string | null;
   loading: boolean;
   isDemo: boolean;
   error: Error | null;
@@ -73,6 +76,8 @@ export function useTask(id: string | null): TaskState {
   const [prompt, setPrompt] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [runConfig, setRunConfig] = useState<Record<string, unknown> | null>(null);
+  const [latestMetrics, setLatestMetrics] = useState<Record<string, unknown> | null>(null);
+  const [metricsFileName, setMetricsFileName] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isDemo, setIsDemo] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -86,6 +91,8 @@ export function useTask(id: string | null): TaskState {
         setPrompt(null);
         setStatus(null);
         setRunConfig(null);
+        setLatestMetrics(null);
+        setMetricsFileName(null);
         return;
       }
       if (!window.mc) {
@@ -94,6 +101,8 @@ export function useTask(id: string | null): TaskState {
         setPrompt(null);
         setStatus(null);
         setRunConfig(null);
+        setLatestMetrics(null);
+        setMetricsFileName(null);
         setIsDemo(true);
         return;
       }
@@ -105,20 +114,29 @@ export function useTask(id: string | null): TaskState {
         setPrompt(null);
         setStatus(null);
         setRunConfig(null);
+        setLatestMetrics(null);
+        setMetricsFileName(null);
         setIsDemo(true);
         return;
       }
-      const [ev, pmt, sts, cfg] = await Promise.all([
+      const [ev, pmt, sts, cfg, artifacts] = await Promise.all([
         window.mc.readTaskEvents(id),
         window.mc.readTaskPrompt(id),
         window.mc.readTaskStatus(id),
         window.mc.readTaskRunConfig(id),
+        window.mc.listTaskArtifacts(id),
       ]);
+      const latestMetricsFile = artifacts.find((a) => a.name.endsWith(".metrics.json")) ?? null;
+      const latestMetricsJson = latestMetricsFile
+        ? await window.mc.readTaskArtifactJson(id, latestMetricsFile.name)
+        : null;
       setTask(real);
       setEvents(ev);
       setPrompt(pmt);
       setStatus(sts);
       setRunConfig(cfg);
+      setLatestMetrics(latestMetricsJson);
+      setMetricsFileName(latestMetricsFile?.name ?? null);
       setIsDemo(false);
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
@@ -127,6 +145,8 @@ export function useTask(id: string | null): TaskState {
       setPrompt(null);
       setStatus(null);
       setRunConfig(null);
+      setLatestMetrics(null);
+      setMetricsFileName(null);
       setIsDemo(true);
     } finally {
       setLoading(false);
@@ -140,5 +160,17 @@ export function useTask(id: string | null): TaskState {
   // Live refetch on any task-related push from the main process.
   useSubscribe("tasks", () => { void load(); });
 
-  return { task, events, prompt, status, runConfig, loading, isDemo, error, refresh: load };
+  return {
+    task,
+    events,
+    prompt,
+    status,
+    runConfig,
+    latestMetrics,
+    metricsFileName,
+    loading,
+    isDemo,
+    error,
+    refresh: load,
+  };
 }

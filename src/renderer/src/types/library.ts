@@ -35,6 +35,12 @@ export interface LibraryIndexItem {
   estimatedSteps?: number;
   hasParallel?: boolean;
   hasBreakpoints?: boolean;
+  /** Co-located DESCRIPTION.md next to the entry file; set by library index build. */
+  descriptionMdPath?: string | null;
+  /** README.md beside AGENT.md / SKILL.md / example JSON; workflows use companionDoc instead. */
+  readmeMdPath?: string | null;
+  /** Nearest ancestor README under `library/`; set by library index build. */
+  containerReadmePath?: string | null;
 }
 
 export interface LibraryIndex {

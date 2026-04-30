@@ -26,6 +26,28 @@ async function main(): Promise<void> {
   assert(Array.isArray(sampleWorkflow.usesAgents), "workflow includes usesAgents");
   assert(typeof sampleWorkflow.estimatedSteps === "number", "workflow includes estimatedSteps");
 
+  const bmadDev = index.items.find((i) => i.id === "methodologies/bmad-method/agents/developer/AGENT");
+  assert(!!bmadDev, "sample nested agent for readme resolution");
+  assert(
+    bmadDev.containerReadmePath !== null &&
+      bmadDev.containerReadmePath.replace(/\\/g, "/").endsWith("methodologies/bmad-method/README.md"),
+    "containerReadmePath walks to methodology README",
+  );
+
+  const cogSkill = index.items.find(
+    (i) => i.id === "methodologies/cog-second-brain/skills/knowledge-consolidation/SKILL",
+  );
+  assert(!!cogSkill, "cog-second-brain knowledge-consolidation skill");
+  assert(
+    cogSkill.readmeMdPath !== null &&
+      cogSkill.readmeMdPath.replace(/\\/g, "/").endsWith(
+        "methodologies/cog-second-brain/skills/knowledge-consolidation/README.md",
+      ),
+    "readmeMdPath is co-located README beside SKILL.md",
+  );
+
+  assert(sampleWorkflow.readmeMdPath === null, "workflow uses companionDoc, not readmeMdPath");
+
   console.log(
     `[smoke] index counts: agents=${index.summary.agents}, ` +
       `skills=${index.summary.skills}, workflows=${index.summary.workflows}, ` +

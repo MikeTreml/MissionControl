@@ -5,21 +5,25 @@
  * Throughput is a simple SVG bar chart derived from createdAt/updatedAt.
  * Stuck tasks = lane=approval OR idle > 24h.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRoute } from "../router";
 import { useProjects } from "../hooks/useProjects";
 import { useTasks } from "../hooks/useTasks";
+import { useSubscribe } from "../hooks/data-bus";
 import { PageStub } from "./PageStub";
 import { AddProjectForm } from "../components/AddProjectForm";
 import type { UiTask } from "../hooks/useTasks";
 import type { ProjectWithGit } from "../../../shared/models";
+import type { ProjectRunMetricsRollup } from "../global";
 
 export function ProjectDetail(): JSX.Element {
   const { selectedProjectId, setView } = useRoute();
   const { projects, isDemo: projectsDemo } = useProjects();
   const { tasks, isDemo: tasksDemo } = useTasks();
   const [editOpen, setEditOpen] = useState(false);
+  const [runMetricsRollup, setRunMetricsRollup] = useState<ProjectRunMetricsRollup | null>(null);
+  const [rollupError, setRollupError] = useState("");
 
   const project = useMemo(
     () =>
@@ -57,6 +61,30 @@ export function ProjectDetail(): JSX.Element {
 
   const stats = computeStats(projectTasks);
   const isDemo = projectsDemo || tasksDemo;
+
+  const loadRunMetricsRollup = useCallback(async () => {
+    if (!window.mc || isDemo || !project?.id) {
+      setRunMetricsRollup(null);
+      setRollupError("");
+      return;
+    }
+    setRollupError("");
+    try {
+      const rollup = await window.mc.aggregateProjectRunMetrics(project.id);
+      setRunMetricsRollup(rollup);
+    } catch (e) {
+      setRunMetricsRollup(null);
+      setRollupError(e instanceof Error ? e.message : String(e));
+    }
+  }, [project?.id, isDemo]);
+
+  useEffect(() => {
+    void loadRunMetricsRollup();
+  }, [loadRunMetricsRollup]);
+
+  useSubscribe("tasks", () => {
+    void loadRunMetricsRollup();
+  });
 
   // UiProject doesn't carry gitInfo — fetch the full ProjectWithGit for the
   // edit form by finding the raw project in the real list if available,
@@ -132,6 +160,39 @@ export function ProjectDetail(): JSX.Element {
           <Kpi label="Stuck (>24h)" value={stats.stuck} />
         </section>
 
+        {!isDemo && (
+          <section className="card">
+            <h3>Run metrics (artifacts)</h3>
+            <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+              Totals from every task in this project with <code>artifacts/*.metrics.json</code> (written when a run ends).
+            </p>
+            {rollupError && (
+              <p className="muted" style={{ marginTop: 8, color: "var(--bad)", fontSize: 12 }}>{rollupError}</p>
+            )}
+            {!rollupError && runMetricsRollup && runMetricsRollup.metricsArtifactCount === 0 && (
+              <p className="muted" style={{ marginTop: 8, fontSize: 12 }}>No metrics artifacts yet. Complete a run to populate this rollup.</p>
+            )}
+            {!rollupError && runMetricsRollup && runMetricsRollup.metricsArtifactCount > 0 && (
+              <div className="card-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+                <Kpi label="Completed run snapshots" value={runMetricsRollup.metricsArtifactCount} />
+                <Kpi label="Tasks with metrics" value={runMetricsRollup.tasksWithArtifacts} />
+                <Kpi
+                  label="Tokens (in / out)"
+                  value={`${abbreviateTokens(runMetricsRollup.tokensIn)} / ${abbreviateTokens(runMetricsRollup.tokensOut)}`}
+                />
+                <Kpi
+                  label="Wall time (sum)"
+                  value={formatDurationSeconds(runMetricsRollup.wallTimeSeconds)}
+                />
+                <Kpi
+                  label="Spend (sum)"
+                  value={runMetricsRollup.costUSD > 0 ? `$${runMetricsRollup.costUSD.toFixed(4)}` : "—"}
+                />
+              </div>
+            )}
+          </section>
+        )}
+
         <section className="card">
           <h3>Tasks by lane</h3>
           <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
@@ -159,6 +220,22 @@ function Kpi({ label, value }: { label: string; value: number | string }): JSX.E
       <div className="kpi">{value}</div>
     </div>
   );
+}
+
+function abbreviateTokens(n: number): string {
+  if (n < 1_000) return n.toLocaleString();
+  if (n < 1_000_000) return `${(n / 1_000).toFixed(1)}K`;
+  return `${(n / 1_000_000).toFixed(2)}M`;
+}
+
+function formatDurationSeconds(totalSeconds: number): string {
+  const s = Math.max(0, Math.round(totalSeconds));
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  const rem = s % 60;
+  if (m < 60) return rem ? `${m}m ${rem}s` : `${m}m`;
+  const h = Math.floor(m / 60);
+  return `${h}h ${m % 60}m`;
 }
 
 function LaneBars({ tasks }: { tasks: UiTask[] }): JSX.Element {

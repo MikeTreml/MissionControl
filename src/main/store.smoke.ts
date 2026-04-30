@@ -128,6 +128,37 @@ async function main(): Promise<void> {
   assert((runConfig.runSettings as Record<string, unknown>).model === "openai:gpt-5.3", "runConfig model persisted");
   console.log("[smoke] RUN_CONFIG.json read/write OK");
 
+  // ── artifacts JSON write helper ──────────────────────────────────────
+  const artifactPath = await store.writeArtifactJson("DA-001F", "sample.metrics.json", {
+    step: "planner",
+    costUSD: 0.04,
+  });
+  assert(existsSync(artifactPath), "writeArtifactJson creates artifact file");
+  const artifactRaw = await fs.readFile(artifactPath, "utf8");
+  assert(artifactRaw.includes("\"costUSD\": 0.04"), "artifact payload persisted");
+  const artifacts = await store.listArtifacts("DA-001F");
+  assert(artifacts.length >= 1, "listArtifacts returns persisted artifact files");
+  const artifactJson = await store.readArtifactJson("DA-001F", "sample.metrics.json");
+  assert(artifactJson?.step === "planner", "readArtifactJson returns parsed payload");
+  console.log("[smoke] artifact JSON write helper OK");
+
+  // ── project-level metrics rollup (artifacts/*.metrics.json) ─────────
+  await store.writeArtifactJson("DA-002F", "DA-002F-run-c1-2026-01-01T00-00-00-000Z.metrics.json", {
+    tokensIn: 100,
+    tokensOut: 50,
+    costUSD: 0.01,
+    wallTimeSeconds: 30,
+  });
+  const dogRoll = await store.aggregateProjectRunMetrics("dogapp");
+  assert(dogRoll.metricsArtifactCount === 2, `expected 2 metric artifacts for dogapp, got ${dogRoll.metricsArtifactCount}`);
+  assert(dogRoll.tokensIn === 100 && dogRoll.tokensOut === 50, "tokens summed from artifacts");
+  assert(Math.abs(dogRoll.costUSD - 0.05) < 0.0001, `costUSD summed (0.04+0.01), got ${dogRoll.costUSD}`);
+  assert(dogRoll.wallTimeSeconds === 30, `wallTimeSeconds summed, got ${dogRoll.wallTimeSeconds}`);
+  assert(dogRoll.tasksWithArtifacts === 2, `two tasks had metrics artifacts, got ${dogRoll.tasksWithArtifacts}`);
+  const emptyRoll = await store.aggregateProjectRunMetrics("no-such-project");
+  assert(emptyRoll.metricsArtifactCount === 0, "unknown project yields empty rollup");
+  console.log("[smoke] aggregateProjectRunMetrics OK");
+
   // ── Phase 2: PROMPT.md + STATUS.md convention ──────────────────────
   // Every task is scaffolded with both files. PROMPT.md has an initial
   // brief; STATUS.md is seeded with a "task created" entry.

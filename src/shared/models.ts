@@ -408,6 +408,8 @@ export type SubagentSpawn = z.infer<typeof SubagentSpawnSchema>;
  */
 export const MCSettingsSchema = z.object({
   babysitterMode: z.enum(["plan", "execute", "direct"]).default("plan"),
+  // Max number of tasks MC should actively run at once.
+  runConcurrencyCap: z.number().int().min(1).max(50).default(10),
   // Per-agent UI/runtime overrides layered on top of bundled agent.json.
   // Lets MC activate/deactivate agents and tweak display/model metadata
   // without editing shipped files in place.
