@@ -1,11 +1,11 @@
 import { useTasks, type BoardStage, type UiTask } from "../hooks/useTasks";
 import { TaskCard } from "./TaskCard";
 
-const BOARD_STAGES: readonly BoardStage[] = ["Draft", "Plan", "Active", "Attention", "Failed", "Complete"] as const;
+const BOARD_STAGES: readonly BoardStage[] = ["Draft", "Active", "Attention", "Failed", "Complete"] as const;
 
 function groupByStage(tasks: UiTask[]): Record<BoardStage, UiTask[]> {
   const out: Record<BoardStage, UiTask[]> = {
-    Draft: [], Plan: [], Active: [], Attention: [], Failed: [], Complete: [],
+    Draft: [], Active: [], Attention: [], Failed: [], Complete: [],
   };
   for (const t of tasks) out[t.boardStage].push(t);
   return out;
