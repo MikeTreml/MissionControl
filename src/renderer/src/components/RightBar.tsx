@@ -279,6 +279,17 @@ function iconForEvent(type: string): string {
   if (type === "bs:phase")                                  return "◇";
   if (type === "bs:error")                                  return "✕";
   if (type === "bs:log" || type === "bs:stdout" || type === "bs:stderr") return "·";
+  // SDK journal events from `<runPath>/journal/*.jsonl` (subagents,
+  // breakpoints, process-level messages — see journal-reader.ts).
+  if (type === "bs:journal:effect_requested")               return "⚙";
+  if (type === "bs:journal:effect_resolved_ok")             return "✓";
+  if (type === "bs:journal:effect_resolved_error")          return "✕";
+  if (type === "bs:journal:breakpoint_opened")              return "⏸";
+  if (type === "bs:journal:breakpoint_responded")           return "▷";
+  if (type === "bs:journal:process_completed")              return "■";
+  if (type === "bs:journal:process_failed")                 return "✕";
+  if (type === "bs:journal:process_log")                    return "·";
+  if (type.startsWith("bs:journal:"))                       return "◆";
   return "";
 }
 
@@ -313,6 +324,45 @@ function summarizePayload(event: TaskEvent): string {
       return record.line.length > 80 ? `${record.line.slice(0, 77)}…` : record.line;
     }
     if (typeof record.message === "string") return record.message;
+  }
+  // SDK journal events — payload lives under `data` (see journal-reader.ts).
+  if (event.type.startsWith("bs:journal:")) {
+    const data = (record.data as Record<string, unknown> | undefined) ?? {};
+    const effectId = typeof data.effectId === "string" ? data.effectId : null;
+    if (event.type === "bs:journal:effect_requested") {
+      const kind = typeof data.kind === "string" ? data.kind : "effect";
+      const taskDef = data.taskDef as { title?: string; name?: string } | undefined;
+      const title = taskDef?.title ?? taskDef?.name ?? effectId ?? "(unnamed)";
+      return `${kind}: ${title}`;
+    }
+    if (event.type === "bs:journal:effect_resolved_ok" && effectId) {
+      return `done: ${effectId}`;
+    }
+    if (event.type === "bs:journal:effect_resolved_error") {
+      const err = data.error as { message?: string; name?: string } | undefined;
+      return err?.message ?? err?.name ?? `failed: ${effectId ?? "?"}`;
+    }
+    if (event.type === "bs:journal:breakpoint_opened") {
+      const expert = typeof data.expert === "string" ? ` · ${data.expert}` : "";
+      const payload = data.payload as { question?: string; title?: string } | undefined;
+      return `awaiting${expert}${payload?.title ? ` · ${payload.title}` : ""}`;
+    }
+    if (event.type === "bs:journal:breakpoint_responded") {
+      const approved = data.approved === true ? "approved" : "rejected";
+      const respondedBy = typeof data.respondedBy === "string" ? ` by ${data.respondedBy}` : "";
+      return `${approved}${respondedBy}`;
+    }
+    if (event.type === "bs:journal:process_log") {
+      const label = typeof data.label === "string" ? `[${data.label}] ` : "";
+      const message = typeof data.message === "string" ? data.message : "";
+      const text = `${label}${message}`;
+      return text.length > 80 ? `${text.slice(0, 77)}…` : text;
+    }
+    if (event.type === "bs:journal:process_failed") {
+      const err = data.error as { message?: string } | undefined;
+      return err?.message ?? "process failed";
+    }
+    return effectId ?? "";
   }
 
   // Structural: lane + run events

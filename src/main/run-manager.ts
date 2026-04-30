@@ -25,6 +25,7 @@ import type { TaskStore } from "./store.ts";
 import type { ProjectStore } from "./project-store.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { SettingsStore } from "./settings-store.ts";
+import { JournalReader } from "./journal-reader.ts";
 import { renderPromptFile } from "./render-prompt.ts";
 import { writeLatestRunMetricsArtifact } from "./run-cost-tracker.ts";
 import type { CampaignItem, MCSettings, RunState, Task } from "../shared/models.ts";
@@ -62,6 +63,8 @@ export class RunManager {
   private readonly projects: ProjectStore | null;
   private readonly pi: PiSessionManager | null;
   private readonly settings: SettingsStore | null;
+  /** Active journal readers per task. Stopped on completeRun. */
+  private readonly journalReaders = new Map<string, JournalReader>();
 
   constructor(
     tasks: TaskStore,
@@ -74,6 +77,38 @@ export class RunManager {
     this.pi = pi ?? null;
     this.projects = projects ?? null;
     this.settings = settings ?? null;
+  }
+
+  /**
+   * Start streaming the SDK journal at <runPath>/journal/*.jsonl into
+   * the task's events.jsonl. Idempotent per task — calling twice with
+   * the same task replaces the prior reader. Stops automatically when
+   * `stopJournalReader(taskId)` is called from completeRun.
+   */
+  private startJournalReader(taskId: string, runPath: string): void {
+    this.stopJournalReader(taskId);
+    const reader = new JournalReader(runPath, (event) => {
+      // Forward every journal event to the task journal as
+      // `bs:journal:<lowercased-type>` so RightBar can dispatch on it.
+      const type = `bs:journal:${event.type.toLowerCase()}`;
+      void this.tasks.appendEvent(taskId, {
+        type,
+        ...(event.seq !== undefined ? { seq: event.seq } : {}),
+        ...(event.ulid ? { ulid: event.ulid } : {}),
+        ...(event.recordedAt ? { recordedAt: event.recordedAt } : {}),
+        ...(event.data ? { data: event.data } : {}),
+      });
+    });
+    this.journalReaders.set(taskId, reader);
+    reader.start();
+  }
+
+  private stopJournalReader(taskId: string): void {
+    const existing = this.journalReaders.get(taskId);
+    if (existing) {
+      existing.stop();
+      this.journalReaders.delete(taskId);
+    }
   }
 
   async start(input: {
@@ -164,6 +199,7 @@ export class RunManager {
     const cwd = await this.resolveCwd(task);
     const runsDir = path.join(cwd, ".a5c", "runs");
     await fs.mkdir(runsDir, { recursive: true });
+    const beforeRuns = await snapshotBabysitterRuns(cwd);
 
     const args = [
       cliPath,
@@ -189,6 +225,9 @@ export class RunManager {
     );
 
     const child = spawn(process.execPath, args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+    // Once the SDK creates its run directory, start streaming the
+    // journal events into the task journal as bs:journal:* entries.
+    void this.detectBabysitterRun(task.id, cwd, beforeRuns);
     const onLine = (chunk: Buffer | string, stream: "stdout" | "stderr"): void => {
       const text = typeof chunk === "string" ? chunk : chunk.toString("utf8");
       for (const raw of text.split(/\r?\n/)) {
@@ -342,6 +381,7 @@ export class RunManager {
     await this.recordMetricsArtifact(task.id, "run", task.cycle);
     await this.tasks.appendStatus(task.id, `Run ended — cycle ${task.cycle} · ${reason}`);
     this.activeModel.delete(task.id);
+    this.stopJournalReader(taskId);
     await this.startQueuedIfCapacity();
   }
 
@@ -403,6 +443,7 @@ export class RunManager {
       `Campaign ended — cycle ${task.cycle} · ${done}/${task.items.length} done, ${failed} failed`,
     );
     this.activeModel.delete(task.id);
+    this.stopJournalReader(task.id);
     await this.startQueuedIfCapacity();
   }
 
@@ -481,6 +522,7 @@ export class RunManager {
     }
     this.activeModel.delete(task.id);
     this.parallelSteps.delete(task.id);
+    this.stopJournalReader(task.id);
     await this.startQueuedIfCapacity();
     return next;
   }
@@ -686,6 +728,7 @@ export class RunManager {
         runPath,
       });
       await this.tasks.appendStatus(taskId, `Babysitter run detected — ${newRunId}`);
+      this.startJournalReader(taskId, runPath);
       return;
     }
   }

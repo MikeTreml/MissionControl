@@ -23,7 +23,6 @@ import path from "node:path";
 
 import {
   makeTask,
-  taskFile,
   TaskSchema,
   type Task,
   type TaskEvent,
@@ -226,13 +225,11 @@ export class TaskStore extends EventEmitter {
     description?: string;
     projectId: string;
     projectPrefix: string;
-    workflow?: string;
     /**
-     * Initial lane — defaults to "plan". Callers that know the workflow
-     * (e.g. via `effectiveLanes(workflow)[0]`) should pass it explicitly
-     * so tasks start in a lane their workflow actually uses.
+     * Workflow letter for the task ID suffix (e.g. "F" -> DA-015F). Stored
+     * only as part of the immutable id; not a separate task field.
      */
-    lane?: Task["lane"];
+    workflow?: string;
     /** "single" (default) or "campaign". Campaigns carry an items list. */
     kind?: Task["kind"];
     items?: Task["items"];
@@ -244,8 +241,6 @@ export class TaskStore extends EventEmitter {
       title: input.title,
       description: input.description ?? "",
       project: input.projectId,
-      workflow,
-      ...(input.lane ? { lane: input.lane } : {}),
       ...(input.kind ? { kind: input.kind } : {}),
       ...(input.items ? { items: input.items } : {}),
     });
@@ -264,7 +259,8 @@ export class TaskStore extends EventEmitter {
     const folder = path.join(this.root, validated.id);
 
     // Read the prior manifest (if any) BEFORE overwriting so we can diff
-    // lane/cycle and emit specific journal events.
+    // cycle / blocker and emit specific journal events. (Lane was diffed
+    // here too pre-Phase-10; that field is gone now.)
     const prior = await this.readPriorForDiff(folder);
 
     await fs.mkdir(folder, { recursive: true });
@@ -274,13 +270,7 @@ export class TaskStore extends EventEmitter {
       "utf8",
     );
 
-    if (prior && prior.lane !== validated.lane) {
-      await this.appendEvent(validated.id, {
-        type: "lane-changed",
-        from: prior.lane,
-        to: validated.lane,
-      });
-    } else if (prior && prior.cycle !== validated.cycle) {
+    if (prior && prior.cycle !== validated.cycle) {
       await this.appendEvent(validated.id, {
         type: "cycle-changed",
         from: prior.cycle,
