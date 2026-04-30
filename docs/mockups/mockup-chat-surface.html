@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mockup — Orchestrator chat surface (#36)</title>
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .layout {
+    display: grid; grid-template-columns: 1fr 380px;
+    gap: 0; min-height: 580px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden;
+  }
+  .main-pane {
+    padding: 16px; border-right: 1px solid var(--border);
+    display: grid; gap: 12px; align-content: start;
+  }
+  .placeholder-card {
+    background: var(--panel-2); border: 1px dashed var(--border);
+    border-radius: 8px; padding: 12px 14px; color: var(--muted);
+    font-size: 12px; text-align: center;
+  }
+
+  /* Right drawer */
+  .drawer {
+    background: var(--panel-2); display: grid; grid-template-rows: auto 1fr auto;
+  }
+  .drawer-head {
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .drawer-head .title { font-weight: 600; font-size: 13px; }
+  .drawer-head .meta  { color: var(--muted); font-size: 11px; }
+  .drawer-head .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); animation: mc-pulse 1.4s ease-in-out infinite; }
+  @keyframes mc-pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
+
+  .messages { padding: 14px; overflow-y: auto; display: grid; gap: 14px; }
+  .msg { display: grid; gap: 4px; max-width: 88%; }
+  .msg.from-user  { justify-self: end; }
+  .msg.from-orch  { justify-self: start; }
+  .msg .who { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+  .msg .who.you { color: var(--accent); text-align: right; }
+  .msg .who.orch { color: var(--good); }
+  .msg .body {
+    padding: 10px 12px; border-radius: 10px; font-size: 13px;
+    background: var(--panel); border: 1px solid var(--border);
+  }
+  .msg.from-user .body { background: rgba(110,168,254,0.10); border-color: var(--accent); }
+  .msg.from-orch .body { background: rgba(77,212,172,0.06); }
+  .msg .ts   { font-size: 10px; color: var(--muted); }
+  .msg.from-user .ts { text-align: right; }
+
+  /* Inline event marker — when an mc_ask_user happens (agent → user),
+     it shows differently from a chat message. */
+  .event-marker {
+    align-self: center; font-size: 11px; color: var(--muted);
+    padding: 6px 10px; background: var(--panel); border-radius: 6px;
+    border: 1px dashed var(--border);
+    max-width: 90%;
+  }
+  .event-marker strong { color: var(--warn); }
+
+  .composer {
+    border-top: 1px solid var(--border); padding: 10px 12px;
+    display: grid; gap: 8px;
+  }
+  .quick-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .qa {
+    font-size: 11px; padding: 4px 10px; border-radius: 999px;
+    background: transparent; color: var(--muted); border: 1px solid var(--border);
+    cursor: pointer; font-family: inherit;
+  }
+  .qa:hover { background: var(--panel); color: var(--text); border-color: var(--accent); }
+  .composer-input {
+    display: grid; grid-template-columns: 1fr auto; gap: 8px;
+  }
+  textarea.send {
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; min-height: 56px; max-height: 140px;
+    resize: vertical; font-family: inherit; font-size: 13px;
+  }
+  .send-btn {
+    background: var(--accent); color: #0b0d12; border: none;
+    border-radius: 8px; padding: 0 16px; font-size: 13px; font-weight: 600;
+    cursor: pointer; align-self: end;
+  }
+
+  .capability-warn {
+    background: rgba(244,201,93,0.08); border: 1px solid var(--warn);
+    border-radius: 8px; padding: 10px 12px; font-size: 12px; color: var(--text);
+    margin: 0 12px;
+  }
+  .capability-warn strong { color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="mockup-shell">
+
+  <div class="mockup-header">
+    <h1>Orchestrator chat surface · UI mockup</h1>
+    <div class="meta">Active list #36 · per docs/SPEC-CHAT-SURFACE.md · drawer attached to Task Detail</div>
+  </div>
+
+  <div class="note">
+    <strong>What this is.</strong>
+    A side drawer on Task Detail where the user can talk to the orchestrator about a stuck
+    task: "what's wrong", "skip this step", "try X instead". Distinct from the existing
+    AskUserCard (agent → user); this is user → agent. Sends through
+    <code>pi.session.steer()</code> / <code>session.followUp()</code> depending on
+    what the SDK actually supports (open question — see SPEC §1).
+  </div>
+
+  <div class="layout">
+
+    <!-- Left: stub of the rest of Task Detail so the drawer relationship is visible -->
+    <div class="main-pane">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 16px; font-weight: 600;">DA-021F — Roll out cost rollups in the dashboard</div>
+          <div class="muted" style="font-size: 12px;">single · project DogApp</div>
+        </div>
+        <button class="btn ghost">💬 Chat with run</button>
+      </div>
+      <div class="placeholder-card">PhaseChipStrip · Pending Effects panel · Mission · Status · Subagents · etc.</div>
+      <div class="placeholder-card" style="height: 80px;">… (existing Task Detail content stays unchanged) …</div>
+    </div>
+
+    <!-- Right: chat drawer -->
+    <div class="drawer">
+      <div class="drawer-head">
+        <span class="pulse"></span>
+        <div>
+          <div class="title">Chat with run</div>
+          <div class="meta">DA-021F · iteration 4 · running</div>
+        </div>
+        <span style="flex: 1;"></span>
+        <button class="btn ghost" style="font-size: 12px; padding: 3px 8px;">⋯</button>
+      </div>
+
+      <div class="messages">
+        <div class="msg from-user">
+          <div class="who you">you · 3m ago</div>
+          <div class="body">Skip the schema lint step — we already know it's flagging the legacy table.</div>
+        </div>
+
+        <div class="msg from-orch">
+          <div class="who orch">orchestrator · 2m ago</div>
+          <div class="body">Got it. Forwarding to the active session as a steer message. The current build
+            agent will see it on its next turn boundary.</div>
+        </div>
+
+        <div class="event-marker">
+          <strong>⏸ Breakpoint opened</strong> — Awaiting human approval. See the
+          Pending Effects panel on the left to approve / request changes.
+        </div>
+
+        <div class="msg from-user">
+          <div class="who you">you · 1m ago</div>
+          <div class="body">What's the diff between the current attempt and the one that succeeded last week?</div>
+        </div>
+
+        <div class="msg from-orch">
+          <div class="who orch">orchestrator · 1m ago</div>
+          <div class="body">
+            Last week's run used <code>cradle/bugfix</code>; this run is on <code>methodologies/tdd-strict</code>.
+            That changes the sequence: tests-first instead of fix-then-tests. The lint failure is
+            blocking step 3 of TDD-strict.
+            <br><br>
+            <span class="muted">Three options:</span><br>
+            • Skip lint for legacy tables (you just steered for this)<br>
+            • Switch back to <code>cradle/bugfix</code><br>
+            • Update the lint rules to whitelist legacy
+          </div>
+        </div>
+
+        <div class="msg from-user">
+          <div class="who you">you · just now</div>
+          <div class="body">Stay on TDD-strict but lower the lint level for migrations.</div>
+        </div>
+      </div>
+
+      <div class="capability-warn">
+        <strong>Heads up.</strong> Steer messages queue at the next agent turn boundary.
+        The agent finishes its current LLM call before it sees you. This is closer to "queued
+        guidance" than "interrupt." If the SDK exposes real interruption later, this will tighten.
+      </div>
+
+      <div class="composer">
+        <div class="quick-actions">
+          <button class="qa">What's wrong?</button>
+          <button class="qa">Skip this step</button>
+          <button class="qa">Show me the plan</button>
+          <button class="qa">Stop here</button>
+        </div>
+        <div class="composer-input">
+          <textarea class="send" placeholder="Type a message to the orchestrator…"></textarea>
+          <button class="send-btn">Send →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Distinct visual treatment vs <code>AskUserCard</code> (agent → user).</strong>
+    <span class="muted">
+      AskUserCard is yellow-tinted, sits inline in the main column, and has Approve / Reject
+      buttons. The chat drawer is right-side, neutral panel-2 background, free-form input
+      with quick-action chips. The two never overlap visually so the user can tell which
+      direction the input is flowing.
+    </span>
+  </div>
+
+  <div class="note">
+    <strong>Open questions for build.</strong>
+    <span class="muted">
+      (a) Does <code>pi.session.steer()</code> actually interrupt or just queue? (Spec §1 — investigate before implementation.)<br>
+      (b) Persistence — chat history in <code>events.jsonl</code> (mixed with other run events) or its own <code>chat.jsonl</code>?<br>
+      (c) Inline event markers (e.g. breakpoint opened) — render in chat as shown, or skip and rely on the Pending Effects panel?<br>
+      (d) Quick-action chips — fixed list or workflow-defined?
+    </span>
+  </div>
+
+</div>
+</body>
+</html>
