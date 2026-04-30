@@ -36,24 +36,6 @@ export interface DerivedPhases {
   current: string | null;
 }
 
-const GENERIC_BY_RUN_STATE: Record<string, DerivedPhase[]> = {
-  idle: [
-    { id: "draft", label: "Draft", status: "active" },
-    { id: "active", label: "Active", status: "pending" },
-    { id: "finished", label: "Finished", status: "pending" },
-  ],
-  running: [
-    { id: "draft", label: "Draft", status: "done" },
-    { id: "active", label: "Active", status: "active" },
-    { id: "finished", label: "Finished", status: "pending" },
-  ],
-  paused: [
-    { id: "draft", label: "Draft", status: "done" },
-    { id: "paused", label: "Paused", status: "active" },
-    { id: "finished", label: "Finished", status: "pending" },
-  ],
-};
-
 export function derivePhases(task: Task, events: TaskEvent[]): DerivedPhases {
   const curated = phasesFromCuratedEvents(events);
   if (curated.phases.length > 0) return curated;
@@ -61,10 +43,67 @@ export function derivePhases(task: Task, events: TaskEvent[]): DerivedPhases {
   const lane = phasesFromLaneEvents(task, events);
   if (lane.phases.length > 0) return lane;
 
+  return genericFallback(task);
+}
+
+/**
+ * Generic 3-chip skeleton when no journal phases exist yet. Status takes
+ * precedence over runState — a task that's status=failed/done should look
+ * failed/done even if its runState hasn't caught up yet.
+ */
+function genericFallback(task: Task): DerivedPhases {
+  if (task.status === "failed") {
+    return {
+      phases: [
+        { id: "draft", label: "Draft", status: "done" },
+        { id: "failed", label: "Failed", status: "failed" },
+      ],
+      source: "generic",
+      current: null,
+    };
+  }
+  if (task.status === "done") {
+    return {
+      phases: [
+        { id: "draft", label: "Draft", status: "done" },
+        { id: "active", label: "Active", status: "done" },
+        { id: "finished", label: "Finished", status: "active" },
+      ],
+      source: "generic",
+      current: "finished",
+    };
+  }
+  if (task.runState === "running") {
+    return {
+      phases: [
+        { id: "draft", label: "Draft", status: "done" },
+        { id: "active", label: "Active", status: "active" },
+        { id: "finished", label: "Finished", status: "pending" },
+      ],
+      source: "generic",
+      current: "active",
+    };
+  }
+  if (task.runState === "paused") {
+    return {
+      phases: [
+        { id: "draft", label: "Draft", status: "done" },
+        { id: "paused", label: "Paused", status: "active" },
+        { id: "finished", label: "Finished", status: "pending" },
+      ],
+      source: "generic",
+      current: "paused",
+    };
+  }
+  // idle + active/waiting status → still drafting
   return {
-    phases: GENERIC_BY_RUN_STATE[task.runState] ?? GENERIC_BY_RUN_STATE.idle!,
+    phases: [
+      { id: "draft", label: "Draft", status: "active" },
+      { id: "active", label: "Active", status: "pending" },
+      { id: "finished", label: "Finished", status: "pending" },
+    ],
     source: "generic",
-    current: task.runState === "running" ? "active" : task.runState === "paused" ? "paused" : "draft",
+    current: "draft",
   };
 }
 
@@ -79,28 +118,37 @@ function phasesFromCuratedEvents(events: TaskEvent[]): DerivedPhases {
     const id = `phase-${phase}`;
     const label = `Phase ${phase}`;
     const status: DerivedPhase["status"] = ev.type === "bs:error" ? "failed" : "done";
+    const ts = typeof rec.timestamp === "string" ? rec.timestamp : undefined;
 
-    // Mark all prior phases done, swap current to this one.
-    for (const p of seen) if (p.status === "active") p.status = "done";
+    // Close out any active prior phase: mark it done AND stamp leftAt
+    // with this event's timestamp so the timeline can show duration.
+    for (const p of seen) {
+      if (p.status === "active") {
+        p.status = "done";
+        if (ts && !p.leftAt) p.leftAt = ts;
+      }
+    }
     const existing = seen.find((p) => p.id === id);
     if (existing) {
       existing.status = status;
-      if (typeof rec.timestamp === "string") existing.leftAt = rec.timestamp;
+      if (ts) existing.leftAt = ts;
     } else {
       seen.push({
         id,
         label,
         status,
-        ...(typeof rec.timestamp === "string" ? { enteredAt: rec.timestamp } : {}),
+        ...(ts ? { enteredAt: ts } : {}),
       });
     }
     if (status !== "failed") activeId = id;
   }
-  if (seen.length > 0 && activeId) {
-    const last = seen[seen.length - 1]!;
-    if (last.id === activeId) last.status = "active";
-  }
-  return { phases: seen, source: "curated", current: activeId };
+  // The most recent non-failed phase becomes "active". If the last event
+  // was a failure, leave current=null so callers know the run is broken.
+  const last = seen.length > 0 ? seen[seen.length - 1]! : null;
+  const lastIsFailed = last?.status === "failed";
+  const current = lastIsFailed ? null : activeId;
+  if (last && current && last.id === current) last.status = "active";
+  return { phases: seen, source: "curated", current };
 }
 
 function phasesFromLaneEvents(task: Task, events: TaskEvent[]): DerivedPhases {

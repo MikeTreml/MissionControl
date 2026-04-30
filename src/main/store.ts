@@ -259,7 +259,8 @@ export class TaskStore extends EventEmitter {
     const folder = path.join(this.root, validated.id);
 
     // Read the prior manifest (if any) BEFORE overwriting so we can diff
-    // lane/cycle and emit specific journal events.
+    // cycle / blocker and emit specific journal events. (Lane was diffed
+    // here too pre-Phase-10; that field is gone now.)
     const prior = await this.readPriorForDiff(folder);
 
     await fs.mkdir(folder, { recursive: true });

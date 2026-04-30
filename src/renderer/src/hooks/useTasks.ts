@@ -20,7 +20,7 @@ import type { Task, TaskEvent, TaskStatus, RunState } from "../../../shared/mode
  * CONFIRMED: `projectId` is the Project.id slug, not the prefix. Tasks
  * reference projects by slug; the prefix is encoded in the task id itself.
  */
-export type BoardStage = "Draft" | "Plan" | "Active" | "Attention" | "Failed" | "Complete";
+export type BoardStage = "Draft" | "Active" | "Attention" | "Failed" | "Complete";
 
 export type UiTask = MockTask & {
   projectId: string;
