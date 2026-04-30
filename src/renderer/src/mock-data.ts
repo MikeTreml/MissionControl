@@ -121,9 +121,12 @@ export const mockTasks: MockTask[] = [
 ];
 
 export const mockRunActivity: MockRunEvent[] = [
-  { label: "Planner",      detail: "Started 10:18 PM • Claude" },
-  { label: "RepoMapper",   detail: "Spawned 10:19 PM • Local" },
-  { label: "DocRefresher", detail: "Spawned 10:20 PM • Local" },
+  // Generic agent labels for the demo activity stream — real labels
+  // come from whatever the workflow declared at runtime; these don't
+  // imply a fixed roster.
+  { label: "Agent A",      detail: "Started 10:18 PM • Claude" },
+  { label: "Subagent B",   detail: "Spawned 10:19 PM • Local" },
+  { label: "Subagent C",   detail: "Spawned 10:20 PM • Local" },
 ];
 
 export const mockQueue: MockQueueItem[] = [

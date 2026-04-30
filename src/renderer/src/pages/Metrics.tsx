@@ -241,11 +241,16 @@ const cell: React.CSSProperties = { padding: "8px 10px" };
 // the same canned values the wireframe always shipped.
 
 function DemoPerRoleTable(): JSX.Element {
+  // Demo wireframe rows. The real per-role rollup, once built, will
+  // group on whatever agentSlugs the workflows declared at runtime —
+  // there is no fixed roster of roles in MC. These rows are
+  // illustrative only; treat them as a layout placeholder, not as
+  // a list of agents the system supports.
   const rows = [
-    { role: "Planner",   runs: 58, avgDuration: "14m",    avgTokens: "11,200", loopBack: "—",             topModel: "Claude Opus 4.6" },
-    { role: "Developer", runs: 52, avgDuration: "3h 18m", avgTokens: "38,400", loopBack: "12%",           topModel: "GPT-5 Codex" },
-    { role: "Reviewer",  runs: 52, avgDuration: "22m",    avgTokens: "7,900",  loopBack: "38% loop-back", topModel: "Claude Opus 4.6" },
-    { role: "Surgeon",   runs: 47, avgDuration: "9m",     avgTokens: "4,100",  loopBack: "—",             topModel: "Qwen 2.5 Coder" },
+    { role: "Agent A", runs: 58, avgDuration: "14m",    avgTokens: "11,200", loopBack: "—",             topModel: "Claude Opus 4.6" },
+    { role: "Agent B", runs: 52, avgDuration: "3h 18m", avgTokens: "38,400", loopBack: "12%",           topModel: "GPT-5 Codex" },
+    { role: "Agent C", runs: 52, avgDuration: "22m",    avgTokens: "7,900",  loopBack: "38% loop-back", topModel: "Claude Opus 4.6" },
+    { role: "Agent D", runs: 47, avgDuration: "9m",     avgTokens: "4,100",  loopBack: "—",             topModel: "Qwen 2.5 Coder" },
   ];
   return (
     <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 10, fontSize: 13 }}>

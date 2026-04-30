@@ -1011,7 +1011,7 @@ function CampaignItems({ task }: { task: Task }): JSX.Element {
       <h3>Campaign items</h3>
       <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
         {items.length === 0
-          ? "No items yet. Paste items into the Create Task form or let the Planner generate them."
+          ? "No items yet. Paste items into the Create Task form or let the workflow's planning agent generate them."
           : `${done} done · ${failed} failed · ${running} running · ${pending} pending — ${finishedPct}% finished`}
       </p>
       {items.length > 0 && (

@@ -8,7 +8,7 @@
  *   4. open the BrowserWindow, point it at the renderer
  *
  * Path layout:
- *   <userData>/tasks/<TP-NNN>/manifest.json · events.jsonl · notes.md per agent
+ *   <userData>/tasks/<TP-NNN>/manifest.json · events.jsonl · PROMPT.md · STATUS.md · shared/
  *   <userData>/projects/<slug>/project.json
  *   <appRoot>/library/                      (bundled — agents/skills/workflows catalog)
  *

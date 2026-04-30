@@ -2,6 +2,11 @@ import { useState } from "react";
 import { useRoute } from "../router";
 import { CreateTaskForm } from "./CreateTaskForm";
 
+// TODO: bridge-status indicator dot — green/amber/red mapped to
+// preload connection + run state. CLAUDE.md and docs/UI-DESIGN.md
+// already reference this dot, but the component below renders only
+// buttons. Implement it in the leading slot of the topbar before
+// removing this TODO. See AUDIT-2026-04.md Appendix A3.
 export function Topbar(): JSX.Element {
   const { setView } = useRoute();
   const [createOpen, setCreateOpen] = useState(false);

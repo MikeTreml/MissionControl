@@ -368,7 +368,7 @@ export function CreateTaskForm({
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What does done look like? Any constraints the Planner should know?"
+              placeholder="What does done look like? Any constraints the workflow agents should know?"
             />
           </div>
           {kind === "campaign" && (
@@ -381,8 +381,9 @@ export function CreateTaskForm({
                 placeholder={"./src/lib/thing-a.dll\n./src/lib/thing-b.dll\n./src/lib/thing-c.dll"}
               />
               <div className="hint">
-                Optional at creation — Planner can generate items as part of
-                its run. One item per line, blank lines ignored.
+                Optional at creation — the workflow's planning agent
+                can generate items as part of its run. One item per line,
+                blank lines ignored.
               </div>
             </div>
           )}

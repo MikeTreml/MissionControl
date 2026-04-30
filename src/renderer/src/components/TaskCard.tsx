@@ -1,7 +1,9 @@
 /**
  * One task card on the board.
  * The pill color is stored on the task itself so each lane stays visually
- * consistent with the mock (e.g. Developer=warn yellow, Done=good green).
+ * consistent (e.g. running=warn yellow, done=good green) — the color
+ * is derived from runState/status in useTasks.deriveLaneStyle, not
+ * from any specific agent name.
  *
  * Click the card → navigate to Task Detail.
  * Project icon (if any) floats in the upper-right as a visual fingerprint

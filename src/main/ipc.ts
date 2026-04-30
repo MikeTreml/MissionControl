@@ -63,8 +63,9 @@ export function registerIpc(stores: Stores): void {
       logged(`tasks:appendEvent ${id} ${event.type}`, () => stores.tasks.appendEvent(id, event)),
   );
   // Per-task file reads — PROMPT.md, STATUS.md, arbitrary task-linked .md
-  // (e.g. <taskId>-p for Planner output). Return null when the file is
-  // missing so the renderer can distinguish "not produced yet" from empty.
+  // (e.g. <taskId>-<suffix> where the suffix is whatever the workflow's
+  // agents declared at runtime). Return null when the file is missing
+  // so the renderer can distinguish "not produced yet" from empty.
   ipcMain.handle("tasks:readPrompt", (_e, id: string) => stores.tasks.readPromptFile(id));
   ipcMain.handle("tasks:readStatus", (_e, id: string) => stores.tasks.readStatusFile(id));
   ipcMain.handle("tasks:readRunConfig", (_e, id: string) => stores.tasks.readRunConfig(id));

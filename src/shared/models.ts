@@ -10,14 +10,12 @@
  *   - Types are exported as `Xxx` (type).
  *   - Timestamps serialize as ISO 8601 strings (simple, JSON-friendly).
  *
- * DESIGN NOTE (2026-04-23): Roles are NOT enum. Every agent — primary or
- * subagent — is a folder under `agents/<slug>/agent.json`. The agent's
- * `code` field distinguishes:
- *   - 1 char  → primary role (planner=p, developer=d, reviewer=r, surgeon=s)
- *   - 2-4 chr → spawnable subagent (RepoMapper=rmp, DocRefresher=drf, ...)
- *
- * Agents are added/removed by dropping or deleting folders. No code change
- * required to introduce a new role or subagent.
+ * DESIGN NOTE (2026-04-23, refreshed 2026-04-30): Roles are NOT enum.
+ * The library at `library/` is the source of truth for every agent,
+ * skill, and workflow. Workflows declare which agents they use; MC
+ * does not maintain a fixed roster. Adding a new agent or subagent
+ * means dropping a folder under `library/`, then rebuilding the
+ * index — no code change required.
  */
 import { z } from "zod";
 
@@ -73,12 +71,13 @@ export const TaskSchema = z.object({
   kind: TaskKindSchema.default("single"),      // single-task vs campaign (N items)
   status: TaskStatusSchema.default("active"),
   runState: RunStateSchema.default("idle"),    // live state for Start/Pause/Stop
-  cycle: z.number().int().default(1),          // increments on reviewer loop-back
+  cycle: z.number().int().default(1),          // increments on workflow loop-back (e.g. review failed → re-plan)
   /**
    * Campaign items. Only populated when `kind === "campaign"`. Empty at
-   * creation is fine — the Planner may generate them during its run.
-   * CONFIRMED: RunManager opens one pi session per item; Stop marks any
-   * running item failed; failed items don't halt the campaign.
+   * creation is fine — the workflow's planning agent may generate items
+   * during its run. CONFIRMED: RunManager opens one pi session per item;
+   * Stop marks any running item failed; failed items don't halt the
+   * campaign.
    */
   items: z.array(CampaignItemSchema).default([]),
   /**
