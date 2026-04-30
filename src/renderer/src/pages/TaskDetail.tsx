@@ -37,6 +37,7 @@ export function TaskDetail(): JSX.Element {
   const [editOpen, setEditOpen] = useState(false);
   const [workflowOpen, setWorkflowOpen] = useState(false);
   const [rerunOpen, setRerunOpen] = useState(false);
+  const [doctorOpen, setDoctorOpen] = useState(false);
 
   // Distinguish "task is loading" from "no task selected" — useTask
   // resolves both into `task: null` initially. If we have a selected
@@ -99,6 +100,15 @@ export function TaskDetail(): JSX.Element {
           {!isDemo && (
             <button
               className="button ghost"
+              title="Spin off a doctor task — diagnose why this task is stuck without modifying it"
+              onClick={() => setDoctorOpen(true)}
+            >
+              ↳ Spin off doctor
+            </button>
+          )}
+          {!isDemo && (
+            <button
+              className="button ghost"
               title="Open the task's folder in your OS file explorer"
               onClick={() => { void window.mc?.openTaskFolder(task.id); }}
             >
@@ -132,6 +142,14 @@ export function TaskDetail(): JSX.Element {
           open={rerunOpen}
           onClose={() => setRerunOpen(false)}
           preload={buildRerunPreload(task, runConfig)}
+        />
+      )}
+
+      {!isDemo && (
+        <CreateTaskForm
+          open={doctorOpen}
+          onClose={() => setDoctorOpen(false)}
+          preload={buildDoctorPreload(task, runConfig)}
         />
       )}
 
@@ -232,6 +250,50 @@ function buildRerunPreload(
       | undefined;
     if (rs && rs.inputs && typeof rs.inputs === "object") {
       preload.inputs = rs.inputs as Record<string, unknown>;
+    }
+  }
+
+  return preload;
+}
+
+/**
+ * Build a CreateTaskForm preload for the "↳ Spin off doctor" flow
+ * (#37). Like buildRerunPreload but with a different intent: the new
+ * task's job is to *diagnose* the source, not redo it. We seed a
+ * starter prompt that points the doctor task at the source's
+ * STATUS.md / events.jsonl, force kind=single (campaigns don't
+ * doctor sensibly), and copy the workflow if any.
+ *
+ * Inputs from RUN_CONFIG are NOT carried — a doctor task is a fresh
+ * investigation, not a parameter sweep. The user can fill or change
+ * them in the form.
+ */
+function buildDoctorPreload(
+  task: Task,
+  runConfig: Record<string, unknown> | null,
+): CreateTaskPreload {
+  const lastPhase = task.runState !== "idle" ? `still ${task.runState}` : task.status;
+  const starter =
+    `Diagnose why ${task.id} is stuck (${lastPhase}). Read the source ` +
+    `task's STATUS.md and events.jsonl to identify the failure mode, ` +
+    `then propose a fix or a follow-up task. Do not modify the source ` +
+    `task's files.\n\n` +
+    `Source description:\n${task.description || "(no description)"}\n`;
+
+  const preload: CreateTaskPreload = {
+    title: `Doctor: ${task.title}`,
+    description: starter,
+    projectId: task.project,
+    kind: "single",
+    parentTaskId: task.id,
+  };
+
+  // Carry the workflow if the source had one curated. For auto-gen
+  // sources, leave the doctor task on auto-gen too — same path.
+  if (runConfig) {
+    const lw = runConfig["libraryWorkflow"] as { logicalPath?: unknown } | null | undefined;
+    if (lw && typeof lw.logicalPath === "string") {
+      preload.workflowLogicalPath = lw.logicalPath;
     }
   }
 
