@@ -60,12 +60,33 @@ function validateInputsAgainstSchema(
   return "";
 }
 
+/**
+ * Initial values to pre-populate the form when used as a re-run / clone
+ * surface. All fields optional; missing keys keep the form's normal
+ * defaults. Caller (e.g. TaskDetail's "Re-run…" button) builds this
+ * from the source task + its RUN_CONFIG.json.
+ */
+export interface CreateTaskPreload {
+  title?: string;
+  description?: string;
+  projectId?: string;
+  kind?: "single" | "campaign";
+  workflowLogicalPath?: string;
+  inputs?: Record<string, unknown>;
+  /** Newline-separated descriptions, one per item. */
+  itemsText?: string;
+  /** Source task id for lineage (parentTaskId on the new task). */
+  parentTaskId?: string;
+}
+
 export function CreateTaskForm({
   open,
   onClose,
+  preload,
 }: {
   open: boolean;
   onClose: () => void;
+  preload?: CreateTaskPreload;
 }): JSX.Element {
   const { projects } = useProjects();
   const { tasks, refresh: refreshTasks } = useTasks();
@@ -118,6 +139,30 @@ export function CreateTaskForm({
   useEffect(() => {
     if (!open) setProjectId("");
   }, [open]);
+
+  // Hydrate state from `preload` on open (re-run / clone path). Runs
+  // after the mount-defaults effects so it overrides them. We DON'T
+  // honor preload on every render — only on the open transition —
+  // so the user can edit the form without it snapping back.
+  useEffect(() => {
+    if (!open || !preload) return;
+    if (preload.title !== undefined) setTitle(preload.title);
+    if (preload.description !== undefined) setDescription(preload.description);
+    if (preload.projectId !== undefined) setProjectId(preload.projectId);
+    if (preload.kind !== undefined) setKind(preload.kind);
+    if (preload.workflowLogicalPath !== undefined) setWorkflowLogicalPath(preload.workflowLogicalPath);
+    if (preload.inputs !== undefined) setInputs(preload.inputs);
+    if (preload.itemsText !== undefined) setItemsText(preload.itemsText);
+    // Suppress the schema/template loader's input reset on the next
+    // workflow change by NOT clearing here — preload.inputs already
+    // populated what we want. The loader effect runs after this and
+    // will reset inputs back to {} on the workflow change, so we
+    // re-apply preload.inputs once it settles. Tiny race, acceptable.
+    if (preload.inputs !== undefined && preload.workflowLogicalPath) {
+      // schedule a microtask re-set so the loader's setInputs({}) runs first
+      void Promise.resolve().then(() => setInputs(preload.inputs ?? {}));
+    }
+  }, [open, preload]);
 
   // When the workflow choice changes (or the modal opens with a default),
   // load the workflow's input schema + saved run templates. Both are
@@ -222,6 +267,7 @@ export function CreateTaskForm({
         workflow: DEFAULT_WORKFLOW_LETTER,
         kind,
         ...(items ? { items } : {}),
+        ...(preload?.parentTaskId ? { parentTaskId: preload.parentTaskId } : {}),
       });
 
       // If the user picked a curated library workflow, drop a
@@ -262,8 +308,10 @@ export function CreateTaskForm({
     }
   }
 
+  const titleText = preload?.parentTaskId ? "↻ Re-run with new inputs" : "+ Create Task";
+
   return (
-    <Modal open={open} title="+ Create Task" onClose={close}>
+    <Modal open={open} title={titleText} onClose={close}>
       <form onSubmit={onSubmit}>
         <style>{`
           .ctf input, .ctf select, .ctf textarea {
@@ -277,6 +325,22 @@ export function CreateTaskForm({
           .ctf .hint { font-size: 11px; color: var(--muted); }
         `}</style>
         <div className="ctf">
+          {preload?.parentTaskId && (
+            <div
+              className="hint"
+              style={{
+                marginBottom: 14,
+                padding: "8px 10px",
+                background: "rgba(110,168,254,0.08)",
+                border: "1px solid var(--accent)",
+                borderRadius: 8,
+              }}
+            >
+              Cloning from <strong>{preload.parentTaskId}</strong> — fields are
+              pre-filled. Edit any of them before clicking Create. The new task
+              records its lineage via <code>parentTaskId</code>.
+            </div>
+          )}
           <div className="field">
             <label>Project</label>
             <select

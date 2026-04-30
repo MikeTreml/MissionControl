@@ -230,6 +230,8 @@ export class TaskStore extends EventEmitter {
     /** "single" (default) or "campaign". Campaigns carry an items list. */
     kind?: Task["kind"];
     items?: Task["items"];
+    /** Source task id when this is a re-run / clone / spin-off. Empty = no parent. */
+    parentTaskId?: string;
   }): Promise<Task> {
     const workflow = (input.workflow ?? "F").toUpperCase();
     const id = await this.nextTaskId(input.projectPrefix, workflow);
@@ -240,6 +242,7 @@ export class TaskStore extends EventEmitter {
       project: input.projectId,
       ...(input.kind ? { kind: input.kind } : {}),
       ...(input.items ? { items: input.items } : {}),
+      ...(input.parentTaskId ? { parentTaskId: input.parentTaskId } : {}),
     });
     await this.scaffold(task);
     await this.saveTask(task);

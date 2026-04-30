@@ -24,6 +24,7 @@ import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { ChangeWorkflowModal } from "../components/ChangeWorkflowModal";
 import { SkeletonLine, SkeletonBlock, SkeletonRows } from "../components/Skeleton";
+import { CreateTaskForm, type CreateTaskPreload } from "../components/CreateTaskForm";
 import { PageStub } from "./PageStub";
 import type { Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
@@ -34,6 +35,7 @@ export function TaskDetail(): JSX.Element {
   const pendingAsks = usePendingAsks(selectedTaskId);
   const [editOpen, setEditOpen] = useState(false);
   const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [rerunOpen, setRerunOpen] = useState(false);
 
   // Distinguish "task is loading" from "no task selected" — useTask
   // resolves both into `task: null` initially. If we have a selected
@@ -87,6 +89,15 @@ export function TaskDetail(): JSX.Element {
           {!isDemo && (
             <button
               className="button ghost"
+              title="Create a new task pre-filled from this one — edit anything before saving"
+              onClick={() => setRerunOpen(true)}
+            >
+              ↻ Re-run…
+            </button>
+          )}
+          {!isDemo && (
+            <button
+              className="button ghost"
               title="Open the task's folder in your OS file explorer"
               onClick={() => { void window.mc?.openTaskFolder(task.id); }}
             >
@@ -112,6 +123,14 @@ export function TaskDetail(): JSX.Element {
           open={workflowOpen}
           onClose={() => setWorkflowOpen(false)}
           task={task}
+        />
+      )}
+
+      {!isDemo && (
+        <CreateTaskForm
+          open={rerunOpen}
+          onClose={() => setRerunOpen(false)}
+          preload={buildRerunPreload(task, runConfig)}
         />
       )}
 
@@ -159,6 +178,60 @@ export function TaskDetail(): JSX.Element {
       </div>
     </>
   );
+}
+
+/**
+ * Build a CreateTaskForm preload from the source task + its
+ * RUN_CONFIG.json. Used by the "↻ Re-run…" button to clone a task
+ * into a new one with editable fields. The new task records its
+ * lineage via parentTaskId.
+ *
+ * The shape of RUN_CONFIG (when present) follows what RunWorkflowModal
+ * and ChangeWorkflowModal write:
+ *   { kind: "library-workflow-run",
+ *     libraryWorkflow: { logicalPath, ... } | null,
+ *     runSettings: { model, inputs: {...} } }
+ *
+ * If runConfig is missing or shaped differently, we just preload the
+ * basics (title/description/projectId/kind) and let the user pick a
+ * workflow.
+ */
+function buildRerunPreload(
+  task: Task,
+  runConfig: Record<string, unknown> | null,
+): CreateTaskPreload {
+  const preload: CreateTaskPreload = {
+    title: task.title,
+    description: task.description,
+    projectId: task.project,
+    kind: task.kind,
+    parentTaskId: task.id,
+  };
+
+  // For campaigns, copy item descriptions back into the textarea
+  // format the form expects (one per line).
+  if (task.kind === "campaign" && task.items.length > 0) {
+    preload.itemsText = task.items.map((it) => it.description).join("\n");
+  }
+
+  // Curated workflow + inputs from RUN_CONFIG.
+  if (runConfig) {
+    const lw = runConfig["libraryWorkflow"] as
+      | { logicalPath?: unknown }
+      | null
+      | undefined;
+    if (lw && typeof lw.logicalPath === "string") {
+      preload.workflowLogicalPath = lw.logicalPath;
+    }
+    const rs = runConfig["runSettings"] as
+      | { inputs?: unknown }
+      | undefined;
+    if (rs && rs.inputs && typeof rs.inputs === "object") {
+      preload.inputs = rs.inputs as Record<string, unknown>;
+    }
+  }
+
+  return preload;
 }
 
 /**

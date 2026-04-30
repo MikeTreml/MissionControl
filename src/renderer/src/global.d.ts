@@ -46,6 +46,8 @@ type CreateTaskInput = {
   workflow?: string;
   kind?: TaskKind;
   items?: CampaignItem[];
+  /** Source task id when this is a re-run / clone / spin-off. */
+  parentTaskId?: string;
 };
 
 type CreateProjectInput = {
