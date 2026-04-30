@@ -31,6 +31,8 @@ export type UiTask = MockTask & {
   boardStage: BoardStage;
   status: TaskStatus;
   runState: RunState;
+  /** Source task id when this is a re-run / clone / spin-off. "" = no parent. */
+  parentTaskId: string;
 };
 
 /**
@@ -75,6 +77,7 @@ function toUiTask(t: Task, projectIcon: string, currentModel: string): UiTask {
     boardStage: deriveBoardStage(t),
     status: t.status,
     runState: t.runState,
+    parentTaskId: t.parentTaskId,
   };
 }
 
@@ -117,7 +120,7 @@ export function useTasks(): TasksState {
       if (!window.mc) {
         // Mock tasks don't have a real project id; stamp a synthetic one so
         // filters don't collapse them.
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle" })));
+        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "" })));
         setIsDemo(true);
         return;
       }
@@ -128,7 +131,7 @@ export function useTasks(): TasksState {
       // Map project id → icon so each task can carry its project's icon.
       const iconByProject = new Map(projects.map((p) => [p.id, p.icon]));
       if (real.length === 0) {
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle" })));
+        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "" })));
         setIsDemo(true);
       } else {
         const eventRows = await Promise.all(real.map(async (t) => {
@@ -144,7 +147,7 @@ export function useTasks(): TasksState {
       }
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
-      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle" })));
+      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "" })));
       setIsDemo(true);
     } finally {
       setLoading(false);

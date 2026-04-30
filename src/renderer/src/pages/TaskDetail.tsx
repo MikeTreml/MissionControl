@@ -12,6 +12,7 @@ import { Fragment, useEffect, useState } from "react";
 
 import { useRoute } from "../router";
 import { useTask } from "../hooks/useTask";
+import { useTasks } from "../hooks/useTasks";
 import { usePiModels } from "../hooks/usePiModels";
 import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
@@ -162,6 +163,8 @@ export function TaskDetail(): JSX.Element {
 
         {task.kind === "campaign" && <CampaignItems task={task} />}
 
+        {!isDemo && <SpawnedFromPanel task={task} />}
+
         <SubagentsPanel events={events} />
 
         <RunHistory events={events} />
@@ -232,6 +235,91 @@ function buildRerunPreload(
   }
 
   return preload;
+}
+
+/**
+ * Lineage panel — shows where this task came from and what it spawned.
+ *
+ *   - Parent: rendered when task.parentTaskId !== "". Click → openTask.
+ *   - Children: any task whose parentTaskId equals THIS task's id.
+ *     Cheap O(N) scan over the full task list (no inverse index;
+ *     real-world counts are small enough).
+ *
+ * Returns null when neither side has anything — keeps Task Detail
+ * uncluttered for tasks that are root + childless.
+ *
+ * Same `parentTaskId` infrastructure feeds re-run/clone (#5),
+ * doctor / spin-off tasks (#37), and planning tasks that spawn
+ * children (#40). When those land, they each populate parent/child
+ * relationships that this panel surfaces.
+ */
+function SpawnedFromPanel({ task }: { task: Task }): JSX.Element | null {
+  const { tasks, isDemo: tasksDemo } = useTasks();
+  const { openTask } = useRoute();
+
+  // Don't try to render lineage from demo data — the IDs are
+  // synthetic and won't link to anything meaningful.
+  if (tasksDemo) return null;
+
+  const parent = task.parentTaskId
+    ? tasks.find((t) => t.id === task.parentTaskId)
+    : null;
+  const children = tasks.filter((t) => t.parentTaskId === task.id);
+
+  if (!parent && children.length === 0) return null;
+
+  return (
+    <section className="card" style={{ display: "grid", gap: 10 }}>
+      <h3 style={{ margin: 0 }}>Lineage</h3>
+
+      {parent && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
+          <span className="muted" style={{ minWidth: 100 }}>Spawned from</span>
+          <button
+            className="button ghost"
+            onClick={() => openTask(parent.id)}
+            style={{ fontSize: 12, padding: "3px 8px" }}
+            title={parent.summary}
+          >
+            ← {parent.id}
+          </button>
+          <span className="muted" style={{ fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {parent.summary}
+          </span>
+        </div>
+      )}
+
+      {task.parentTaskId && !parent && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
+          <span className="muted" style={{ minWidth: 100 }}>Spawned from</span>
+          <span className="muted" style={{ fontSize: 12, fontStyle: "italic" }}>
+            {task.parentTaskId} (deleted or not loaded)
+          </span>
+        </div>
+      )}
+
+      {children.length > 0 && (
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 13 }}>
+          <span className="muted" style={{ minWidth: 100, paddingTop: 4 }}>
+            Spawns ({children.length})
+          </span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {children.map((c) => (
+              <button
+                key={c.id}
+                className="button ghost"
+                onClick={() => openTask(c.id)}
+                style={{ fontSize: 12, padding: "3px 8px" }}
+                title={c.summary}
+              >
+                {c.id} →
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
 }
 
 /**
