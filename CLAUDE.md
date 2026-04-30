@@ -8,7 +8,15 @@ full walkthrough** once you've skimmed this.
 
 An Electron + React + TypeScript desktop app that orchestrates AI coding
 agents. MC is the UI + state layer. Pi-mono (`@mariozechner/pi-coding-agent`)
-is the agent runtime — **not wired yet**, that's the main remaining work.
+is the agent runtime — **wired and live**: clicking Start opens a real pi
+session and runs babysitter end-to-end. Remaining work is mostly polish
+(plannotator hand-off, pi-memory-md, pi-superpowers role prompts) — see
+"Not started" below.
+
+**Note (2026-04-29):** agents and workflows are migrating to live under
+`library/` rather than the top-level `agents/` and `workflows/` folders.
+The loaders in `src/main/agent-loader.ts` and `src/main/workflows.ts`
+still read the old paths today — that's an open refactor, not done.
 
 ## Who's picking this up
 
@@ -45,15 +53,8 @@ npm run dev            # electron-vite dev server + Electron window
 npx tsc --noEmit -p tsconfig.node.json   # main + preload
 npx tsc --noEmit -p tsconfig.web.json    # renderer
 
-# Smoke tests (all green as of handoff)
-node --experimental-strip-types src/main/store.smoke.ts
-node --experimental-strip-types src/main/project-store.smoke.ts
-node --experimental-strip-types src/main/workflows.smoke.ts
-node --experimental-strip-types src/main/agent-loader.smoke.ts
-node --experimental-strip-types src/main/model-roster.smoke.ts
-node --experimental-strip-types src/main/git-detect.smoke.ts
-node --experimental-strip-types src/main/run-manager.smoke.ts
-node --experimental-strip-types src/main/pi-session-manager.smoke.ts
+# Smoke tests — see package.json `smoke` script for the full set.
+# Quick way: npm run smoke
 ```
 
 ## Orientation — grep these first
@@ -86,20 +87,23 @@ Then read the docs in this order:
  │  hooks/*.ts       │  IPC       │  ipc.ts               │
  │  components/*.tsx │ ◄───────►  │  store.ts             │
  │  pages/*.tsx      │            │  project-store.ts     │
- │  router.ts        │            │  model-roster.ts      │
+ │  router.ts        │            │  settings-store.ts    │
  └───────────────────┘            │  agent-loader.ts      │
            ▲                      │  workflows.ts         │
            │                      │  git-detect.ts        │
-     preload/index.ts             │  (PI-WIRE spot)       │
-     (contextBridge)              └───────────────────────┘
+     preload/index.ts             │  pi-session-manager.ts│
+     (contextBridge)              │  run-manager.ts       │
+                                  │  library-index.ts     │
+                                  └───────────────────────┘
                                            │
                                            ▼
                                   Disk (file-first)
                                   ├ <userData>/tasks/<id>/
                                   ├ <userData>/projects/<slug>/
-                                  ├ <userData>/models.json
+                                  ├ <userData>/settings.json
                                   ├ agents/<slug>/agent.json + prompt.md
-                                  └ workflows/<CODE>-<slug>/
+                                  ├ workflows/<CODE>-<slug>/
+                                  └ library/_index.json (built artifact)
 ```
 
 - **Hooks** fetch via `window.mc.*`, use mock data with `isDemo: true` when needed.
