@@ -130,23 +130,31 @@ check the dev terminal for `preload-error` — the most common cause is
 - Project CRUD (create/edit/delete, git auto-detect, icon picker)
 - Task CRUD with `<userData>/tasks/<id>/` folder, `PROMPT.md` (mission),
   `STATUS.md` (append-only), `events.jsonl` journal
-- Workflow list with per-workflow lanes (`workflow.json` `lanes[]`)
-- Settings: Agents, Workflows, run templates
 - Library browser (drives the Library page; index built via
   `npm run build-library-index`)
-- **Start runs the full babysitter pipeline.** Click Start → MC opens a
-  pi session and prompts `/babysit <brief>`. Babysitter drives Planner
-  → Developer → Reviewer → Surgeon with loopbacks + mandatory stops.
-  Runs take minutes — pacing is deliberate.
+- **Start has two paths.**
+  1. **Curated library workflow.** Library page → Run Workflow modal
+     records the chosen `workflow.js` path in the task's
+     `RUN_CONFIG.json`. RunManager spawns
+     `babysitter harness:create-run --process <path>` directly via
+     the SDK CLI. Phase 1 auto-gen is skipped; the orchestrator runs
+     the curated workflow against the pi adapter. CLI events stream
+     into the task journal as `bs:phase` / `bs:error` / `bs:log`.
+  2. **Auto-gen fallback.** No curated workflow → MC prompts
+     `/babysit <brief>` in a pi session. Requires the
+     `@a5c-ai/babysitter-pi` extension installed at
+     `~/.pi/agent/extensions/`.
 - Workspace cwd: `project.path` when set (babysitter writes
   `.a5c/processes/` + `.a5c/runs/` there); else
   `<userData>/tasks/<id>/workspace/` per-task scratch dir.
-- Approval lane gate: Task Detail shows Approve / Request changes
-  buttons that advance or loop the lane and bump cycle.
-- Live events bridge debounces pi's 20–50 events/sec down to the data
-  bus; RightBar shows real session activity; Metrics + Run History
-  derive tokens/cost from the journal.
+- Phase timeline on Task Detail driven by `lib/derive-phases.ts` —
+  reads journal events (curated `bs:phase` first, lane-changed
+  legacy events second, generic runState fallback third).
+- Live events bridge debounces pi events ~20–50/sec down to the data
+  bus; RightBar shows pi session events + curated `bs:*` CLI signals;
+  Metrics + Run History derive tokens/cost from the journal.
 - Model picker (per-task) reads pi's `ModelRegistry` via `pi:listModels`.
+  Per-task; not bound to any role.
 - **Campaign task kind** end-to-end: kind selector + items table +
   per-item runtime iteration. RunManager opens one pi session per item
   and marks items done/failed/running as it progresses.
@@ -154,34 +162,28 @@ check the dev terminal for `preload-error` — the most common cause is
   `pi` CLI login (`~/.pi/agent/auth.json`).
 
 **Not started:**
-- Plannotator hand-off (current Approval gate is manual buttons).
+- Plannotator hand-off (no journal-driven approval gate yet).
 - pi-memory-md per-project memory wire-up.
-- pi-superpowers role prompts (replace hand-rolled `agents/<slug>/prompt.md`).
 - Pause/Resume actually steering pi mid-turn (currently MC-state only).
-- Subagent spawn tracking as first-class RightBar rows.
-- Migrating agents/ and workflows/ under library/ (loaders still read
-  the top-level dirs).
+- Subagent spawn tracking as first-class RightBar rows (would parse
+  `EFFECT_REQUESTED` / `EFFECT_RESOLVED_OK` from
+  `.a5c/runs/<runId>/journal/*.jsonl`).
+- Lane redesign — Board still groups by run-state-derived bands.
 - Packaging (electron-builder smoke beyond `--dir`).
 
 ## 7. Next concrete work
 
-The pi wire-in plan that used to live in this section is **done**.
-Useful next bites, smallest first:
-
 1. **Plannotator hand-off** — when plannotator exposes an invocation
-   surface, swap the manual Approve/Request-changes buttons for a
-   plannotator launch pointed at the planner artifact. Consume
-   approve/reject + annotations as structured feedback.
+   surface, drive an approval gate against journal `BREAKPOINT_OPENED`
+   events instead of the dropped manual gate.
 2. **pi-memory-md** — install + initialize per-project memory at
    `~/.pi/memory-md/<project>/`. Agents pick up memory tools
-   automatically once it's set up.
-3. **pi-superpowers role prompts** — replace hand-rolled prompts
-   under `agents/<slug>/prompt.md` with skill references.
-4. **Subagent spawn tracking** — install pi-finder + pi-librarian;
-   capture `subagent_spawn` / `subagent_complete` events in RightBar.
-5. **Library-based loaders** — point AgentLoader and WorkflowLoader at
-   `library/` instead of the top-level `agents/` and `workflows/`
-   folders.
+   automatically once set up.
+3. **Subagent spawn tracking** — parse the SDK journal alongside
+   pi's session events and surface subagents as first-class rows.
+4. **Lane redesign** — replace the kanban shell with a flat list
+   grouped by state (per the mockup) once the phase timeline + state
+   bands have been validated end-to-end.
 
 ## 8. Gotchas Michael and I hit
 
