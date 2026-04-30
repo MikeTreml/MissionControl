@@ -26,8 +26,6 @@ function mockTaskToTask(id: string): Task | null {
     status: "active",
     runState: m.active ? "running" : "idle",
     cycle: 1,
-    currentStep: m.stepLine,
-    lastEvent: m.sub ?? "",
     items: [],
     blocker: "",
     createdAt: now,

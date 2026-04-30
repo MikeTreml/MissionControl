@@ -61,8 +61,8 @@ function toUiTask(t: Task, projectIcon: string, currentModel: string): UiTask {
     lane: LANE_LABEL[t.lane],
     roleLabel: style.role,
     rolePill: style.pill,
-    stepLine: t.currentStep || t.lastEvent || `Cycle ${t.cycle}`,
-    sub: t.lastEvent && t.currentStep ? t.lastEvent : undefined,
+    stepLine: `Cycle ${t.cycle}`,
+    sub: undefined,
     active: t.runState === "running",
     projectId: t.project,
     projectIcon,
@@ -80,7 +80,7 @@ function deriveBoardStage(t: Task): BoardStage {
   if (t.status === "failed") return "Failed";
   if (t.blocker.trim() || t.status === "waiting" || t.runState === "paused" || t.lane === "approval") return "Attention";
   if (t.runState === "running") return "Active";
-  if (t.lane === "plan") return t.currentStep || t.lastEvent ? "Plan" : "Draft";
+  if (t.lane === "plan") return "Plan";
   return "Active";
 }
 

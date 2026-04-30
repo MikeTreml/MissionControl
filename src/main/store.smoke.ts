@@ -83,10 +83,9 @@ async function main(): Promise<void> {
   // ── save bumps updatedAt ────────────────────────────────────────────
   const before = got!.updatedAt;
   await new Promise((r) => setTimeout(r, 10)); // ensure timestamp changes
-  await store.saveTask({ ...got!, lane: "develop", currentStep: "coding" });
+  await store.saveTask({ ...got!, lane: "develop" });
   const after = await store.getTask("DA-001F");
   assert(after!.lane === "develop", "lane should be updated");
-  assert(after!.currentStep === "coding", "currentStep should be updated");
   assert(after!.updatedAt > before, "updatedAt should advance");
   console.log(`[smoke] saveTask updates + bumps updatedAt`);
 

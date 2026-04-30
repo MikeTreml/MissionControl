@@ -86,8 +86,6 @@ export const TaskSchema = z.object({
   status: TaskStatusSchema.default("active"),
   runState: RunStateSchema.default("idle"),    // live state for Start/Pause/Stop
   cycle: z.number().int().default(1),          // increments on reviewer loop-back
-  currentStep: z.string().default(""),         // short human-readable status line
-  lastEvent: z.string().default(""),           // most-recent event summary
   /**
    * Campaign items. Only populated when `kind === "campaign"`. Empty at
    * creation is fine — the Planner may generate them during its run.

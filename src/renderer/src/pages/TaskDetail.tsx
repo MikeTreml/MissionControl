@@ -1168,7 +1168,7 @@ function summarizeRunStatus(task: Task, events: TaskEvent[]): {
   lastTransition: string;
   recentEvents: string[];
 } {
-  let currentStep = task.currentStep || "(none)";
+  let currentStep = "(none)";
   let expected = 0;
   let completed = 0;
   let failed = 0;
