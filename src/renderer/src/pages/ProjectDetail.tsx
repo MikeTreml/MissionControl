@@ -13,13 +13,14 @@ import { useTasks } from "../hooks/useTasks";
 import { useSubscribe } from "../hooks/data-bus";
 import { PageStub } from "./PageStub";
 import { AddProjectForm } from "../components/AddProjectForm";
+import { SkeletonLine, SkeletonBlock, SkeletonRows } from "../components/Skeleton";
 import type { UiTask } from "../hooks/useTasks";
 import type { ProjectWithGit } from "../../../shared/models";
 import type { ProjectRunMetricsRollup } from "../global";
 
 export function ProjectDetail(): JSX.Element {
   const { selectedProjectId, setView } = useRoute();
-  const { projects, isDemo: projectsDemo } = useProjects();
+  const { projects, isDemo: projectsDemo, loading: projectsLoading } = useProjects();
   const { tasks, isDemo: tasksDemo } = useTasks();
   const [editOpen, setEditOpen] = useState(false);
   const [runMetricsRollup, setRunMetricsRollup] = useState<ProjectRunMetricsRollup | null>(null);
@@ -42,6 +43,34 @@ export function ProjectDetail(): JSX.Element {
       setView("dashboard");
     }
   }, [project, selectedProjectId, projects.length, setView]);
+
+  // Skeleton while projects are still loading and we don't have a hit yet.
+  // Distinguishes "loading" from "really not found" — the former resolves
+  // shortly; the latter is final.
+  if (!project && projectsLoading) {
+    return (
+      <>
+        <div className="topbar">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <SkeletonLine width="35%" height="1.6em" marginBottom={6} />
+            <SkeletonLine width="20%" height="0.85em" />
+          </div>
+        </div>
+        <div className="content">
+          <section className="card-grid">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className="card">
+                <SkeletonLine width="50%" height="0.8em" marginBottom={6} />
+                <SkeletonLine width="80%" height="1.4em" />
+              </div>
+            ))}
+          </section>
+          <SkeletonBlock height={140} />
+          <SkeletonBlock height={180} />
+        </div>
+      </>
+    );
+  }
 
   if (!project) {
     return (

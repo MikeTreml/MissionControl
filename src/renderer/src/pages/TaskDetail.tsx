@@ -23,16 +23,25 @@ import { deriveSubagents, type SubagentEntry } from "../lib/derive-subagents";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { ChangeWorkflowModal } from "../components/ChangeWorkflowModal";
+import { SkeletonLine, SkeletonBlock, SkeletonRows } from "../components/Skeleton";
 import { PageStub } from "./PageStub";
 import type { Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
 
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
-  const { task, events, prompt, status, runConfig, latestMetrics, metricsFileName, isDemo } = useTask(selectedTaskId);
+  const { task, events, prompt, status, runConfig, latestMetrics, metricsFileName, isDemo, loading } = useTask(selectedTaskId);
   const pendingAsks = usePendingAsks(selectedTaskId);
   const [editOpen, setEditOpen] = useState(false);
   const [workflowOpen, setWorkflowOpen] = useState(false);
+
+  // Distinguish "task is loading" from "no task selected" — useTask
+  // resolves both into `task: null` initially. If we have a selected
+  // id and we're still fetching, render a skeleton instead of the
+  // "pick a task" stub.
+  if (!task && selectedTaskId && loading) {
+    return <TaskDetailSkeleton />;
+  }
 
   if (!task) {
     return (
@@ -147,6 +156,37 @@ export function TaskDetail(): JSX.Element {
 
         {!isDemo && <RunConfigCard runConfig={runConfig} />}
         {!isDemo && <RunMetricsCard metrics={latestMetrics} fileName={metricsFileName} />}
+      </div>
+    </>
+  );
+}
+
+/**
+ * Loading shell shown while `useTask` is resolving a real task. Mirrors
+ * the live page's structure (header + chip strip + cards row + meta) so
+ * the layout doesn't shift when content swaps in. Pure presentation —
+ * no data dependencies.
+ */
+function TaskDetailSkeleton(): JSX.Element {
+  return (
+    <>
+      <div className="topbar">
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <SkeletonLine width="40%" height="1.6em" marginBottom={6} />
+          <SkeletonLine width="20%" height="0.85em" />
+        </div>
+      </div>
+      <div className="content">
+        <SkeletonBlock height={48} />
+        <SkeletonBlock height={56} />
+        <section className="card" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+          <SkeletonRows rows={6} />
+          <SkeletonRows rows={6} />
+        </section>
+        <section className="card" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 18 }}>
+          <SkeletonRows rows={4} />
+          <SkeletonRows rows={4} />
+        </section>
       </div>
     </>
   );
