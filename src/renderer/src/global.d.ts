@@ -33,7 +33,6 @@ export interface WorkflowRunTemplate {
   workflowLogicalPath: string;
   workflowName: string;
   projectId: string;
-  workflowCode: string;
   goal: string;
   model: string | null;
   inputs: Record<string, unknown>;

@@ -145,7 +145,6 @@ export function RunWorkflowModal({
       workflowLogicalPath: workflowItem.logicalPath,
       workflowName: workflowItem.name,
       projectId: projectId || "",
-      workflowCode: DEFAULT_WORKFLOW_LETTER,
       goal,
       model: model || null,
       inputs,
