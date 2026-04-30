@@ -16,17 +16,13 @@ import { usePiModels } from "../hooks/usePiModels";
 import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
 import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
+import { derivePhases } from "../lib/derive-phases";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { PageStub } from "./PageStub";
 import { LANE_ORDER } from "../../../shared/models";
-import type { Lane, LaneHistoryEntry, Task, TaskEvent } from "../../../shared/models";
+import type { Lane, Task, TaskEvent } from "../../../shared/models";
 import type { PiModelInfo } from "../global";
-
-const LANE_LABEL: Record<Lane, string> = {
-  plan: "Plan", develop: "Develop", review: "Review",
-  surgery: "Surgery", approval: "Approval", done: "Done",
-};
 
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
@@ -109,7 +105,7 @@ export function TaskDetail(): JSX.Element {
         </section>
 
         <section className="card" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 18 }}>
-          <LaneTimeline task={task} />
+          <LaneTimeline task={task} events={events} />
           <TaskMeta task={task} events={events} />
         </section>
 
@@ -420,15 +416,30 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
   );
 }
 
-/** Vertical timeline of lane transitions, oldest at the top. */
-function LaneTimeline({ task }: { task: Task }): JSX.Element {
-  const entries: LaneHistoryEntry[] = task.laneHistory.length > 0
-    ? task.laneHistory
-    : [{ lane: task.lane, enteredAt: task.createdAt }];
+/**
+ * Vertical phase timeline, oldest at the top. Driven by `derivePhases`,
+ * which reads journal events (curated workflow phases or lane-changed
+ * legacy events) and falls back to a generic Draft/Active/Finished
+ * skeleton if no events are present yet.
+ */
+function LaneTimeline({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element {
+  const { phases, source } = derivePhases(task, events);
+
+  const colorFor = (status: typeof phases[number]["status"]): string => {
+    if (status === "active") return "var(--warn)";
+    if (status === "failed") return "var(--bad)";
+    if (status === "done") return "var(--good)";
+    return "var(--muted)";
+  };
 
   return (
     <div>
-      <h3>Lane timeline</h3>
+      <h3>Phase timeline</h3>
+      <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>
+        {source === "curated" && "From workflow journal"}
+        {source === "lane" && "From lane transitions"}
+        {source === "generic" && "Generic phases — no run data yet"}
+      </div>
       <div
         style={{
           display: "grid",
@@ -448,11 +459,11 @@ function LaneTimeline({ task }: { task: Task }): JSX.Element {
             background: "var(--border)",
           }}
         />
-        {entries.map((e, idx) => {
-          const isCurrent = !e.leftAt;
+        {phases.map((p) => {
+          const dotColor = colorFor(p.status);
           return (
             <div
-              key={`${e.lane}-${e.enteredAt}`}
+              key={p.id}
               style={{ position: "relative", padding: "6px 0 14px" }}
             >
               <div
@@ -463,27 +474,25 @@ function LaneTimeline({ task }: { task: Task }): JSX.Element {
                   width: 12,
                   height: 12,
                   borderRadius: "50%",
-                  background: isCurrent ? "var(--warn)" : "var(--good)",
-                  border: `2px solid ${isCurrent ? "var(--warn)" : "var(--good)"}`,
-                  boxShadow: isCurrent ? "0 0 0 4px rgba(244,201,93,0.2)" : undefined,
+                  background: dotColor,
+                  border: `2px solid ${dotColor}`,
+                  boxShadow: p.status === "active" ? "0 0 0 4px rgba(244,201,93,0.2)" : undefined,
                 }}
               />
               <h4 style={{ margin: "0 0 2px", fontSize: 14 }}>
-                {LANE_LABEL[e.lane]}
-                {isCurrent && " — current"}
+                {p.label}
+                {p.status === "active" && " — current"}
+                {p.status === "failed" && " — failed"}
               </h4>
-              <div className="sub">
-                Entered {fmt(e.enteredAt)}
-                {e.leftAt && ` · left ${fmt(e.leftAt)}`}
-              </div>
+              {(p.enteredAt || p.leftAt) && (
+                <div className="sub">
+                  {p.enteredAt && `Entered ${fmt(p.enteredAt)}`}
+                  {p.leftAt && ` · left ${fmt(p.leftAt)}`}
+                </div>
+              )}
             </div>
           );
         })}
-        {entries.length === 1 && entries[0]!.leftAt === undefined && (
-          <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-            No history yet — task hasn't moved between lanes.
-          </div>
-        )}
       </div>
     </div>
   );
