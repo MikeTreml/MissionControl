@@ -74,17 +74,6 @@ export type CampaignItem = z.infer<typeof CampaignItemSchema>;
 
 // ── main models ──────────────────────────────────────────────────────────
 
-/**
- * One entry in a task's lane history. Missing `leftAt` = currently in this lane.
- * Lets the Project Detail / Task Detail pages render a timeline and compute
- * how long a task has been sitting in any given lane.
- */
-export const LaneHistoryEntrySchema = z.object({
-  lane: LaneSchema,
-  enteredAt: z.string().datetime(),
-  leftAt: z.string().datetime().optional(),
-});
-export type LaneHistoryEntry = z.infer<typeof LaneHistoryEntrySchema>;
 
 /** A unit of work moving through the pipeline. Serialized in manifest.json. */
 export const TaskSchema = z.object({
@@ -99,7 +88,6 @@ export const TaskSchema = z.object({
   cycle: z.number().int().default(1),          // increments on reviewer loop-back
   currentStep: z.string().default(""),         // short human-readable status line
   lastEvent: z.string().default(""),           // most-recent event summary
-  laneHistory: z.array(LaneHistoryEntrySchema).default([]), // timeline data
   /**
    * Campaign items. Only populated when `kind === "campaign"`. Empty at
    * creation is fine — the Planner may generate them during its run.
