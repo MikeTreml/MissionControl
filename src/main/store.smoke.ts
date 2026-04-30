@@ -28,9 +28,7 @@ async function main(): Promise<void> {
     projectPrefix: "DA",
   });
   assert(a.id === "DA-001F", `expected DA-001F, got ${a.id}`);
-  assert(a.workflow === "F", `expected default workflow F, got ${a.workflow}`);
   assert(a.lane === "plan", `new task should start in plan lane`);
-  assert(a.currentAgentSlug === "planner", `new task should have planner as current agent`);
   console.log(`[smoke] created ${a.id} (${a.title})`);
 
   const b = await store.createTask({
@@ -48,7 +46,6 @@ async function main(): Promise<void> {
     workflow: "B",
   });
   assert(c.id === "DX-001B", `expected DX-001B (per-prefix counter + workflow letter), got ${c.id}`);
-  assert(c.workflow === "B", `expected workflow B, got ${c.workflow}`);
 
   // Workflow letter does NOT split counter — next DA task after a B would be 003.
   const d = await store.createTask({

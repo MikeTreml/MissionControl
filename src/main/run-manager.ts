@@ -108,7 +108,7 @@ export class RunManager {
 
   /** Single-task path: one /babysit run, agent_end flips task to idle. */
   private async startSingle(task: Task, input: { agentSlug?: string; model?: string }): Promise<Task> {
-    const chosenAgent = input.agentSlug ?? task.currentAgentSlug ?? null;
+    const chosenAgent = input.agentSlug ?? null;
     if (this.pi) {
       const cwd = await this.resolveCwd(task);
       const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
@@ -124,16 +124,15 @@ export class RunManager {
     const next: Task = {
       ...task,
       runState: "running",
-      currentAgentSlug: chosenAgent,
     };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
-      agentSlug: next.currentAgentSlug,
+      ...(chosenAgent ? { agentSlug: chosenAgent } : {}),
     });
     await this.tasks.appendStatus(
       task.id,
-      `Started — cycle ${next.cycle} · agent: ${next.currentAgentSlug ?? "(none)"}`,
+      `Started — cycle ${next.cycle}${chosenAgent ? ` · agent: ${chosenAgent}` : ""}`,
     );
     return next;
   }
@@ -144,7 +143,7 @@ export class RunManager {
    * runState="running" across the whole campaign.
    */
   private async startCampaign(task: Task, input: { agentSlug?: string; model?: string }): Promise<Task> {
-    const chosenAgent = input.agentSlug ?? task.currentAgentSlug ?? null;
+    const chosenAgent = input.agentSlug ?? null;
     const pendingIdx = task.items.findIndex((i) => i.status === "pending");
     if (pendingIdx === -1) {
       // Nothing to do — flip to idle so the UI doesn't get stuck.
@@ -158,13 +157,12 @@ export class RunManager {
     const next: Task = {
       ...task,
       runState: "running",
-      currentAgentSlug: chosenAgent,
       items,
     };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
-      agentSlug: next.currentAgentSlug,
+      ...(chosenAgent ? { agentSlug: chosenAgent } : {}),
     });
     await this.tasks.appendStatus(
       task.id,
@@ -180,8 +178,7 @@ export class RunManager {
     const cwd = await this.resolveCwd(task);
     const m = model ?? this.activeModel.get(task.id);
     const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
-    const agentSlug = task.currentAgentSlug ?? null;
-    await this.tasks.writePromptFile(task.id, renderPromptFile(task, agentSlug));
+    await this.tasks.writePromptFile(task.id, renderPromptFile(task, null));
     await this.tasks.appendEvent(task.id, { type: "item-started", itemId: item.id });
     await this.tasks.appendStatus(task.id, `Item ${item.id} started — cycle ${task.cycle} · ${item.description}`);
     await this.pi.start(task.id, {
@@ -219,7 +216,7 @@ export class RunManager {
       type: "run-ended",
       reason,
     });
-    await this.recordMetricsArtifact(task.id, task.currentAgentSlug ?? "run", task.cycle);
+    await this.recordMetricsArtifact(task.id, "run", task.cycle);
     await this.tasks.appendStatus(task.id, `Run ended — cycle ${task.cycle} · ${reason}`);
     this.activeModel.delete(task.id);
     await this.startQueuedIfCapacity();
@@ -277,7 +274,7 @@ export class RunManager {
     const next: Task = { ...task, runState: "idle" };
     await this.tasks.saveTask(next);
     await this.tasks.appendEvent(task.id, { type: "run-ended", reason: finalReason });
-    await this.recordMetricsArtifact(task.id, task.currentAgentSlug ?? "run", task.cycle);
+    await this.recordMetricsArtifact(task.id, "run", task.cycle);
     await this.tasks.appendStatus(
       task.id,
       `Campaign ended — cycle ${task.cycle} · ${done}/${task.items.length} done, ${failed} failed`,
@@ -351,7 +348,7 @@ export class RunManager {
       type: "run-ended",
       reason: input.reason ?? "user",
     });
-    await this.recordMetricsArtifact(task.id, task.currentAgentSlug ?? "run", task.cycle);
+    await this.recordMetricsArtifact(task.id, "run", task.cycle);
     await this.tasks.appendStatus(task.id, `Stopped — cycle ${task.cycle} (${input.reason ?? "user"})`);
 
     // Best-effort pi cleanup — don't let a dispose failure undo the state
@@ -625,7 +622,7 @@ function buildBabysitPrompt(
     "",
     `Task id: ${task.id}`,
     `Project: ${task.project}`,
-    `Workflow: ${task.workflow} (cycle ${task.cycle})`,
+    `Cycle: ${task.cycle}`,
     `Suggested starting agent: ${agentSlug ?? "(none)"}`,
     "",
     "Orchestrate the full workflow: plan, implement, review, finalize.",
@@ -670,7 +667,7 @@ function buildItemBabysitPrompt(
     "",
     `Task id: ${task.id}`,
     `Project: ${task.project}`,
-    `Campaign workflow: ${task.workflow}`,
+    `Campaign cycle: ${task.cycle}`,
     `Item index: ${idx + 1} of ${total}`,
     "",
     ...artifactExampleLines(task.id, task.cycle),

@@ -74,12 +74,6 @@ export type CampaignItem = z.infer<typeof CampaignItemSchema>;
 
 // ── main models ──────────────────────────────────────────────────────────
 
-/** Single uppercase letter workflow code (F=Feature, B=Bug, R=Refactor, S=Spike, ...). */
-export const WorkflowLetterSchema = z
-  .string()
-  .length(1)
-  .regex(/^[A-Z]$/, "workflow must be a single uppercase letter");
-
 /**
  * One entry in a task's lane history. Missing `leftAt` = currently in this lane.
  * Lets the Project Detail / Task Detail pages render a timeline and compute
@@ -94,18 +88,14 @@ export type LaneHistoryEntry = z.infer<typeof LaneHistoryEntrySchema>;
 
 /** A unit of work moving through the pipeline. Serialized in manifest.json. */
 export const TaskSchema = z.object({
-  id: z.string(),                              // e.g. "DA-015F"
+  id: z.string(),                              // e.g. "DA-015F" — workflow letter encoded in suffix
   title: z.string(),
   description: z.string().default(""),
   project: z.string().default("default"),      // project id slug, e.g. "dogapp"
-  workflow: WorkflowLetterSchema.default("F"), // e.g. "F" (Feature)
   kind: TaskKindSchema.default("single"),      // single-task vs campaign (N items)
   lane: LaneSchema.default("plan"),
   status: TaskStatusSchema.default("active"),
   runState: RunStateSchema.default("idle"),    // live state for Start/Pause/Stop
-  // Slug of the agent currently working this task (refs agents/<slug>/).
-  // Nullable = no one assigned yet.
-  currentAgentSlug: z.string().nullable().default("planner"),
   cycle: z.number().int().default(1),          // increments on reviewer loop-back
   currentStep: z.string().default(""),         // short human-readable status line
   lastEvent: z.string().default(""),           // most-recent event summary

@@ -35,7 +35,6 @@ async function main(): Promise<void> {
   // start: idle → running
   const started = await mgr.start({ taskId: task.id, agentSlug: "developer" });
   assert(started.runState === "running", "start flips runState to running");
-  assert(started.currentAgentSlug === "developer", "start honors agentSlug");
 
   // start again should fail
   let threw = false;

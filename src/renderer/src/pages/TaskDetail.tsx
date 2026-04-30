@@ -51,7 +51,7 @@ export function TaskDetail(): JSX.Element {
             {task.id} — {task.title}
           </h1>
           <p className="muted">
-            {task.kind} · workflow {task.workflow} · project {task.project}
+            {task.kind} · project {task.project}
             {isDemo && " · demo"}
           </p>
         </div>
@@ -560,11 +560,9 @@ function TaskMeta({ task, events }: { task: Task; events: TaskEvent[] }): JSX.El
     <div>
       <h3>Task meta</h3>
       <div style={{ marginTop: 10 }}>
-        <Row label="Workflow" value={task.workflow} />
         <Row label="Project" value={task.project} />
         <Row label="Kind" value={task.kind} />
         <Row label="Cycles so far" value={String(task.cycle)} />
-        <Row label="Current agent" value={task.currentAgentSlug ?? "(none)"} />
         <Row label="Tokens in / out" value={`${totals.tokensIn.toLocaleString()} / ${totals.tokensOut.toLocaleString()}`} />
         <Row label="Cost (USD)" value={totals.cost > 0 ? `$${totals.cost.toFixed(4)}` : "—"} />
         <Row label="Created" value={fmt(task.createdAt)} />
