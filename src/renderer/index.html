@@ -3,6 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Content Security Policy — addresses Electron's "Insecure CSP" warning.
+        default-src 'self'              same-origin only by default
+        script-src 'self'               our own bundles; no eval / no inline
+        style-src 'self' 'unsafe-inline' inline style attributes are pervasive
+                                         in components (and in the React-style
+                                         attribute prop); no inline <style>
+                                         elements rely on this
+        connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:*
+                                         Vite HMR websocket + dev server
+        img-src 'self' data:            small base64 icons inline
+        font-src 'self' data:           any embedded webfonts
+      Tighten in production by setting CSP via session.webRequest in main if
+      the meta-tag-only surface ever needs to differ between dev and packaged.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:*; img-src 'self' data:; font-src 'self' data:;"
+    />
     <title>Mission Control</title>
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
