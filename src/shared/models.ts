@@ -89,6 +89,17 @@ export const TaskSchema = z.object({
    * approval lane. Empty string = not blocked.
    */
   blocker: z.string().default(""),
+  /**
+   * Lineage — id of the task that spawned this one, if any. Empty string
+   * (default) means "no parent." Used by:
+   *   - Doctor / spin-off pattern: a stuck task forks a child to debug it
+   *   - Cascading creation: authoring an agent that needs a missing skill
+   *     spawns a child to author the skill
+   *   - Planning tasks: a meta-task whose output is a list of child tasks
+   * Children are queried by scanning all tasks for matching parentTaskId
+   * (no inverse index — task counts are small and the scan is cheap).
+   */
+  parentTaskId: z.string().default(""),
   createdAt: z.string().datetime(),            // ISO 8601
   updatedAt: z.string().datetime(),
 });

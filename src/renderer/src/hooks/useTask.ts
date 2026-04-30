@@ -27,6 +27,7 @@ function mockTaskToTask(id: string): Task | null {
     cycle: 1,
     items: [],
     blocker: "",
+    parentTaskId: "",
     createdAt: now,
     updatedAt: now,
   };
