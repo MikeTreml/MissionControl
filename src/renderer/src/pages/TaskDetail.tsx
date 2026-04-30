@@ -85,6 +85,7 @@ export function TaskDetail(): JSX.Element {
 
       <div className="content">
         <Controls task={task} />
+        <PhaseChipStrip task={task} events={events} />
         {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
 
         {!isDemo && pendingAsks.map((ask) => (
@@ -420,6 +421,90 @@ function BlockerField({ task }: { task: Task }): JSX.Element {
  * legacy events) and falls back to a generic Draft/Active/Finished
  * skeleton if no events are present yet.
  */
+/**
+ * Horizontal phase chip strip — sits at the top of Task Detail. Same data
+ * source as LaneTimeline (`derivePhases`); different layout. Mockup spec
+ * is `queued → plan → approval ● → build → verify` with the active chip
+ * highlighted and a `cycle 1 · 12m` summary on the right side.
+ */
+function PhaseChipStrip({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const { phases, current, source } = derivePhases(task, events);
+  if (phases.length === 0) return null;
+
+  const colorFor = (status: typeof phases[number]["status"]): { bg: string; fg: string } => {
+    if (status === "active") return { bg: "rgba(244,201,93,0.15)", fg: "var(--warn)" };
+    if (status === "failed") return { bg: "rgba(255,123,123,0.12)", fg: "var(--bad)" };
+    if (status === "done")   return { bg: "rgba(74,222,128,0.10)", fg: "var(--good)" };
+    return { bg: "var(--panel-2)", fg: "var(--muted)" };
+  };
+
+  const elapsed = elapsedSinceLatestEvent(events) ?? "";
+  return (
+    <div
+      className="card"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "10px 14px",
+        flexWrap: "wrap",
+      }}
+    >
+      <span className="muted" style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 0.04, marginRight: 4 }}>
+        Phase
+      </span>
+      {phases.map((p, idx) => {
+        const c = colorFor(p.status);
+        return (
+          <span key={p.id} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <span
+              style={{
+                background: c.bg,
+                color: c.fg,
+                border: `1px solid ${p.status === "active" ? c.fg : "var(--border)"}`,
+                borderRadius: 5,
+                padding: "3px 9px",
+                fontSize: 12,
+                fontWeight: p.status === "active" ? 600 : 400,
+                whiteSpace: "nowrap",
+              }}
+              title={p.status}
+            >
+              {p.label}
+              {p.id === current && p.status === "active" && " ●"}
+              {p.status === "failed" && " ✕"}
+            </span>
+            {idx < phases.length - 1 && (
+              <span style={{ color: "var(--muted)", fontSize: 11 }}>→</span>
+            )}
+          </span>
+        );
+      })}
+      <span style={{ flex: 1 }} />
+      <span className="muted" style={{ fontSize: 11, fontFamily: "monospace" }}>
+        cycle {task.cycle}
+        {elapsed ? ` · ${elapsed}` : ""}
+        {source !== "curated" ? ` · ${source}` : ""}
+      </span>
+    </div>
+  );
+}
+
+function elapsedSinceLatestEvent(events: TaskEvent[]): string | null {
+  const last = events[events.length - 1];
+  if (!last) return null;
+  const ts = (last as unknown as { timestamp?: string }).timestamp;
+  if (!ts) return null;
+  const ms = Date.now() - new Date(ts).getTime();
+  if (ms < 0 || !Number.isFinite(ms)) return null;
+  const s = Math.floor(ms / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  return `${h}h ${m % 60}m`;
+}
+
 function LaneTimeline({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element {
   const { phases, source } = derivePhases(task, events);
 
