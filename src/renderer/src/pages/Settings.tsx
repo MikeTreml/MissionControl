@@ -11,6 +11,8 @@ import type { MCSettings } from "../../../shared/models";
 
 const SUBTABS: ReadonlyArray<{ id: ViewId; label: string }> = [
   { id: "settings-global", label: "Global" },
+  { id: "settings-models", label: "Models" },
+  { id: "settings-agents", label: "Agents" },
 ];
 
 function Header(): JSX.Element {
@@ -349,5 +351,70 @@ function DisplaySettings(): JSX.Element {
         </div>
       )}
     </div>
+  );
+}
+
+// ═══════════════ MODELS ═══════════════
+/**
+ * Models sub-tab. Today: a stub explaining where Models ought to live
+ * (per CLAUDE.md "Models = roster + provider toggles; no Lane defaults").
+ * Wiring deferred — pi owns the model roster via ModelRegistry; we'll
+ * surface that here in a later slice.
+ */
+export function SettingsModels(): JSX.Element {
+  return (
+    <>
+      <Header />
+      <div className="content">
+        <SubTabs />
+        <div className="card">
+          <h3>Models</h3>
+          <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+            Pi owns the model roster via its ModelRegistry. This screen
+            will surface the configured providers + per-model toggles
+            (cost cap, default reasoning, max tokens) once pi exposes
+            them through IPC. Until then, models are auth'd via env
+            vars (<code>OPENAI_API_KEY</code> / <code>ANTHROPIC_API_KEY</code>)
+            and selected per-task on the Task Detail picker.
+          </p>
+          <div className="muted" style={{ marginTop: 12, fontSize: 12 }}>
+            See <code>library/models.json</code> for the catalog and
+            <code>~/.pi/agent/auth.json</code> for credentials.
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ═══════════════ AGENTS ═══════════════
+/**
+ * Agents sub-tab — stub. The Library page is the source of truth for
+ * agents/skills/workflows; this sub-tab is here so the sidebar's
+ * "Agents" link has a destination. A future slice could surface
+ * runtime-configurable knobs (default agent per workflow, allow-list
+ * of skills to load) without duplicating the catalog browser.
+ */
+export function SettingsAgents(): JSX.Element {
+  return (
+    <>
+      <Header />
+      <div className="content">
+        <SubTabs />
+        <div className="card">
+          <h3>Agents</h3>
+          <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+            The agent / skill catalog is managed by the
+            <strong> Library</strong> page (sidebar → Library). This
+            sub-tab is reserved for runtime knobs (default agent per
+            workflow, skill allow-lists) that don't live in the
+            catalog itself.
+          </p>
+          <div className="muted" style={{ marginTop: 12, fontSize: 12 }}>
+            Browse the catalog: <code>library/_index.json</code>.
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

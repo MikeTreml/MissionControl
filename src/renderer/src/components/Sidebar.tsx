@@ -170,8 +170,18 @@ export function Sidebar(): JSX.Element {
       <div>
         <div className="section-label">System</div>
         <div className="nav-list">
-          <NavItem glyph="◐" label="Models" disabled tooltip="Coming soon" />
-          <NavItem glyph="⌖" label="Agents" disabled tooltip="Coming soon" />
+          <NavItem
+            glyph="◐"
+            label="Models"
+            active={view === "settings-models"}
+            onClick={() => setView("settings-models")}
+          />
+          <NavItem
+            glyph="⌖"
+            label="Agents"
+            active={view === "settings-agents"}
+            onClick={() => setView("settings-agents")}
+          />
           <NavItem
             glyph="⚙"
             label="Settings"

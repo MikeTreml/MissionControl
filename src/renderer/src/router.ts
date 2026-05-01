@@ -13,6 +13,8 @@ export type ViewId =
   | "project"
   | "task"
   | "settings-global"
+  | "settings-models"
+  | "settings-agents"
   | "metrics"
   | "run-history"
   | "handoffs";

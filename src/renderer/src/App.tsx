@@ -16,7 +16,7 @@ import { LibraryBrowser } from "./pages/Library";
 import { ProjectDetail } from "./pages/ProjectDetail";
 import { TaskDetail } from "./pages/TaskDetail";
 import { Metrics } from "./pages/Metrics";
-import { SettingsGlobal } from "./pages/Settings";
+import { SettingsGlobal, SettingsModels, SettingsAgents } from "./pages/Settings";
 import { RunHistory } from "./pages/RunHistory";
 import { Handoffs } from "./pages/Handoffs";
 
@@ -32,6 +32,8 @@ function CurrentView({ view }: { view: ViewId }): JSX.Element {
     case "task":                return <TaskDetail />;
     case "metrics":             return <Metrics />;
     case "settings-global":     return <SettingsGlobal />;
+    case "settings-models":     return <SettingsModels />;
+    case "settings-agents":     return <SettingsAgents />;
     case "run-history":         return <RunHistory />;
     case "handoffs":            return <Handoffs />;
   }
