@@ -13,7 +13,9 @@ export type ViewId =
   | "project"
   | "task"
   | "settings-global"
-  | "metrics";
+  | "metrics"
+  | "run-history"
+  | "handoffs";
 
 export interface Route {
   view: ViewId;

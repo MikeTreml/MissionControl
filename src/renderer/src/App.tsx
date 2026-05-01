@@ -17,6 +17,8 @@ import { ProjectDetail } from "./pages/ProjectDetail";
 import { TaskDetail } from "./pages/TaskDetail";
 import { Metrics } from "./pages/Metrics";
 import { SettingsGlobal } from "./pages/Settings";
+import { RunHistory } from "./pages/RunHistory";
+import { Handoffs } from "./pages/Handoffs";
 
 import { RouteContext, type ViewId } from "./router";
 
@@ -30,6 +32,8 @@ function CurrentView({ view }: { view: ViewId }): JSX.Element {
     case "task":                return <TaskDetail />;
     case "metrics":             return <Metrics />;
     case "settings-global":     return <SettingsGlobal />;
+    case "run-history":         return <RunHistory />;
+    case "handoffs":            return <Handoffs />;
   }
 }
 

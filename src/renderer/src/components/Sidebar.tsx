@@ -150,8 +150,19 @@ export function Sidebar(): JSX.Element {
             active={view === "library"}
             onClick={() => setView("library")}
           />
-          <NavItem glyph="⟳" label="Run history" disabled tooltip="Coming soon" />
-          <NavItem glyph="⌥" label="Hand-offs" disabled tooltip="Coming soon" />
+          <NavItem
+            glyph="⟳"
+            label="Run history"
+            active={view === "run-history"}
+            onClick={() => setView("run-history")}
+          />
+          <NavItem
+            glyph="⌥"
+            label="Hand-offs"
+            badge={tasks.filter((t) => t.boardStage === "Review" || t.boardStage === "Blocked").length}
+            active={view === "handoffs"}
+            onClick={() => setView("handoffs")}
+          />
         </div>
       </div>
 
