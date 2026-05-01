@@ -649,6 +649,63 @@ async function main(): Promise<void> {
     "doesNotExistTask",
   );
 
+  // ── Slice G polish: per-phase descriptions, headerNote, call-form question
+
+  const polishedSpec: WorkflowSpec = {
+    processId: "demo/polished",
+    description: "Polish-slice spec exercising headerNote + per-phase descriptions + call-form questions",
+    headerNote: "Polished Workflow Process\n\nMulti-line note block.",
+    inputs: [{ name: "input1", jsDocType: "string", defaultLiteral: "''" }],
+    outputs: [{ name: "result", jsDocType: "string", expression: "doneTask.result" }],
+    extraImports: [
+      { source: "./helpers.js", named: ["buildPrompt"] },
+    ],
+    phases: [
+      {
+        kind: "sequential",
+        title: "Gather",
+        description: "Collect inputs and validate",
+        resultVar: "doneTask",
+        taskRef: "doneTask",
+        args: { input1: "input1" },
+      },
+      {
+        kind: "breakpoint",
+        title: "Confirm",
+        description: "Operator confirms before next step",
+        question: { call: "buildPrompt(doneTask)" },
+        options: ["Approve", "Request changes"],
+      },
+    ],
+    tasks: [
+      {
+        kind: "agent",
+        factoryName: "doneTask",
+        taskKey: "done-task",
+        title: "Done",
+        agentName: "general-purpose",
+        role: "Worker",
+        taskDescription: "Do",
+        contextKeys: ["input1"],
+        instructions: ["Do it"],
+        outputFormat: "JSON with result",
+        outputSchema: {
+          type: "object",
+          required: ["result"],
+          properties: { result: { type: "string" } },
+        },
+        labels: ["agent"],
+      },
+    ],
+  };
+  const polishedSource = generateWorkflow(polishedSpec);
+  assert(polishedSource.includes(" * Polished Workflow Process"), "headerNote first line in JSDoc");
+  assert(polishedSource.includes(" * Multi-line note block."), "headerNote multi-line preserved");
+  assert(polishedSource.includes(" * 1. Gather - Collect inputs and validate"), "phase description appended after dash");
+  assert(polishedSource.includes(" * 2. Confirm - Operator confirms before next step"), "second phase description");
+  assert(polishedSource.includes("question: buildPrompt(doneTask),"), "call-form question rendered verbatim");
+  assert(!polishedSource.includes("'buildPrompt(doneTask)'"), "call form not wrapped in quotes");
+
   console.log("\n--- generated workflow.js ---\n");
   console.log(source);
   console.log("\n--- end ---");

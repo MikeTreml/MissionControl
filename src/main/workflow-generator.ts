@@ -43,12 +43,30 @@ export type WorkflowSpec = {
    * valid `taskRef`s in phases (no need to redeclare them in `tasks[]`).
    */
   extraImports?: ImportSpec[];
+  /**
+   * Free-text block rendered between `@description` and the phase list
+   * in the JSDoc header. Multi-line is fine — newlines become ` * `
+   * comment lines. Useful for "Bug Report Contribution Process"-style
+   * separator text seen in cradle/* workflows.
+   */
+  headerNote?: string;
 };
 
 export type ImportSpec = {
   source: string;
   named: string[];
 };
+
+/**
+ * A breakpoint's question text. Two forms:
+ *   - A string literal (single or multi-line).
+ *   - `{ call: "fnName(arg1)" }` — a JS expression rendered verbatim,
+ *     letting the workflow call a helper that builds a context-rich
+ *     prompt at runtime (e.g. `diagnosisBreakpointQuestion(diagnosis)`).
+ *     The function must be declared in the workflow scope, typically
+ *     via `extraImports`.
+ */
+export type BreakpointQuestion = string | { call: string };
 
 export type WorkflowInput = {
   name: string;
@@ -74,6 +92,8 @@ export type Phase =
 export type SequentialPhase = {
   kind: "sequential";
   title: string;
+  /** Optional one-liner shown in the JSDoc header phase list. */
+  description?: string;
   logMessage?: string;
   resultVar: string;
   taskRef: string;
@@ -85,6 +105,7 @@ export type SequentialPhase = {
 export type ParallelPhase = {
   kind: "parallel";
   title: string;
+  description?: string;
   logMessage?: string;
   resultVars: string[];
   branches: Array<{ taskRef: string; args: Record<string, string> }>;
@@ -93,7 +114,8 @@ export type ParallelPhase = {
 export type BreakpointPhase = {
   kind: "breakpoint";
   title: string;
-  question: string;
+  description?: string;
+  question: BreakpointQuestion;
   options?: string[];
   expert?: string;
   tags?: string[];
@@ -102,12 +124,13 @@ export type BreakpointPhase = {
 export type RetryPhase = {
   kind: "retry";
   title: string;
+  description?: string;
   logMessage?: string;
   maxAttempts: number;
   resultVar: string;
   taskRef: string;
   args: Record<string, string>;
-  question: string;
+  question: BreakpointQuestion;
   bpTitle: string;
   options?: string[];
   expert?: string;
@@ -126,6 +149,7 @@ export type RetryPhase = {
 export type ConditionalPhase = {
   kind: "conditional";
   title: string;
+  description?: string;
   condition: string;
   resultVar: string;
   taskRef: string;
@@ -140,6 +164,7 @@ export type ConditionalPhase = {
 export type ConditionalBlockPhase = {
   kind: "conditional-block";
   title: string;
+  description?: string;
   condition: string;
   body: Phase;
 };
@@ -152,9 +177,10 @@ export type ConditionalBlockPhase = {
 export type ConfirmLoopPhase = {
   kind: "confirm-loop";
   title: string;
+  description?: string;
   logMessage?: string;
   maxAttempts: number;
-  question: string;
+  question: BreakpointQuestion;
   bpTitle: string;
   feedbackVar: string;
   options?: string[];
@@ -365,10 +391,24 @@ function renderHeader(spec: WorkflowSpec): string {
     const inner = spec.outputs.map((o) => `${o.name}: ${o.jsDocType}`).join(", ");
     lines.push(` * @outputs { ${inner} }`);
   }
+  // Optional free-text block between @description and the phase list.
+  // Used by cradle/* workflows to carry a "Bug Report Contribution
+  // Process"-style separator label.
+  if (spec.headerNote) {
+    lines.push(" *");
+    for (const noteLine of spec.headerNote.split("\n")) {
+      lines.push(noteLine.length > 0 ? ` * ${noteLine}` : " *");
+    }
+  }
   lines.push(" *");
   lines.push(" * Phases:");
   spec.phases.forEach((phase, i) => {
-    lines.push(` * ${i + 1}. ${phase.title}`);
+    const desc = (phase as { description?: string }).description;
+    if (desc) {
+      lines.push(` * ${i + 1}. ${phase.title} - ${desc}`);
+    } else {
+      lines.push(` * ${i + 1}. ${phase.title}`);
+    }
   });
   lines.push(" */");
   return lines.join("\n");
@@ -558,7 +598,7 @@ function renderConfirmLoop(phase: ConfirmLoopPhase): string {
 }
 
 function renderBreakpointBody(
-  question: string,
+  question: BreakpointQuestion,
   title: string,
   options?: string[],
   expert?: string,
@@ -583,7 +623,13 @@ function renderBreakpointBody(
   return lines.join("\n");
 }
 
-function renderQuestion(q: string): string {
+function renderQuestion(q: BreakpointQuestion): string {
+  // Function-call form — emit the JS expression verbatim. The function
+  // must be available in scope (typically via WorkflowSpec.extraImports).
+  if (typeof q === "object" && q !== null && "call" in q) {
+    return q.call;
+  }
+  if (typeof q !== "string") return "''";
   if (!q.includes("\n")) return jsString(q);
   const lines = q.split("\n").map((l) => jsString(l));
   return `[\n  ${lines.join(",\n  ")}\n].join('\\n')`;
