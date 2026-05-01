@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Sidebar } from "./components/Sidebar";
 import { RightBar } from "./components/RightBar";
 import { Toaster } from "./components/Toaster";
+import { ContextStrip } from "./components/ContextStrip";
 
 import { Dashboard } from "./pages/Dashboard";
 import { LibraryBrowser } from "./pages/Library";
@@ -65,6 +66,7 @@ export function App(): JSX.Element {
       }}
     >
       <>
+        <ContextStrip />
         <div className="app-shell">
           <Sidebar />
           <main className="main">
