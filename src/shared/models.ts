@@ -101,6 +101,13 @@ export const TaskSchema = z.object({
   parentTaskId: z.string().default(""),
   createdAt: z.string().datetime(),            // ISO 8601
   updatedAt: z.string().datetime(),
+  /**
+   * Marker for sample/demo records that ship with the app under
+   * `library/samples/`. Tagged at read-time by TaskStore when loaded
+   * from the sample root; never written back to user data. The
+   * renderer filters these out when MCSettings.showSampleData is false.
+   */
+  isSample: z.boolean().default(false),
 });
 export type Task = z.infer<typeof TaskSchema>;
 
@@ -126,6 +133,8 @@ export const ProjectSchema = z.object({
   // A short emoji or 1-2 chars works best; no schema enforcement so future
   // formats (svg data url, icon name from a library) can drop in.
   icon: z.string().default(""),
+  /** Same semantics as `Task.isSample`. Tagged at read-time. */
+  isSample: z.boolean().default(false),
 });
 export type Project = z.infer<typeof ProjectSchema>;
 
@@ -167,6 +176,14 @@ export const MCSettingsSchema = z.object({
   babysitterMode: z.enum(["plan", "execute", "direct"]).default("plan"),
   // Max number of tasks MC should actively run at once.
   runConcurrencyCap: z.number().int().min(1).max(50).default(10),
+  /**
+   * Show pre-baked sample tasks/projects from `library/samples/` alongside
+   * real user data. Default true so first-run users see a populated UI
+   * without setting anything up. Toggle off in Settings to hide samples
+   * once the user has their own work going. Sample records are tagged
+   * isSample:true at read time and filtered in the renderer hooks.
+   */
+  showSampleData: z.boolean().default(true),
 }).passthrough();
 export type MCSettings = z.infer<typeof MCSettingsSchema>;
 

@@ -18,12 +18,18 @@ const SLUG_RE = /^[a-z0-9][a-z0-9-]*$/;
 
 export class ProjectStore {
   private readonly root: string;
+  private readonly sampleRoot: string | null;
 
   /**
-   * @param root  absolute path to the projects root (e.g. `<userData>/projects`)
+   * @param root        absolute path to the user's projects root (e.g. `<userData>/projects`)
+   * @param sampleRoot  optional read-only sample projects root (e.g.
+   *                    `<appRoot>/library/samples/projects`). Projects
+   *                    loaded from this root are tagged `isSample:true`.
+   *                    Writes against sample projects throw.
    */
-  constructor(root: string) {
+  constructor(root: string, sampleRoot: string | null = null) {
     this.root = root;
+    this.sampleRoot = sampleRoot;
   }
 
   /** Ensure the root folder exists. Call once at app start. */
@@ -35,22 +41,46 @@ export class ProjectStore {
 
   /** Every project on disk, sorted by name (case-insensitive). */
   async listProjects(): Promise<Project[]> {
-    if (!existsSync(this.root)) return [];
-    const entries = await fs.readdir(this.root, { withFileTypes: true });
     const projects: Project[] = [];
-    for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
-      const project = await this.readManifest(path.join(this.root, entry.name));
-      if (project) projects.push(project);
+    const seen = new Set<string>();
+    await this.collectFromRoot(this.root, false, projects, seen);
+    if (this.sampleRoot) {
+      await this.collectFromRoot(this.sampleRoot, true, projects, seen);
     }
     projects.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
     return projects;
   }
 
-  /** Read one project by id, or null if missing. */
+  private async collectFromRoot(
+    root: string,
+    isSample: boolean,
+    out: Project[],
+    seen: Set<string>,
+  ): Promise<void> {
+    if (!existsSync(root)) return;
+    const entries = await fs.readdir(root, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      if (seen.has(entry.name)) continue;
+      const project = await this.readManifest(path.join(root, entry.name));
+      if (!project) continue;
+      seen.add(entry.name);
+      out.push(isSample ? { ...project, isSample: true } : project);
+    }
+  }
+
+  /** Read one project by id, or null if missing. Falls back to sampleRoot. */
   async getProject(id: string): Promise<Project | null> {
-    const folder = path.join(this.root, id);
-    return existsSync(folder) ? this.readManifest(folder) : null;
+    const userFolder = path.join(this.root, id);
+    if (existsSync(userFolder)) return this.readManifest(userFolder);
+    if (this.sampleRoot) {
+      const sampleFolder = path.join(this.sampleRoot, id);
+      if (existsSync(sampleFolder)) {
+        const p = await this.readManifest(sampleFolder);
+        return p ? { ...p, isSample: true } : null;
+      }
+    }
+    return null;
   }
 
   // ── write ─────────────────────────────────────────────────────────────
@@ -106,6 +136,9 @@ export class ProjectStore {
   ): Promise<Project> {
     const existing = await this.getProject(id);
     if (!existing) throw new Error(`Project "${id}" not found`);
+    if (existing.isSample) {
+      throw new Error(`Project "${id}" is a sample (read-only). Cannot update.`);
+    }
 
     // Merge patch onto existing but drop any stale id/prefix in the patch.
     const merged: Project = {
@@ -127,6 +160,9 @@ export class ProjectStore {
   async deleteProject(id: string): Promise<void> {
     const folder = path.join(this.root, id);
     if (!existsSync(folder)) {
+      if (this.sampleRoot && existsSync(path.join(this.sampleRoot, id))) {
+        throw new Error(`Project "${id}" is a sample (read-only). Cannot delete.`);
+      }
       throw new Error(`Project "${id}" not found`);
     }
     await fs.rm(folder, { recursive: true, force: true });
@@ -134,8 +170,12 @@ export class ProjectStore {
 
   /** Persist a project's project.json. */
   async saveProject(project: Project): Promise<void> {
-    // Re-validate before write — cheap safety net.
-    const validated = ProjectSchema.parse(project);
+    if (project.isSample) {
+      throw new Error(`Project "${project.id}" is a sample (read-only). Cannot save.`);
+    }
+    // Re-validate before write — cheap safety net. Strip isSample if it
+    // somehow rode in from a renderer-side edit.
+    const validated = ProjectSchema.parse({ ...project, isSample: false });
     const folder = path.join(this.root, validated.id);
     await fs.mkdir(folder, { recursive: true });
     await fs.writeFile(

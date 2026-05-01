@@ -41,8 +41,19 @@ async function bootstrapStores(): Promise<void> {
   console.log("[main] userData:", userData);
   console.log("[main] appRoot:", appRoot);
 
-  const tasks = new TaskStore(join(userData, "tasks"));
-  const projects = new ProjectStore(join(userData, "projects"));
+  // Sample roots — read-only demo data shipped under library/samples/.
+  // Stores load from these in addition to the user's writable roots so
+  // first-run users see a populated UI. The renderer hides them when
+  // MCSettings.showSampleData is false.
+  const samplesRoot = join(appRoot, "library", "samples");
+  const tasks = new TaskStore(
+    join(userData, "tasks"),
+    join(samplesRoot, "tasks"),
+  );
+  const projects = new ProjectStore(
+    join(userData, "projects"),
+    join(samplesRoot, "projects"),
+  );
   const settings = new SettingsStore(userData);
   const libraryIndex = new LibraryIndexStore(join(appRoot, "library"));
   const workflowCreator = new WorkflowCreator(join(appRoot, "library"));

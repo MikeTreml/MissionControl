@@ -11,10 +11,11 @@
  * When the user creates a real project, this re-fetches and the demo flag
  * flips off.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { mockProjects, type MockProject } from "../mock-data";
 import { useSubscribe } from "./data-bus";
+import { useSettings } from "./useSettings";
 import type { ProjectWithGit } from "../../../shared/models";
 
 /** Shape rendered by the sidebar. Real Project OR mock, with flags. */
@@ -28,6 +29,8 @@ export interface UiProject {
   sourceHint: string;    // "GitHub: owner/repo" or the raw path
   stats: string;         // computed for real projects, canned for mock
   active?: boolean;
+  /** True if loaded from library/samples/ (read-only demo data). */
+  isSample: boolean;
 }
 
 function toUiProject(p: ProjectWithGit): UiProject {
@@ -44,6 +47,7 @@ function toUiProject(p: ProjectWithGit): UiProject {
     notes: p.notes,
     sourceHint,
     stats: "—",
+    isSample: p.isSample === true,
   };
 }
 
@@ -58,6 +62,7 @@ function mockToUi(p: MockProject): UiProject {
     sourceHint: p.source,
     stats: p.stats,
     active: p.active,
+    isSample: false,
   };
 }
 
@@ -109,5 +114,12 @@ export function useProjects(): ProjectsState {
   useSubscribe("projects", () => { void load(); });
   useSubscribe("tasks", () => { void load(); });
 
-  return { projects, loading, isDemo, error, refresh: load };
+  // Filter sample projects when the user has hidden them.
+  const { showSampleData } = useSettings();
+  const visible = useMemo(
+    () => (showSampleData ? projects : projects.filter((p) => !p.isSample)),
+    [projects, showSampleData],
+  );
+
+  return { projects: visible, loading, isDemo, error, refresh: load };
 }

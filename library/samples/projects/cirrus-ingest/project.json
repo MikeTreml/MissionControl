@@ -1,0 +1,9 @@
+{
+  "id": "cirrus-ingest",
+  "name": "cirrus-ingest",
+  "prefix": "CIRR",
+  "path": "",
+  "notes": "Sample project — cloud-storage ingestion service",
+  "icon": "",
+  "isSample": true
+}

@@ -1,0 +1,16 @@
+{
+  "id": "ALGD-0152F",
+  "title": "Audit feature-store SLO drift",
+  "description": "",
+  "project": "algodelta",
+  "kind": "single",
+  "status": "active",
+  "runState": "idle",
+  "cycle": 1,
+  "items": [],
+  "blocker": "",
+  "parentTaskId": "",
+  "createdAt": "2026-04-30T14:25:00.000Z",
+  "updatedAt": "2026-05-01T14:25:00.000Z",
+  "isSample": true
+}

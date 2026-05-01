@@ -1,0 +1,16 @@
+{
+  "id": "BRIE-0019F",
+  "title": "Draft renewal language for Section 4(b)",
+  "description": "",
+  "project": "briefcase-rewrite",
+  "kind": "single",
+  "status": "waiting",
+  "runState": "paused",
+  "cycle": 1,
+  "items": [],
+  "blocker": "awaiting review",
+  "parentTaskId": "",
+  "createdAt": "2026-04-30T14:25:00.000Z",
+  "updatedAt": "2026-05-01T13:25:00.000Z",
+  "isSample": true
+}

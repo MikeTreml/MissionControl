@@ -5,10 +5,11 @@
  * matches the shape Board + TaskCard already render; transformation lives
  * here so components stay dumb.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { mockTasks, type MockLane, type MockPill, type MockRoleLabel, type MockTask } from "../mock-data";
 import { useSubscribe } from "./data-bus";
+import { useSettings } from "./useSettings";
 import { latestModelForEvents } from "../lib/derive-runs";
 import type { Task, TaskEvent, TaskStatus, RunState } from "../../../shared/models";
 
@@ -33,6 +34,8 @@ export type UiTask = MockTask & {
   runState: RunState;
   /** Source task id when this is a re-run / clone / spin-off. "" = no parent. */
   parentTaskId: string;
+  /** True if loaded from library/samples/ (read-only demo data). */
+  isSample: boolean;
 };
 
 /**
@@ -78,6 +81,7 @@ function toUiTask(t: Task, projectIcon: string, currentModel: string): UiTask {
     status: t.status,
     runState: t.runState,
     parentTaskId: t.parentTaskId,
+    isSample: t.isSample === true,
   };
 }
 
@@ -120,7 +124,7 @@ export function useTasks(): TasksState {
       if (!window.mc) {
         // Mock tasks don't have a real project id; stamp a synthetic one so
         // filters don't collapse them.
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "" })));
+        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "", isSample: false })));
         setIsDemo(true);
         return;
       }
@@ -131,7 +135,7 @@ export function useTasks(): TasksState {
       // Map project id → icon so each task can carry its project's icon.
       const iconByProject = new Map(projects.map((p) => [p.id, p.icon]));
       if (real.length === 0) {
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "" })));
+        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "", isSample: false })));
         setIsDemo(true);
       } else {
         const eventRows = await Promise.all(real.map(async (t) => {
@@ -147,7 +151,7 @@ export function useTasks(): TasksState {
       }
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
-      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "" })));
+      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "", isSample: false })));
       setIsDemo(true);
     } finally {
       setLoading(false);
@@ -160,5 +164,13 @@ export function useTasks(): TasksState {
 
   useSubscribe("tasks", () => { void load(); });
 
-  return { tasks, loading, isDemo, error, refresh: load };
+  // Filter sample tasks out when the user has hidden them in Settings.
+  // Live (non-sample) tasks are always returned.
+  const { showSampleData } = useSettings();
+  const visible = useMemo(
+    () => (showSampleData ? tasks : tasks.filter((t) => !t.isSample)),
+    [tasks, showSampleData],
+  );
+
+  return { tasks: visible, loading, isDemo, error, refresh: load };
 }

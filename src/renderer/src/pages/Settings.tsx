@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 
 import { useRoute, type ViewId } from "../router";
+import { publish } from "../hooks/data-bus";
 import type { MCSettings } from "../../../shared/models";
 
 const SUBTABS: ReadonlyArray<{ id: ViewId; label: string }> = [
@@ -67,6 +68,7 @@ export function SettingsGlobal(): JSX.Element {
 
         <BabysitterMode />
         <RunQueueSettings />
+        <DisplaySettings />
 
         <div className="card">
           <h3>Paths</h3>
@@ -279,6 +281,73 @@ function PathRow({ label, value }: { label: string; value: string }): JSX.Elemen
     >
       <span>{label}</span>
       <span className="muted"><code>{value}</code></span>
+    </div>
+  );
+}
+
+/**
+ * Display section — renderer-side filters that don't change persisted
+ * data. Today: a toggle for sample (read-only demo) tasks/projects.
+ */
+function DisplaySettings(): JSX.Element {
+  const [show, setShow] = useState<boolean>(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!window.mc) return;
+    void window.mc.getSettings()
+      .then((next) => setShow(next.showSampleData ?? true))
+      .catch((e) => setError(String(e)));
+  }, []);
+
+  async function toggle(): Promise<void> {
+    if (!window.mc) return;
+    const next = !show;
+    setSaving(true);
+    setError("");
+    try {
+      await window.mc.saveSettings({ showSampleData: next });
+      setShow(next);
+      publish("settings");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="card">
+      <h3>Display</h3>
+      <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+        Toggle the read-only sample tasks + projects shipped under
+        <code> library/samples/</code>. Hide them once you have your own
+        work going. Sample records are tagged at read time and never
+        written back to your data.
+      </p>
+      <label
+        style={{
+          marginTop: 10,
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          cursor: saving ? "wait" : "pointer",
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={show}
+          disabled={saving}
+          onChange={() => void toggle()}
+        />
+        <span>Show sample data</span>
+      </label>
+      {error && (
+        <div style={{ marginTop: 8, color: "var(--bad)", fontSize: 12 }}>
+          {error}
+        </div>
+      )}
     </div>
   );
 }

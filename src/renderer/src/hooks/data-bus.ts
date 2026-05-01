@@ -11,7 +11,7 @@
  */
 import { useEffect, useRef } from "react";
 
-export type Topic = "projects" | "tasks" | "models" | "agents" | "workflows";
+export type Topic = "projects" | "tasks" | "models" | "agents" | "workflows" | "settings";
 
 const subscribers = new Map<Topic, Set<() => void>>();
 

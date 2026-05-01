@@ -1,0 +1,16 @@
+{
+  "id": "DMTR-0004F",
+  "title": "Re-rank crop-yield priors using 2024 NOAA snapshot",
+  "description": "",
+  "project": "demeter",
+  "kind": "single",
+  "status": "waiting",
+  "runState": "paused",
+  "cycle": 1,
+  "items": [],
+  "blocker": "awaiting review",
+  "parentTaskId": "",
+  "createdAt": "2026-04-30T14:25:00.000Z",
+  "updatedAt": "2026-05-01T11:25:00.000Z",
+  "isSample": true
+}

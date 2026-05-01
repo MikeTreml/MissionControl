@@ -71,18 +71,56 @@ const TASK_ID_RE = /^([A-Z0-9]{1,8})-(\d{3,})([A-Z])$/;
 
 export class TaskStore extends EventEmitter {
   private readonly root: string;
+  private readonly sampleRoot: string | null;
 
   /**
-   * @param root  absolute path to the tasks root (e.g. `<userData>/tasks`)
+   * @param root        absolute path to the user's tasks root (e.g. `<userData>/tasks`)
+   * @param sampleRoot  optional absolute path to a read-only sample tasks
+   *                    root (e.g. `<appRoot>/library/samples/tasks`).
+   *                    Tasks loaded from this root are tagged
+   *                    `isSample:true`. Writes against sample tasks throw.
    */
-  constructor(root: string) {
+  constructor(root: string, sampleRoot: string | null = null) {
     super();
     this.root = root;
+    this.sampleRoot = sampleRoot;
   }
 
-  /** Absolute path to a task's folder. Folder may not exist yet. */
+  /** Absolute path to a task's folder in the user root. May not exist. */
   folderFor(taskId: string): string {
     return path.join(this.root, taskId);
+  }
+
+  /**
+   * Resolve a task's folder by checking the user root first, then the
+   * sample root if set. Returns the directory path that exists, or null.
+   * Used by reads that don't care which root the task lives in.
+   */
+  private async resolveFolder(taskId: string): Promise<{ folder: string; isSample: boolean } | null> {
+    const userFolder = path.join(this.root, taskId);
+    if (existsSync(userFolder)) return { folder: userFolder, isSample: false };
+    if (this.sampleRoot) {
+      const sampleFolder = path.join(this.sampleRoot, taskId);
+      if (existsSync(sampleFolder)) return { folder: sampleFolder, isSample: true };
+    }
+    return null;
+  }
+
+  /**
+   * Synchronous variant of resolveFolder for use in non-async hot paths.
+   * Returns the user-root path if it exists, otherwise falls through to
+   * the sample root (if set), otherwise the user-root path even though
+   * it doesn't exist (callers will fail on the next read with a clearer
+   * error). Suffix is joined inside the chosen root.
+   */
+  private taskPath(taskId: string, ...rest: string[]): string {
+    const userFolder = path.join(this.root, taskId);
+    if (existsSync(userFolder)) return path.join(userFolder, ...rest);
+    if (this.sampleRoot) {
+      const sampleFolder = path.join(this.sampleRoot, taskId);
+      if (existsSync(sampleFolder)) return path.join(sampleFolder, ...rest);
+    }
+    return path.join(userFolder, ...rest);
   }
 
   // Typed overrides so callers get autocomplete on event names.
@@ -168,23 +206,53 @@ export class TaskStore extends EventEmitter {
 
   // ── read ──────────────────────────────────────────────────────────────
 
-  /** Every task on disk, sorted newest-first by updatedAt. */
+  /**
+   * Every task on disk, sorted newest-first by updatedAt. Walks the user
+   * root first, then the sample root (if set). Sample-loaded tasks are
+   * tagged `isSample:true` in memory. If a sample id collides with a
+   * real id (shouldn't happen — different prefixes), the real wins.
+   */
   async listTasks(): Promise<Task[]> {
-    const entries = await fs.readdir(this.root, { withFileTypes: true });
     const tasks: Task[] = [];
-    for (const entry of entries) {
-      if (!entry.isDirectory() || !TASK_ID_RE.test(entry.name)) continue;
-      const task = await this.readManifest(path.join(this.root, entry.name));
-      if (task) tasks.push(task);
+    const seen = new Set<string>();
+    await this.collectFromRoot(this.root, false, tasks, seen);
+    if (this.sampleRoot && existsSync(this.sampleRoot)) {
+      await this.collectFromRoot(this.sampleRoot, true, tasks, seen);
     }
     tasks.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     return tasks;
   }
 
-  /** Read one task by id, or null if missing. */
+  private async collectFromRoot(
+    root: string,
+    isSample: boolean,
+    out: Task[],
+    seen: Set<string>,
+  ): Promise<void> {
+    let entries;
+    try {
+      entries = await fs.readdir(root, { withFileTypes: true });
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code === "ENOENT") return;
+      throw e;
+    }
+    for (const entry of entries) {
+      if (!entry.isDirectory() || !TASK_ID_RE.test(entry.name)) continue;
+      if (seen.has(entry.name)) continue;
+      const task = await this.readManifest(path.join(root, entry.name));
+      if (!task) continue;
+      seen.add(entry.name);
+      out.push(isSample ? { ...task, isSample: true } : task);
+    }
+  }
+
+  /** Read one task by id, or null if missing. Falls back to sampleRoot. */
   async getTask(id: string): Promise<Task | null> {
-    const folder = path.join(this.root, id);
-    return existsSync(folder) ? this.readManifest(folder) : null;
+    const resolved = await this.resolveFolder(id);
+    if (!resolved) return null;
+    const task = await this.readManifest(resolved.folder);
+    if (!task) return null;
+    return resolved.isSample ? { ...task, isSample: true } : task;
   }
 
   /**
@@ -200,6 +268,11 @@ export class TaskStore extends EventEmitter {
   async deleteTask(id: string): Promise<void> {
     const folder = path.join(this.root, id);
     if (!existsSync(folder)) {
+      // If the id only lives in sampleRoot, refuse with a clearer message
+      // than "not found" — samples are read-only.
+      if (this.sampleRoot && existsSync(path.join(this.sampleRoot, id))) {
+        throw new Error(`Task "${id}" is a sample (read-only). Cannot delete.`);
+      }
       throw new Error(`Task "${id}" not found`);
     }
     await fs.rm(folder, { recursive: true, force: true });
@@ -252,8 +325,12 @@ export class TaskStore extends EventEmitter {
 
   /** Persist a task's manifest.json. Bumps updatedAt first. */
   async saveTask(task: Task): Promise<void> {
+    if (task.isSample) {
+      throw new Error(`Task "${task.id}" is a sample (read-only). Cannot save.`);
+    }
     const now = new Date().toISOString();
-    const next: Task = { ...task, updatedAt: now };
+    // Strip isSample from anything that might write back to user disk.
+    const next: Task = { ...task, isSample: false, updatedAt: now };
     // Re-validate before write — cheap safety net.
     const validated = TaskSchema.parse(next);
     const folder = path.join(this.root, validated.id);
@@ -337,7 +414,7 @@ export class TaskStore extends EventEmitter {
 
   /** Read all events for a task in order. Returns [] if file missing. */
   async readEvents(taskId: string): Promise<TaskEvent[]> {
-    const p = path.join(this.root, taskId, "events.jsonl");
+    const p = this.taskPath(taskId, "events.jsonl");
     if (!existsSync(p)) return [];
     const raw = await fs.readFile(p, "utf8");
     return raw
@@ -374,7 +451,7 @@ export class TaskStore extends EventEmitter {
    * before this convention landed, or the file was deleted externally).
    */
   async readPromptFile(taskId: string): Promise<string | null> {
-    const p = path.join(this.root, taskId, "PROMPT.md");
+    const p = this.taskPath(taskId, "PROMPT.md");
     if (!existsSync(p)) return null;
     return fs.readFile(p, "utf8");
   }
@@ -385,7 +462,7 @@ export class TaskStore extends EventEmitter {
    * rather than render the whole thing.
    */
   async readStatusFile(taskId: string): Promise<string | null> {
-    const p = path.join(this.root, taskId, "STATUS.md");
+    const p = this.taskPath(taskId, "STATUS.md");
     if (!existsSync(p)) return null;
     return fs.readFile(p, "utf8");
   }
@@ -431,7 +508,7 @@ export class TaskStore extends EventEmitter {
 
   /** Read workflow-runner settings sidecar, null when missing. */
   async readRunConfig(taskId: string): Promise<Record<string, unknown> | null> {
-    const p = path.join(this.root, taskId, "RUN_CONFIG.json");
+    const p = this.taskPath(taskId, "RUN_CONFIG.json");
     if (!existsSync(p)) return null;
     const raw = await fs.readFile(p, "utf8");
     return JSON.parse(raw) as Record<string, unknown>;
@@ -449,7 +526,7 @@ export class TaskStore extends EventEmitter {
 
   /** List artifact files under `<taskId>/artifacts/` (non-recursive). */
   async listArtifacts(taskId: string): Promise<Array<{ name: string; size: number; modifiedAt: string }>> {
-    const folder = path.join(this.root, taskId, "artifacts");
+    const folder = this.taskPath(taskId, "artifacts");
     if (!existsSync(folder)) return [];
     const entries = await fs.readdir(folder, { withFileTypes: true });
     const out: Array<{ name: string; size: number; modifiedAt: string }> = [];
@@ -465,7 +542,7 @@ export class TaskStore extends EventEmitter {
   /** Read one JSON artifact by file name from `<taskId>/artifacts/`. */
   async readArtifactJson(taskId: string, fileName: string): Promise<Record<string, unknown> | null> {
     const safeName = fileName.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_");
-    const p = path.join(this.root, taskId, "artifacts", safeName);
+    const p = this.taskPath(taskId, "artifacts", safeName);
     if (!existsSync(p)) return null;
     const raw = await fs.readFile(p, "utf8");
     return JSON.parse(raw) as Record<string, unknown>;
@@ -541,7 +618,7 @@ export class TaskStore extends EventEmitter {
     stem: string,
     options: { cycle?: number } = {},
   ): Promise<string | null> {
-    const folder = path.join(this.root, taskId);
+    const folder = this.taskPath(taskId);
     const targetStem =
       options.cycle !== undefined && stem !== taskId
         ? `${stem}-c${options.cycle}`
@@ -553,7 +630,7 @@ export class TaskStore extends EventEmitter {
 
   /** List all discovered cycle numbers for a given task artifact stem. */
   async listTaskFileCycles(taskId: string, stem: string): Promise<number[]> {
-    const folder = path.join(this.root, taskId);
+    const folder = this.taskPath(taskId);
     if (!existsSync(folder)) return [];
     const entries = await fs.readdir(folder, { withFileTypes: true });
     const re = new RegExp(`^${escapeRegExp(stem)}-c(\\d+)\\.md$`, "i");
@@ -578,7 +655,7 @@ export class TaskStore extends EventEmitter {
     size: number;
     modifiedAt: string;
   }>> {
-    const folder = path.join(this.root, taskId);
+    const folder = this.taskPath(taskId);
     if (!existsSync(folder)) return [];
     const entries = await fs.readdir(folder, { withFileTypes: true });
     const out: Array<{ name: string; size: number; modifiedAt: string }> = [];

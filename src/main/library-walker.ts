@@ -181,6 +181,10 @@ export class LibraryWalker {
     const out: string[] = [];
     for (const entry of entries) {
       if (entry.name === ".git" || entry.name === "node_modules" || entry.name === ".claude") continue;
+      // Sample data lives under library/samples/ — it's read-only seed data
+      // for the demo board, not part of the curated agent/skill/workflow
+      // catalog. Skip so it doesn't show up in the Library Browser.
+      if (entry.name === "samples") continue;
       const abs = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         out.push(...(await this.walk(abs)));
