@@ -14,6 +14,7 @@ import { useSubscribe } from "../hooks/data-bus";
 import { PageStub } from "./PageStub";
 import { AddProjectForm } from "../components/AddProjectForm";
 import { SkeletonLine, SkeletonBlock, SkeletonRows } from "../components/Skeleton";
+import { ProjectMemoryCard } from "../components/ProjectMemoryCard";
 import type { UiTask } from "../hooks/useTasks";
 import type { ProjectWithGit } from "../../../shared/models";
 import type { ProjectRunMetricsRollup } from "../global";
@@ -191,6 +192,7 @@ export function ProjectDetail(): JSX.Element {
       </div>
 
       <div className="content">
+        <ProjectMemoryCard projectId={project.id} isDemo={isDemo} />
         {projectTasks.length === 0 && !isDemo && (
           <section
             className="card"

@@ -153,7 +153,6 @@ Then read these in order:
 - **Plannotator hand-off** — when plannotator exposes an invocation
   surface, drive an approval workflow against journal `BREAKPOINT_OPENED`
   events instead of the dropped manual gate.
-- **pi-memory-md wire-up** — per-project memory at `~/.pi/memory-md/<project>/`.
 
 ## Dep notes
 

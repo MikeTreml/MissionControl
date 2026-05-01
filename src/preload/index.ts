@@ -54,6 +54,12 @@ const api = {
   createLibraryWorkflow: (opts: unknown) =>
     ipcRenderer.invoke("library:createWorkflow", opts),
 
+  // ── per-project memory (~/.pi/memory-md/<id>/MEMORY.md) ─────────────
+  readProjectMemory: (projectId: string) =>
+    ipcRenderer.invoke("memory:read", projectId),
+  writeProjectMemory: (projectId: string, content: string) =>
+    ipcRenderer.invoke("memory:write", projectId, content),
+
   // ── runs (Start/Pause/Resume/Stop) ───────────────────────────────────
   startRun:   (input: { taskId: string; agentSlug?: string; model?: string }) =>
     ipcRenderer.invoke("runs:start", input),

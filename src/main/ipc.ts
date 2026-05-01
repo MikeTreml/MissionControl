@@ -16,6 +16,7 @@ import type { RunManager } from "./run-manager.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { SettingsStore } from "./settings-store.ts";
 import type { LibraryIndexStore } from "./library-index.ts";
+import type { MemoryStore } from "./memory-store.ts";
 import type { WorkflowCreator, CreateWorkflowOpts } from "./workflow-creator.ts";
 import { detectGit } from "./git-detect.ts";
 import type { Project, ProjectWithGit } from "../shared/models.ts";
@@ -38,6 +39,7 @@ export interface Stores {
   settings: SettingsStore;
   libraryIndex: LibraryIndexStore;
   workflowCreator: WorkflowCreator;
+  memory: MemoryStore;
 }
 
 /** Log each IPC hit at debug level. Uncomment the call site to silence. */
@@ -123,6 +125,14 @@ export function registerIpc(stores: Stores): void {
     logged(`library:createWorkflow ${opts.category}/${opts.slug}`, () =>
       stores.workflowCreator.create(opts),
     ),
+  );
+
+  // ── per-project memory (~/.pi/memory-md/<projectId>/MEMORY.md) ──────
+  ipcMain.handle("memory:read", (_e, projectId: string) =>
+    stores.memory.read(projectId),
+  );
+  ipcMain.handle("memory:write", (_e, projectId: string, content: string) =>
+    logged(`memory:write ${projectId}`, () => stores.memory.write(projectId, content)),
   );
 
   // ── runs (Start/Pause/Resume/Stop state machine) ─────────────────────

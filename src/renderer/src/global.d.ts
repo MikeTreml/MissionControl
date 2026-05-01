@@ -119,6 +119,12 @@ export interface McApi {
     opts: CreateWorkflowOpts,
   ) => Promise<{ diskPath: string; relPath: string }>;
 
+  // per-project memory (~/.pi/memory-md/<projectId>/MEMORY.md). Pi will
+  // consume this directly once it lands; MC reads/writes the same path
+  // so the operator can edit memory from the Project page.
+  readProjectMemory: (projectId: string) => Promise<string | null>;
+  writeProjectMemory: (projectId: string, content: string) => Promise<void>;
+
   // runs (Start/Pause/Resume/Stop state machine; returns updated Task)
   startRun: (input: { taskId: string; agentSlug?: string; model?: string }) => Promise<Task>;
   pauseRun: (input: { taskId: string }) => Promise<Task>;
