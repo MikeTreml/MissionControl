@@ -30,6 +30,12 @@ export type WorkflowSpec = {
   outputs: WorkflowOutput[];
   phases: Phase[];
   tasks: TaskDef[];
+  /**
+   * JS expression assigned to the returned `success` field. If omitted,
+   * defaults to `'true'`. Existing workflows usually wire this to the
+   * final task result (e.g. `'prResult.success'` or `'converged'`).
+   */
+  successExpression?: string;
 };
 
 export type WorkflowInput = {
@@ -156,7 +162,16 @@ export function generateWorkflow(spec: WorkflowSpec): string {
 function validateSpec(spec: WorkflowSpec): void {
   if (!spec.processId) throw new Error("WorkflowSpec.processId is required");
   if (!spec.description) throw new Error("WorkflowSpec.description is required");
-  const taskKeys = new Set(spec.tasks.map((t) => t.factoryName));
+
+  // Unique factory names — duplicates would emit duplicate `export const`s.
+  const taskKeys = new Set<string>();
+  for (const task of spec.tasks) {
+    if (taskKeys.has(task.factoryName)) {
+      throw new Error(`Duplicate task factoryName "${task.factoryName}" is not allowed`);
+    }
+    taskKeys.add(task.factoryName);
+  }
+
   for (const phase of spec.phases) {
     const refs = collectTaskRefs(phase);
     for (const ref of refs) {
@@ -164,7 +179,66 @@ function validateSpec(spec: WorkflowSpec): void {
         throw new Error(`Phase "${phase.title}" references unknown task "${ref}"`);
       }
     }
+    if (phase.kind === "parallel" && phase.resultVars.length !== phase.branches.length) {
+      throw new Error(
+        `Parallel phase "${phase.title}" must define exactly one resultVar per branch ` +
+          `(got ${phase.resultVars.length} vars / ${phase.branches.length} branches)`,
+      );
+    }
+    if (phase.kind === "retry" && (!Number.isInteger(phase.maxAttempts) || phase.maxAttempts < 1)) {
+      throw new Error(
+        `Retry phase "${phase.title}" maxAttempts must be a positive integer (got ${phase.maxAttempts})`,
+      );
+    }
+    // Phase args become bare identifiers in the emitted JS — guard the keys.
+    const phaseArgs = collectPhaseArgs(phase);
+    for (const argSet of phaseArgs) {
+      for (const key of Object.keys(argSet)) {
+        if (!isValidJsIdentifier(key)) {
+          throw new Error(
+            `Phase "${phase.title}" arg key "${key}" is not a valid JS identifier`,
+          );
+        }
+      }
+    }
   }
+
+  // Output schema property names are also rendered as bare identifiers.
+  for (const task of spec.tasks) {
+    if (task.kind === "agent") {
+      validateSchemaIdentifiers(task.outputSchema, `${task.factoryName}.outputSchema`);
+    }
+  }
+}
+
+function collectPhaseArgs(phase: Phase): Array<Record<string, string>> {
+  switch (phase.kind) {
+    case "sequential":
+    case "retry":
+    case "conditional":
+      return [phase.args];
+    case "parallel":
+      return phase.branches.map((b) => b.args);
+    case "breakpoint":
+      return [];
+  }
+}
+
+function validateSchemaIdentifiers(schema: SchemaProp, path: string): void {
+  if (schema.type === "object") {
+    for (const key of Object.keys(schema.properties)) {
+      if (!isValidJsIdentifier(key)) {
+        throw new Error(`${path}: property key "${key}" is not a valid JS identifier`);
+      }
+      validateSchemaIdentifiers(schema.properties[key]!, `${path}.${key}`);
+    }
+  } else if (schema.type === "array") {
+    validateSchemaIdentifiers(schema.items, `${path}[]`);
+  }
+}
+
+function isValidJsIdentifier(s: string): boolean {
+  return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(s);
 }
 
 function collectTaskRefs(phase: Phase): string[] {
@@ -225,7 +299,7 @@ function renderProcess(spec: WorkflowSpec): string {
   });
 
   out.push("  return {");
-  out.push("    success: true,");
+  out.push(`    success: ${spec.successExpression ?? "true"},`);
   for (const output of spec.outputs) {
     out.push(`    ${output.name}: ${output.expression},`);
   }
@@ -281,19 +355,39 @@ function renderBreakpoint(phase: BreakpointPhase): string {
 function renderRetry(phase: RetryPhase): string {
   const lines: string[] = [];
   if (phase.logMessage) lines.push(`ctx.log('info', ${jsString(phase.logMessage)});`);
+  const feedbackVar = `${phase.resultVar}LastFeedback`;
   lines.push(`let ${phase.resultVar} = null;`);
-  lines.push(`let ${phase.resultVar}LastFeedback = null;`);
+  lines.push(`let ${feedbackVar} = null;`);
   lines.push(`for (let attempt = 0; attempt < ${phase.maxAttempts}; attempt++) {`);
   lines.push(`  ${phase.resultVar} = await ctx.task(${phase.taskRef}, {`);
   for (const [k, v] of Object.entries(phase.args)) {
     lines.push(`    ${k}: ${v},`);
   }
-  lines.push(`    feedback: ${phase.resultVar}LastFeedback,`);
+  lines.push(`    feedback: ${feedbackVar},`);
   lines.push(`    attempt: attempt + 1`);
   lines.push(`  });`);
-  lines.push(`  const approval = await ctx.breakpoint(${renderBreakpointBody(phase.question, phase.bpTitle, phase.options, phase.expert, phase.tags, true)});`);
+
+  // Breakpoint inside the retry loop. Matches bugfix/workflow.js exactly:
+  // previousFeedback wires the last "request changes" message into the gate,
+  // and `attempt` is omitted on the first iteration.
+  const bpLines: string[] = ["{"];
+  bpLines.push(`    question: ${renderQuestion(phase.question)},`);
+  bpLines.push(`    previousFeedback: ${feedbackVar} || undefined,`);
+  bpLines.push(`    attempt: attempt > 0 ? attempt + 1 : undefined,`);
+  bpLines.push(`    title: ${jsString(phase.bpTitle)},`);
+  if (phase.options && phase.options.length > 0) {
+    bpLines.push(`    options: [${phase.options.map((o) => jsString(o)).join(", ")}],`);
+  }
+  if (phase.expert) bpLines.push(`    expert: ${jsString(phase.expert)},`);
+  if (phase.tags && phase.tags.length > 0) {
+    bpLines.push(`    tags: [${phase.tags.map((t) => jsString(t)).join(", ")}],`);
+  }
+  bpLines.push(`    context: { runId: ctx.runId }`);
+  bpLines.push(`  }`);
+  lines.push(`  const approval = await ctx.breakpoint(${bpLines.join("\n  ")});`);
+
   lines.push(`  if (approval.approved) break;`);
-  lines.push(`  ${phase.resultVar}LastFeedback = approval.response || approval.feedback || 'Changes requested';`);
+  lines.push(`  ${feedbackVar} = approval.response || approval.feedback || 'Changes requested';`);
   lines.push(`}`);
   return lines.join("\n");
 }
@@ -463,5 +557,15 @@ function indentBlock(text: string, spaces: number): string {
 }
 
 function jsString(s: string): string {
-  return "'" + s.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n") + "'";
+  return (
+    "'" +
+    s
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'")
+      .replace(/\r/g, "\\r")
+      .replace(/\n/g, "\\n")
+      .replace(/\u2028/g, "\\u2028")
+      .replace(/\u2029/g, "\\u2029") +
+    "'"
+  );
 }

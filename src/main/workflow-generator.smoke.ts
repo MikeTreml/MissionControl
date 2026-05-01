@@ -217,18 +217,22 @@ async function main(): Promise<void> {
   assert(source.includes("export const runTestsTask = defineTask('run-tests'"), "shell factory emitted");
   assert(source.match(/inputJsonPath: `tasks\/\$\{taskCtx\.effectId\}\/input\.json`/), "io paths emitted");
 
+  // Retry breakpoint shape — match bugfix/workflow.js conventions.
+  assert(source.includes("previousFeedback: applyResultLastFeedback || undefined"), "retry emits previousFeedback");
+  assert(source.includes("attempt: attempt > 0 ? attempt + 1 : undefined"), "retry emits conditional attempt");
+
   // Round-trip: write to a temp file and import — proves it parses as valid JS.
-  // We stub the SDK import via an import map shim file so this works without
-  // node_modules resolution from the temp dir.
+  // Using .mjs guarantees ESM treatment regardless of any inherited package.json.
+  // The SDK import is rewritten to point at a local shim so resolution works
+  // without node_modules in the tmpdir.
   const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "wfgen-"));
-  const sdkShim = path.join(tmpDir, "sdk-shim.js");
+  const sdkShim = path.join(tmpDir, "sdk-shim.mjs");
   await fs.writeFile(
     sdkShim,
     "export function defineTask(name, factory) { return Object.assign(factory, { __taskKey: name }); }\n",
     "utf8",
   );
-  const wfFile = path.join(tmpDir, "workflow.js");
-  // Rewrite the SDK import to point at the shim — keeps the test hermetic.
+  const wfFile = path.join(tmpDir, "workflow.mjs");
   const sourceForImport = source.replace(
     "from '@a5c-ai/babysitter-sdk'",
     `from ${JSON.stringify(pathToFileURL(sdkShim).href)}`,
@@ -244,26 +248,180 @@ async function main(): Promise<void> {
   // Cleanup.
   await fs.rm(tmpDir, { recursive: true, force: true });
 
-  // Negative path: validateSpec catches dangling task refs.
-  let threw = false;
-  try {
-    generateWorkflow({
-      ...sampleSpec,
-      phases: [
-        {
-          kind: "sequential",
-          title: "Bad",
-          resultVar: "x",
-          taskRef: "doesNotExistTask",
-          args: {},
-        },
-      ],
-    });
-  } catch (e) {
-    threw = true;
-    assert(String(e).includes("doesNotExistTask"), "validation error names the bad ref");
+  // Custom successExpression: should be propagated verbatim.
+  const sourceWithSuccessExpr = generateWorkflow({ ...sampleSpec, successExpression: "prResult.success" });
+  assert(sourceWithSuccessExpr.includes("success: prResult.success,"), "successExpression propagated to return");
+  assert(!sourceWithSuccessExpr.includes("success: true,"), "default 'true' not emitted when successExpression set");
+
+  // jsString robustness: a question containing CR + U+2028 + U+2029 must produce
+  // a parseable file. Round-trip through the same import mechanism.
+  const trickyQuestion = "line1\r\nline2 line3 line4";
+  const trickySource = generateWorkflow({
+    ...sampleSpec,
+    phases: [
+      {
+        kind: "breakpoint",
+        title: "Tricky",
+        question: trickyQuestion,
+      },
+    ],
+  });
+  const trickyDir = await fs.mkdtemp(path.join(os.tmpdir(), "wfgen-tricky-"));
+  const trickyShim = path.join(trickyDir, "sdk-shim.mjs");
+  await fs.writeFile(
+    trickyShim,
+    "export function defineTask(name, factory) { return Object.assign(factory, { __taskKey: name }); }\n",
+    "utf8",
+  );
+  const trickyFile = path.join(trickyDir, "workflow.mjs");
+  await fs.writeFile(
+    trickyFile,
+    trickySource.replace(
+      "from '@a5c-ai/babysitter-sdk'",
+      `from ${JSON.stringify(pathToFileURL(trickyShim).href)}`,
+    ),
+    "utf8",
+  );
+  const trickyMod = await import(pathToFileURL(trickyFile).href);
+  assert(typeof trickyMod.process === "function", "tricky-string source still parses + imports");
+  await fs.rm(trickyDir, { recursive: true, force: true });
+
+  // ── Negative-path validation cases ──────────────────────────────────────────
+
+  function expectThrow(label: string, fn: () => unknown, needle: string): void {
+    let threw = false;
+    let message = "";
+    try {
+      fn();
+    } catch (e) {
+      threw = true;
+      message = String(e);
+    }
+    assert(threw, `${label}: should throw`);
+    assert(message.includes(needle), `${label}: error mentions "${needle}" (got: ${message})`);
   }
-  assert(threw, "generator throws on unknown task ref");
+
+  // Dangling task ref.
+  expectThrow(
+    "unknown task ref",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        phases: [
+          {
+            kind: "sequential",
+            title: "Bad",
+            resultVar: "x",
+            taskRef: "doesNotExistTask",
+            args: {},
+          },
+        ],
+      }),
+    "doesNotExistTask",
+  );
+
+  // Duplicate factoryName.
+  expectThrow(
+    "duplicate factoryName",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        tasks: [...sampleSpec.tasks, { ...sampleSpec.tasks[0]! }],
+      }),
+    "Duplicate task factoryName",
+  );
+
+  // Parallel mismatch.
+  expectThrow(
+    "parallel mismatch",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        phases: [
+          {
+            kind: "parallel",
+            title: "Mismatched",
+            resultVars: ["a"],
+            branches: [
+              { taskRef: "runTestsTask", args: {} },
+              { taskRef: "runLintTask", args: {} },
+            ],
+          },
+        ],
+      }),
+    "exactly one resultVar per branch",
+  );
+
+  // Retry maxAttempts < 1.
+  expectThrow(
+    "retry zero attempts",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        phases: [
+          {
+            kind: "retry",
+            title: "Zero",
+            maxAttempts: 0,
+            resultVar: "x",
+            taskRef: "applyFixTask",
+            args: { details: "details" },
+            question: "?",
+            bpTitle: "?",
+          },
+        ],
+      }),
+    "positive integer",
+  );
+
+  // Invalid identifier in phase args.
+  expectThrow(
+    "non-identifier arg key",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        phases: [
+          {
+            kind: "sequential",
+            title: "BadKey",
+            resultVar: "x",
+            taskRef: "applyFixTask",
+            args: { "bug-description": "bugDescription" },
+          },
+        ],
+      }),
+    "not a valid JS identifier",
+  );
+
+  // Invalid identifier in output schema.
+  expectThrow(
+    "non-identifier schema key",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        tasks: [
+          {
+            kind: "agent",
+            factoryName: "badSchemaTask",
+            taskKey: "bad-schema",
+            title: "Bad",
+            agentName: "general-purpose",
+            role: "x",
+            taskDescription: "y",
+            contextKeys: [],
+            instructions: ["a"],
+            outputFormat: "JSON",
+            outputSchema: {
+              type: "object",
+              properties: { "not-an-id": { type: "string" } },
+            },
+            labels: [],
+          },
+          ...sampleSpec.tasks,
+        ],
+      }),
+    "not a valid JS identifier",
+  );
 
   console.log("\n--- generated workflow.js ---\n");
   console.log(source);
