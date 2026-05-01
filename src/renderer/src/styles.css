@@ -882,3 +882,124 @@ body:has(.context-strip) .app-shell {
   cursor: pointer;
 }
 .context-strip .open-btn:hover { background: var(--floating); color: var(--text); }
+
+/* ── Footer command bar (Slice K — placeholder) ──────────────────
+ * Floating quick-actions pill: timeline scrubber + agent command
+ * input. Today the scrubber is decorative and the command sends a
+ * toast; full wiring is deferred. */
+.quick-actions {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--floating);
+  border-radius: var(--radius-pill);
+  padding: 6px 6px 6px 12px;
+  box-shadow: var(--shadow-popover), var(--lift-strong);
+  z-index: 100;
+  font-size: var(--fs-sm);
+  max-width: calc(100vw - 64px);
+  margin-right: -170px;
+}
+.qa-scrubber {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 10px;
+  border-right: 1px solid var(--hairline-strong);
+}
+.qa-scrubber .label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.qa-scrubber .track {
+  position: relative;
+  width: 200px;
+  height: 4px;
+  background: var(--canvas);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.qa-scrubber .fill {
+  position: absolute;
+  inset: 0;
+  background: var(--info);
+  border-radius: 999px;
+}
+.qa-scrubber .head {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px; height: 12px;
+  background: var(--text);
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px var(--floating);
+}
+.qa-scrubber .ticks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.qa-scrubber .tick {
+  width: 1px;
+  height: 8px;
+  background: var(--muted);
+  opacity: 0.5;
+  transform: translateY(-2px);
+}
+.qa-scrubber .now {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  min-width: 38px;
+}
+.qa-cmd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 4px;
+}
+.qa-cmd .glyph { color: var(--muted); }
+.qa-cmd input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--fs-md);
+  width: 200px;
+}
+.qa-cmd input::placeholder { color: var(--muted); }
+.qa-cmd .kbd {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  padding: 2px 6px;
+  background: var(--canvas);
+  border-radius: var(--radius-xs);
+}
+.qa-cmd .send {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  background: var(--info);
+  color: var(--abyss);
+  border-radius: 999px;
+  font-weight: var(--fw-bold);
+  border: none;
+  cursor: pointer;
+}
+.qa-cmd .send:disabled {
+  background: var(--raised);
+  color: var(--muted);
+  cursor: default;
+}
+.qa-cmd .send:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--info) 85%, white);
+}
