@@ -363,29 +363,101 @@ body {
 .project-list, .agent-list, .task-list { display: grid; gap: 10px; }
 
 /* v2: elevation-only separation. Cards lift via a lighter fill plus an
- * inner highlight, no 1px border. The 3px project-accent left border
- * (project identity rule) is still applied inline by TaskCard. */
-.project, .agent, .task, .card {
+ * inner highlight, no 1px border. .task-card rules (project-accent
+ * bleed, head/summary/step/row, running-pulse) live further down. */
+.project, .agent, .card {
   background: var(--raised);
   border: none;
   box-shadow: var(--lift);
   border-radius: var(--radius-xl);
   padding: 14px;
 }
-.project.active, .task.active { outline: 1px solid var(--info); }
+.project.active { outline: 1px solid var(--info); }
 
-/* Pulsing halo on any task card whose runState is "running" — makes it
-   obvious from a cross-project view which tasks are actively working
-   without scanning for role pills. */
-.task.active {
+/* ── Task card (v2 kit) ────────────────────────────────────────── */
+.task {
+  background: var(--raised);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  box-shadow: var(--lift);
+  transition: background var(--dur-fast), transform var(--dur-fast);
+}
+.task:hover { background: var(--floating); }
+.task[data-proj] {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--task-accent, transparent) 6%, var(--raised)) 0%,
+    var(--raised) 60%
+  );
+  box-shadow: inset 2px 0 0 var(--task-accent, transparent), var(--lift);
+}
+.task[data-proj]:hover {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--task-accent, transparent) 10%, var(--floating)) 0%,
+    var(--floating) 60%
+  );
+}
+.task .head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.task .tid {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-2);
+}
+.task .tid .pfx {
+  color: var(--task-accent, var(--text-2));
+  font-weight: var(--fw-semibold);
+}
+.task .summary {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+  line-height: var(--lh-snug);
+  text-wrap: pretty;
+}
+.task .step {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+.task .row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.task .row .agent {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  color: var(--text-2);
+}
+.task .row .spacer { flex: 1; }
+.task.active { outline: 1px solid var(--info); }
+
+/* Pulsing halo for running tasks. Layered on top of the project-accent
+ * inset so the bleed bar stays visible while the halo breathes. */
+.task.running {
   animation: mc-pulse 2.1s ease-in-out infinite;
 }
 @keyframes mc-pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(107, 164, 232, 0.25);
+    box-shadow: inset 2px 0 0 var(--task-accent, transparent), var(--lift),
+                0 0 0 0 rgba(107, 164, 232, 0.20);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(107, 164, 232, 0);
+    box-shadow: inset 2px 0 0 var(--task-accent, transparent), var(--lift),
+                0 0 0 5px rgba(107, 164, 232, 0);
   }
 }
 
@@ -397,34 +469,65 @@ body {
 .compact-kpis { gap: 10px; }
 .kpi { font-size: 20px; font-weight: 700; margin-top: 8px; }
 
-.lane-wrap {
+/* ── Lanes (Board) — v2 kit ────────────────────────────────────── */
+.lanes, .lane-wrap {
   display: grid;
   grid-template-columns: repeat(6, minmax(220px, 1fr));
   gap: 14px;
   align-items: start;
+  min-height: 100%;
 }
 .lane {
   background: var(--surface);
   border: none;
   box-shadow: var(--lift);
-  border-radius: var(--radius-2xl);
-  padding: 12px;
-  min-height: 450px;
+  border-radius: var(--radius-xl);
+  padding: 12px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 460px;
 }
-.lane h3 { margin-bottom: 12px; }
+.lane-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 8px;
+}
+.lane-head .title {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-2);
+}
+.lane-head .count {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
 
+/* ── Pills — state-tinted, v2 ──────────────────────────────────── */
 .pill {
-  display: inline-block;
-  padding: 4px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   margin-right: 6px;
 }
-.good { background: rgba(77, 212, 172, 0.15); color: var(--good); }
-.warn { background: rgba(244, 201, 93, 0.15); color: var(--warn); }
-.bad  { background: rgba(255, 123, 123, 0.15); color: var(--bad); }
-.info { background: rgba(110, 168, 254, 0.15); color: var(--accent); }
+.good, .pill.good { background: var(--success-bg); color: var(--success); }
+.warn, .pill.warn { background: var(--warning-bg); color: var(--warning); }
+.bad,  .pill.bad  { background: var(--danger-bg);  color: var(--danger); }
+.info, .pill.info { background: var(--info-bg);    color: var(--info); }
+.pill.neutral     { background: var(--raised);     color: var(--text-2); }
+.pill .dot {
+  width: 6px; height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
 
 .task-title { font-weight: 700; margin-bottom: 8px; }
 .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }

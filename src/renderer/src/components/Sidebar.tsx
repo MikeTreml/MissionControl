@@ -45,7 +45,7 @@ export function Sidebar(): JSX.Element {
   }
   // Total open tasks for the Board badge.
   const totalOpen = [...openByProject.values()].reduce((a, b) => a + b, 0);
-  const draftCount = tasks.filter((t) => t.boardStage === "Draft" && t.cycle === 0).length;
+  const draftCount = tasks.filter((t) => t.boardStage === "Drafting" && t.cycle === 0).length;
   const runningCount = tasks.filter((t) => t.runState === "running").length;
 
   return (

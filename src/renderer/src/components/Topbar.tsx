@@ -34,14 +34,16 @@ export function Topbar(): JSX.Element {
   }, [settled, isDemo]);
   const demoRegressed = settled && isDemo && hasBeenReal;
 
-  // Input-needed pill (#38). Counts tasks the user needs to attend
-  // to: paused / waiting status / blocker set. boardStage="Attention"
-  // already encapsulates this in deriveBoardStage. v1 doesn't try to
-  // distinguish breakpoint vs mc_ask_user vs blocker — they all
-  // collapse into "this task wants you." Click navigates to the
-  // Board (Attention column is visible there).
+  // Input-needed pill (#38). Counts tasks the user needs to attend to —
+  // Review (awaiting approval/review) + Blocked (waiting on something).
+  // v1 doesn't try to distinguish breakpoint vs mc_ask_user vs blocker;
+  // they all collapse into "this task wants you." Click navigates to
+  // the Board.
   const attentionTasks = tasks.filter(
-    (t) => !tasksDemo && t.boardStage === "Attention" && t.status !== "archived",
+    (t) =>
+      !tasksDemo &&
+      (t.boardStage === "Review" || t.boardStage === "Blocked") &&
+      t.status !== "archived",
   );
   const attentionCount = attentionTasks.length;
 

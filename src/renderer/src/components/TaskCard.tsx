@@ -1,13 +1,20 @@
 /**
- * One task card on the board.
- * The pill color is stored on the task itself so each lane stays visually
- * consistent (e.g. running=warn yellow, done=good green) — the color
- * is derived from runState/status in useTasks.deriveLaneStyle, not
- * from any specific agent name.
+ * One task card on the board. Matches the v2 design-canvas markup
+ * (NewUI/Mission Control Design System/ui_kits/mission-control/index.html):
  *
- * Click the card → navigate to Task Detail.
- * Project icon (if any) floats in the upper-right as a visual fingerprint
- * so you can tell which project a card belongs to at a glance.
+ *   .task[data-proj]
+ *     .head
+ *       .tid (.pfx + rest)
+ *       .pill <state>
+ *     .summary
+ *     .step
+ *     .row
+ *       .agent
+ *       .spacer
+ *       <elapsed/idle>
+ *
+ * The project's hashed accent color is injected as `--task-accent` so the
+ * left-edge bleed picks it up without any per-card CSS.
  */
 import { useState } from "react";
 
@@ -16,42 +23,38 @@ import { shortModelLabel } from "../lib/derive-runs";
 import { useRoute } from "../router";
 import { publish } from "../hooks/data-bus";
 import { pushErrorToast } from "../hooks/useToasts";
+import { colorForKey } from "../lib/color-hash";
 
-/**
- * "idle 3h" / "idle 2d" muted line shown for tasks that haven't been
- * touched recently and aren't actively running. Hidden when idle < 1h
- * (too noisy) and for tasks in terminal stages (Complete / Failed) or
- * archived. Anything < 1d shows hours; anything ≥ 1d shows days.
- */
+const TASK_ID_RE = /^([A-Z0-9]+)-(\d+[A-Z]?)$/;
+
+function splitTaskId(id: string): { pfx: string; rest: string } {
+  const m = TASK_ID_RE.exec(id);
+  return m ? { pfx: m[1]!, rest: `-${m[2]!}` } : { pfx: "", rest: id };
+}
+
 function formatIdleSince(updatedAt: string): string | null {
   const ms = Date.now() - new Date(updatedAt).getTime();
   if (!Number.isFinite(ms) || ms < 0) return null;
-  const hours = ms / 3_600_000;
-  if (hours < 1) return null;
-  if (hours < 24) return `idle ${Math.round(hours)}h`;
-  return `idle ${Math.round(hours / 24)}d`;
+  const minutes = ms / 60_000;
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${Math.round(minutes)}m ago`;
+  const hours = minutes / 60;
+  if (hours < 24) return `${Math.round(hours)}h ago`;
+  return `${Math.round(hours / 24)}d ago`;
 }
 
 export function TaskCard({ task }: { task: UiTask }): JSX.Element {
   const { openTask } = useRoute();
   const modelLabel = shortModelLabel(task.currentModel);
   const [archiveBusy, setArchiveBusy] = useState(false);
-  // Only show the idle indicator for tasks where it's actionable —
-  // running tasks have their own "active" affordance, terminal stages
-  // don't need an idle clock, and archived tasks are out of view.
-  const showIdle =
-    task.boardStage !== "Complete" &&
-    task.boardStage !== "Failed" &&
-    task.boardStage !== "Archived" &&
-    task.runState !== "running";
-  const idleLabel = showIdle ? formatIdleSince(task.updatedAt) : null;
   const isArchived = task.status === "archived";
+  const isRunning = task.runState === "running";
+  const { pfx, rest } = splitTaskId(task.id);
+  const accent = pfx ? colorForKey(pfx) : "transparent";
+  const ago = formatIdleSince(task.updatedAt);
 
-  // Quick archive toggle without leaving the Board. Re-fetches the
-  // full Task because UiTask is a derived projection — saveTask
-  // expects the persisted shape.
   async function toggleArchive(e: React.MouseEvent): Promise<void> {
-    e.stopPropagation(); // don't trigger card click → openTask
+    e.stopPropagation();
     if (!window.mc) return;
     try {
       setArchiveBusy(true);
@@ -73,21 +76,25 @@ export function TaskCard({ task }: { task: UiTask }): JSX.Element {
     }
   }
 
+  const cls = [
+    "task",
+    isRunning ? "running" : "",
+    task.active ? "active" : "",
+  ].filter(Boolean).join(" ");
+
   return (
     <div
-      className={task.active ? "task active" : "task"}
-      style={{ cursor: "pointer", position: "relative" }}
+      className={cls}
+      data-proj
+      style={{ ["--task-accent" as string]: accent }}
       onClick={() => openTask(task.id)}
     >
-      {/* Hover-only quick actions — Trello-style. Click stops propagation
-       * so the underlying card click (which navigates) doesn't fire. */}
       <div className="hover-actions" onClick={(e) => e.stopPropagation()}>
         <button
           type="button"
           onClick={(e) => void toggleArchive(e)}
           disabled={archiveBusy}
           title={isArchived ? "Restore this task to the active board" : "Archive — hide from default board"}
-          aria-label={isArchived ? "Unarchive task" : "Archive task"}
         >
           {archiveBusy ? "…" : isArchived ? "↩" : "📦"}
         </button>
@@ -95,51 +102,44 @@ export function TaskCard({ task }: { task: UiTask }): JSX.Element {
           type="button"
           onClick={(e) => { e.stopPropagation(); openTask(task.id); }}
           title="Open Task Detail"
-          aria-label="Open task detail"
         >
           ↗
         </button>
       </div>
-      {task.projectIcon && (
-        <div
-          style={{
-            position: "absolute",
-            top: 8,
-            right: 10,
-            fontSize: 14,
-            lineHeight: 1,
-          }}
-        >
-          {task.projectIcon}
-        </div>
-      )}
-      <div className="task-title" style={{ paddingRight: task.projectIcon ? 22 : 0 }}>
-        {task.id}
+
+      <div className="head">
+        <span className="tid">
+          {pfx && <span className="pfx">{pfx}</span>}{rest}
+        </span>
+        <span className={`pill ${task.rolePill}`} style={{ marginLeft: "auto" }}>
+          {isRunning && <span className="dot" />}
+          {task.roleLabel.toLowerCase()}
+        </span>
+        {task.projectIcon && (
+          <span style={{ marginLeft: 4, fontSize: 14, lineHeight: 1 }}>
+            {task.projectIcon}
+          </span>
+        )}
       </div>
-      <div>{task.summary}</div>
-      <div className="step-line">
-        <span className={`pill ${task.rolePill}`}>{task.roleLabel}</span>
-        {task.stepLine}
+
+      <div className="summary">{task.summary}</div>
+
+      {task.stepLine && <div className="step">{task.stepLine}</div>}
+      {task.sub && <div className="step">{task.sub}</div>}
+
+      <div className="row">
+        {modelLabel && (
+          <div className="agent" title={`Model: ${task.currentModel}`}>
+            {modelLabel}
+          </div>
+        )}
+        <span className="spacer" />
+        {ago && (
+          <span title={`Last updated ${new Date(task.updatedAt).toLocaleString()}`}>
+            {ago}
+          </span>
+        )}
       </div>
-      {task.sub && <div className="sub">{task.sub}</div>}
-      {modelLabel && (
-        <div
-          className="muted"
-          style={{ fontSize: 11, marginTop: 6 }}
-          title={`Model: ${task.currentModel}`}
-        >
-          Model: {modelLabel}
-        </div>
-      )}
-      {idleLabel && (
-        <div
-          className="muted"
-          style={{ fontSize: 11, marginTop: 2 }}
-          title={`Last updated ${new Date(task.updatedAt).toLocaleString()}`}
-        >
-          {idleLabel}
-        </div>
-      )}
     </div>
   );
 }

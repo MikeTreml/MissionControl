@@ -10,11 +10,14 @@ import { pushErrorToast } from "../hooks/useToasts";
 import { TaskCard } from "./TaskCard";
 import { SkeletonCard } from "./Skeleton";
 
-const DEFAULT_STAGES: readonly BoardStage[] = ["Draft", "Active", "Attention", "Failed", "Complete"] as const;
+// 6-lane Kanban order (mockup): Drafting / Running / Review / Blocked / Done.
+// "Failed" is a 7th lane that's only shown when there are failed tasks
+// (same conditional treatment as Archived). "Archived" is opt-in.
+const DEFAULT_STAGES: readonly BoardStage[] = ["Drafting", "Running", "Review", "Blocked", "Done"] as const;
 
 function groupByStage(tasks: UiTask[]): Record<BoardStage, UiTask[]> {
   const out: Record<BoardStage, UiTask[]> = {
-    Draft: [], Active: [], Attention: [], Failed: [], Complete: [], Archived: [],
+    Drafting: [], Running: [], Review: [], Blocked: [], Failed: [], Done: [], Archived: [],
   };
   for (const t of tasks) out[t.boardStage].push(t);
   return out;
@@ -32,8 +35,9 @@ export function Board(): JSX.Element {
   // Drafts subset per SPEC §2 Option A — boardStage Draft AND cycle 0.
   // Returning-to-idle tasks (cycle > 0) belong on the Kanban under
   // their actual stage, not in the triage list.
-  const drafts = tasks.filter((t) => t.boardStage === "Draft" && t.cycle === 0);
+  const drafts = tasks.filter((t) => t.boardStage === "Drafting" && t.cycle === 0);
   const draftCount = drafts.length;
+  const failedCount = byStage.Failed.length;
 
   return (
     <section className="card">
@@ -76,7 +80,12 @@ export function Board(): JSX.Element {
       </div>
 
       {tab === "kanban" ? (
-        <KanbanView byStage={byStage} showArchived={showArchived} loadingCold={loading && tasks.length === 0} />
+        <KanbanView
+          byStage={byStage}
+          showArchived={showArchived}
+          showFailed={failedCount > 0}
+          loadingCold={loading && tasks.length === 0}
+        />
       ) : (
         <DraftsTable drafts={drafts} isDemo={isDemo} />
       )}
@@ -115,24 +124,24 @@ function BoardTabButton({
 function KanbanView({
   byStage,
   showArchived,
+  showFailed,
   loadingCold,
 }: {
   byStage: Record<BoardStage, UiTask[]>;
   showArchived: boolean;
+  showFailed: boolean;
   loadingCold: boolean;
 }): JSX.Element {
-  const stages: readonly BoardStage[] = showArchived
-    ? [...DEFAULT_STAGES, "Archived"]
-    : DEFAULT_STAGES;
+  const stages: BoardStage[] = [...DEFAULT_STAGES];
+  if (showFailed) stages.push("Failed");
+  if (showArchived) stages.push("Archived");
   return (
-    <div className="lane-wrap">
+    <div className="lanes">
       {stages.map((stage) => (
         <div key={stage} className="lane">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 12 }}>
-            <h3 style={{ margin: 0 }}>{stage}</h3>
-            <span className="muted" style={{ fontSize: 12 }}>
-              {loadingCold ? "" : byStage[stage].length}
-            </span>
+          <div className="lane-head">
+            <span className="title">{stage}</span>
+            <span className="count">{loadingCold ? "" : byStage[stage].length}</span>
           </div>
           {loadingCold ? (
             <div style={{ display: "grid", gap: 10 }}>

@@ -21,7 +21,7 @@ import type { Task, TaskEvent, TaskStatus, RunState } from "../../../shared/mode
  * CONFIRMED: `projectId` is the Project.id slug, not the prefix. Tasks
  * reference projects by slug; the prefix is encoded in the task id itself.
  */
-export type BoardStage = "Draft" | "Active" | "Attention" | "Failed" | "Complete" | "Archived";
+export type BoardStage = "Drafting" | "Running" | "Review" | "Blocked" | "Failed" | "Done" | "Archived";
 
 export type UiTask = MockTask & {
   projectId: string;
@@ -89,19 +89,26 @@ function deriveBoardStage(t: Task): BoardStage {
   // Archived takes precedence over any other status — once archived,
   // a task is hidden from default Board / ProjectDetail views.
   if (t.status === "archived") return "Archived";
-  if (t.status === "done") return "Complete";
+  if (t.status === "done") return "Done";
   if (t.status === "failed") return "Failed";
-  if (t.blocker.trim() || t.status === "waiting" || t.runState === "paused") return "Attention";
-  if (t.runState === "running") return "Active";
-  return "Draft";
+  // Split former "Attention" into Review vs Blocked. Review = the task
+  // is paused waiting for human review; Blocked = anything else that's
+  // halted (waiting on a key, on another person, etc.).
+  const blocker = t.blocker.trim().toLowerCase();
+  const isReview = blocker.includes("review") || blocker.includes("approval");
+  if (blocker || t.status === "waiting" || t.runState === "paused") {
+    return isReview ? "Review" : "Blocked";
+  }
+  if (t.runState === "running") return "Running";
+  return "Drafting";
 }
 
 function mockToBoardStage(lane: MockLane): BoardStage {
-  if (lane === "Done") return "Complete";
+  if (lane === "Done") return "Done";
   if (lane === "Failed") return "Failed";
-  if (lane === "Waiting") return "Attention";
-  if (lane === "Running") return "Active";
-  return "Draft";
+  if (lane === "Waiting") return "Blocked";
+  if (lane === "Running") return "Running";
+  return "Drafting";
 }
 
 export interface TasksState {
