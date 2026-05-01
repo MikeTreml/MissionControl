@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.toast{background:rgba(29,34,48,0.98);border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 12px 28px rgba(0,0,0,0.35);display:flex;align-items:flex-start;gap:10px;width:300px}
+.toast .dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:0 0 auto}
+.toast .body{flex:1;display:grid;gap:2px}
+.toast .title{font-size:13px;font-weight:600}
+.toast .sub{font-size:11px;color:var(--text-2)}
+.toast .close{color:var(--muted);font-size:16px;line-height:1}
+.toast.good{border-left:3px solid var(--success)}
+.toast.warn{border-left:3px solid var(--warning)}
+.toast.bad{border-left:3px solid var(--danger)}
+</style>
+</head>
+<body><div class="card-root" style="background:var(--canvas);align-content:center;justify-items:end">
+  <div style="display:grid;gap:10px">
+    <div class="toast good"><span class="dot" style="background:var(--success)"></span><div class="body"><div class="title">Run started</div><div class="sub">ALGD-0143 · planner</div></div><span class="close">×</span></div>
+    <div class="toast warn"><span class="dot" style="background:var(--warning)"></span><div class="body"><div class="title">Awaiting input</div><div class="sub">plan ready — review needed</div></div><span class="close">×</span></div>
+    <div class="toast bad"><span class="dot" style="background:var(--danger)"></span><div class="body"><div class="title">Start failed</div><div class="sub">missing AxTable reference</div></div><span class="close">×</span></div>
+  </div>
+</div></body></html>

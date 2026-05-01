@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>.g{display:grid;grid-template-columns:32px 1fr;gap:8px;align-items:center;padding:6px 8px;background:var(--raised);border:1px solid var(--border);border-radius:8px}.g .gl{font-size:18px;text-align:center;line-height:1}.g .lab{font-size:11px;color:var(--text-2);font-family:var(--font-mono)}</style>
+</head>
+<body><div class="card-root">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+    <div class="g"><span class="gl">▶</span><span class="lab">run start</span></div>
+    <div class="g"><span class="gl">■</span><span class="lab">run end</span></div>
+    <div class="g"><span class="gl">⏸</span><span class="lab">paused</span></div>
+    <div class="g"><span class="gl">▷</span><span class="lab">resumed</span></div>
+    <div class="g"><span class="gl">→</span><span class="lab">lane changed</span></div>
+    <div class="g"><span class="gl">⚙</span><span class="lab">tool start</span></div>
+    <div class="g"><span class="gl">✓</span><span class="lab">tool end</span></div>
+    <div class="g"><span class="gl">⤴</span><span class="lab">subagent spawn</span></div>
+    <div class="g"><span class="gl">⤵</span><span class="lab">subagent done</span></div>
+    <div class="g"><span class="gl">⚠</span><span class="lab">interrupted</span></div>
+    <div class="g"><span class="gl">↗</span><span class="lab">open detail</span></div>
+    <div class="g"><span class="gl">📁</span><span class="lab">open folder</span></div>
+    <div class="g"><span class="gl">📦</span><span class="lab">archive</span></div>
+    <div class="g"><span class="gl">🚧</span><span class="lab">blocker</span></div>
+    <div class="g"><span class="gl">✦</span><span class="lab">empty / nothing</span></div>
+    <div class="g"><span class="gl">+</span><span class="lab">add</span></div>
+  </div>
+  <div style="font-size:11px;color:var(--muted)">No icon library. Unicode + functional emoji only. See RightBar.tsx#iconForEvent.</div>
+</div></body></html>

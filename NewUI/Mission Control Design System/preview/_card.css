@@ -1,0 +1,58 @@
+/* Shared card chrome for Design System tab previews. */
+@import url("../colors_and_type.css");
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-snug);
+  -webkit-font-smoothing: antialiased;
+}
+.card-root {
+  padding: 18px;
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.swatch {
+  display: grid;
+  grid-template-rows: 56px auto;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  min-width: 110px;
+  flex: 1 1 110px;
+}
+.swatch-fill { width: 100%; height: 56px; }
+.swatch-meta { padding: 6px 8px; display: grid; gap: 1px; }
+.swatch-meta .name { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text); }
+.swatch-meta .hex  { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+.label-up { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); font-weight: 600; }
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 4px 9px; border-radius: 999px;
+  font-size: 12px; font-weight: 700;
+}
+.pill.good { background: rgba(74,222,128,0.15); color: var(--success); }
+.pill.warn { background: rgba(245,181,68,0.15); color: var(--warning); }
+.pill.bad  { background: rgba(248,113,113,0.15); color: var(--danger);  }
+.pill.info { background: rgba(96,165,250,0.15); color: var(--info);     }
+.btn {
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  padding: 10px 14px; border-radius: 10px; border: none; cursor: pointer;
+  background: var(--info); color: #08111f;
+}
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.task-mock {
+  background: var(--raised); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px;
+  position: relative;
+}
