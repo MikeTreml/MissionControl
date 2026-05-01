@@ -25,6 +25,7 @@ export function ProjectDetail(): JSX.Element {
   const [editOpen, setEditOpen] = useState(false);
   const [runMetricsRollup, setRunMetricsRollup] = useState<ProjectRunMetricsRollup | null>(null);
   const [rollupError, setRollupError] = useState("");
+  const [showArchived, setShowArchived] = useState(false);
 
   const project = useMemo(
     () =>
@@ -33,6 +34,8 @@ export function ProjectDetail(): JSX.Element {
         : projects[0],
     [projects, selectedProjectId],
   );
+
+  const isDemo = projectsDemo || tasksDemo;
 
   // Close the edit modal + bounce back to the dashboard if the project was
   // deleted (project will no longer appear in the list).
@@ -43,6 +46,34 @@ export function ProjectDetail(): JSX.Element {
       setView("dashboard");
     }
   }, [project, selectedProjectId, projects.length, setView]);
+
+  // Load + reload run-metrics rollup. Hooks live up here (above any early
+  // return) so the hook count is identical on every render — React enforces
+  // this. The callback is still safe when `project` is null: it bails out
+  // and clears the rollup state.
+  const loadRunMetricsRollup = useCallback(async () => {
+    if (!window.mc || isDemo || !project?.id) {
+      setRunMetricsRollup(null);
+      setRollupError("");
+      return;
+    }
+    setRollupError("");
+    try {
+      const rollup = await window.mc.aggregateProjectRunMetrics(project.id);
+      setRunMetricsRollup(rollup);
+    } catch (e) {
+      setRunMetricsRollup(null);
+      setRollupError(e instanceof Error ? e.message : String(e));
+    }
+  }, [project?.id, isDemo]);
+
+  useEffect(() => {
+    void loadRunMetricsRollup();
+  }, [loadRunMetricsRollup]);
+
+  useSubscribe("tasks", () => {
+    void loadRunMetricsRollup();
+  });
 
   // Skeleton while projects are still loading and we don't have a hit yet.
   // Distinguishes "loading" from "really not found" — the former resolves
@@ -88,38 +119,12 @@ export function ProjectDetail(): JSX.Element {
     ? tasks.filter((t) => t.projectId === project.id || (tasksDemo && t.projectId === "demo"))
     : [];
   const archivedCount = allProjectTasks.filter((t) => t.status === "archived").length;
-  const [showArchived, setShowArchived] = useState(false);
   // Default: hide archived from stats and tables. Toggle includes them.
   const projectTasks = showArchived
     ? allProjectTasks
     : allProjectTasks.filter((t) => t.status !== "archived");
 
   const stats = computeStats(projectTasks);
-  const isDemo = projectsDemo || tasksDemo;
-
-  const loadRunMetricsRollup = useCallback(async () => {
-    if (!window.mc || isDemo || !project?.id) {
-      setRunMetricsRollup(null);
-      setRollupError("");
-      return;
-    }
-    setRollupError("");
-    try {
-      const rollup = await window.mc.aggregateProjectRunMetrics(project.id);
-      setRunMetricsRollup(rollup);
-    } catch (e) {
-      setRunMetricsRollup(null);
-      setRollupError(e instanceof Error ? e.message : String(e));
-    }
-  }, [project?.id, isDemo]);
-
-  useEffect(() => {
-    void loadRunMetricsRollup();
-  }, [loadRunMetricsRollup]);
-
-  useSubscribe("tasks", () => {
-    void loadRunMetricsRollup();
-  });
 
   // UiProject doesn't carry gitInfo — fetch the full ProjectWithGit for the
   // edit form by finding the raw project in the real list if available,
