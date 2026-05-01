@@ -11,7 +11,6 @@ type FolderNode = {
   depth: number;
   children: TreeNode[];
   itemIds: string[];
-  counts: Record<LibraryItemKind, number>;
 };
 
 type FileNode = {
@@ -22,8 +21,6 @@ type FileNode = {
   depth: number;
   item: LibraryIndexItem;
 };
-
-const KIND_ORDER: LibraryItemKind[] = ["agent", "skill", "workflow", "example"];
 
 const TABS: ReadonlyArray<{ kind: LibraryItemKind; label: string }> = [
   { kind: "workflow", label: "Workflow" },
@@ -103,12 +100,15 @@ export function Tree({
     return out;
   }, [items]);
 
+  // Each per-tab tree skips the kind-named folder (`workflows/`, `agents/`,
+  // `skills/`, `examples/`) since the tab itself already filters by kind —
+  // showing the folder layer would be redundant.
   const treesByKind = useMemo(
     () => ({
-      workflow: buildTree(itemsByKind.workflow),
-      agent: buildTree(itemsByKind.agent),
-      skill: buildTree(itemsByKind.skill),
-      example: buildTree(itemsByKind.example),
+      workflow: buildTree(itemsByKind.workflow, "workflows"),
+      agent: buildTree(itemsByKind.agent, "agents"),
+      skill: buildTree(itemsByKind.skill, "skills"),
+      example: buildTree(itemsByKind.example, "examples"),
     }),
     [itemsByKind],
   );
@@ -434,7 +434,6 @@ function FolderRow({
           {node.path}
         </div>
       </div>
-      <KindCounts counts={node.counts} />
     </div>
   );
 }
@@ -489,8 +488,8 @@ function FileRow({
         <div className="library-tree-file-name">
           {item.name}
         </div>
-        <div className="library-tree-path">
-          {item.logicalPath}
+        <div className="library-tree-path" title={item.logicalPath}>
+          {(item.description ?? "").trim() || item.logicalPath}
         </div>
       </div>
       <span className="pill neutral" style={{ marginRight: 0 }}>
@@ -518,26 +517,21 @@ function FileRow({
   );
 }
 
-function KindCounts({ counts }: { counts: Record<LibraryItemKind, number> }): JSX.Element {
-  return (
-    <div className="library-tree-kind-counts">
-      {KIND_ORDER.filter((kind) => counts[kind] > 0).map((kind) => (
-        <span key={kind} className="pill neutral" style={{ marginRight: 0 }} title={kind}>
-          {kind.slice(0, 1)} {counts[kind]}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function buildTree(items: LibraryIndexItem[]): FolderNode {
+function buildTree(items: LibraryIndexItem[], skipFolderName: string | null = null): FolderNode {
   const root = createFolder("", "library", "", -1);
   const folderByPath = new Map<string, FolderNode>([["", root]]);
   const sorted = [...items].sort((a, b) => a.logicalPath.localeCompare(b.logicalPath));
 
   for (const item of sorted) {
-    const parts = item.logicalPath.split("/").filter(Boolean);
-    const folderParts = parts.slice(0, -1);
+    const allParts = item.logicalPath.split("/").filter(Boolean);
+    const fileName = allParts.at(-1) ?? item.name;
+    // Skip the kind container folder (e.g. drop "workflows" anywhere it
+    // appears in the path when building the Workflow tab's tree). The
+    // file's own logicalPath stays intact on the item; only the tree
+    // collapses the redundant layer.
+    const folderParts = allParts
+      .slice(0, -1)
+      .filter((p) => skipFolderName === null || p !== skipFolderName);
     let cursor = root;
     addItemToFolder(cursor, item);
 
@@ -556,7 +550,7 @@ function buildTree(items: LibraryIndexItem[]): FolderNode {
     cursor.children.push({
       type: "file",
       id: item.id,
-      name: parts.at(-1) ?? item.name,
+      name: fileName,
       path: item.logicalPath,
       depth: folderParts.length,
       item,
@@ -576,13 +570,11 @@ function createFolder(idPath: string, name: string, folderPath: string, depth: n
     depth,
     children: [],
     itemIds: [],
-    counts: { agent: 0, skill: 0, workflow: 0, example: 0 },
   };
 }
 
 function addItemToFolder(folder: FolderNode, item: LibraryIndexItem): void {
   folder.itemIds.push(item.id);
-  folder.counts[item.kind] += 1;
 }
 
 function sortTree(folder: FolderNode): void {

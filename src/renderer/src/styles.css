@@ -914,6 +914,7 @@ body:has(.context-strip) .app-shell {
 .library-tree-scroll {
   display: grid;
   gap: 1px;
+  align-content: start; /* top-align rows; default would stretch them */
   min-height: 360px;
   max-height: calc(100vh - 330px);
   overflow: auto;
@@ -1014,14 +1015,6 @@ body:has(.context-strip) .app-shell {
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
-.library-tree-kind-counts {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  max-width: 220px;
-}
-.library-tree-kind-counts .pill,
 .library-tree-row-file > .pill {
   padding: 1px 6px;
   font-size: var(--fs-2xs);
