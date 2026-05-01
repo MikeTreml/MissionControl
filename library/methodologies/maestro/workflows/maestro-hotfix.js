@@ -6,7 +6,7 @@
  */
 
 import { defineTask } from '@a5c-ai/babysitter-sdk';
-import { rootCauseDiagnosisTask, diagnosisBreakpointQuestion } from '../shared/root-cause-diagnosis.js';
+import { rootCauseDiagnosisTask, diagnosisBreakpointQuestion } from '../../shared/workflows/root-cause-diagnosis.js';
 
 // ============================================================================
 // AGENT TASK DEFINITIONS

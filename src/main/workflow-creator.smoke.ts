@@ -59,9 +59,9 @@ const minimalSpec: WorkflowSpec = {
 
 async function main(): Promise<void> {
   const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "wfcreator-"));
-  // Minimal library skeleton — needs an existing _index.json + workflows/ for
+  // Minimal library skeleton — needs an existing _index.json + category folder for
   // the rebuild step to land somewhere sensible.
-  await fs.mkdir(path.join(tmpRoot, "workflows"), { recursive: true });
+  await fs.mkdir(path.join(tmpRoot, "methodologies", "atdd-tdd"), { recursive: true });
   await fs.writeFile(
     path.join(tmpRoot, "_index.json"),
     JSON.stringify({ generatedAt: new Date().toISOString(), summary: { agents: 0, skills: 0, workflows: 0, examples: 0 }, items: [] }, null, 2),
@@ -72,11 +72,11 @@ async function main(): Promise<void> {
   // Happy path.
   const result = await creator.create({
     spec: minimalSpec,
-    category: "cradle",
+    category: "methodologies/atdd-tdd",
     slug: "smoke-created",
   });
-  assert(result.diskPath.endsWith(path.join("cradle", "smoke-created", "workflow.js")), "result.diskPath ends with target");
-  assert(result.relPath === "workflows/cradle/smoke-created/workflow.js", "result.relPath is forward-slash POSIX style");
+  assert(result.diskPath.endsWith(path.join("methodologies", "atdd-tdd", "workflows", "smoke-created.js")), "result.diskPath ends with target");
+  assert(result.relPath === "methodologies/atdd-tdd/workflows/smoke-created.js", "result.relPath is forward-slash POSIX style");
   const written = await fs.readFile(result.diskPath, "utf8");
   assert(written.includes("@process demo/created"), "written file contains the spec processId");
   assert(written.includes("export const doThingTask = defineTask('do-thing'"), "written file exports the task factory");
@@ -85,14 +85,14 @@ async function main(): Promise<void> {
   const indexRaw = await fs.readFile(path.join(tmpRoot, "_index.json"), "utf8");
   const index = JSON.parse(indexRaw) as { items: Array<{ kind: string; logicalPath?: string }> };
   const found = index.items.find(
-    (i) => i.kind === "workflow" && (i.logicalPath ?? "").includes("cradle/smoke-created"),
+    (i) => i.kind === "workflow" && (i.logicalPath ?? "").includes("methodologies/atdd-tdd/workflows/smoke-created"),
   );
   assert(!!found, "rebuilt index includes the new workflow");
 
   // Collision: creating the same slug again fails.
   let collisionThrew = false;
   try {
-    await creator.create({ spec: minimalSpec, category: "cradle", slug: "smoke-created" });
+    await creator.create({ spec: minimalSpec, category: "methodologies/atdd-tdd", slug: "smoke-created" });
   } catch (e) {
     collisionThrew = true;
     assert(String(e).includes("already exists"), "collision error mentions 'already exists'");
@@ -120,12 +120,12 @@ async function main(): Promise<void> {
   assert(badSlugThrew, "invalid slug throws");
 
   // Bad spec is caught BEFORE writing — make sure no partial file is left.
-  const preExisting = await fs.readdir(path.join(tmpRoot, "workflows", "cradle"));
+  const preExisting = await fs.readdir(path.join(tmpRoot, "methodologies", "atdd-tdd", "workflows"));
   let badSpecThrew = false;
   try {
     await creator.create({
       spec: { ...minimalSpec, processId: "" } as WorkflowSpec,
-      category: "cradle",
+      category: "methodologies/atdd-tdd",
       slug: "should-not-be-created",
     });
   } catch (e) {
@@ -133,7 +133,7 @@ async function main(): Promise<void> {
     assert(String(e).includes("processId"), "bad spec error mentions processId");
   }
   assert(badSpecThrew, "invalid spec throws");
-  const postExisting = await fs.readdir(path.join(tmpRoot, "workflows", "cradle"));
+  const postExisting = await fs.readdir(path.join(tmpRoot, "methodologies", "atdd-tdd", "workflows"));
   assert(
     JSON.stringify(preExisting) === JSON.stringify(postExisting),
     "no directory created when spec validation fails",

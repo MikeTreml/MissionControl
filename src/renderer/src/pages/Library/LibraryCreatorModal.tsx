@@ -5,7 +5,18 @@ import { publish } from "../../hooks/data-bus";
 
 type CreatorKind = "workflow" | "agent" | "skill";
 
-const WORKFLOW_CATEGORIES = ["cradle", "contrib", "core", "processes", "methodologies"] as const;
+const WORKFLOW_CATEGORIES = [
+  "business/knowledge-management",
+  "business/operations",
+  "business/project-management",
+  "methodologies/atdd-tdd",
+  "methodologies/process-hardening",
+  "methodologies/shared",
+  "methodologies/spec-kit",
+  "reference/babysitter",
+  "specializations/devops-sre-platform",
+  "specializations/software-architecture",
+] as const;
 const ITEM_ROOTS = [
   "business/knowledge-management",
   "specializations/ai-agents-conversational",
@@ -26,7 +37,7 @@ export function LibraryCreatorModal({
   const [slug, setSlug] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [workflowCategory, setWorkflowCategory] = useState<(typeof WORKFLOW_CATEGORIES)[number]>("cradle");
+  const [workflowCategory, setWorkflowCategory] = useState<(typeof WORKFLOW_CATEGORIES)[number]>("methodologies/atdd-tdd");
   const [targetRoot, setTargetRoot] = useState<(typeof ITEM_ROOTS)[number]>("business/knowledge-management");
   const [agentName, setAgentName] = useState("general-purpose");
   const [phaseTitle, setPhaseTitle] = useState("Draft and validate output");
@@ -52,7 +63,7 @@ export function LibraryCreatorModal({
     setSlug("");
     setName("");
     setDescription("");
-    setWorkflowCategory("cradle");
+    setWorkflowCategory("methodologies/atdd-tdd");
     setTargetRoot("business/knowledge-management");
     setAgentName("general-purpose");
     setPhaseTitle("Draft and validate output");
@@ -257,7 +268,7 @@ function WorkflowFields({
       </label>
       <div className="muted" style={{ fontSize: 11 }}>
         {slug ? (
-          <>Writes <code>library/workflows/{category}/{slug}/workflow.js</code></>
+          <>Writes <code>library/{category}/workflows/{slug}.js</code></>
         ) : (
           <>Pick a slug to preview the target path.</>
         )}

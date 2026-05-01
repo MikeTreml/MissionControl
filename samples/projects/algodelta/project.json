@@ -1,0 +1,9 @@
+{
+  "id": "algodelta",
+  "name": "algodelta",
+  "prefix": "ALGD",
+  "path": "",
+  "notes": "Sample project — quantitative options & volatility models",
+  "icon": "",
+  "isSample": true
+}

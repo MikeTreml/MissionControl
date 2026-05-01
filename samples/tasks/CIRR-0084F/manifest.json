@@ -1,0 +1,16 @@
+{
+  "id": "CIRR-0084F",
+  "title": "Provision new IAM role for staging ingest",
+  "description": "",
+  "project": "cirrus-ingest",
+  "kind": "single",
+  "status": "waiting",
+  "runState": "idle",
+  "cycle": 1,
+  "items": [],
+  "blocker": "waiting on @michael",
+  "parentTaskId": "",
+  "createdAt": "2026-04-30T14:25:00.000Z",
+  "updatedAt": "2026-04-29T14:25:00.000Z",
+  "isSample": true
+}

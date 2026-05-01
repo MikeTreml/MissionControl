@@ -1,7 +1,7 @@
 /**
  * Writes agent and skill library items, then rebuilds library/_index.json.
  *
- * Workflow creation already goes through WorkflowCreator because workflow.js
+ * Workflow creation already goes through WorkflowCreator because workflow source
  * has a richer structured generator. This creator covers the markdown-backed
  * AGENT.md and SKILL.md entries used by the Library Browser.
  */

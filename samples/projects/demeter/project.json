@@ -1,0 +1,9 @@
+{
+  "id": "demeter",
+  "name": "demeter",
+  "prefix": "DMTR",
+  "path": "",
+  "notes": "Sample project — agronomic forecasting + crop priors",
+  "icon": "",
+  "isSample": true
+}

@@ -1,11 +1,11 @@
 /**
- * Writes a generated workflow.js into `library/workflows/<category>/<slug>/`
+ * Writes a generated workflow into `library/<category>/workflows/<slug>.js`
  * and rebuilds the library index so the new workflow is immediately visible.
  *
  * Boundaries:
- *   - Category must be one of the existing top-level workflow folders.
+ *   - Category must be an existing library container path.
  *   - Slug must be kebab-case.
- *   - Will not clobber an existing workflow.js — caller must pick a fresh slug.
+ *   - Will not clobber an existing workflow file — caller must pick a fresh slug.
  */
 import { promises as fs } from "node:fs";
 import path from "node:path";
@@ -14,11 +14,17 @@ import { LibraryWalker } from "./library-walker.ts";
 import { generateWorkflow, type WorkflowSpec } from "./workflow-generator.ts";
 
 export const VALID_WORKFLOW_CATEGORIES = [
-  "cradle",
-  "contrib",
-  "core",
-  "processes",
+  "business/knowledge-management",
+  "business/operations",
+  "business/project-management",
+  "methodologies/atdd-tdd",
+  "methodologies/process-hardening",
+  "methodologies/shared",
   "methodologies",
+  "methodologies/spec-kit",
+  "reference/babysitter",
+  "specializations/devops-sre-platform",
+  "specializations/software-architecture",
 ] as const;
 export type WorkflowCategory = (typeof VALID_WORKFLOW_CATEGORIES)[number];
 
@@ -41,9 +47,9 @@ export class WorkflowCreator {
   }
 
   async create(opts: CreateWorkflowOpts): Promise<CreateWorkflowResult> {
-    if (!VALID_WORKFLOW_CATEGORIES.includes(opts.category as WorkflowCategory)) {
+    if (!/^[a-z0-9-]+(?:\/[a-z0-9-]+)*$/.test(opts.category)) {
       throw new Error(
-        `Invalid category "${opts.category}". Must be one of: ${VALID_WORKFLOW_CATEGORIES.join(", ")}`,
+        `Invalid category "${opts.category}". Must be a library path such as ${VALID_WORKFLOW_CATEGORIES.join(", ")}`,
       );
     }
     if (!/^[a-z][a-z0-9-]*$/.test(opts.slug)) {
@@ -52,8 +58,16 @@ export class WorkflowCreator {
       );
     }
 
-    const targetDir = path.join(this.libraryRoot, "workflows", opts.category, opts.slug);
-    const targetFile = path.join(targetDir, "workflow.js");
+    const categoryDir = path.resolve(this.libraryRoot, opts.category);
+    if (!isLibraryDescendant(this.libraryRoot, categoryDir)) {
+      throw new Error(`Invalid category "${opts.category}". Must stay inside the library root.`);
+    }
+    if (!(await isDirectory(categoryDir))) {
+      throw new Error(`Invalid category "${opts.category}". No such library container exists.`);
+    }
+
+    const targetDir = path.join(categoryDir, "workflows");
+    const targetFile = path.join(targetDir, `${opts.slug}.js`);
 
     if (await exists(targetFile)) {
       throw new Error(`Workflow already exists at ${targetFile}`);
@@ -88,4 +102,18 @@ async function exists(p: string): Promise<boolean> {
     if ((e as NodeJS.ErrnoException).code === "ENOENT") return false;
     throw e;
   }
+}
+
+async function isDirectory(p: string): Promise<boolean> {
+  try {
+    return (await fs.stat(p)).isDirectory();
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "ENOENT") return false;
+    throw e;
+  }
+}
+
+function isLibraryDescendant(libraryRoot: string, candidate: string): boolean {
+  const rel = path.relative(path.resolve(libraryRoot), path.resolve(candidate));
+  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
 }

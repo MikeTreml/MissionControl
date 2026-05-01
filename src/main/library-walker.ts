@@ -90,9 +90,10 @@ export class LibraryWalker {
       const base = path.basename(filePath);
       const ext = path.extname(filePath).toLowerCase();
       const isExampleJson = ext === ".json" && base !== "_meta.json" && base !== "_index.json";
-      if (!TARGET_FILES.has(base) && !isExampleJson) continue;
+      const isWorkflowJs = isWorkflowSource(rel, base, ext);
+      if (!TARGET_FILES.has(base) && !isExampleJson && !isWorkflowJs) continue;
 
-      const kind = classifyKind(base, isExampleJson);
+      const kind = classifyKind(base, isExampleJson, isWorkflowJs);
       if (!kind) continue;
       items.push(await this.buildItem(filePath, rel, kind));
     }
@@ -220,12 +221,21 @@ export class LibraryWalker {
   }
 }
 
-function classifyKind(base: string, isExampleJson: boolean): LibraryItemKind | null {
+function classifyKind(base: string, isExampleJson: boolean, isWorkflowJs: boolean): LibraryItemKind | null {
   if (base === "AGENT.md") return "agent";
   if (base === "SKILL.md") return "skill";
-  if (base === "workflow.js") return "workflow";
+  if (base === "workflow.js" || isWorkflowJs) return "workflow";
   if (isExampleJson) return "example";
   return null;
+}
+
+function isWorkflowSource(relPath: string, base: string, ext: string): boolean {
+  if (ext !== ".js") return false;
+  const parts = toPosix(relPath).split("/");
+  if (!parts.includes("workflows")) return false;
+  if (parts.some((part) => part.startsWith("_"))) return false;
+  if (base === "index.js") return false;
+  return true;
 }
 
 function toLogicalPath(relPath: string): string {
@@ -314,7 +324,10 @@ async function buildWorkflowFields(filePath: string, src: string): Promise<{
   const dir = path.dirname(filePath);
   const inputsSchemaPath = await existingPath(path.join(dir, "inputs.schema.json"));
   const examplesDir = await existingPath(path.join(dir, "examples"), true);
-  const companionDoc = await existingPath(path.join(dir, "README.md"));
+  const companionDoc =
+    path.basename(filePath) === "workflow.js"
+      ? await existingPath(path.join(dir, "README.md"))
+      : await existingPath(path.join(dir, `${path.basename(filePath, ".js")}.md`));
 
   const usesAgents = uniq(matchRefs(src, /(["'`])((?:specializations|methodologies|agents|core|contrib|cradle)\/[^"'`\s]+)\1/g));
   const usesSkills = uniq(matchRefs(src, /(["'`])((?:skills|specializations|methodologies|core|contrib|cradle)\/[^"'`\s]*skills?\/[^"'`\s]+)\1/g));
