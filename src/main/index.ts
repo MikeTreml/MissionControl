@@ -8,7 +8,7 @@
  *   4. open the BrowserWindow, point it at the renderer
  *
  * Path layout:
- *   <userData>/tasks/<TP-NNN>/manifest.json · events.jsonl · notes.md per agent
+ *   <userData>/tasks/<TP-NNN>/manifest.json · events.jsonl · PROMPT.md · STATUS.md · shared/
  *   <userData>/projects/<slug>/project.json
  *   <appRoot>/library/                      (bundled — agents/skills/workflows catalog)
  *
@@ -17,7 +17,7 @@
  * in ipc.ts; live events are forwarded to the renderer via
  * lib/live-events-bridge.ts.
  */
-import { app, BrowserWindow, Menu } from "electron";
+import { app, BrowserWindow, Menu, session } from "electron";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -153,8 +153,40 @@ function createMainWindow(): void {
 // be called on macOS `activate`) can reattach forwarders to a new window.
 let bootstrappedTasks: TaskStore | null = null;
 
+/**
+ * Inject a Content-Security-Policy header on every renderer response.
+ *
+ * Belt-and-braces with the meta tag in src/renderer/index.html — the meta
+ * tag covers loads we control directly; this header covers anything served
+ * via Electron's session (file:// in packaged builds, http://localhost in
+ * dev). When packaged, we tighten further (no localhost, no ws:) since
+ * Vite HMR isn't running.
+ */
+function attachCspHeader(): void {
+  const dev = !app.isPackaged;
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    dev
+      ? "connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:*"
+      : "connect-src 'self'",
+    "img-src 'self' data:",
+    "font-src 'self' data:",
+  ].join("; ");
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        "Content-Security-Policy": [csp],
+      },
+    });
+  });
+}
+
 app.whenReady().then(async () => {
   Menu.setApplicationMenu(null);
+  attachCspHeader();
   await bootstrapStores();
   createMainWindow();
 

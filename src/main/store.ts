@@ -1,17 +1,21 @@
 /**
  * File-based task store (main process only).
  *
- * Each task lives in its own folder under `<root>/TP-NNN/`:
+ * Each task lives in its own folder under `<root>/<TASK-ID>/`:
  *
  *   TP-001/
  *     manifest.json       <- Task, serialized
- *     planner/notes.md    <- per-role notes; owner R/W, others R
- *     dev/notes.md
- *     reviewer/notes.md
- *     doc/notes.md
- *     shared/             <- requirements, code, review reports
+ *     events.jsonl        <- append-only journal
+ *     PROMPT.md           <- mission, rendered on each Start
+ *     STATUS.md           <- append-only progress log
+ *     shared/             <- whatever the workflow's agents write
+ *     <agent-folder>/     <- created on demand by individual agents;
+ *                            no fixed roster of folders is pre-created
  *
- * Ported from mc-v2-pi-archive/core/store.py. Same layout, TS idioms.
+ * Originally ported from mc-v2-pi-archive/core/store.py with a fixed
+ * Planner/Developer/Reviewer/Surgeon scaffold; that hardcoded set was
+ * scrubbed once workflows became the source of truth for the agent
+ * roster. Anything an agent needs on disk it creates itself.
  *
  * The store is deliberately dumb — no in-memory cache. Read on every call.
  * Fast enough for a local dashboard, easy to reason about when debugging.
@@ -23,7 +27,6 @@ import path from "node:path";
 
 import {
   makeTask,
-  taskFile,
   TaskSchema,
   type Task,
   type TaskEvent,
@@ -65,13 +68,6 @@ export interface TaskStoreEvents {
  *   1 = prefix, 2 = number, 3 = workflow letter
  */
 const TASK_ID_RE = /^([A-Z0-9]{1,8})-(\d{3,})([A-Z])$/;
-const ROLE_FOLDERS = [
-  "planner",
-  "developer",
-  "reviewer",
-  "surgeon",
-  "shared",
-] as const;
 
 export class TaskStore extends EventEmitter {
   private readonly root: string;
@@ -226,16 +222,16 @@ export class TaskStore extends EventEmitter {
     description?: string;
     projectId: string;
     projectPrefix: string;
-    workflow?: string;
     /**
-     * Initial lane — defaults to "plan". Callers that know the workflow
-     * (e.g. via `effectiveLanes(workflow)[0]`) should pass it explicitly
-     * so tasks start in a lane their workflow actually uses.
+     * Workflow letter for the task ID suffix (e.g. "F" -> DA-015F). Stored
+     * only as part of the immutable id; not a separate task field.
      */
-    lane?: Task["lane"];
+    workflow?: string;
     /** "single" (default) or "campaign". Campaigns carry an items list. */
     kind?: Task["kind"];
     items?: Task["items"];
+    /** Source task id when this is a re-run / clone / spin-off. Empty = no parent. */
+    parentTaskId?: string;
   }): Promise<Task> {
     const workflow = (input.workflow ?? "F").toUpperCase();
     const id = await this.nextTaskId(input.projectPrefix, workflow);
@@ -244,10 +240,9 @@ export class TaskStore extends EventEmitter {
       title: input.title,
       description: input.description ?? "",
       project: input.projectId,
-      workflow,
-      ...(input.lane ? { lane: input.lane } : {}),
       ...(input.kind ? { kind: input.kind } : {}),
       ...(input.items ? { items: input.items } : {}),
+      ...(input.parentTaskId ? { parentTaskId: input.parentTaskId } : {}),
     });
     await this.scaffold(task);
     await this.saveTask(task);
@@ -264,7 +259,8 @@ export class TaskStore extends EventEmitter {
     const folder = path.join(this.root, validated.id);
 
     // Read the prior manifest (if any) BEFORE overwriting so we can diff
-    // lane/cycle and emit specific journal events.
+    // cycle / blocker and emit specific journal events. (Lane was diffed
+    // here too pre-Phase-10; that field is gone now.)
     const prior = await this.readPriorForDiff(folder);
 
     await fs.mkdir(folder, { recursive: true });
@@ -274,13 +270,7 @@ export class TaskStore extends EventEmitter {
       "utf8",
     );
 
-    if (prior && prior.lane !== validated.lane) {
-      await this.appendEvent(validated.id, {
-        type: "lane-changed",
-        from: prior.lane,
-        to: validated.lane,
-      });
-    } else if (prior && prior.cycle !== validated.cycle) {
+    if (prior && prior.cycle !== validated.cycle) {
       await this.appendEvent(validated.id, {
         type: "cycle-changed",
         from: prior.cycle,
@@ -543,7 +533,8 @@ export class TaskStore extends EventEmitter {
    *
    * Examples:
    *   `taskId` for the base task file area
-   *   `<taskId>-p` for planner output
+   *   `<taskId>-<suffix>` for an agent's per-cycle artifact (suffix
+   *   is whatever the workflow / agent declares — e.g. "p", "design")
    */
   async readTaskFile(
     taskId: string,
@@ -607,21 +598,22 @@ export class TaskStore extends EventEmitter {
   // ── internals ─────────────────────────────────────────────────────────
 
   /**
-   * Create per-role folders + starter notes.md files + initial
-   * PROMPT.md and STATUS.md. One-time per task. Start overwrites
-   * PROMPT.md with RunManager's richer render; STATUS.md is pure
-   * append-only from here on.
+   * Create the task folder + initial PROMPT.md, STATUS.md, and a
+   * generic `shared/` folder. Per-agent folders are NOT pre-created —
+   * each agent makes whatever folders/files it needs at runtime, so
+   * the on-disk layout reflects the workflow that actually ran rather
+   * than a hardcoded roster from this file.
+   *
+   * Start overwrites PROMPT.md with RunManager's richer render;
+   * STATUS.md is pure append-only from here on.
    */
   private async scaffold(task: Task): Promise<void> {
     const base = path.join(this.root, task.id);
-    // Create the task folder up-front so the PROMPT.md / STATUS.md
-    // writes below have a home. Role subdirs are created in the loop.
     await fs.mkdir(base, { recursive: true });
 
-    // Mission brief stub. Start re-runs renderPromptFile (with the
-    // current agentSlug) on each click so edits propagate; this seed
-    // ensures Task Detail has something to render immediately after
-    // create-task, before the first Start.
+    // Mission brief stub. Start re-runs renderPromptFile on each click
+    // so edits propagate; this seed ensures Task Detail has something
+    // to render immediately after create-task, before the first Start.
     await fs.writeFile(
       path.join(base, "PROMPT.md"),
       renderPromptFile(task, null),
@@ -635,21 +627,10 @@ export class TaskStore extends EventEmitter {
       "utf8",
     );
 
-    for (const name of ROLE_FOLDERS) {
-      const folder = path.join(base, name);
-      await fs.mkdir(folder, { recursive: true });
-      // notes.md only for role folders, not shared/
-      if (name === "shared") continue;
-      const note = path.join(folder, "notes.md");
-      if (!existsSync(note)) {
-        await fs.writeFile(
-          note,
-          `# ${task.id} — ${name} notes\n\n` +
-            `Owner: ${name}. This file grows across cycles.\n`,
-          "utf8",
-        );
-      }
-    }
+    // Generic shared/ folder for cross-agent artifacts. Anything an
+    // individual agent owns (notes, outputs, working files) gets
+    // created by that agent on first write — no pre-allocated set.
+    await fs.mkdir(path.join(base, "shared"), { recursive: true });
   }
 
   /**

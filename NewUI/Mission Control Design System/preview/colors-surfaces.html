@@ -1,0 +1,101 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.surf-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;align-items:stretch}
+.surf-cell{padding:18px 14px;display:grid;gap:4px;min-height:120px;color:var(--text);position:relative}
+.surf-cell + .surf-cell{border-left:1px solid var(--border)}
+.surf-cell .lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.6px;font-weight:700;color:var(--text)}
+.surf-cell .hex{font-family:var(--font-mono);font-size:11px;color:var(--text-2)}
+.surf-cell .use{font-size:11px;color:var(--text-2);margin-top:auto}
+.surf-cell .tint{position:absolute;top:14px;right:14px;width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,0.08)}
+.tone-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tone{display:grid;gap:6px;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+.tone .swatch{height:40px;border-radius:6px;border:1px solid rgba(255,255,255,0.04)}
+.tone .meta{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tone .name{font-size:11px;font-weight:600}
+.tone .h{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+.tone .use{font-size:10.5px;color:var(--text-2)}
+</style>
+</head>
+<body><div class="card-root">
+
+  <!-- Canonical 3-step grayscale stack -->
+  <div class="surf-row">
+    <div class="surf-cell" style="background:#0E0F11">
+      <div class="lbl">Canvas</div>
+      <div class="hex">#0E0F11</div>
+      <div class="use">app background · pure neutral</div>
+    </div>
+    <div class="surf-cell" style="background:#15171A">
+      <div class="lbl">Surface</div>
+      <div class="hex">#15171A</div>
+      <div class="use">sidebar, rightbar, panels</div>
+    </div>
+    <div class="surf-cell" style="background:#1A1D21">
+      <div class="lbl">Raised</div>
+      <div class="hex">#1A1D21</div>
+      <div class="use">cards inside panels</div>
+    </div>
+  </div>
+
+  <!-- Tonal range — five tinted dark surfaces, all near-black, each
+       carrying a different undertone for project / state contexts. -->
+  <div style="font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:0.5px;font-weight:600">Tonal Range — context-tinted surfaces</div>
+  <div class="tone-strip">
+    <div class="tone">
+      <div class="swatch" style="background:#15171A"></div>
+      <div class="meta"><span class="name">Neutral</span><span class="h">#15171A</span></div>
+      <div class="use">default chrome</div>
+    </div>
+    <div class="tone">
+      <div class="swatch" style="background:#161422"></div>
+      <div class="meta"><span class="name">Iris-tint</span><span class="h">#161422</span></div>
+      <div class="use">active project = iris</div>
+    </div>
+    <div class="tone">
+      <div class="swatch" style="background:#1B1612"></div>
+      <div class="meta"><span class="name">Clay-tint</span><span class="h">#1B1612</span></div>
+      <div class="use">active project = clay</div>
+    </div>
+    <div class="tone">
+      <div class="swatch" style="background:#121A18"></div>
+      <div class="meta"><span class="name">Mint-tint</span><span class="h">#121A18</span></div>
+      <div class="use">active project = mint</div>
+    </div>
+    <div class="tone">
+      <div class="swatch" style="background:#181715"></div>
+      <div class="meta"><span class="name">Stone-tint</span><span class="h">#181715</span></div>
+      <div class="use">active project = stone</div>
+    </div>
+  </div>
+
+  <!-- State-tinted backgrounds — used as pill bg + alert lanes. -->
+  <div class="tone-strip">
+    <div class="tone" style="border-color:#1B2A1F">
+      <div class="swatch" style="background:#1B2A1F"></div>
+      <div class="meta"><span class="name" style="color:var(--success)">Success bg</span><span class="h">#1B2A1F</span></div>
+      <div class="use">running pill bg</div>
+    </div>
+    <div class="tone" style="border-color:#2A2417">
+      <div class="swatch" style="background:#2A2417"></div>
+      <div class="meta"><span class="name" style="color:var(--warning)">Warning bg</span><span class="h">#2A2417</span></div>
+      <div class="use">awaiting input</div>
+    </div>
+    <div class="tone" style="border-color:#2A1B1B">
+      <div class="swatch" style="background:#2A1B1B"></div>
+      <div class="meta"><span class="name" style="color:var(--danger)">Danger bg</span><span class="h">#2A1B1B</span></div>
+      <div class="use">failed / blocked</div>
+    </div>
+    <div class="tone" style="border-color:#1A2333">
+      <div class="swatch" style="background:#1A2333"></div>
+      <div class="meta"><span class="name" style="color:var(--info)">Info bg</span><span class="h">#1A2333</span></div>
+      <div class="use">selected / draft</div>
+    </div>
+    <div class="tone" style="border-color:#25282D">
+      <div class="swatch" style="background:#25282D"></div>
+      <div class="meta"><span class="name">Border</span><span class="h">#25282D</span></div>
+      <div class="use">1px separator</div>
+    </div>
+  </div>
+
+  <div style="font-size:11px;color:var(--muted)">All darks read calm. Tinted variants are reserved — chrome stays neutral; tints appear only when a project / state owns the region.</div>
+</div></body></html>

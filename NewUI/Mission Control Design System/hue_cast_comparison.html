@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hue cast comparison</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    background: #0d0d0e;
+    color: #e7e7ea;
+    padding: 32px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .lede { color: #8d8d92; font-size: 13px; margin-bottom: 24px; max-width: 620px; line-height: 1.5; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+  .col {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #2a2a2d;
+  }
+  .label {
+    padding: 10px 14px;
+    background: #16161a;
+    border-bottom: 1px solid #2a2a2d;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: #b8b8bd;
+  }
+  .label .tag { color: #6d6d75; font-weight: 500; text-transform: none; letter-spacing: 0; margin-left: 6px; }
+  .demo { padding: 18px; }
+  .demo .canvas-info {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 11px;
+    color: #6d6d75;
+    margin-bottom: 14px;
+  }
+  .panel {
+    border-radius: 10px;
+    border: 1px solid var(--demo-border);
+    background: var(--demo-surface);
+    padding: 14px;
+  }
+  .card-row { display: grid; gap: 8px; }
+  .card {
+    background: var(--demo-raised);
+    border: 1px solid var(--demo-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+  .card .pid { font-family: ui-monospace, "SF Mono", Consolas, monospace; color: #9b9ba1; font-size: 11px; }
+  .card .accent { width: 8px; height: 8px; border-radius: 999px; }
+  .swatches {
+    display: flex;
+    gap: 6px;
+    margin-top: 14px;
+    align-items: center;
+    font-size: 10px;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    color: #6d6d75;
+  }
+  .sw { width: 26px; height: 26px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06); }
+  .col-neutral { --demo-canvas: #2a2a2c; --demo-surface: #323234; --demo-raised: #3c3c3f; --demo-border: #494a4d; }
+  .col-warm    { --demo-canvas: #2c2a28; --demo-surface: #353330; --demo-raised: #403d3a; --demo-border: #4d4a46; }
+  .col-cool    { --demo-canvas: #28292c; --demo-surface: #303234; --demo-raised: #3a3c3f; --demo-border: #46484c; }
+  .col .demo { background: var(--demo-canvas); }
+
+  .takeaway {
+    margin-top: 8px;
+    padding: 16px 18px;
+    background: #16161a;
+    border: 1px solid #2a2a2d;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #b8b8bd;
+    max-width: 880px;
+  }
+  .takeaway b { color: #e7e7ea; }
+  .takeaway p + p { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<h1>Hue cast for the greys</h1>
+<p class="lede">All three are technically "grey" — same lightness, ~5% saturation. Side-by-side the difference is clear; in isolation it just changes how the app <em>feels</em>.</p>
+
+<div class="grid">
+
+  <!-- ── Pure neutral ── -->
+  <div class="col col-neutral">
+    <div class="label">Pure neutral <span class="tag">0% chroma</span></div>
+    <div class="demo">
+      <div class="canvas-info">canvas #2a2a2c · surface #323234 · raised #3c3c3f</div>
+      <div class="panel">
+        <div class="card-row">
+          <div class="card"><span><span class="accent" style="background:#7F77DD;display:inline-block;margin-right:8px;vertical-align:middle"></span>ALGD-0143</span><span class="pid">running</span></div>
+          <div class="card"><span><span class="accent" style="background:#D85A30;display:inline-block;margin-right:8px;vertical-align:middle"></span>BRIE-0021</span><span class="pid">queued</span></div>
+          <div class="card"><span><span class="accent" style="background:#1D9E75;display:inline-block;margin-right:8px;vertical-align:middle"></span>CIRR-0088</span><span class="pid">done</span></div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="sw" style="background:#2a2a2c"></div>
+        <div class="sw" style="background:#323234"></div>
+        <div class="sw" style="background:#3c3c3f"></div>
+        <span style="margin-left:6px">Apple, Things 3, GitHub Primer dark</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Warm cast ── -->
+  <div class="col col-warm">
+    <div class="label">Slight warm cast <span class="tag">3% toward orange</span></div>
+    <div class="demo">
+      <div class="canvas-info">canvas #2c2a28 · surface #353330 · raised #403d3a</div>
+      <div class="panel">
+        <div class="card-row">
+          <div class="card"><span><span class="accent" style="background:#7F77DD;display:inline-block;margin-right:8px;vertical-align:middle"></span>ALGD-0143</span><span class="pid">running</span></div>
+          <div class="card"><span><span class="accent" style="background:#D85A30;display:inline-block;margin-right:8px;vertical-align:middle"></span>BRIE-0021</span><span class="pid">queued</span></div>
+          <div class="card"><span><span class="accent" style="background:#1D9E75;display:inline-block;margin-right:8px;vertical-align:middle"></span>CIRR-0088</span><span class="pid">done</span></div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="sw" style="background:#2c2a28"></div>
+        <div class="sw" style="background:#353330"></div>
+        <div class="sw" style="background:#403d3a"></div>
+        <span style="margin-left:6px">Linear, Cron, Arc, Granola</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Cool cast ── -->
+  <div class="col col-cool">
+    <div class="label">Slight cool cast <span class="tag">3% toward blue</span></div>
+    <div class="demo">
+      <div class="canvas-info">canvas #28292c · surface #303234 · raised #3a3c3f</div>
+      <div class="panel">
+        <div class="card-row">
+          <div class="card"><span><span class="accent" style="background:#7F77DD;display:inline-block;margin-right:8px;vertical-align:middle"></span>ALGD-0143</span><span class="pid">running</span></div>
+          <div class="card"><span><span class="accent" style="background:#D85A30;display:inline-block;margin-right:8px;vertical-align:middle"></span>BRIE-0021</span><span class="pid">queued</span></div>
+          <div class="card"><span><span class="accent" style="background:#1D9E75;display:inline-block;margin-right:8px;vertical-align:middle"></span>CIRR-0088</span><span class="pid">done</span></div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="sw" style="background:#28292c"></div>
+        <div class="sw" style="background:#303234"></div>
+        <div class="sw" style="background:#3a3c3f"></div>
+        <span style="margin-left:6px">Notion, Height, Slack dark (subtle)</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="takeaway">
+  <p><b>Pure neutral</b> reads clinical / Apple-modern. No personality, gets out of the way. Good for content-heavy tools where the UI shouldn't compete with the work.</p>
+  <p><b>Warm cast</b> reads cozy / premium / hand-crafted. Linear and Cron use this — it makes a tool feel less like infrastructure and more like a workshop. Recommended for Mission Control given the orchestration / craft framing.</p>
+  <p><b>Cool cast</b> reads technical / sober. Different from the AI-cliché blue-black because it's <em>3% chroma</em>, not 30% — but at scale it can still feel a touch cold. Safe choice for an engineering tool.</p>
+</div>
+
+</body>
+</html>

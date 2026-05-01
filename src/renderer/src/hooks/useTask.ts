@@ -27,6 +27,7 @@ function mockTaskToTask(id: string): Task | null {
     cycle: 1,
     items: [],
     blocker: "",
+    parentTaskId: "",
     createdAt: now,
     updatedAt: now,
   };
@@ -35,14 +36,17 @@ function mockTaskToTask(id: string): Task | null {
 function mockEvents(id: string): TaskEvent[] {
   const now = new Date();
   const t = (minsAgo: number) => new Date(now.getTime() - minsAgo * 60_000).toISOString();
+  // Generic agent slugs for the demo timeline — the real workflow's
+  // events use whatever the workflow.js declared at runtime, so this
+  // mock intentionally doesn't carry a fixed roster.
   return [
     { timestamp: t(240), type: "created", by: "system" },
-    { timestamp: t(235), type: "run-started", role: "planner", model: "claude-opus" },
-    { timestamp: t(180), type: "run-ended", role: "planner", exit: "completed" },
-    { timestamp: t(175), type: "lane-changed", from: "plan", to: "develop" },
-    { timestamp: t(170), type: "run-started", role: "developer", model: "codex" },
-    { timestamp: t(20),  type: "run-ended", role: "developer", exit: "completed" },
-    { timestamp: t(15),  type: "lane-changed", from: "develop", to: "review" },
+    { timestamp: t(235), type: "run-started", agentSlug: "agent-a", model: "claude-opus" },
+    { timestamp: t(180), type: "run-ended", agentSlug: "agent-a", exit: "completed" },
+    { timestamp: t(175), type: "lane-changed", from: "phase-1", to: "phase-2" },
+    { timestamp: t(170), type: "run-started", agentSlug: "agent-b", model: "codex" },
+    { timestamp: t(20),  type: "run-ended", agentSlug: "agent-b", exit: "completed" },
+    { timestamp: t(15),  type: "lane-changed", from: "phase-2", to: "phase-3" },
   ] satisfies TaskEvent[];
 }
 

@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mockup — Planning task that spawns subtasks (#40)</title>
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .stack { display: grid; gap: 16px; }
+  .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+  .breadcrumb { font-size: 12px; color: var(--muted); }
+  .micro-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 2px 9px; border-radius: 999px; font-size: 11px;
+    font-weight: 500; border: 1px solid;
+  }
+  .ms-proposing { background: rgba(244,201,93,0.10); color: var(--warn); border-color: var(--warn); }
+  .ms-proposed  { background: rgba(110,168,254,0.10); color: var(--accent); border-color: var(--accent); }
+  .ms-committed { background: rgba(77,212,172,0.10); color: var(--good); border-color: var(--good); }
+
+  /* Phase 1: planning task while it's working */
+  .planner-status {
+    padding: 14px 16px; display: grid; gap: 8px;
+  }
+  .planner-status .row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); animation: mc-pulse 1.4s ease-in-out infinite; }
+  @keyframes mc-pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
+
+  /* Phase 2: review proposed children */
+  .proposal-list {
+    background: var(--bg);
+    display: grid;
+    border-bottom: 1px solid var(--border);
+  }
+  .proposal-row {
+    display: grid;
+    grid-template-columns: 24px 1fr 200px 160px 120px 60px;
+    gap: 10px; align-items: center;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .proposal-row.header {
+    background: var(--panel-2);
+    color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    border-top: none;
+  }
+  .proposal-row input[type="checkbox"] {
+    accent-color: var(--accent); cursor: pointer;
+  }
+  .title-cell {
+    display: grid; gap: 2px; min-width: 0;
+  }
+  .title-cell .title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .title-cell .why   { color: var(--muted); font-size: 11px; }
+  .pick {
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    padding: 4px 8px; border-radius: 6px; font-family: inherit; font-size: 12px;
+    width: 100%;
+  }
+  .row-actions {
+    display: flex; gap: 4px; justify-content: flex-end;
+  }
+  .icon-btn {
+    background: transparent; border: 1px solid transparent; color: var(--muted);
+    cursor: pointer; padding: 4px 6px; border-radius: 4px; font-size: 12px;
+  }
+  .icon-btn:hover { background: var(--panel-2); color: var(--text); border-color: var(--border); }
+
+  .commit-bar {
+    padding: 14px 16px;
+    background: rgba(77,212,172,0.04);
+    border-top: 1px solid var(--good);
+    display: flex; gap: 12px; align-items: center;
+  }
+  .commit-bar .summary { flex: 1; font-size: 13px; }
+  .commit-bar .summary strong { color: var(--good); }
+</style>
+</head>
+<body>
+<div class="mockup-shell">
+
+  <div class="mockup-header">
+    <h1>Planning task that spawns subtasks · UI mockup</h1>
+    <div class="meta">Active list #40 · iterate-on-spec from COMP-RESEARCH §6 (Asana / Linear initiative pattern)</div>
+  </div>
+
+  <div class="note">
+    <strong>What this is.</strong>
+    A meta-task whose goal is to break a high-level ask ("ship the audit log feature") into
+    a list of follow-up tasks. The planning task <em>doesn't</em> do the work — it produces
+    a <strong>proposal</strong> the user reviews, edits inline, and commits as a batch.
+    Each spawned task carries <code>parentTaskId</code> so the lineage is queryable later
+    (Spawned-from panel #43 already shipped).
+  </div>
+
+  <!-- Phase 1: planning task is running -->
+  <div class="frame">
+    <div class="header-row">
+      <span class="breadcrumb">
+        Task Detail · <strong style="color: var(--text)">DA-022P</strong>
+        <span style="color: var(--muted)"> · planning</span>
+      </span>
+      <span class="micro-status ms-proposing"><span class="pulse"></span>proposing</span>
+    </div>
+
+    <div class="planner-status">
+      <div class="row">
+        <span class="pulse"></span>
+        <strong>Planner is breaking down the goal…</strong>
+      </div>
+      <div class="muted" style="font-size: 12px;">
+        <strong>Goal:</strong> Roll out the audit log feature end-to-end —
+        schema migration, write path, read path, UI surface, alerting.
+      </div>
+      <div class="muted" style="font-size: 11px;">
+        Iteration 2 · 4m elapsed · 3 sub-agents running
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2: proposal is ready, user reviews -->
+  <div class="frame">
+    <div class="header-row">
+      <span class="breadcrumb">
+        Task Detail · <strong style="color: var(--text)">DA-022P</strong>
+        <span style="color: var(--muted)"> · planning</span>
+      </span>
+      <span class="micro-status ms-proposed">proposed · review</span>
+    </div>
+
+    <div style="padding: 14px 16px;">
+      <div style="font-weight: 600; font-size: 14px;">Proposed subtasks</div>
+      <div class="muted" style="font-size: 12px; margin-top: 4px;">
+        7 tasks. Edit inline · uncheck to skip · click <strong style="color: var(--good)">Create N tasks</strong>
+        below to commit. Each child carries <code>parentTaskId = DA-022P</code>.
+      </div>
+    </div>
+
+    <div class="proposal-list">
+      <div class="proposal-row header">
+        <span></span>
+        <span>Title / why</span>
+        <span>Project</span>
+        <span>Workflow</span>
+        <span>Kind</span>
+        <span></span>
+      </div>
+
+      <div class="proposal-row">
+        <input type="checkbox" checked />
+        <div class="title-cell">
+          <div class="title">Migrate audit_log schema (initial DDL)</div>
+          <div class="why">Foundation; everything else depends on this table existing.</div>
+        </div>
+        <select class="pick"><option>DogApp (DA)</option></select>
+        <select class="pick"><option>methodologies/tdd-strict</option></select>
+        <select class="pick"><option>single</option></select>
+        <div class="row-actions"><button class="icon-btn" title="Edit">✎</button></div>
+      </div>
+
+      <div class="proposal-row">
+        <input type="checkbox" checked />
+        <div class="title-cell">
+          <div class="title">Implement write path — audit_log.append</div>
+          <div class="why">Hooks into existing transaction middleware; no public API change.</div>
+        </div>
+        <select class="pick"><option>DogApp (DA)</option></select>
+        <select class="pick"><option>cradle/feature</option></select>
+        <select class="pick"><option>single</option></select>
+        <div class="row-actions"><button class="icon-btn" title="Edit">✎</button></div>
+      </div>
+
+      <div class="proposal-row">
+        <input type="checkbox" checked />
+        <div class="title-cell">
+          <div class="title">Implement read path — paginated audit_log query</div>
+          <div class="why">Needs index review with platform team.</div>
+        </div>
+        <select class="pick"><option>DogApp (DA)</option></select>
+        <select class="pick"><option>cradle/feature</option></select>
+        <select class="pick"><option>single</option></select>
+        <div class="row-actions"><button class="icon-btn" title="Edit">✎</button></div>
+      </div>
+
+      <div class="proposal-row">
+        <input type="checkbox" checked />
+        <div class="title-cell">
+          <div class="title">UI: Audit log page + filters</div>
+          <div class="why">Mockup needed first — flagged as design-blocked.</div>
+        </div>
+        <select class="pick"><option>DogApp (DA)</option></select>
+        <select class="pick"><option>Auto-generate</option></select>
+        <select class="pick"><option>single</option></select>
+        <div class="row-actions"><button class="icon-btn" title="Edit">✎</button></div>
+      </div>
+
+      <div class="proposal-row" style="opacity: 0.5;">
+        <input type="checkbox" />
+        <div class="title-cell">
+          <div class="title">Alerting on suspicious audit patterns</div>
+          <div class="why">Out of scope for v1; left here for the user to skip / defer.</div>
+        </div>
+        <select class="pick" disabled><option>—</option></select>
+        <select class="pick" disabled><option>—</option></select>
+        <select class="pick" disabled><option>—</option></select>
+        <div class="row-actions"><button class="icon-btn" title="Edit">✎</button></div>
+      </div>
+
+      <div class="proposal-row">
+        <input type="checkbox" checked />
+        <div class="title-cell">
+          <div class="title">Backfill historical events</div>
+          <div class="why">Run-once campaign-style; one item per source table.</div>
+        </div>
+        <select class="pick"><option>DogApp (DA)</option></select>
+        <select class="pick"><option>methodologies/data-migration</option></select>
+        <select class="pick"><option>campaign</option></select>
+        <div class="row-actions"><button class="icon-btn" title="Edit">✎</button></div>
+      </div>
+
+      <div class="proposal-row">
+        <input type="checkbox" checked />
+        <div class="title-cell">
+          <div class="title">Docs: ADR for audit-log retention policy</div>
+          <div class="why">90-day retention agreed earlier; document the call.</div>
+        </div>
+        <select class="pick"><option>DogApp (DA)</option></select>
+        <select class="pick"><option>contrib/adr</option></select>
+        <select class="pick"><option>single</option></select>
+        <div class="row-actions"><button class="icon-btn" title="Edit">✎</button></div>
+      </div>
+    </div>
+
+    <div class="commit-bar">
+      <div class="summary">
+        <strong>6 tasks selected</strong> — will be created with
+        <code style="font-size: 11px;">parentTaskId=DA-022P</code>.
+        1 unchecked (Alerting) is dropped.
+      </div>
+      <button class="btn ghost">Re-plan</button>
+      <button class="btn">✓ Create 6 tasks</button>
+    </div>
+  </div>
+
+  <!-- Phase 3: after commit — planning task is "done", children visible -->
+  <div class="frame">
+    <div class="header-row">
+      <span class="breadcrumb">
+        Task Detail · <strong style="color: var(--text)">DA-022P</strong>
+        <span style="color: var(--muted)"> · planning</span>
+      </span>
+      <span class="micro-status ms-committed">committed · 6 spawned</span>
+    </div>
+
+    <div style="padding: 14px 16px;">
+      <div class="muted" style="font-size: 12px; margin-bottom: 8px;">
+        Spawns appear in the Spawned-from panel below. The planning task
+        is marked done and lineage is queryable from each child.
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <button class="btn ghost" style="font-size: 11px; padding: 3px 8px;">DA-023F →</button>
+        <button class="btn ghost" style="font-size: 11px; padding: 3px 8px;">DA-024F →</button>
+        <button class="btn ghost" style="font-size: 11px; padding: 3px 8px;">DA-025F →</button>
+        <button class="btn ghost" style="font-size: 11px; padding: 3px 8px;">DA-026F →</button>
+        <button class="btn ghost" style="font-size: 11px; padding: 3px 8px;">DA-027F →</button>
+        <button class="btn ghost" style="font-size: 11px; padding: 3px 8px;">DA-028F →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Three states the page cycles through.</strong>
+    <span class="muted">
+      <strong>proposing</strong> (planner is generating) →
+      <strong>proposed</strong> (review the list) →
+      <strong>committed</strong> (children created; planner task is done).
+      The micro-status pill in the corner is the user's primary cue.
+      A "Re-plan" button on the proposed view kicks the planner with the
+      user's edits as feedback.
+    </span>
+  </div>
+
+  <div class="note">
+    <strong>Open questions for build.</strong>
+    <span class="muted">
+      (a) Schema: new <code>TaskKind="plan"</code>, or just a workflow that emits
+      <code>mc.proposeTasks([...])</code> as a custom effect kind? (Latter is
+      cheaper; reuses the existing custom-effect surface.)<br>
+      (b) Inline edit: title only, or full row (title + why + project + workflow + model)?<br>
+      (c) Re-plan: send the user's edits as feedback to the planner, or restart from scratch?<br>
+      (d) Confirm modal before bulk-spawn? (COMP-RESEARCH §S6 said yes for safety.)
+    </span>
+  </div>
+
+</div>
+</body>
+</html>

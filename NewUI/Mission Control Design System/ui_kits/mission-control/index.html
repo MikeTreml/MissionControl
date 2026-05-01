@@ -1,0 +1,1229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mission Control — UI Kit v2</title>
+<link rel="stylesheet" href="shell.css?v=2">
+<style>
+  /* Belt-and-suspenders: ensure [hidden] always wins regardless of CSS load state. */
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ── Surface tabs ──────────────────────────────────────────────── -->
+<nav class="surface-tabs" role="tablist" aria-label="Primary surfaces">
+  <button class="surface-tab" role="tab" data-surface="board"   aria-selected="true">Board <span class="tag">/</span></button>
+  <button class="surface-tab" role="tab" data-surface="detail"  aria-selected="false">Task Detail <span class="tag">/task/ALGD-0143</span></button>
+  <button class="surface-tab" role="tab" data-surface="library" aria-selected="false">Library <span class="tag">/library</span></button>
+  <button class="surface-tab" role="tab" data-surface="drafts"  aria-selected="false">Drafts <span class="tag">/drafts</span></button>
+  <button class="surface-tab" role="tab" data-surface="project" aria-selected="false">Project <span class="tag">/project/algodelta</span></button>
+  <button class="surface-tab" role="tab" data-surface="settings" aria-selected="false">Settings <span class="tag">/settings</span></button>
+  <button class="surface-tab" role="tab" data-surface="empty"   aria-selected="false">Empty state <span class="tag">/</span></button>
+</nav>
+
+<!-- ── Context strip (always shows currently-running task) ──────── -->
+<div class="context-strip" style="--ctx-accent: var(--proj-iris)">
+  <span class="pulse"></span>
+  <span class="tid">ALGD-0143</span>
+  <span class="summary">Reproduce CI failure on hyper-param sweep — step 4/7, running pytest -k sweep</span>
+  <span class="step">opus-4.1</span>
+  <span class="elapsed">0:48</span>
+  <button class="open-btn">Open →</button>
+</div>
+
+<div class="app-shell has-context" style="--active-accent: var(--proj-iris)">
+
+  <!-- ── Sidebar (shared) ───────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <div class="demo-banner">
+      <b>Demo data</b>
+      <div class="muted2" style="margin-top:2px">Press <code style="font-family:var(--font-mono);font-size:11px">⌘N</code> to add a project.</div>
+    </div>
+
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:0 4px;">
+        <div class="section-label" style="margin:0">Projects · 4</div>
+        <button class="btn ghost icon" title="New project" style="padding:2px 6px;font-size:14px;">+</button>
+      </div>
+      <div class="proj-list">
+        <div class="proj-row active" style="--proj-accent: var(--proj-iris)">
+          <div class="dot"></div>
+          <div class="name">algodelta</div>
+          <div class="count">12</div>
+        </div>
+        <div class="proj-row" style="--proj-accent: var(--proj-clay)">
+          <div class="dot"></div>
+          <div class="name">briefcase-rewrite</div>
+          <div class="count">5</div>
+        </div>
+        <div class="proj-row" style="--proj-accent: var(--proj-pine)">
+          <div class="dot"></div>
+          <div class="name">cirrus-ingest</div>
+          <div class="count">8</div>
+        </div>
+        <div class="proj-row" style="--proj-accent: var(--proj-bronze)">
+          <div class="dot"></div>
+          <div class="name">demeter</div>
+          <div class="count">2</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Workspace</div>
+      <div class="nav-list">
+        <div class="nav-item active"><span class="glyph">▤</span>Board <span class="badge">27</span></div>
+        <div class="nav-item"><span class="glyph">≡</span>Drafts <span class="badge">3</span></div>
+        <div class="nav-item"><span class="glyph">◫</span>Library</div>
+        <div class="nav-item"><span class="glyph">⟳</span>Run history</div>
+        <div class="nav-item"><span class="glyph">⌥</span>Hand-offs <span class="badge">1</span></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">System</div>
+      <div class="nav-list">
+        <div class="nav-item"><span class="glyph">◐</span>Models</div>
+        <div class="nav-item"><span class="glyph">⌖</span>Agents</div>
+        <div class="nav-item"><span class="glyph">⚙</span>Settings</div>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;padding:8px 6px;display:flex;gap:8px;align-items:center;">
+      <div class="avatar">MT</div>
+      <div style="display:flex;flex-direction:column;line-height:1.3;min-width:0;">
+        <div style="font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Michael Treml</div>
+        <div style="font-size:11px;color:var(--muted);">2 agents running</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main column ────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- BOARD topbar -->
+    <div class="topbar" data-surface-content="board">
+      <div class="crumbs">
+        <span>Workspace</span>
+        <span class="sep">/</span>
+        <span class="now">algodelta</span>
+        <span class="sep">/</span>
+        <span>Board</span>
+      </div>
+      <div class="actions">
+        <div class="search">
+          <span class="glyph">⌕</span>
+          <span>Search tasks</span>
+          <span class="kbd">⌘K</span>
+        </div>
+        <button class="btn ghost icon" title="Filter">⚲</button>
+        <button class="btn primary">+ New task</button>
+      </div>
+    </div>
+
+    <!-- DETAIL topbar -->
+    <div class="topbar" data-surface-content="detail" hidden>
+      <div class="crumbs">
+        <span>algodelta</span>
+        <span class="sep">/</span>
+        <span>Board</span>
+        <span class="sep">/</span>
+        <span class="now"><code style="font-family:var(--font-mono);color:var(--proj-iris)">ALGD-0143</code></span>
+      </div>
+      <div class="actions">
+        <button class="btn ghost">← Back</button>
+        <button class="btn ghost">Pause run</button>
+        <button class="btn">Hand off</button>
+        <button class="btn primary">Approve →</button>
+      </div>
+    </div>
+
+    <!-- LIBRARY topbar -->
+    <div class="topbar" data-surface-content="library" hidden>
+      <div class="crumbs">
+        <span>Workspace</span>
+        <span class="sep">/</span>
+        <span class="now">Library</span>
+      </div>
+      <div class="actions">
+        <div class="search">
+          <span class="glyph">⌕</span>
+          <span>Search workflows, agents, models</span>
+          <span class="kbd">⌘K</span>
+        </div>
+        <button class="btn primary">+ New workflow</button>
+      </div>
+    </div>
+
+    <!-- DRAFTS topbar -->
+    <div class="topbar" data-surface-content="drafts" hidden>
+      <div class="crumbs">
+        <span>Workspace</span>
+        <span class="sep">/</span>
+        <span class="now">Drafts</span>
+        <span class="sep">·</span>
+        <span>3 ready · 1 needs review</span>
+      </div>
+      <div class="actions">
+        <button class="btn ghost">Discard all</button>
+        <button class="btn primary">Promote selected →</button>
+      </div>
+    </div>
+
+    <!-- PROJECT topbar -->
+    <div class="topbar" data-surface-content="project" hidden>
+      <div class="crumbs">
+        <span>Workspace</span>
+        <span class="sep">/</span>
+        <span class="now">algodelta</span>
+      </div>
+      <div class="actions">
+        <button class="btn ghost icon" title="Pin">⚲</button>
+        <button class="btn ghost">Settings</button>
+        <button class="btn primary">+ New task</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS topbar -->
+    <div class="topbar" data-surface-content="settings" hidden>
+      <div class="crumbs">
+        <span>Workspace</span>
+        <span class="sep">/</span>
+        <span class="now">Settings</span>
+      </div>
+      <div class="actions">
+        <button class="btn ghost">Cancel</button>
+        <button class="btn primary">Save changes</button>
+      </div>
+    </div>
+
+    <!-- EMPTY topbar -->
+    <div class="topbar" data-surface-content="empty" hidden>
+      <div class="crumbs"><span class="now">Welcome to Mission Control</span></div>
+      <div class="actions">
+        <button class="btn ghost">Skip tour</button>
+      </div>
+    </div>
+
+    <!-- ── Content panes ────────────────────────────────────────── -->
+    <div class="content">
+
+      <!-- ░░ BOARD ░░ -->
+      <section data-surface-content="board">
+        <div class="card-grid" style="grid-template-columns: repeat(4, minmax(0,1fr)); margin-bottom:18px;">
+          <div class="kpi-card">
+            <div class="label">In progress</div>
+            <div class="value">7</div>
+            <div class="delta up">+2 today</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Awaiting review</div>
+            <div class="value">3</div>
+            <div class="delta">unchanged</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Avg. turnaround</div>
+            <div class="value">14m</div>
+            <div class="delta up">−6m vs. last week</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Tokens · 24h</div>
+            <div class="value">812k</div>
+            <div class="delta down">+18% vs. avg</div>
+          </div>
+        </div>
+
+        <div class="lanes">
+
+          <!-- Drafting -->
+          <div class="lane">
+            <div class="lane-head">
+              <span class="title">Drafting</span>
+              <span class="count">2</span>
+              <button class="add" title="Add task">+</button>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-iris)">
+              <div class="head">
+                <span class="tid"><span class="pfx">ALGD</span>-0151</span>
+                <span class="pill neutral" style="margin-left:auto">3 sub-tasks</span>
+              </div>
+              <div class="summary">Backfill volatility model with Q3 options chain</div>
+              <div class="step">drafting plan · 2/5 steps</div>
+              <div class="row">
+                <div class="agent">claude-sonnet-4.5</div>
+                <span class="spacer"></span>
+                <span>2m ago</span>
+              </div>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-iris)">
+              <div class="head">
+                <span class="tid"><span class="pfx">ALGD</span>-0152</span>
+              </div>
+              <div class="summary">Audit feature-store SLO drift</div>
+              <div class="row">
+                <span>queued</span>
+                <span class="spacer"></span>
+                <span>just now</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Running -->
+          <div class="lane">
+            <div class="lane-head">
+              <span class="title">Running</span>
+              <span class="count">3</span>
+              <button class="add" title="Add task">+</button>
+            </div>
+            <div class="task bleed running" data-proj style="--task-accent: var(--proj-iris)">
+              <div class="head">
+                <span class="tid"><span class="pfx">ALGD</span>-0143</span>
+                <span class="pill info" style="margin-left:auto"><span class="dot"></span>running</span>
+              </div>
+              <div class="summary">Reproduce CI failure on hyper-param sweep</div>
+              <div class="step">step 4/7 · running pytest -k sweep</div>
+              <div class="row">
+                <div class="agent">claude-opus-4.1</div>
+                <span class="spacer"></span>
+                <span>0:48 elapsed</span>
+              </div>
+            </div>
+            <div class="task bleed running" data-proj style="--task-accent: var(--proj-clay)">
+              <div class="head">
+                <span class="tid"><span class="pfx">BRIE</span>-0021</span>
+                <span class="pill info" style="margin-left:auto"><span class="dot"></span>running</span>
+              </div>
+              <div class="summary">Convert legal brief intake to structured JSON</div>
+              <div class="step">step 2/4 · scanning document</div>
+              <div class="row">
+                <div class="agent">gpt-5</div>
+                <span class="spacer"></span>
+                <span>0:12 elapsed</span>
+              </div>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-pine)">
+              <div class="head">
+                <span class="tid"><span class="pfx">CIRR</span>-0088</span>
+                <span class="pill warning" style="margin-left:auto">paused</span>
+              </div>
+              <div class="summary">Add S3 retry-with-backoff to ingest worker</div>
+              <div class="step">paused · awaiting key rotation</div>
+              <div class="row">
+                <div class="agent">sonnet-4.5</div>
+                <span class="spacer"></span>
+                <span>4h ago</span>
+              </div>
+            </div>
+            <div class="lane-history">
+              <div class="label">Recent runs · last 24h</div>
+              <div class="strip">
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>ALGD-0142</div><div class="when">11m</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>ALGD-0141</div><div class="when">38m</div></div>
+                <div class="chip" data-state="failed"><div class="top"><span class="dot"></span>BRIE-0020</div><div class="when">2h</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>CIRR-0087</div><div class="when">3h</div></div>
+                <div class="chip" data-state="paused"><div class="top"><span class="dot"></span>ALGD-0137</div><div class="when">5h</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>DMTR-0003</div><div class="when">8h</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>ALGD-0136</div><div class="when">11h</div></div>
+                <div class="chip" data-state="failed"><div class="top"><span class="dot"></span>CIRR-0085</div><div class="when">14h</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review -->
+          <div class="lane">
+            <div class="lane-head">
+              <span class="title">Review</span>
+              <span class="count">3</span>
+              <button class="add" title="Add task">+</button>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-iris)">
+              <div class="hover-actions">
+                <button title="Approve">✓</button>
+                <button title="Reject">✕</button>
+                <button title="More">⋯</button>
+              </div>
+              <div class="head">
+                <span class="tid"><span class="pfx">ALGD</span>-0140</span>
+                <span class="pill warning" style="margin-left:auto">awaiting review</span>
+              </div>
+              <div class="summary">Migrate options chain loader to Polars</div>
+              <div class="step">12 files changed · +318 / −204</div>
+              <div class="row">
+                <div class="agent">opus-4.1</div>
+                <span class="spacer"></span>
+                <span>22m ago</span>
+              </div>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-clay)">
+              <div class="head">
+                <span class="tid"><span class="pfx">BRIE</span>-0019</span>
+                <span class="pill warning" style="margin-left:auto">awaiting review</span>
+              </div>
+              <div class="summary">Draft renewal language for Section 4(b)</div>
+              <div class="step">draft attached · 2 alternatives</div>
+              <div class="row">
+                <div class="agent">gpt-5</div>
+                <span class="spacer"></span>
+                <span>1h ago</span>
+              </div>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-bronze)">
+              <div class="head">
+                <span class="tid"><span class="pfx">DMTR</span>-0004</span>
+                <span class="pill warning" style="margin-left:auto">awaiting review</span>
+              </div>
+              <div class="summary">Re-rank crop-yield priors using 2024 NOAA snapshot</div>
+              <div class="row">
+                <div class="agent">sonnet-4.5</div>
+                <span class="spacer"></span>
+                <span>3h ago</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blocked -->
+          <div class="lane">
+            <div class="lane-head">
+              <span class="title">Blocked</span>
+              <span class="count">1</span>
+              <button class="add" title="Add task">+</button>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-pine)">
+              <div class="head">
+                <span class="tid"><span class="pfx">CIRR</span>-0084</span>
+                <span class="pill danger" style="margin-left:auto">blocked</span>
+              </div>
+              <div class="summary">Provision new IAM role for staging ingest</div>
+              <div class="step">waiting on @michael · 2 days</div>
+              <div class="row">
+                <span>—</span>
+                <span class="spacer"></span>
+                <span>2d ago</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Done -->
+          <div class="lane">
+            <div class="lane-head">
+              <span class="title">Done</span>
+              <span class="count">28</span>
+              <button class="add" title="Add task">+</button>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-iris)">
+              <div class="head">
+                <span class="tid"><span class="pfx">ALGD</span>-0139</span>
+                <span class="pill success" style="margin-left:auto">merged</span>
+              </div>
+              <div class="summary">Switch backtest seed to deterministic mode</div>
+              <div class="row">
+                <span>shipped to main</span>
+                <span class="spacer"></span>
+                <span>11h ago</span>
+              </div>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-iris)">
+              <div class="head">
+                <span class="tid"><span class="pfx">ALGD</span>-0138</span>
+                <span class="pill success" style="margin-left:auto">merged</span>
+              </div>
+              <div class="summary">Cache greeks per (expiry, strike) tuple</div>
+              <div class="row">
+                <span>2.4× speedup</span>
+                <span class="spacer"></span>
+                <span>1d ago</span>
+              </div>
+            </div>
+            <div class="task bleed" data-proj style="--task-accent: var(--proj-clay)">
+              <div class="head">
+                <span class="tid"><span class="pfx">BRIE</span>-0017</span>
+                <span class="pill success" style="margin-left:auto">delivered</span>
+              </div>
+              <div class="summary">Summarize 14 amicus filings for Patel v. Reyes</div>
+              <div class="row">
+                <span>shared with @kara</span>
+                <span class="spacer"></span>
+                <span>1d ago</span>
+              </div>
+            </div>
+            <div class="lane-history">
+              <div class="label">Shipped · last 7d</div>
+              <div class="strip">
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>ALGD-0137</div><div class="when">2d</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>ALGD-0136</div><div class="when">2d</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>BRIE-0016</div><div class="when">3d</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>ALGD-0134</div><div class="when">3d</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>CIRR-0079</div><div class="when">4d</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>ALGD-0131</div><div class="when">5d</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>DMTR-0002</div><div class="when">6d</div></div>
+                <div class="chip" data-state="success"><div class="top"><span class="dot"></span>BRIE-0014</div><div class="when">7d</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Archived -->
+          <div class="lane">
+            <div class="lane-head">
+              <span class="title">Archived</span>
+              <span class="count">112</span>
+            </div>
+            <div class="empty-state" style="padding:32px 12px">
+              <div class="glyph">▤</div>
+              <div class="body" style="font-size:12px">All older runs live here. Search to find one.</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ░░ TASK DETAIL ░░ -->
+      <section data-surface-content="detail" hidden style="--task-accent: var(--proj-algodelta);">
+
+        <!-- ── Hero block ─────────────────────────────────────────── -->
+        <div class="task-hero">
+          <div class="lhs">
+            <div class="id-line">
+              <div class="id"><span class="pfx">ALGD</span>-0143</div>
+              <span class="pill info"><span class="dot"></span>running</span>
+              <span class="pill neutral">opus-4.1</span>
+              <span class="pill neutral">algodelta · main</span>
+            </div>
+            <h1>Reproduce the CI failure on the hyper-param sweep with the exact seed</h1>
+            <div class="meta-line">
+              <span>Filed by <strong style="color:var(--text)">michael</strong></span>
+              <span>·</span>
+              <span>14:22 · 0:48 elapsed</span>
+              <span>·</span>
+              <span>Sandbox <code>algd-7f3a</code></span>
+            </div>
+
+            <!-- Plan progress (clickable nodes) -->
+            <div class="plan-progress" role="tablist" aria-label="Plan steps">
+              <div class="step done" role="tab"><div class="node">✓</div><div class="label">Plan</div></div>
+              <div class="step done" role="tab"><div class="node">✓</div><div class="label">Checkout</div></div>
+              <div class="step done" role="tab"><div class="node">✓</div><div class="label">Replay</div></div>
+              <div class="step active" role="tab" aria-selected="true"><div class="node">4</div><div class="label">Diagnose</div></div>
+              <div class="step" role="tab"><div class="node">5</div><div class="label">Fix</div></div>
+              <div class="step" role="tab"><div class="node">6</div><div class="label">Verify</div></div>
+              <div class="step" role="tab"><div class="node">7</div><div class="label">Hand-off</div></div>
+            </div>
+          </div>
+
+          <div class="who-stack">
+            <div class="avatar bot" title="opus-4.1">α</div>
+            <div class="avatar" title="michael">MT</div>
+          </div>
+        </div>
+
+        <!-- ── Workshop 3-col layout ─────────────────────────────── -->
+        <div class="workshop">
+
+          <!-- Plan rail -->
+          <aside class="plan-rail" aria-label="Plan steps">
+            <h4>Plan · 4/7</h4>
+            <div class="rail-step done">
+              <div class="num">✓</div>
+              <div>
+                <div class="text">Pull the failed run's seed and config from CI artifacts</div>
+                <div class="meta">14:22 · 8s</div>
+              </div>
+            </div>
+            <div class="rail-step done">
+              <div class="num">✓</div>
+              <div>
+                <div class="text">Check out failing commit <code>9f3ac1e</code></div>
+                <div class="meta">14:23 · 4s</div>
+              </div>
+            </div>
+            <div class="rail-step done">
+              <div class="num">✓</div>
+              <div>
+                <div class="text">Replay <code>pytest -k sweep</code> with seed 42</div>
+                <div class="meta">14:24 · 38s</div>
+              </div>
+            </div>
+            <div class="rail-step active">
+              <div class="num">4</div>
+              <div>
+                <div class="text">Diff metric ledger against last-green run</div>
+                <div class="meta">14:25 · running</div>
+              </div>
+            </div>
+            <div class="rail-step">
+              <div class="num">5</div>
+              <div>
+                <div class="text">Pin optuna sampler RNG to v3 behaviour</div>
+                <div class="meta">queued</div>
+              </div>
+            </div>
+            <div class="rail-step">
+              <div class="num">6</div>
+              <div>
+                <div class="text">Re-run sweep, confirm green</div>
+                <div class="meta">queued</div>
+              </div>
+            </div>
+            <div class="rail-step">
+              <div class="num">7</div>
+              <div>
+                <div class="text">Open PR with runbook entry</div>
+                <div class="meta">queued</div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main transcript / workshop -->
+          <div class="workshop-main">
+
+            <!-- User filing turn -->
+            <div class="turn" data-role="user">
+              <div class="head"><span class="who">michael</span><span>· 14:22</span></div>
+              <div class="body">CI sweep just failed on <code>main</code>. Reproduce it locally with the exact seed and tell me what's different.</div>
+            </div>
+
+            <!-- Agent plan turn -->
+            <div class="turn" data-role="agent">
+              <div class="head"><span class="who">opus-4.1</span><span>· 14:22</span><span style="margin-left:auto">step 1/7 · plan</span></div>
+              <div class="body">I'll pull the failed run's seed and config, replay it under <code>pytest -k sweep</code>, then diff the resulting metric ledger against last green run on main. If the divergence reproduces, I'll bisect the dependency graph.</div>
+            </div>
+
+            <!-- Tool pane: git -->
+            <div class="tool-pane">
+              <div class="pane-head">
+                <span class="tool">git.checkout</span>
+                <span class="when">· 14:23:11</span>
+                <span class="exit ok">exit 0</span>
+              </div>
+              <div class="pane-body">
+                <div class="ln">1</div><div class="row cmd">$ git fetch origin && git checkout 9f3ac1e</div>
+                <div class="ln">2</div><div class="row dim">From github.com:algodelta/core</div>
+                <div class="ln">3</div><div class="row dim">   8a1b2c3..9f3ac1e  main       -&gt; origin/main</div>
+                <div class="ln">4</div><div class="row">HEAD is now at 9f3ac1e sweep: bump optuna to 4.0.1</div>
+              </div>
+            </div>
+
+            <!-- Tool pane: pytest (failure) -->
+            <div class="tool-pane">
+              <div class="pane-head">
+                <span class="tool">shell.run</span>
+                <span class="when">· 14:24:02</span>
+                <span class="exit fail">exit 1</span>
+              </div>
+              <div class="pane-body">
+                <div class="ln">1</div><div class="row cmd">$ pytest -k sweep --seed 42 -q</div>
+                <div class="ln">2</div><div class="row">............F.....                                            [ 88%]</div>
+                <div class="ln">3</div><div class="row dim">═════════════════════ FAILURES ═════════════════════</div>
+                <div class="ln">4</div><div class="row fail">FAILED tests/sweep_test.py::test_sweep_converges[0.001-adam]</div>
+                <div class="ln">5</div><div class="row dim">  AssertionError: loss 0.412 ≠ 0.391 (delta +5.3%)</div>
+                <div class="ln">6</div><div class="row dim">  +    where 0.412 = ledger.read('final_loss')</div>
+                <div class="ln">7</div><div class="row warn">═════ 1 failed, 17 passed in 38.2s ═════</div>
+              </div>
+            </div>
+
+            <!-- Agent diagnosis turn -->
+            <div class="turn" data-role="agent">
+              <div class="head"><span class="who">opus-4.1</span><span>· 14:25</span><span style="margin-left:auto">step 4/7 · diagnose</span></div>
+              <div class="body">Reproduced. The failing case is <code>lr=0.001, optimizer=adam</code> — loss diverges from last green by ~5%. <strong>Hypothesis:</strong> the optuna 4.0.1 bump changed default sampler RNG draws, so same seed produces a different parameter draw order. Patching the sampler config now.</div>
+            </div>
+
+            <!-- Diff card: proposed fix -->
+            <div class="diff-card">
+              <div class="diff-head">
+                <span class="name">core/sweep.py</span>
+                <span class="pill info">proposed</span>
+                <span class="stats"><span class="add">+6</span><span class="del">−2</span></span>
+              </div>
+              <div class="diff-body">
+                <div class="line ctx"><div class="ln">42</div><div class="ln">42</div><div class="code">import optuna</div></div>
+                <div class="line ctx"><div class="ln">43</div><div class="ln">43</div><div class="code">from .ledger import MetricLedger</div></div>
+                <div class="line ctx"><div class="ln">44</div><div class="ln">44</div><div class="code"></div></div>
+                <div class="line ctx"><div class="ln">45</div><div class="ln">45</div><div class="code">def build_study(name: str, seed: int) -&gt; optuna.Study:</div></div>
+                <div class="line del"><div class="ln">46</div><div class="ln">  </div><div class="code">    sampler = optuna.samplers.TPESampler(seed=seed)</div></div>
+                <div class="line del"><div class="ln">47</div><div class="ln">  </div><div class="code">    return optuna.create_study(sampler=sampler)</div></div>
+                <div class="line add"><div class="ln">  </div><div class="ln">46</div><div class="code">    sampler = optuna.samplers.TPESampler(</div></div>
+                <div class="line add"><div class="ln">  </div><div class="ln">47</div><div class="code">        seed=seed,</div></div>
+                <div class="line add"><div class="ln">  </div><div class="ln">48</div><div class="code">        n_startup_trials=10,        # pin v3 behaviour</div></div>
+                <div class="line add"><div class="ln">  </div><div class="ln">49</div><div class="code">        consider_prior=True,</div></div>
+                <div class="line add"><div class="ln">  </div><div class="ln">50</div><div class="code">    )</div></div>
+                <div class="line add"><div class="ln">  </div><div class="ln">51</div><div class="code">    return optuna.create_study(sampler=sampler, study_name=name)</div></div>
+                <div class="line ctx"><div class="ln">48</div><div class="ln">52</div><div class="code"></div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Side panel -->
+          <aside class="workshop-side">
+
+            <div class="side-block">
+              <h4>Cost</h4>
+              <div class="cost-meter">
+                <div class="cost-dial" style="--pct: 42"><span class="pct">42%</span></div>
+                <div class="info">
+                  <span class="num">$0.42</span>
+                  <span class="of">of $1.00 budget</span>
+                  <span class="of" style="margin-top:6px">34,128 / 80,000 tokens</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="side-block">
+              <h4>Run</h4>
+              <dl class="kv">
+                <dt>Status</dt><dd><span class="pill info"><span class="dot"></span>running</span></dd>
+                <dt>Started</dt><dd>14:22:04</dd>
+                <dt>Elapsed</dt><dd>0:48</dd>
+                <dt>Step</dt><dd>4/7</dd>
+                <dt>Model</dt><dd>opus-4.1</dd>
+                <dt>Sandbox</dt><dd><code>algd-7f3a</code></dd>
+              </dl>
+            </div>
+
+            <div class="side-block">
+              <h4>Workspace</h4>
+              <dl class="kv">
+                <dt>Repo</dt><dd>algodelta/core</dd>
+                <dt>Branch</dt><dd>main @ <code>9f3ac1e</code></dd>
+                <dt>Triggered by</dt><dd>CI failure #2841</dd>
+              </dl>
+            </div>
+
+            <div class="side-block">
+              <h4>Files touched</h4>
+              <div class="files-list">
+                <div class="file-row">
+                  <span class="glyph">M</span>
+                  <span class="name">tests/sweep_test.py</span>
+                  <span class="size">+24/−18</span>
+                </div>
+                <div class="file-row">
+                  <span class="glyph">M</span>
+                  <span class="name">core/sweep.py</span>
+                  <span class="size">+6/−2</span>
+                </div>
+                <div class="file-row">
+                  <span class="glyph">+</span>
+                  <span class="name">docs/runbook-rng.md</span>
+                  <span class="size">+38</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="side-block">
+              <h4>Activity</h4>
+              <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:var(--fs-xs);color:var(--text-2)">
+                <li>· Plan accepted by <strong style="color:var(--text)">michael</strong> · 14:22</li>
+                <li>· Sandbox provisioned · 14:22</li>
+                <li>· 3 tool calls completed</li>
+                <li>· 0 hand-offs needed</li>
+              </ul>
+            </div>
+
+          </aside>
+        </div>
+
+        <!-- ── Sticky approval footer ──────────────────────────── -->
+        <div class="approval-bar">
+          <div class="label">
+            <b>opus-4.1</b> wants to apply the patch to <code>core/sweep.py</code> and re-run the sweep.
+          </div>
+          <div class="actions">
+            <button class="btn ghost">Reject</button>
+            <button class="btn ghost">Hand-off to engineer</button>
+            <button class="btn primary">Approve &amp; continue</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ░░ LIBRARY ░░ -->
+      <section data-surface-content="library" hidden>
+        <div class="subnav">
+          <div class="tab active">Workflows <span class="badge">14</span></div>
+          <div class="tab">Agents <span class="badge">7</span></div>
+          <div class="tab">Models <span class="badge">5</span></div>
+          <div class="tab">Hand-offs <span class="badge">3</span></div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:280px">Workflow</th>
+              <th style="width:130px">Project</th>
+              <th>Agents</th>
+              <th style="width:100px">Avg. cost</th>
+              <th style="width:100px">Runs · 7d</th>
+              <th style="width:80px">Last</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="name">Reproduce CI failure</div>
+                <div class="desc">Pull seed, replay locally, diff metric ledger.</div>
+              </td>
+              <td><span class="pill neutral" style="background:color-mix(in oklch, var(--proj-iris) 18%, var(--canvas));color:var(--proj-iris)">algodelta</span></td>
+              <td><code>opus-4.1</code> → <code>shell</code></td>
+              <td>$0.38</td>
+              <td>14</td>
+              <td>22m ago</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="name">Brief intake → JSON</div>
+                <div class="desc">OCR PDF, extract parties + dates + claims, normalize to schema v3.</div>
+              </td>
+              <td><span class="pill neutral" style="background:color-mix(in oklch, var(--proj-clay) 18%, var(--canvas));color:var(--proj-clay)">briefcase</span></td>
+              <td><code>gpt-5</code> → <code>jsonschema</code></td>
+              <td>$0.12</td>
+              <td>61</td>
+              <td>5m ago</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="name">S3 ingest worker patch</div>
+                <div class="desc">Detect region/timeout/credential failures and propose retry policy.</div>
+              </td>
+              <td><span class="pill neutral" style="background:color-mix(in oklch, var(--proj-pine) 18%, var(--canvas));color:var(--proj-pine)">cirrus</span></td>
+              <td><code>sonnet-4.5</code> → <code>aws.iam</code></td>
+              <td>$0.21</td>
+              <td>9</td>
+              <td>4h ago</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="name">Crop-yield re-rank</div>
+                <div class="desc">Apply NOAA priors against current model outputs; explain shifts.</div>
+              </td>
+              <td><span class="pill neutral" style="background:color-mix(in oklch, var(--proj-bronze) 18%, var(--canvas));color:var(--proj-bronze)">demeter</span></td>
+              <td><code>sonnet-4.5</code></td>
+              <td>$0.08</td>
+              <td>3</td>
+              <td>3h ago</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="name">Renewal language draft</div>
+                <div class="desc">Generate two alternatives + risk commentary for any clause.</div>
+              </td>
+              <td><span class="pill neutral" style="background:color-mix(in oklch, var(--proj-clay) 18%, var(--canvas));color:var(--proj-clay)">briefcase</span></td>
+              <td><code>gpt-5</code></td>
+              <td>$0.18</td>
+              <td>22</td>
+              <td>1h ago</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="name">Backtest seed audit</div>
+                <div class="desc">Walk every backtest in last 30d; flag non-deterministic runs.</div>
+              </td>
+              <td><span class="pill neutral" style="background:color-mix(in oklch, var(--proj-iris) 18%, var(--canvas));color:var(--proj-iris)">algodelta</span></td>
+              <td><code>opus-4.1</code> → <code>shell</code></td>
+              <td>$0.55</td>
+              <td>2</td>
+              <td>1d ago</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ░░ DRAFTS ░░ -->
+      <section data-surface-content="drafts" hidden>
+        <p style="color:var(--text-2);margin-bottom:14px;max-width:640px;font-size:13px;">
+          Drafts are tasks an agent generated but hasn't started yet. Review the plan, edit the brief, then promote — or discard.
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:32px"><input type="checkbox"></th>
+              <th>Title &amp; brief</th>
+              <th style="width:120px">Project</th>
+              <th style="width:160px">Workflow</th>
+              <th style="width:100px">Model</th>
+              <th style="width:100px">Created</th>
+              <th style="width:140px;text-align:right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" checked></td>
+              <td>
+                <div class="name">Backfill volatility model with Q3 options chain</div>
+                <div class="desc">Pull <code>options_q3_2025.parquet</code>, replay backtest, write metric ledger to <code>artifacts/</code>.</div>
+              </td>
+              <td><span style="color:var(--proj-iris)">algodelta</span></td>
+              <td>Backtest seed audit</td>
+              <td><code>opus-4.1</code></td>
+              <td>2m ago</td>
+              <td style="text-align:right">
+                <button class="btn ghost">Edit</button>
+                <button class="btn primary">Promote</button>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" checked></td>
+              <td>
+                <div class="name">Audit feature-store SLO drift</div>
+                <div class="desc">Compute p50/p95 read latency over last 14d; flag any feature group above 200ms.</div>
+              </td>
+              <td><span style="color:var(--proj-iris)">algodelta</span></td>
+              <td>—</td>
+              <td><code>sonnet-4.5</code></td>
+              <td>just now</td>
+              <td style="text-align:right">
+                <button class="btn ghost">Edit</button>
+                <button class="btn primary">Promote</button>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>
+                <div class="name">Renewal language for Section 4(b) — Reyes contract</div>
+                <div class="desc">Two alternatives: conservative (mirror prior term) and assertive (cap penalties).</div>
+              </td>
+              <td><span style="color:var(--proj-clay)">briefcase</span></td>
+              <td>Renewal language draft</td>
+              <td><code>gpt-5</code></td>
+              <td>14m ago</td>
+              <td style="text-align:right">
+                <button class="btn ghost">Edit</button>
+                <button class="btn primary">Promote</button>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>
+                <div class="name"><span class="pill warning" style="margin-right:6px">needs review</span>Provision IAM role for staging ingest</div>
+                <div class="desc">Auto-generated from blocked task <code>CIRR-0084</code>. Confirm scope before promoting.</div>
+              </td>
+              <td><span style="color:var(--proj-pine)">cirrus</span></td>
+              <td>S3 ingest worker patch</td>
+              <td><code>sonnet-4.5</code></td>
+              <td>1h ago</td>
+              <td style="text-align:right">
+                <button class="btn ghost">Edit</button>
+                <button class="btn primary">Promote</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ░░ PROJECT DETAIL ░░ -->
+      <section data-surface-content="project" hidden>
+        <div class="page-head">
+          <div class="left">
+            <h1 style="display:flex;align-items:center;gap:10px;">
+              <span style="display:inline-block;width:12px;height:12px;border-radius:999px;background:var(--proj-iris)"></span>
+              algodelta
+            </h1>
+            <div class="subline">
+              <span>Quant trading research workspace</span>
+              <span class="pill neutral">12 active</span>
+              <span class="pill success">healthy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-grid" style="grid-template-columns: repeat(4, minmax(0,1fr)); margin: 18px 0">
+          <div class="kpi-card">
+            <div class="label">Tasks · 30d</div>
+            <div class="value">142</div>
+            <div class="delta up">+24 vs. prior</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Approval rate</div>
+            <div class="value">87%</div>
+            <div class="delta up">+4pp</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Avg. cost / task</div>
+            <div class="value">$0.41</div>
+            <div class="delta down">+$0.06</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Sandbox time</div>
+            <div class="value">38h</div>
+            <div class="delta">last 7 days</div>
+          </div>
+        </div>
+
+        <div class="subnav">
+          <div class="tab active">Activity</div>
+          <div class="tab">Workflows <span class="badge">6</span></div>
+          <div class="tab">Members <span class="badge">3</span></div>
+          <div class="tab">Settings</div>
+        </div>
+
+        <div style="display:grid;gap:8px">
+          <div class="card" style="display:grid;grid-template-columns:160px 1fr auto;gap:14px;align-items:center">
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">14:25</span>
+            <span><b>opus-4.1</b> reproduced CI failure on <code style="font-family:var(--font-mono);font-size:12px;color:var(--proj-iris)">ALGD-0143</code></span>
+            <span class="pill info"><span class="dot"></span>running</span>
+          </div>
+          <div class="card" style="display:grid;grid-template-columns:160px 1fr auto;gap:14px;align-items:center">
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">14:03</span>
+            <span><b>michael</b> approved <code style="font-family:var(--font-mono);font-size:12px;color:var(--proj-iris)">ALGD-0140</code> "Migrate options chain loader to Polars"</span>
+            <span class="pill success">merged</span>
+          </div>
+          <div class="card" style="display:grid;grid-template-columns:160px 1fr auto;gap:14px;align-items:center">
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">13:48</span>
+            <span><b>sonnet-4.5</b> drafted plan for "Audit feature-store SLO drift"</span>
+            <span class="pill neutral">draft</span>
+          </div>
+          <div class="card" style="display:grid;grid-template-columns:160px 1fr auto;gap:14px;align-items:center">
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">11:14</span>
+            <span><b>opus-4.1</b> shipped <code style="font-family:var(--font-mono);font-size:12px;color:var(--proj-iris)">ALGD-0139</code> "Switch backtest seed to deterministic mode"</span>
+            <span class="pill success">merged</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ░░ SETTINGS ░░ -->
+      <section data-surface-content="settings" hidden>
+        <div class="settings-grid">
+          <nav class="settings-nav">
+            <div class="nav-item active"><span class="glyph">◐</span>Models</div>
+            <div class="nav-item"><span class="glyph">⌖</span>Agents</div>
+            <div class="nav-item"><span class="glyph">⚙</span>Sandbox</div>
+            <div class="nav-item"><span class="glyph">⌥</span>Hand-offs</div>
+            <div class="nav-item"><span class="glyph">⚲</span>Notifications</div>
+            <div class="nav-item"><span class="glyph">⌗</span>Keyboard</div>
+            <div class="nav-item"><span class="glyph">▤</span>Appearance</div>
+          </nav>
+
+          <div>
+            <div class="settings-section">
+              <h3>Models</h3>
+              <p class="desc">Connect provider keys. Tasks pick the cheapest model that meets a workflow's minimum capability.</p>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">Anthropic</div>
+                  <div class="help-text">claude-opus-4.1, sonnet-4.5, haiku-4.5</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="pill success"><span class="dot"></span>connected</span>
+                  <button class="btn ghost">Manage</button>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">OpenAI</div>
+                  <div class="help-text">gpt-5, gpt-5-mini</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="pill success"><span class="dot"></span>connected</span>
+                  <button class="btn ghost">Manage</button>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">Local (Ollama)</div>
+                  <div class="help-text">Drafting + summarization only — no shell or net access.</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="pill neutral">disconnected</span>
+                  <button class="btn">Connect</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Sandbox</h3>
+              <p class="desc">Where agents execute shell, network, and write operations.</p>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">Default sandbox</div>
+                  <div class="help-text">Fresh container per task; recycled after 24h idle.</div>
+                </div>
+                <select class="input" style="width:200px">
+                  <option>Docker (local)</option>
+                  <option>Firecracker (remote)</option>
+                </select>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">Allow network egress</div>
+                  <div class="help-text">If off, agents can only reach pre-approved hosts.</div>
+                </div>
+                <div class="toggle on"></div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">Auto-approve trivial diffs</div>
+                  <div class="help-text">Lint/format-only changes ship without review.</div>
+                </div>
+                <div class="toggle"></div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">Max sandbox lifetime</div>
+                  <div class="help-text">Hard kill after this duration regardless of state.</div>
+                </div>
+                <input class="input mono" value="24h" style="width:120px">
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Hand-off</h3>
+              <p class="desc">When an agent gets stuck, who gets pinged.</p>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">Default reviewer</div>
+                  <div class="help-text">Used when a workflow doesn't specify one.</div>
+                </div>
+                <select class="input" style="width:200px">
+                  <option>Michael Treml (you)</option>
+                  <option>Round-robin team</option>
+                </select>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <div class="label-text">Hand-off after</div>
+                  <div class="help-text">If a step exceeds this, hand off to a human.</div>
+                </div>
+                <input class="input mono" value="3 retries" style="width:120px">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ░░ EMPTY ░░ -->
+      <section data-surface-content="empty" hidden>
+        <div class="empty-state" style="padding:96px 32px">
+          <div class="glyph" style="font-size:48px">▤</div>
+          <h2 style="font-size:22px">Welcome to Mission Control</h2>
+          <div class="body" style="max-width:460px;font-size:14px;line-height:1.5">
+            Mission Control runs autonomous agents on your code, your contracts, your data — across as many projects as you want, in parallel. You stay in the loop only when one needs you.
+          </div>
+          <div class="actions">
+            <button class="btn ghost">Watch 90s tour</button>
+            <button class="btn primary">+ Create your first project</button>
+          </div>
+
+          <div style="margin-top:48px;display:grid;grid-template-columns:repeat(3,minmax(0,220px));gap:12px;text-align:left;max-width:720px;">
+            <div class="card" style="padding:16px">
+              <h4 style="margin-bottom:6px">1 · Connect a model</h4>
+              <p style="font-size:13px;color:var(--text-2)">Anthropic, OpenAI, or local. You can change later.</p>
+            </div>
+            <div class="card" style="padding:16px">
+              <h4 style="margin-bottom:6px">2 · Add a project</h4>
+              <p style="font-size:13px;color:var(--text-2)">Point it at a repo, folder, or just a workspace name.</p>
+            </div>
+            <div class="card" style="padding:16px">
+              <h4 style="margin-bottom:6px">3 · Hand it a task</h4>
+              <p style="font-size:13px;color:var(--text-2)">Describe what you want. The agent drafts a plan; you approve.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── Right rail (Run Activity) — visible on Board / Detail / Project -->
+  <aside class="rightbar">
+    <div class="rb-head">
+      <span class="title">Run activity</span>
+      <span class="live">live</span>
+    </div>
+    <div class="rb-feed">
+      <div class="rb-event">
+        <div class="when">14:25:08</div>
+        <div class="what"><b>opus-4.1</b> ran <code style="font-family:var(--font-mono);font-size:11px">pytest -k sweep</code></div>
+        <div class="who">ALGD-0143 · step 4/7</div>
+      </div>
+      <div class="rb-event">
+        <div class="when">14:24:46</div>
+        <div class="what"><b>opus-4.1</b> checked out <code style="font-family:var(--font-mono);font-size:11px">9f3ac1e</code></div>
+        <div class="who">ALGD-0143 · step 3/7</div>
+      </div>
+      <div class="rb-event">
+        <div class="when">14:23:12</div>
+        <div class="what"><b>gpt-5</b> finished OCR pass on Reyes-renewal-v3.pdf</div>
+        <div class="who">BRIE-0021 · step 1/4</div>
+      </div>
+      <div class="rb-event">
+        <div class="when">14:22:04</div>
+        <div class="what">michael started <code style="font-family:var(--font-mono);font-size:11px">ALGD-0143</code></div>
+        <div class="who">algodelta</div>
+      </div>
+      <div class="rb-event">
+        <div class="when">14:18:39</div>
+        <div class="what"><b>sonnet-4.5</b> drafted plan for "Audit feature-store SLO drift"</div>
+        <div class="who">ALGD-0152 · draft</div>
+      </div>
+      <div class="rb-event">
+        <div class="when">14:14:00</div>
+        <div class="what">michael approved <code style="font-family:var(--font-mono);font-size:11px">ALGD-0140</code></div>
+        <div class="who">algodelta · merged to main</div>
+      </div>
+      <div class="rb-event">
+        <div class="when">13:51:22</div>
+        <div class="what"><b>opus-4.1</b> opened PR #418 on algodelta/core</div>
+        <div class="who">ALGD-0140 · step 7/7</div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ── Floating quick-actions: timeline scrubber + inline command bar ── -->
+<div class="quick-actions">
+  <div class="qa-scrubber">
+    <span class="label">Timeline</span>
+    <div class="track">
+      <div class="fill"></div>
+      <div class="ticks">
+        <div class="tick"></div><div class="tick"></div><div class="tick"></div>
+        <div class="tick"></div><div class="tick"></div><div class="tick"></div>
+        <div class="tick"></div><div class="tick"></div>
+      </div>
+      <div class="head"></div>
+    </div>
+    <span class="now">14:25</span>
+  </div>
+  <div class="qa-cmd">
+    <span class="glyph">⌕</span>
+    <input type="text" placeholder="Tell an agent what to do…">
+    <span class="kbd">⌘K</span>
+    <button class="send" title="Send">↵</button>
+  </div>
+</div>
+
+<!-- Surface tab switching -->
+<script>
+(function () {
+  const tabs = document.querySelectorAll('.surface-tab');
+  const surfaces = ['board','detail','library','drafts','project','settings','empty'];
+  function show(name) {
+    tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.surface === name ? 'true' : 'false'));
+    document.querySelectorAll('[data-surface-content]').forEach(el => {
+      el.hidden = el.dataset.surfaceContent !== name;
+    });
+    // Right rail only relevant on board / project; Detail has its own workshop side panel
+    document.querySelector('.rightbar').hidden = !['board','project'].includes(name);
+    // Adjust grid columns when right rail is hidden
+    const shell = document.querySelector('.app-shell');
+    shell.style.gridTemplateColumns = ['board','project'].includes(name)
+      ? '264px 1fr 340px'
+      : '264px 1fr';
+  }
+  tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.surface)));
+})();
+</script>
+
+</body>
+</html>

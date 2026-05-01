@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.prow{padding:7px 9px;border-radius:8px;background:var(--raised);border:1px solid var(--border);display:grid;gap:4px;cursor:pointer}
+.prow.active{outline:1px solid var(--info)}
+.phead{display:flex;align-items:center;gap:8px;min-width:0}
+.pchip{padding:2px 6px;font-size:11px;font-weight:700;line-height:1.25;border-radius:6px;color:#0b0d12;border:1px solid;text-align:center;min-width:42px}
+.pname{font-weight:600;font-size:13px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcount{font-size:11px;font-weight:600;color:var(--info);background:rgba(96,165,250,0.12);border-radius:999px;padding:1px 6px}
+.psrc{margin-left:50px;font-size:11px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</head>
+<body><div class="card-root">
+  <div style="display:grid;gap:4px;background:var(--surface);padding:10px;border-radius:10px;border:1px solid var(--border)">
+    <div class="prow active">
+      <div class="phead"><span class="pchip" style="background:#7F77DD;border-color:#5b53b8">ALGD</span><span class="pname">algorithmic-design</span><span class="pcount">7</span><span style="font-size:13px">📁</span></div>
+      <div class="psrc">~/code/algorithmic-design · git@main</div>
+    </div>
+    <div class="prow">
+      <div class="phead"><span class="pchip" style="background:#D85A30;border-color:#9d3e1d">PIPE</span><span class="pname">pipeline-runner</span><span class="pcount">3</span></div>
+      <div class="psrc">~/code/pipeline-runner</div>
+    </div>
+    <div class="prow">
+      <div class="phead"><span class="pchip" style="background:#5DCAA5;border-color:#3a9b7a">MEM</span><span class="pname">mc-memory</span></div>
+      <div class="psrc">~/code/mc-memory</div>
+    </div>
+    <div class="prow">
+      <div class="phead"><span class="pchip" style="background:#888780;border-color:#5b5a55">D365</span><span class="pname">d365-tools</span><span class="pcount">2</span></div>
+      <div class="psrc">~/code/d365-tools</div>
+    </div>
+  </div>
+</div></body></html>

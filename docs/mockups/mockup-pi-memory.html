@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mockup — Per-project pi-memory (#11)</title>
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .layout { display: grid; gap: 16px; }
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; padding: 12px 14px; background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-pill {
+    padding: 4px 10px; border-radius: 999px; font-size: 11px;
+    border: 1px solid var(--border); cursor: pointer; background: transparent;
+    color: var(--muted);
+  }
+  .filter-pill.active { background: rgba(110,168,254,0.10); color: var(--accent); border-color: var(--accent); }
+  .memory-list { display: grid; gap: 1px; background: var(--border); }
+  .memory-row {
+    background: var(--panel); padding: 14px 16px; display: grid;
+    grid-template-columns: 90px 1fr auto; gap: 14px; align-items: start;
+  }
+  .memory-row:hover { background: var(--panel-2); }
+  .memory-type {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--muted); padding-top: 3px;
+  }
+  .memory-type.user     { color: var(--accent); }
+  .memory-type.feedback { color: var(--warn); }
+  .memory-type.project  { color: var(--good); }
+  .memory-type.reference{ color: var(--muted); }
+  .memory-body { display: grid; gap: 4px; min-width: 0; }
+  .memory-name { font-weight: 600; font-size: 13px; }
+  .memory-desc { font-size: 12px; color: var(--muted); }
+  .memory-content {
+    margin-top: 4px; padding: 8px 10px;
+    background: var(--bg); border-radius: 6px; font-size: 12px;
+    border-left: 2px solid var(--border);
+    max-height: 80px; overflow: hidden; position: relative;
+  }
+  .memory-content::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 30px; background: linear-gradient(to bottom, transparent, var(--bg));
+  }
+  .memory-actions {
+    display: flex; gap: 4px; opacity: 0.6;
+  }
+  .memory-row:hover .memory-actions { opacity: 1; }
+  .icon-btn {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); cursor: pointer; padding: 4px 8px;
+    border-radius: 4px; font-size: 12px;
+  }
+  .icon-btn:hover { background: var(--panel-2); color: var(--text); border-color: var(--border); }
+  .add-form {
+    background: var(--panel-2); padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    display: grid; gap: 10px;
+  }
+  .add-form-row { display: grid; grid-template-columns: 100px 1fr; gap: 10px; align-items: center; }
+  .add-form input, .add-form textarea, .add-form select {
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 13px;
+    width: 100%;
+  }
+  .add-form textarea { min-height: 80px; resize: vertical; font-family: var(--mono); font-size: 12px; }
+  .empty-state {
+    padding: 40px 20px; text-align: center; color: var(--muted);
+  }
+  .breadcrumb { font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="mockup-shell">
+
+  <div class="mockup-header">
+    <h1>Per-project pi-memory · UI mockup</h1>
+    <div class="meta">Active list #11 · file source: <code>~/.pi/memory-md/&lt;project&gt;/MEMORY.md</code> + per-entry files</div>
+  </div>
+
+  <div class="note">
+    <strong>What this is.</strong>
+    Memory entries (user / feedback / project / reference) that pi reads when running tasks
+    in this project. Today they live as files only; this surface lets you read, add, edit,
+    and prune them without leaving MC. Same shape as Claude Code's auto-memory, just scoped
+    to <code>&lt;project&gt;</code> instead of global.
+  </div>
+
+  <div class="frame">
+    <div class="frame-caption">
+      <span class="breadcrumb">Project Detail · DogApp (DA) · <strong style="color: var(--text)">Memory</strong></span>
+      <span class="muted">12 entries · last touched 2h ago</span>
+    </div>
+
+    <div class="toolbar">
+      <div class="filter-pills">
+        <button class="filter-pill active">All (12)</button>
+        <button class="filter-pill">User (3)</button>
+        <button class="filter-pill">Feedback (4)</button>
+        <button class="filter-pill">Project (3)</button>
+        <button class="filter-pill">Reference (2)</button>
+      </div>
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <input placeholder="Search…" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 5px 10px; border-radius: 6px; font-size: 12px; width: 200px;" />
+        <button class="btn ghost">Open folder</button>
+        <button class="btn">+ Add entry</button>
+      </div>
+    </div>
+
+    <div class="memory-list">
+
+      <div class="memory-row">
+        <span class="memory-type feedback">feedback</span>
+        <div class="memory-body">
+          <div class="memory-name">No mocked DBs in DA tests</div>
+          <div class="memory-desc">Last incident burned us; integration tests must hit real Postgres in this project</div>
+          <div class="memory-content">
+            Don't mock the database in tests. Use the testcontainer pattern.
+            <strong>Why:</strong> mocked tests passed but the prod migration failed last quarter.
+            <strong>How to apply:</strong> any new test file in <code>src/db/**</code> spins up the testcontainer.
+          </div>
+        </div>
+        <div class="memory-actions">
+          <button class="icon-btn" title="Edit">✎</button>
+          <button class="icon-btn" title="Open file">↗</button>
+          <button class="icon-btn" title="Delete">✕</button>
+        </div>
+      </div>
+
+      <div class="memory-row">
+        <span class="memory-type project">project</span>
+        <div class="memory-body">
+          <div class="memory-name">Q2 deadline freeze</div>
+          <div class="memory-desc">Merge freeze 2026-05-15 for the mobile release branch</div>
+          <div class="memory-content">
+            Merge freeze begins 2026-05-15 for the mobile release cut.
+            <strong>How to apply:</strong> flag any non-critical PR work scheduled after that date.
+          </div>
+        </div>
+        <div class="memory-actions">
+          <button class="icon-btn" title="Edit">✎</button>
+          <button class="icon-btn" title="Open file">↗</button>
+          <button class="icon-btn" title="Delete">✕</button>
+        </div>
+      </div>
+
+      <div class="memory-row">
+        <span class="memory-type user">user</span>
+        <div class="memory-body">
+          <div class="memory-name">DA stack: Go backend, React frontend</div>
+          <div class="memory-desc">Backend Go 1.22, frontend React 18 + Vite, deployed via Cloud Run</div>
+          <div class="memory-content">
+            Go 1.22 backend with sqlc + pgx. React 18 + Vite frontend, deployed via Cloud Run.
+            User is comfortable with Go internals; less familiar with the React side.
+          </div>
+        </div>
+        <div class="memory-actions">
+          <button class="icon-btn" title="Edit">✎</button>
+          <button class="icon-btn" title="Open file">↗</button>
+          <button class="icon-btn" title="Delete">✕</button>
+        </div>
+      </div>
+
+      <div class="memory-row">
+        <span class="memory-type reference">reference</span>
+        <div class="memory-body">
+          <div class="memory-name">Pipeline bugs in Linear INGEST</div>
+          <div class="memory-desc">Bugs tracked at linear.app/dogapp/team/INGEST</div>
+          <div class="memory-content">Pipeline bugs are tracked in Linear project "INGEST"</div>
+        </div>
+        <div class="memory-actions">
+          <button class="icon-btn" title="Edit">✎</button>
+          <button class="icon-btn" title="Open file">↗</button>
+          <button class="icon-btn" title="Delete">✕</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="add-form">
+      <div style="font-weight: 600; font-size: 13px;">+ Add memory entry</div>
+      <div class="add-form-row">
+        <label class="muted" style="font-size: 12px;">Type</label>
+        <select>
+          <option>user — facts about the user / role</option>
+          <option>feedback — guidance after corrections or successes</option>
+          <option>project — current state, decisions, deadlines</option>
+          <option>reference — pointers to external systems</option>
+        </select>
+      </div>
+      <div class="add-form-row">
+        <label class="muted" style="font-size: 12px;">Name</label>
+        <input placeholder="short slug — kebab-case-ok" />
+      </div>
+      <div class="add-form-row">
+        <label class="muted" style="font-size: 12px;">Description</label>
+        <input placeholder="one-line summary used for relevance ranking" />
+      </div>
+      <div class="add-form-row">
+        <label class="muted" style="font-size: 12px;">Content</label>
+        <textarea placeholder="The memory body. For feedback / project, lead with the rule, then **Why:** and **How to apply:** lines."></textarea>
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button class="btn ghost">Cancel</button>
+        <button class="btn">Save entry</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Design notes.</strong>
+    <span class="muted">
+      Entries are file-backed (<code>memory/&lt;type&gt;_&lt;name&gt;.md</code>); the index UI is just
+      a viewer + scaffolder. "Open folder" punts to the OS file browser for power-user editing.
+      "Edit" opens a modal that writes the file directly. The chrome here mirrors the existing
+      Drafts tab — table-like rows, type pills, hover actions, add form drops below.
+    </span>
+  </div>
+
+  <div class="note">
+    <strong>Open questions for build.</strong>
+    <span class="muted">
+      (a) Where does this surface live? Project Detail tab vs Settings sub-page?<br>
+      (b) Type filter pills — should "All" include archive, or do we have an Archive type?<br>
+      (c) MEMORY.md index file — auto-regenerate on save, or surface "rebuild index" button?
+    </span>
+  </div>
+
+</div>
+</body>
+</html>

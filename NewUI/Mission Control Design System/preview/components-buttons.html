@@ -1,0 +1,42 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.btn-primary{background:var(--info);color:#08111f;border:none;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-ghost{background:var(--raised);color:var(--text);border:1px solid #3a4150;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer}
+.btn-ghost:hover{background:#22262d;border-color:#4a5160}
+.btn-tinted{background:rgba(96,165,250,0.10);color:var(--info);border:1px solid rgba(96,165,250,0.35);padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
+.btn-sm{font-size:12px;padding:4px 10px;border-radius:8px}
+.btn-icon{padding:4px 9px;font-size:15px;line-height:1;min-width:30px}
+.btn-danger{background:rgba(248,113,113,0.10);color:var(--danger);border:1px solid rgba(248,113,113,0.35);padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
+.row-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);font-weight:600;width:80px;flex:0 0 auto}
+.btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--border)}
+.btn-row:last-child{border-bottom:none}
+</style>
+</head>
+<body><div class="card-root" style="background:var(--surface);padding:14px;border-radius:12px;border:1px solid var(--border);gap:0">
+  <div class="btn-row">
+    <span class="row-lbl">Primary</span>
+    <button class="btn-primary">+ Create Task</button>
+    <button class="btn-primary btn-sm">▶ Start</button>
+    <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-left:auto">--info bg · #08111f text</span>
+  </div>
+  <div class="btn-row">
+    <span class="row-lbl">Tinted</span>
+    <button class="btn-tinted">Library</button>
+    <button class="btn-tinted btn-sm">↗ Open</button>
+    <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-left:auto">rgba(--info, .10) bg · --info text</span>
+  </div>
+  <div class="btn-row">
+    <span class="row-lbl">Ghost</span>
+    <button class="btn-ghost">Settings</button>
+    <button class="btn-ghost btn-sm">Reveal in Finder</button>
+    <button class="btn-ghost btn-icon">+</button>
+    <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-left:auto">--raised bg · 1px #3a4150</span>
+  </div>
+  <div class="btn-row">
+    <span class="row-lbl">Danger</span>
+    <button class="btn-danger btn-sm">Cancel run</button>
+    <button class="btn-danger btn-sm">Delete draft</button>
+    <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-left:auto">rgba(--danger, .10) bg</span>
+  </div>
+  <div style="font-size:11px;color:var(--muted);padding-top:10px">Library & Settings use Tinted / Ghost — never the bare canvas. Ghost rests on --raised so it sits proud of the topbar.</div>
+</div></body></html>

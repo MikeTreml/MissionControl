@@ -15,6 +15,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { publish } from "../hooks/data-bus";
+import { pushErrorToast } from "../hooks/useToasts";
 import type { PendingAskInfo } from "../global";
 
 const CATEGORY_LABEL: Record<PendingAskInfo["params"]["category"], string> = {
@@ -71,6 +72,7 @@ export function AskUserCard({
       publish("tasks");
     } catch (err) {
       console.error("[AskUserCard] cancelAsk failed:", err);
+      pushErrorToast("Cancel failed", err, taskId);
     } finally {
       setBusy(false);
     }

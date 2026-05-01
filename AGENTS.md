@@ -21,9 +21,12 @@ You're an agent loaded from one of the folders under `agents/`. Your own
 `prompt.md` describes your specific job; this file describes the project
 you're working on.
 
-The pipeline is **Planner → Developer → Reviewer → Surgeon** (can loop back
-from Reviewer → Planner, incrementing `Task.cycle`). Subagents (RepoMapper,
-DocRefresher) are spawnable by any primary agent.
+The pipeline is flexible: **users assemble workflows from the agent
+library** under `library/`. Planner / Developer / Reviewer / Surgeon
+are *example* agents, not a fixed roster — the workflow.js for a task
+declares which agents run and in what order, and a Reviewer→Planner
+loopback (incrementing `Task.cycle`) is one common shape. Subagents
+(RepoMapper, DocRefresher, etc.) are spawnable by any agent.
 
 ## Ground rules for changes
 

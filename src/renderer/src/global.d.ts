@@ -46,6 +46,8 @@ type CreateTaskInput = {
   workflow?: string;
   kind?: TaskKind;
   items?: CampaignItem[];
+  /** Source task id when this is a re-run / clone / spin-off. */
+  parentTaskId?: string;
 };
 
 type CreateProjectInput = {
@@ -109,6 +111,8 @@ export interface McApi {
 
   // library catalog
   getLibraryIndex: () => Promise<LibraryIndex>;
+  /** Walk the library tree in-process, write `_index.json`, return fresh index. */
+  refreshLibraryIndex: () => Promise<LibraryIndex>;
   readLibraryJsonSchema: (absPath: string | null | undefined) => Promise<Record<string, unknown> | null>;
   /** Generate a workflow.js from a WorkflowSpec and write it under library/workflows/. */
   createLibraryWorkflow: (
@@ -120,6 +124,32 @@ export interface McApi {
   pauseRun: (input: { taskId: string }) => Promise<Task>;
   resumeRun: (input: { taskId: string }) => Promise<Task>;
   stopRun: (input: { taskId: string; reason?: "user" | "completed" | "failed" }) => Promise<Task>;
+  /**
+   * POST a response back to a babysitter SDK breakpoint via
+   * `babysitter task:post --status ok --value-inline '{...}'`. Used by
+   * the journal-driven approval card on Task Detail.
+   */
+  respondBreakpoint: (input: {
+    taskId: string;
+    runPath: string;
+    effectId: string;
+    approved: boolean;
+    response?: string;
+    feedback?: string;
+  }) => Promise<void>;
+  /**
+   * SDK-authoritative run state. Wraps `babysitter run:status --json`.
+   * Returns null when the task has no detected run path yet (auto-gen
+   * tasks before babysitter-pi spins one up).
+   */
+  runStatus: (taskId: string) => Promise<unknown | null>;
+  /**
+   * SDK-authoritative pending-effects list. Wraps
+   * `babysitter task:list --pending --json`. The shape is the SDK's
+   * `{ tasks: Array<{ effectId, kind, label?, status }> }`. Use this
+   * for breakpoint/approval detection instead of walking events.
+   */
+  runListPending: (taskId: string) => Promise<{ tasks?: Array<{ effectId: string; kind: string; label?: string; status?: string }> } | null>;
 
   // pi meta
   listPiModels: () => Promise<PiModelInfo[]>;

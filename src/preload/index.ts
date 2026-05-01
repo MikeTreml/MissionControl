@@ -48,6 +48,7 @@ const api = {
 
   // ── library catalog ──────────────────────────────────────────────────
   getLibraryIndex: () => ipcRenderer.invoke("library:index"),
+  refreshLibraryIndex: () => ipcRenderer.invoke("library:refresh"),
   readLibraryJsonSchema: (absPath: string | null | undefined) =>
     ipcRenderer.invoke("library:readJsonSchema", absPath),
   createLibraryWorkflow: (opts: unknown) =>
@@ -62,6 +63,18 @@ const api = {
     ipcRenderer.invoke("runs:resume", input),
   stopRun:    (input: { taskId: string; reason?: "user" | "completed" | "failed" }) =>
     ipcRenderer.invoke("runs:stop", input),
+  respondBreakpoint: (input: {
+    taskId: string;
+    runPath: string;
+    effectId: string;
+    approved: boolean;
+    response?: string;
+    feedback?: string;
+  }) => ipcRenderer.invoke("runs:respondBreakpoint", input),
+  /** Authoritative run state from the SDK's state cache. */
+  runStatus: (taskId: string) => ipcRenderer.invoke("runs:status", taskId),
+  /** Authoritative pending-effects list (breakpoints, sleeps, etc.). */
+  runListPending: (taskId: string) => ipcRenderer.invoke("runs:listPending", taskId),
 
   // ── pi meta ──────────────────────────────────────────────────────────
   listPiModels: () => ipcRenderer.invoke("pi:listModels"),
