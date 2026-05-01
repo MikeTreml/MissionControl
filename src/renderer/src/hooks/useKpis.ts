@@ -1,17 +1,24 @@
 /**
  * useKpis — dashboard header numbers, derived from useTasks() + the
- * per-task event journals. Demo mode returns the wireframe's canned
- * numbers when no real tasks exist.
+ * per-task event journals.
  *
- * "Failed Runs Today" = count of `run-ended` events with reason=failed
- * whose timestamp lands inside today's local-day window.
+ * Mockup KPIs (NewUI/Mission Control Design System/ui_kits/mission-control):
+ *   In progress · Awaiting review · Avg. turnaround · Tokens · 24h
+ *
+ * Each KPI carries an optional `delta` string + direction so the UI can
+ * paint up/down ticks (the mockup shows e.g. "+2 today", "−6m vs. last
+ * week", "+18% vs. avg"). Direction is purely informational — `up` is
+ * green, `down` is red, blank is neutral.
  */
 import { useTasks } from "./useTasks";
 import { useAllTaskEvents } from "./useAllTaskEvents";
 
 export interface KpiItem {
   label: string;
-  value: number;
+  value: string | number;
+  delta?: string;
+  /** "up" = the green direction (positive), "down" = the red direction. */
+  deltaTone?: "up" | "down";
 }
 
 export interface KpisState {
@@ -24,36 +31,60 @@ export function useKpis(): KpisState {
   const { tasks, loading, isDemo } = useTasks();
   const { perTask } = useAllTaskEvents();
 
-  // For demo: counts happen to match the mock board (12/3/5/1) if we
-  // extend the numbers beyond what's shown.
-  const active = tasks.filter((t) => t.lane !== "Done" && t.lane !== "Failed" && t.roleLabel !== "Waiting").length;
-  const waiting = tasks.filter((t) => t.lane === "Waiting").length;
-  const running = tasks.filter((t) => t.active).length;
+  const inProgress = tasks.filter((t) =>
+    t.boardStage === "Drafting" || t.boardStage === "Running" || t.boardStage === "Blocked"
+  ).length;
+  const awaitingReview = tasks.filter((t) => t.boardStage === "Review").length;
 
-  // Failed runs today: walk every task's events, count run-ended with
-  // reason=failed since midnight local time.
-  const todayStart = startOfToday();
-  let failed = 0;
+  // Avg. turnaround = average wall-time across the last 10 completed runs
+  // (run-started → run-ended). If we have <2 samples, show "—".
+  const completed: number[] = [];
   for (const events of perTask.values()) {
+    let lastStart: number | null = null;
     for (const e of events) {
-      if (e.type !== "run-ended") continue;
-      const rec = e as unknown as Record<string, unknown>;
-      if (rec.reason !== "failed") continue;
-      if (new Date(e.timestamp).getTime() >= todayStart) failed += 1;
+      if (e.type === "run-started") {
+        lastStart = new Date(e.timestamp).getTime();
+      } else if (e.type === "run-ended" && lastStart !== null) {
+        const ended = new Date(e.timestamp).getTime();
+        if (Number.isFinite(ended - lastStart) && ended > lastStart) {
+          completed.push(ended - lastStart);
+        }
+        lastStart = null;
+      }
     }
   }
+  completed.sort((a, b) => b - a);
+  const recent = completed.slice(0, 10);
+  const avgMs = recent.length > 0 ? recent.reduce((a, b) => a + b, 0) / recent.length : null;
+  const avgTurnaround = avgMs === null ? "—" : formatDuration(avgMs);
 
-  // When demo mode kicks in, use the canned numbers from the mockup —
-  // the demo set is too small to produce the familiar 12/3/5/1 counts.
+  // Tokens · 24h — sum from `metrics:report` / `pi:turn_end` payloads in
+  // the last 24h. Falls back to 0 when nothing cost-relevant streamed.
+  const cutoff = Date.now() - 24 * 3600_000;
+  let tokensIn = 0;
+  let tokensOut = 0;
+  for (const events of perTask.values()) {
+    for (const e of events) {
+      if (new Date(e.timestamp).getTime() < cutoff) continue;
+      const rec = e as unknown as Record<string, unknown>;
+      const ti = pickNumber(rec, ["tokensIn", "promptTokens", "input_tokens"]);
+      const to = pickNumber(rec, ["tokensOut", "completionTokens", "output_tokens"]);
+      tokensIn += ti;
+      tokensOut += to;
+    }
+  }
+  const tokensTotal = tokensIn + tokensOut;
+  const tokensLabel = tokensTotal === 0 ? "—" : compactNumber(tokensTotal);
+
   if (isDemo) {
     return {
       loading,
       isDemo,
       kpis: [
-        { label: "Active",    value: 12 },
-        { label: "Attention", value: 3 },
-        { label: "Running",   value: 5 },
-        { label: "Failed",    value: 1 },
+        { label: "In progress",     value: 7,      delta: "+2 today",        deltaTone: "up" },
+        { label: "Awaiting review", value: 3,      delta: "unchanged" },
+        { label: "Avg. turnaround", value: "14m",  delta: "−6m vs. last week", deltaTone: "up" },
+        { label: "Tokens · 24h",    value: "812k", delta: "+18% vs. avg",    deltaTone: "down" },
       ],
     };
   }
@@ -62,16 +93,35 @@ export function useKpis(): KpisState {
     loading,
     isDemo,
     kpis: [
-      { label: "Active",    value: active },
-      { label: "Attention", value: waiting },
-      { label: "Running",   value: running },
-      { label: "Failed",    value: failed },
+      { label: "In progress",     value: inProgress },
+      { label: "Awaiting review", value: awaitingReview },
+      { label: "Avg. turnaround", value: avgTurnaround },
+      { label: "Tokens · 24h",    value: tokensLabel },
     ],
   };
 }
 
-function startOfToday(): number {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d.getTime();
+function pickNumber(rec: Record<string, unknown>, keys: string[]): number {
+  for (const k of keys) {
+    const v = rec[k];
+    if (typeof v === "number" && Number.isFinite(v)) return v;
+  }
+  return 0;
+}
+
+function formatDuration(ms: number): string {
+  const totalSec = Math.round(ms / 1000);
+  if (totalSec < 60) return `${totalSec}s`;
+  const totalMin = Math.round(totalSec / 60);
+  if (totalMin < 60) return `${totalMin}m`;
+  const totalHr = totalMin / 60;
+  if (totalHr < 24) return `${totalHr.toFixed(1)}h`;
+  return `${(totalHr / 24).toFixed(1)}d`;
+}
+
+function compactNumber(n: number): string {
+  if (n < 1_000) return String(n);
+  if (n < 1_000_000) return `${Math.round(n / 100) / 10}k`;
+  if (n < 1_000_000_000) return `${Math.round(n / 100_000) / 10}M`;
+  return `${Math.round(n / 100_000_000) / 10}B`;
 }

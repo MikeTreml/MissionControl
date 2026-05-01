@@ -469,6 +469,34 @@ body {
 .compact-kpis { gap: 10px; }
 .kpi { font-size: 20px; font-weight: 700; margin-top: 8px; }
 
+/* ── KPI cards (Dashboard header) ──────────────────────────────── */
+.kpi-card {
+  background: var(--raised);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: var(--lift);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.kpi-card .label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--muted);
+}
+.kpi-card .value {
+  font-size: 22px;
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+}
+.kpi-card .delta { font-size: var(--fs-xs); color: var(--text-2); }
+.kpi-card .delta.up   { color: var(--success); }
+.kpi-card .delta.down { color: var(--danger); }
+
 /* ── Lanes (Board) — v2 kit ────────────────────────────────────── */
 .lanes, .lane-wrap {
   display: grid;

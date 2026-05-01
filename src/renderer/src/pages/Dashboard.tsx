@@ -7,6 +7,7 @@
  */
 import { Topbar } from "../components/Topbar";
 import { Board } from "../components/Board";
+import { KpiRow } from "../components/KpiRow";
 import { SelectedTaskPanel } from "../components/SelectedTaskPanel";
 
 export function Dashboard(): JSX.Element {
@@ -14,6 +15,7 @@ export function Dashboard(): JSX.Element {
     <>
       <Topbar />
       <div className="content">
+        <KpiRow />
         <Board />
         <SelectedTaskPanel />
       </div>
