@@ -57,6 +57,17 @@ type CreateProjectInput = {
   icon?: string;
 };
 
+/**
+ * Renderer-facing shape for the library:createWorkflow IPC. The `spec` field
+ * is opaque at this boundary — main-process WorkflowGenerator validates shape
+ * at runtime. See src/main/workflow-generator.ts for the full WorkflowSpec.
+ */
+export type CreateWorkflowOpts = {
+  spec: Record<string, unknown>;
+  category: string;
+  slug: string;
+};
+
 export interface McApi {
   version: string;
 
@@ -99,6 +110,10 @@ export interface McApi {
   // library catalog
   getLibraryIndex: () => Promise<LibraryIndex>;
   readLibraryJsonSchema: (absPath: string | null | undefined) => Promise<Record<string, unknown> | null>;
+  /** Generate a workflow.js from a WorkflowSpec and write it under library/workflows/. */
+  createLibraryWorkflow: (
+    opts: CreateWorkflowOpts,
+  ) => Promise<{ diskPath: string; relPath: string }>;
 
   // runs (Start/Pause/Resume/Stop state machine; returns updated Task)
   startRun: (input: { taskId: string; agentSlug?: string; model?: string }) => Promise<Task>;

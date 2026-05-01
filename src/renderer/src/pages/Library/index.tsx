@@ -9,6 +9,7 @@ import { Tree } from "./Tree";
 import { DetailPanel } from "./DetailPanel";
 import { SelectionBag } from "./SelectionBag";
 import { RunWorkflowModal } from "./RunWorkflowModal";
+import { NewWorkflowModal } from "./NewWorkflowModal";
 
 export function LibraryBrowser(): JSX.Element {
   const { setView } = useRoute();
@@ -36,6 +37,7 @@ export function LibraryBrowser(): JSX.Element {
   const [selectedSet, setSelectedSet] = useState<Set<string>>(() => loadStoredSet());
   const [templateWorkflowId, setTemplateWorkflowId] = useState<string | null>(() => loadStoredTemplate());
   const [runOpen, setRunOpen] = useState(false);
+  const [newOpen, setNewOpen] = useState(false);
   const itemById = useMemo(
     () => new Map(filteredItems.map((item) => [item.id, item] as const)),
     [filteredItems],
@@ -83,6 +85,13 @@ export function LibraryBrowser(): JSX.Element {
           </div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
+          <button
+            className="button ghost"
+            onClick={() => setNewOpen(true)}
+            title="Scaffold a new workflow.js under library/workflows/"
+          >
+            + New workflow
+          </button>
           <button
             className="button"
             onClick={() => setRunOpen(true)}
@@ -154,6 +163,7 @@ export function LibraryBrowser(): JSX.Element {
         workflowItem={resolveWorkflowSelection(selectedItem, selectedItems, templateWorkflowId)}
         onClose={() => setRunOpen(false)}
       />
+      <NewWorkflowModal open={newOpen} onClose={() => setNewOpen(false)} />
     </>
   );
 }
