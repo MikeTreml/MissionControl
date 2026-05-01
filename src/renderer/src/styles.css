@@ -327,9 +327,51 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 18px;
+  gap: 16px;
+  padding: 10px 20px;
   border-bottom: 1px solid var(--hairline);
   background: rgba(46, 45, 42, 0.8); /* --surface @ 80% */
+}
+.topbar .crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-md);
+  color: var(--text-2);
+  min-width: 0;
+}
+.topbar .crumbs .sep { color: var(--muted); }
+.topbar .crumbs .now {
+  color: var(--text);
+  font-weight: var(--fw-semibold);
+}
+.topbar .actions { display: flex; align-items: center; gap: 8px; }
+
+/* Search box — visual today, ⌘K wiring later. */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-md);
+  color: var(--text-2);
+  min-width: 220px;
+  cursor: text;
+  transition: background var(--dur-fast);
+  border: none;
+}
+.search:hover { background: var(--raised); }
+.search .glyph { color: var(--muted); }
+.search .kbd {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  padding: 1px 5px;
+  background: var(--canvas);
+  border-radius: var(--radius-xs);
 }
 
 .content {
