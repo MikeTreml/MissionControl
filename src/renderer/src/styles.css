@@ -274,3 +274,83 @@ body {
   opacity: 0.5;
   cursor: wait;
 }
+
+/* ── Task Detail overflow menu (kebab) ── */
+.task-actions-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  display: grid;
+  gap: 2px;
+  min-width: 220px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  z-index: 100;
+}
+
+.task-actions-menu > button {
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  padding: 7px 10px !important;
+  font-size: 13px;
+  background: transparent !important;
+}
+
+.task-actions-menu > button:hover:not(:disabled) {
+  background: var(--panel-2) !important;
+  border-color: var(--border) !important;
+}
+
+/* ── Drafts tab table polish ── */
+.drafts-table-wrap {
+  container-type: inline-size;
+  container-name: drafts;
+  overflow-x: auto;
+}
+
+.drafts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.drafts-table thead tr {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+.drafts-table th,
+.drafts-table td {
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.drafts-table tbody tr:hover { background: var(--panel-2); }
+
+.drafts-table .col-id      { width: 90px;  white-space: nowrap; }
+.drafts-table .col-project { width: 130px; }
+.drafts-table .col-workflow{ width: 220px; }
+.drafts-table .col-model   { width: 160px; }
+.drafts-table .col-created { width: 90px; white-space: nowrap; }
+.drafts-table .col-actions { width: 110px; text-align: right; }
+.drafts-table .col-title   { /* flex */ min-width: 200px; }
+
+/* Container-query: drop the Created column once the Board section is
+ * narrow enough that 7 columns crowd the row. createdAt is the least
+ * essential column — workflow + model are the decision-bearing ones. */
+@container drafts (max-width: 880px) {
+  .drafts-table .col-created { display: none; }
+}
+@container drafts (max-width: 720px) {
+  .drafts-table .col-project { width: 90px; }
+}

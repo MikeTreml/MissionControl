@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mockup — Per-task worktree toggle (#30)</title>
+<link rel="stylesheet" href="_shared.css" />
+<style>
+  .stack { display: grid; gap: 16px; }
+  .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+  .breadcrumb { font-size: 12px; color: var(--muted); }
+  .toggle-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+  }
+  .toggle {
+    width: 40px; height: 22px; border-radius: 11px;
+    background: var(--border); position: relative; cursor: pointer; flex: 0 0 auto;
+    border: 1px solid var(--border);
+  }
+  .toggle.on { background: var(--accent); border-color: var(--accent); }
+  .toggle::after {
+    content: ""; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--text); position: absolute; top: 2px; left: 2px;
+    transition: left 0.15s;
+  }
+  .toggle.on::after { left: 20px; background: #0b0d12; }
+  .field-row {
+    display: grid; grid-template-columns: 130px 1fr; gap: 12px;
+    padding: 8px 16px; align-items: center;
+    font-size: 13px;
+  }
+  .field-row .key { color: var(--muted); font-size: 12px; }
+  .field-row .val { font-family: var(--mono); font-size: 12px; }
+  .actions {
+    display: flex; gap: 6px; padding: 12px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .branch-card {
+    background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px;
+    display: grid; gap: 8px;
+  }
+  .branch-name { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+  .ws-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--muted);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.good { background: var(--good); }
+  .dot.warn { background: var(--warn); }
+  .dot.bad  { background: var(--bad); }
+  .file-tree {
+    background: var(--bg); border-radius: 6px; padding: 8px;
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    line-height: 1.6;
+  }
+  .file-tree .changed { color: var(--warn); }
+  .file-tree .added   { color: var(--good); }
+</style>
+</head>
+<body>
+<div class="mockup-shell">
+
+  <div class="mockup-header">
+    <h1>Per-task worktree toggle · UI mockup</h1>
+    <div class="meta">Active list #30 · enables A/B comparing workflows + models on the same task without conflicts</div>
+  </div>
+
+  <div class="note">
+    <strong>What this is.</strong>
+    A toggle that runs a task in a fresh git worktree of <code>&lt;project&gt;</code> instead of
+    the project's main checkout. Lets you Re-run a task with a different workflow / model and
+    keep both runs' file changes side-by-side without merge conflict.
+  </div>
+
+  <div class="frame">
+    <div class="header-row">
+      <span class="breadcrumb">Task Detail · DA-018F · <strong style="color: var(--text)">Workspace</strong></span>
+      <span class="muted">2 worktrees · 1 active</span>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle on" aria-checked="true" role="switch"></div>
+      <div style="flex: 1;">
+        <div style="font-weight: 600; font-size: 13px;">Run in fresh git worktree</div>
+        <div class="muted" style="font-size: 11px;">
+          On Start, MC creates <code>mc-task/DA-018F</code> off <code>main</code> and points the run there.
+          Off → run in the project's primary checkout.
+        </div>
+      </div>
+    </div>
+
+    <div class="field-row"><span class="key">Worktree path</span><span class="val">~/.claude/worktrees/DA-018F</span></div>
+    <div class="field-row"><span class="key">Branch</span><span class="val">mc-task/DA-018F</span></div>
+    <div class="field-row"><span class="key">Base</span><span class="val">main @ 8d8ec2cc</span></div>
+    <div class="field-row">
+      <span class="key">Status</span>
+      <span class="val">
+        <span class="ws-status"><span class="dot good"></span>clean</span>
+      </span>
+    </div>
+
+    <div class="actions">
+      <button class="btn ghost">📂 Open in editor</button>
+      <button class="btn ghost">🖥 Open terminal here</button>
+      <button class="btn ghost">↗ Show on disk</button>
+      <span style="flex: 1;"></span>
+      <button class="btn ghost" style="color: var(--bad); border-color: var(--bad);">Delete worktree</button>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="header-row">
+      <span class="breadcrumb">Compare · DA-018F (2 runs)</span>
+      <span class="muted">A vs B view</span>
+    </div>
+
+    <div style="padding: 14px 16px;" class="compare-grid">
+
+      <div class="branch-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="branch-name">mc-task/DA-018F-a</span>
+          <span class="pill warn">running</span>
+        </div>
+        <div class="muted" style="font-size: 12px;">
+          Workflow: <strong style="color: var(--text)">cradle/bugfix</strong>
+          · Model: <strong style="color: var(--text)">claude-opus-4-7</strong>
+        </div>
+        <div class="muted" style="font-size: 11px;">started 14m ago · iteration 3 · $0.18 spent</div>
+        <div class="file-tree">
+src/<br>
+&nbsp;&nbsp;db/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="changed">~ migrations/0042.sql</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="changed">~ schema.go</span><br>
+&nbsp;&nbsp;<span class="added">+ docs/migration-notes.md</span>
+        </div>
+      </div>
+
+      <div class="branch-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="branch-name">mc-task/DA-018F-b</span>
+          <span class="pill good">done</span>
+        </div>
+        <div class="muted" style="font-size: 12px;">
+          Workflow: <strong style="color: var(--text)">methodologies/tdd-strict</strong>
+          · Model: <strong style="color: var(--text)">gpt-5-codex</strong>
+        </div>
+        <div class="muted" style="font-size: 11px;">finished 6m ago · iteration 5 · $0.31 spent</div>
+        <div class="file-tree">
+src/<br>
+&nbsp;&nbsp;db/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="changed">~ migrations/0042.sql</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="changed">~ schema.go</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="changed">~ schema_test.go</span><br>
+&nbsp;&nbsp;<span class="added">+ docs/adr-0042.md</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button class="btn ghost">↔ Diff A vs B</button>
+      <button class="btn ghost">Adopt A as primary</button>
+      <button class="btn ghost">Adopt B as primary</button>
+      <span style="flex: 1;"></span>
+      <button class="btn ghost" style="color: var(--bad); border-color: var(--bad);">Delete both</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>v1 scope (per spec).</strong>
+    <span class="muted">
+      Manual lifecycle only — toggle creates the worktree, user manages cleanup via the
+      "Delete worktree" button. No auto-cleanup on task delete or task done. Compare
+      view is v2 — v1 ships with just the toggle + worktree info card.
+    </span>
+  </div>
+
+  <div class="note">
+    <strong>Open questions for build.</strong>
+    <span class="muted">
+      (a) Branch naming: <code>mc-task/&lt;task-id&gt;</code> always, or let user override at toggle?<br>
+      (b) Base ref: always <code>main</code>, or follow project's default branch?<br>
+      (c) When project.path is empty (track-only project), the toggle is disabled; copy?<br>
+      (d) Compare view (second card above) — defer to v2 or include?
+    </span>
+  </div>
+
+</div>
+</body>
+</html>

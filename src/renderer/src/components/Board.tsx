@@ -210,23 +210,17 @@ function DraftsTable({ drafts, isDemo }: { drafts: UiTask[]; isDemo: boolean }):
     );
   }
   return (
-    <div style={{ overflowX: "auto" }}>
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          fontSize: 13,
-        }}
-      >
+    <div className="drafts-table-wrap">
+      <table className="drafts-table">
         <thead>
-          <tr style={{ color: "var(--muted)", textAlign: "left", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5 }}>
-            <th style={cellStyle}>ID</th>
-            <th style={cellStyle}>Title</th>
-            <th style={cellStyle}>Project</th>
-            <th style={cellStyle}>Workflow</th>
-            <th style={cellStyle}>Model</th>
-            <th style={cellStyle}>Created</th>
-            <th style={{ ...cellStyle, textAlign: "right" }}>Actions</th>
+          <tr>
+            <th className="col-id">ID</th>
+            <th className="col-title">Title</th>
+            <th className="col-project">Project</th>
+            <th className="col-workflow">Workflow</th>
+            <th className="col-model">Model</th>
+            <th className="col-created">Created</th>
+            <th className="col-actions">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -238,12 +232,6 @@ function DraftsTable({ drafts, isDemo }: { drafts: UiTask[]; isDemo: boolean }):
     </div>
   );
 }
-
-const cellStyle: React.CSSProperties = {
-  padding: "8px 10px",
-  borderTop: "1px solid var(--border)",
-  fontWeight: 500,
-};
 
 const AUTO_GEN_VALUE = "__autogen__";
 
@@ -387,8 +375,8 @@ function DraftRow({ draft }: { draft: UiTask }): JSX.Element {
   const startReady = !busy;
 
   return (
-    <tr style={{ borderTop: "1px solid var(--border)" }}>
-      <td style={cellStyle}>
+    <tr>
+      <td className="col-id">
         <button
           className="button ghost"
           onClick={() => openTask(draft.id)}
@@ -398,20 +386,24 @@ function DraftRow({ draft }: { draft: UiTask }): JSX.Element {
           {draft.id}
         </button>
       </td>
-      <td style={{ ...cellStyle, maxWidth: 280, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={draft.summary}>
+      <td
+        className="col-title"
+        style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+        title={draft.summary}
+      >
         {draft.summary}
       </td>
-      <td style={cellStyle}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12 }} title={project?.name ?? draft.projectId}>
+      <td className="col-project">
+        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, minWidth: 0 }} title={project?.name ?? draft.projectId}>
           {(project?.icon || draft.projectIcon) && (
-            <span style={{ fontSize: 14 }}>{project?.icon || draft.projectIcon}</span>
+            <span style={{ fontSize: 14, flex: "0 0 auto" }}>{project?.icon || draft.projectIcon}</span>
           )}
-          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 100 }}>
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
             {project?.name ?? draft.projectId}
           </span>
         </div>
       </td>
-      <td style={cellStyle}>
+      <td className="col-workflow">
         <div style={{ display: "grid", gap: 2 }}>
           <select
             value={workflowPath}
@@ -439,7 +431,7 @@ function DraftRow({ draft }: { draft: UiTask }): JSX.Element {
           )}
         </div>
       </td>
-      <td style={cellStyle}>
+      <td className="col-model">
         <select
           value={modelId}
           onChange={(e) => void onModelChange(e.target.value)}
@@ -455,10 +447,10 @@ function DraftRow({ draft }: { draft: UiTask }): JSX.Element {
           ))}
         </select>
       </td>
-      <td style={{ ...cellStyle, color: "var(--muted)", fontSize: 12, whiteSpace: "nowrap" }}>
+      <td className="col-created" style={{ color: "var(--muted)", fontSize: 12 }}>
         {ago}
       </td>
-      <td style={{ ...cellStyle, textAlign: "right" }}>
+      <td className="col-actions">
         <div style={{ display: "inline-flex", gap: 4 }}>
           <button
             className="button"
@@ -490,7 +482,10 @@ const selectStyle: React.CSSProperties = {
   padding: "3px 6px",
   fontSize: 12,
   fontFamily: "inherit",
-  maxWidth: 180,
+  width: "100%",
+  // Column widths constrain the actual rendered size; this just stops
+  // selects from overflowing on long workflow names.
+  maxWidth: "100%",
 };
 
 /** "3h ago" / "2d ago" / "just now". Same heuristic as TaskCard's idle indicator. */
