@@ -14,7 +14,11 @@ import { useEffect, useState } from "react";
 import { useSubscribe } from "../hooks/data-bus";
 import { mockRunActivity, mockQueue } from "../mock-data";
 import { useRoute } from "../router";
+import { useAllTaskEvents } from "../hooks/useAllTaskEvents";
+import { deriveSubagents, type SubagentEntry } from "../lib/derive-subagents";
 import type { Task, TaskEvent } from "../../../shared/models";
+
+type SubagentStatus = SubagentEntry["status"];
 
 const MAX_LIVE_EVENTS = 50;
 
@@ -42,6 +46,9 @@ const HIGHLIGHT_TYPES = new Set([
   "pi:tool_execution_end",
   "pi:subagent_spawn",
   "pi:subagent_complete",
+  "bs:journal:effect_requested",
+  "bs:journal:effect_resolved_ok",
+  "bs:journal:effect_resolved_error",
   "item-started",
   "item-ended",
   "run-started",
@@ -101,9 +108,111 @@ export function RightBar(): JSX.Element {
         </div>
       </div>
 
+      <SubagentsPanel hasBridge={hasBridge} onOpen={openTask} />
       <NeedsAttentionPanel hasBridge={hasBridge} onOpen={openTask} />
     </aside>
   );
+}
+
+/**
+ * Subagents — flat list of in-flight + recently-completed subagent
+ * effects across all tasks. Sources both SDK journal effects
+ * (bs:journal:effect_requested → resolved_ok/error) and pi spawn/complete
+ * events. Sorted running-first, then most-recent.
+ *
+ * Rendered as compact rows with a status icon, label, parent task id,
+ * and elapsed/duration. Hidden when there's nothing to show — keeps
+ * the rail tight when no agent has spawned a subagent yet.
+ */
+function SubagentsPanel({
+  hasBridge,
+  onOpen,
+}: {
+  hasBridge: boolean;
+  onOpen: (taskId: string) => void;
+}): JSX.Element | null {
+  const { perTask } = useAllTaskEvents();
+  const cutoff = Date.now() - 6 * 3600_000; // last 6h
+  type Row = SubagentEntry & { taskId: string };
+  const rows: Row[] = [];
+  for (const [taskId, events] of perTask.entries()) {
+    for (const s of deriveSubagents(events)) {
+      const ts = s.endedAt ?? s.startedAt;
+      if (ts && new Date(ts).getTime() < cutoff) continue;
+      rows.push({ ...s, taskId });
+    }
+  }
+  rows.sort((a, b) => {
+    if (a.status === "running" && b.status !== "running") return -1;
+    if (b.status === "running" && a.status !== "running") return 1;
+    const aT = a.endedAt ?? a.startedAt ?? "";
+    const bT = b.endedAt ?? b.startedAt ?? "";
+    return bT.localeCompare(aT);
+  });
+  if (!hasBridge || rows.length === 0) return null;
+  return (
+    <div className="group" style={{ marginTop: 14 }}>
+      <h3>Subagents</h3>
+      <div className="task-list" style={{ marginTop: 10, display: "grid", gap: 6 }}>
+        {rows.slice(0, 8).map((r) => (
+          <button
+            key={`${r.taskId}-${r.id}`}
+            onClick={() => onOpen(r.taskId)}
+            className="task"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "16px 1fr auto",
+              gap: 8,
+              alignItems: "center",
+              padding: "8px 10px",
+              fontSize: 12,
+              cursor: "pointer",
+              textAlign: "left",
+            }}
+            title={`${r.label} — open ${r.taskId}`}
+          >
+            <span style={{ color: subagentColor(r.status) }}>{subagentIcon(r.status)}</span>
+            <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {r.label}
+              {r.subtitle && (
+                <span className="muted" style={{ fontSize: 11, marginLeft: 6 }}>{r.subtitle}</span>
+              )}
+            </span>
+            <span className="muted" style={{ fontSize: 11, fontVariantNumeric: "tabular-nums" }}>
+              {formatRowTiming(r)}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function subagentIcon(status: SubagentStatus): string {
+  if (status === "running") return "⤴";
+  if (status === "failed") return "✕";
+  return "✓";
+}
+function subagentColor(status: SubagentStatus): string {
+  if (status === "running") return "var(--info)";
+  if (status === "failed") return "var(--bad)";
+  return "var(--good)";
+}
+function formatRowTiming(r: SubagentEntry): string {
+  if (r.status === "running" && r.startedAt) {
+    const ms = Date.now() - new Date(r.startedAt).getTime();
+    return formatShortMs(ms);
+  }
+  if (r.durationMs !== null) return formatShortMs(r.durationMs);
+  return "";
+}
+function formatShortMs(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  const sec = Math.round(ms / 1000);
+  if (sec < 60) return `${sec}s`;
+  const min = sec / 60;
+  if (min < 60) return `${min.toFixed(min < 10 ? 1 : 0)}m`;
+  return `${(min / 60).toFixed(1)}h`;
 }
 
 /**
