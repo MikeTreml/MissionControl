@@ -117,7 +117,7 @@ export function EditTaskForm({
             className="card"
             style={{
               borderColor: "var(--bad)",
-              background: "rgba(255,123,123,0.08)",
+              background: "rgba(232, 116, 116,0.08)",
               fontSize: 13,
             }}
           >

@@ -1,9 +1,14 @@
 # UI design rules
 
-Locked 2026-04-29 from the mockup pass in `~/Downloads/mission_control_*.html`.
-Treat this as the contract every component honors. When something here would
-need to change, edit this doc *first* — don't drift the components and let
-the doc go stale.
+Locked 2026-04-29; **v2 token reset 2026-05-01** from
+`NewUI/Mission Control Design System/`. Treat this as the contract every
+component honors. When something here would need to change, edit this
+doc *first* — don't drift the components and let the doc go stale.
+
+The v2 reset moved off the cool near-black blue cast (the AI-cliché
+"darkness 10/10") to a warmer neutral shell at ~darkness 6, and replaced
+1px card borders with **elevation-only** separation (`--lift` inner
+highlight on a lighter fill).
 
 ## Layout
 
@@ -17,28 +22,43 @@ Only **state** carries saturated color. Project identity is grayscale-with-an-ac
 
 ### State palette (locked — do not redefine these)
 
-| Role        | Hex        | On bg        | Used for                       |
-|-------------|------------|--------------|--------------------------------|
-| Success     | `#4ADE80`  | `#1B2A1F`    | running, healthy, bridge dot   |
-| Warning     | `#F5B544`  | `#2A2417`    | approval, awaiting input       |
-| Danger      | `#F87171`  | `#2A1B1B`    | blocked, failed, stop confirm  |
-| Info        | `#60A5FA`  | `#1A2333`    | selected items, links, ⓘ banners |
+| Role        | Hex        | On bg (12% tint over canvas)  | Used for                       |
+|-------------|------------|-------------------------------|--------------------------------|
+| Success     | `#5DBF8A`  | `--success-bg`                | running, healthy, bridge dot   |
+| Warning     | `#E8B14C`  | `--warning-bg`                | approval, awaiting input       |
+| Danger      | `#E87474`  | `--danger-bg`                 | blocked, failed, stop confirm  |
+| Info        | `#6BA4E8`  | `--info-bg`                   | selected items, links, ⓘ banners |
 
+Slightly desaturated from v1 to sit on the lighter v2 shell without vibrating.
 Greens, ambers, reds are **reserved** — projects can't pick them.
 
-### Surface palette
+### Surface palette (v2 — warm neutral, elevation-only)
 
-| Role            | Hex        | Used for                |
-|-----------------|------------|-------------------------|
-| Canvas          | `#0E0F11`  | App background          |
-| Surface         | `#15171A`  | Panels                  |
-| Surface raised  | `#1A1D21`  | Cards inside panels     |
-| Border          | `#25282D`  | All separators          |
-| Text primary    | `#E6E7EA`  | IDs, titles             |
-| Text secondary  | `#9DA3AE`  | Metadata                |
-| Text muted      | `#6E7480`  | Timestamps, labels      |
+| Role            | Hex        | Token         | Used for                              |
+|-----------------|------------|---------------|---------------------------------------|
+| Abyss           | `#1C1B1A`  | `--abyss`     | overlays, code blocks                 |
+| Canvas          | `#252422`  | `--canvas`    | App background                        |
+| Surface         | `#2E2D2A`  | `--surface`   | Panels (sidebar, lanes, rightbar)     |
+| Raised          | `#38362F`  | `--raised`    | Cards on top of panels                |
+| Floating        | `#423F37`  | `--floating`  | Menus, popovers, hover-on-raised      |
+| Hairline        | `#3D3B35`  | `--hairline`  | Subtle separator (table rules)        |
+| Hairline strong | `#4A4842`  | `--hairline-strong` | Input borders, focus-ring base  |
+| Text primary    | `#ECEAE5`  | `--text`      | IDs, titles, body                     |
+| Text secondary  | `#B5B0A6`  | `--text-2`    | Metadata, sub lines                   |
+| Text muted      | `#87827A`  | `--muted`     | Timestamps, hints                     |
 
-Light mode is a future-tense concern — keep components agnostic by using CSS custom properties (`var(--surface)` etc.), don't hard-code hex in components.
+**Cards lift, they don't border.** Use `box-shadow: var(--lift)` on
+`.card`/`.task`/`.project`/`.agent`/`.lane` instead of
+`border: 1px solid var(--border)`. Borders are reserved for shell
+separators (sidebar↔main, file rows, ghost-button affordance, floating
+menus). The 3px project-accent left border on task cards is still applied.
+
+Light mode is a future-tense concern — keep components agnostic by using
+CSS custom properties (`var(--surface)` etc.), don't hard-code hex.
+
+Legacy aliases `--bg` / `--panel` / `--panel-2` / `--border` / `--accent`
+/ `--good` / `--warn` / `--bad` are still declared in `styles.css` and
+resolve to the v2 tokens. Prefer the v2 names for new work.
 
 ## Project identity
 
@@ -48,7 +68,12 @@ Light mode is a future-tense concern — keep components agnostic by using CSS c
   - 7-9px filled dot beside the project name
   - PROMPT.md / STATUS.md cards may carry a tinted background (project-specific content)
   - **Operational panels stay neutral** — lane timeline, plan steps, controls. They're about the *task's* run, not the project's identity. Tinting them made the whole view read "purple" before "task."
-- **Color picker** in the create modal: 10 swatches, none from the state-reserved hues. `#7F77DD`, `#1D9E75`, `#D85A30`, `#D4537E`, `#378ADD`, `#BA7517`, `#639922`, `#5DCAA5`, `#AFA9EC`, `#888780`.
+- **Color picker** in the create modal: 10 swatches, none from the
+  state-reserved hues. v2 hexes (slightly desaturated from v1 to sit on
+  the lighter shell): Iris `#8E87DD`, Pine `#2EA882`, Clay `#D86E48`,
+  Rose `#D26890`, Sky `#5599DD`, Bronze `#C58432`, Moss `#7BAA38`,
+  Mint `#6FCFB0`, Lilac `#BCB6EE`, Stone `#97968F`. Tokens:
+  `--proj-iris` … `--proj-stone`.
 - ~10 active projects typical, ~20 max. If we ever need more, upgrade to hue-+-intensity (option C from the mockup discussion), don't add a 21st new hue.
 
 ## Lane timeline — workflow-driven chips

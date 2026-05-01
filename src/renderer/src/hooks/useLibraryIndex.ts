@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { LibraryIndex, LibraryIndexItem, LibraryItemKind } from "../types/library";
+import { useSubscribe } from "./data-bus";
 
 export interface LibraryIndexState {
   index: LibraryIndex | null;
@@ -71,6 +72,9 @@ export function useLibraryIndex(): LibraryIndexState {
   useEffect(() => {
     void load();
   }, []);
+
+  // Re-fetch after a workflow is created (or any future workflow mutation).
+  useSubscribe("workflows", () => { void load(); });
 
   /**
    * Re-walk the library tree in-process via the main-side

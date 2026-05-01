@@ -16,6 +16,7 @@ import type { RunManager } from "./run-manager.ts";
 import type { PiSessionManager } from "./pi-session-manager.ts";
 import type { SettingsStore } from "./settings-store.ts";
 import type { LibraryIndexStore } from "./library-index.ts";
+import type { WorkflowCreator, CreateWorkflowOpts } from "./workflow-creator.ts";
 import { detectGit } from "./git-detect.ts";
 import type { Project, ProjectWithGit } from "../shared/models.ts";
 
@@ -36,6 +37,7 @@ export interface Stores {
   pi: PiSessionManager;
   settings: SettingsStore;
   libraryIndex: LibraryIndexStore;
+  workflowCreator: WorkflowCreator;
 }
 
 /** Log each IPC hit at debug level. Uncomment the call site to silence. */
@@ -117,6 +119,11 @@ export function registerIpc(stores: Stores): void {
     logged("library:refresh", () => stores.libraryIndex.refresh()));
   ipcMain.handle("library:readJsonSchema", (_e, absPath: string | null | undefined) =>
     stores.libraryIndex.readJsonSchema(absPath));
+  ipcMain.handle("library:createWorkflow", (_e, opts: CreateWorkflowOpts) =>
+    logged(`library:createWorkflow ${opts.category}/${opts.slug}`, () =>
+      stores.workflowCreator.create(opts),
+    ),
+  );
 
   // ── runs (Start/Pause/Resume/Stop state machine) ─────────────────────
   // RunManager owns the task state-machine; PiSessionManager owns the

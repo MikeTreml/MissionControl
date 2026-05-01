@@ -90,7 +90,7 @@ export function AskUserCard({
       style={{
         borderLeft: "3px solid var(--warn)",
         paddingLeft: 14,
-        background: "rgba(244, 201, 93, 0.04)",
+        background: "rgba(232, 177, 76, 0.04)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>

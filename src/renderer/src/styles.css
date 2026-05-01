@@ -1,19 +1,133 @@
 /*
  * Mission Control — global styles.
- * Lifted from mission_control_saved_mock_v2.html so the wireframe reads
- * identically to the agreed mockup. Tokens first, then layout, then atoms.
+ * v2 token system imported from NewUI/Mission Control Design System/
+ * (commit `1e2f3da`). Reset from the cool blue v1 to a warmer neutral
+ * shell with elevation-based separation. Legacy aliases (--bg, --panel,
+ * --panel-2, --good, --warn, --bad, --accent) are preserved so existing
+ * component CSS keeps working.
  */
 :root {
-  --bg: #0f1115;
-  --panel: #171a21;
-  --panel-2: #1d2230;
-  --border: #2a3040;
-  --text: #e9edf5;
-  --muted: #9da8bb;
-  --accent: #6ea8fe;
-  --good: #4dd4ac;
-  --warn: #f4c95d;
-  --bad: #ff7b7b;
+  /* ── Surfaces — warm neutral, three clear planes ──────────────── */
+  --canvas:        #252422;
+  --surface:       #2e2d2a;
+  --raised:        #38362f;
+  --floating:      #423f37;
+  --abyss:         #1c1b1a;
+
+  --hairline:      #3d3b35;
+  --hairline-strong: #4a4842;
+
+  /* Inner highlight on raised surfaces — replaces the v1 1px card border. */
+  --lift:          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --lift-strong:   inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* Legacy aliases — keep so existing component CSS stays valid. */
+  --bg:            var(--canvas);
+  --panel:         var(--surface);
+  --panel-2:       var(--raised);
+  --border:        var(--hairline);
+
+  /* ── Text — tuned for the lighter shell ──────────────────────── */
+  --text:          #ECEAE5;
+  --text-2:        #B5B0A6;
+  --muted:         #87827A;
+  --text-disabled: #5C5852;
+
+  /* ── State (locked — never reassign) ─────────────────────────── */
+  --success:       #5DBF8A;
+  --success-bg:    rgba(93, 191, 138, 0.12);
+  --warning:       #E8B14C;
+  --warning-bg:    rgba(232, 177, 76, 0.12);
+  --danger:        #E87474;
+  --danger-bg:     rgba(232, 116, 116, 0.12);
+  --info:          #6BA4E8;
+  --info-bg:       rgba(107, 164, 232, 0.12);
+
+  /* legacy state aliases */
+  --good:          var(--success);
+  --warn:          var(--warning);
+  --bad:           var(--danger);
+  --accent:        var(--info);
+
+  /* ── Project accent palette — 10 swatches ──────────────────── */
+  --proj-iris:     #8E87DD;
+  --proj-pine:     #2EA882;
+  --proj-clay:     #D86E48;
+  --proj-rose:     #D26890;
+  --proj-sky:      #5599DD;
+  --proj-bronze:   #C58432;
+  --proj-moss:     #7BAA38;
+  --proj-mint:     #6FCFB0;
+  --proj-lilac:    #BCB6EE;
+  --proj-stone:    #97968F;
+
+  /* ── Type ──────────────────────────────────────────────────── */
+  --font-sans:     "Segoe UI", -apple-system, BlinkMacSystemFont,
+                   "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:     ui-monospace, "Cascadia Code", "JetBrains Mono",
+                   "SF Mono", Consolas, "Liberation Mono", monospace;
+  --mono:          var(--font-mono);
+
+  --fs-2xs:        10px;
+  --fs-xs:         11px;
+  --fs-sm:         12px;
+  --fs-md:         13px;
+  --fs-base:       14px;
+  --fs-lg:         16px;
+  --fs-xl:         20px;
+  --fs-2xl:        26px;
+
+  --lh-tight:      1.2;
+  --lh-snug:       1.4;
+  --lh-relaxed:    1.55;
+
+  --fw-regular:    400;
+  --fw-medium:     500;
+  --fw-semibold:   600;
+  --fw-bold:       700;
+
+  --tracking-wide: 0.06em;
+  --tracking-tight: -0.01em;
+
+  /* ── Radii ──────────────────────────────────────────────────── */
+  --radius-xs:     4px;
+  --radius-sm:     6px;
+  --radius-md:     8px;
+  --radius-lg:     10px;
+  --radius-xl:     14px;
+  --radius-2xl:    18px;
+  --radius-pill:   999px;
+
+  /* ── Spacing ────────────────────────────────────────────────── */
+  --space-0:       0;
+  --space-px:      1px;
+  --space-1:       4px;
+  --space-2:       8px;
+  --space-3:       12px;
+  --space-4:       16px;
+  --space-5:       20px;
+  --space-6:       24px;
+  --space-7:       32px;
+  --space-8:       40px;
+  --space-9:       56px;
+  --space-10:      72px;
+
+  /* ── Shadows — sparingly. Cards lift with --lift, not shadow. */
+  --shadow-popover: 0 4px 12px rgba(0, 0, 0, 0.28),
+                    0 12px 28px rgba(0, 0, 0, 0.22);
+  --shadow-toast:   0 8px 24px rgba(0, 0, 0, 0.32);
+  --shadow-menu:    0 4px 16px rgba(0, 0, 0, 0.30);
+
+  /* ── Focus / motion ─────────────────────────────────────────── */
+  --focus-ring:    0 0 0 2px var(--canvas), 0 0 0 4px var(--info);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out:      cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-instant:   100ms;
+  --dur-fast:      160ms;
+  --dur-base:      240ms;
+  --dur-slow:      400ms;
+  --dur-pulse:     2100ms;
 }
 
 * { box-sizing: border-box; }
@@ -63,8 +177,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(23, 26, 33, 0.8);
+  border-bottom: 1px solid var(--hairline);
+  background: rgba(46, 45, 42, 0.8); /* --surface @ 80% */
 }
 
 .content {
@@ -79,11 +193,11 @@ body {
 .muted { color: var(--muted); }
 
 .button {
-  background: var(--accent);
-  color: #08111f;
+  background: var(--info);
+  color: var(--abyss);
   border: none;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-weight: 600;
   cursor: pointer;
   font-size: 14px;
@@ -97,13 +211,17 @@ body {
 .group { margin-bottom: 18px; }
 .project-list, .agent-list, .task-list { display: grid; gap: 10px; }
 
+/* v2: elevation-only separation. Cards lift via a lighter fill plus an
+ * inner highlight, no 1px border. The 3px project-accent left border
+ * (project identity rule) is still applied inline by TaskCard. */
 .project, .agent, .task, .card {
-  background: var(--panel-2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  background: var(--raised);
+  border: none;
+  box-shadow: var(--lift);
+  border-radius: var(--radius-xl);
   padding: 14px;
 }
-.project.active, .task.active { outline: 1px solid var(--accent); }
+.project.active, .task.active { outline: 1px solid var(--info); }
 
 /* Pulsing halo on any task card whose runState is "running" — makes it
    obvious from a cross-project view which tasks are actively working
@@ -113,10 +231,10 @@ body {
 }
 @keyframes mc-pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(110, 168, 254, 0.25);
+    box-shadow: 0 0 0 0 rgba(107, 164, 232, 0.25);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(110, 168, 254, 0);
+    box-shadow: 0 0 0 6px rgba(107, 164, 232, 0);
   }
 }
 
@@ -135,9 +253,10 @@ body {
   align-items: start;
 }
 .lane {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  background: var(--surface);
+  border: none;
+  box-shadow: var(--lift);
+  border-radius: var(--radius-2xl);
   padding: 12px;
   min-height: 450px;
 }
@@ -179,12 +298,12 @@ body {
 }
 
 .toast {
-  background: rgba(29, 34, 48, 0.98);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  border-radius: 12px;
+  background: var(--floating);
+  border: 1px solid var(--hairline-strong);
+  border-left: 3px solid var(--info);
+  border-radius: var(--radius-xl);
   padding: 12px 14px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-toast);
   cursor: pointer;
   animation: toast-in 140ms ease-out;
 }
@@ -245,8 +364,8 @@ body {
   right: 6px;
   display: none;
   gap: 4px;
-  background: rgba(15, 17, 21, 0.85);
-  border: 1px solid var(--border);
+  background: rgba(37, 36, 34, 0.85); /* --canvas @ 85% */
+  border: 1px solid var(--hairline);
   border-radius: 6px;
   padding: 3px;
   backdrop-filter: blur(2px);

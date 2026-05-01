@@ -51,6 +51,8 @@ const api = {
   refreshLibraryIndex: () => ipcRenderer.invoke("library:refresh"),
   readLibraryJsonSchema: (absPath: string | null | undefined) =>
     ipcRenderer.invoke("library:readJsonSchema", absPath),
+  createLibraryWorkflow: (opts: unknown) =>
+    ipcRenderer.invoke("library:createWorkflow", opts),
 
   // ── runs (Start/Pause/Resume/Stop) ───────────────────────────────────
   startRun:   (input: { taskId: string; agentSlug?: string; model?: string }) =>

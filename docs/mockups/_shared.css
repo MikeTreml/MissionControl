@@ -1,18 +1,39 @@
 /* Shared tokens + chrome for the mockup HTMLs.
- * Mirrors src/renderer/src/styles.css so mockups render with the
- * actual app palette. Open any mockup-*.html directly in a browser. */
+ * Mirrors src/renderer/src/styles.css (v2 token reset) so mockups render
+ * with the actual app palette. Open any mockup-*.html directly in a browser. */
 
 :root {
-  --bg: #0f1115;
-  --panel: #171a21;
-  --panel-2: #1d2230;
-  --border: #2a3040;
-  --text: #e9edf5;
-  --muted: #9da8bb;
-  --accent: #6ea8fe;
-  --good: #4dd4ac;
-  --warn: #f4c95d;
-  --bad: #ff7b7b;
+  /* v2 surfaces — warm neutral, three planes + abyss/floating. */
+  --canvas:        #252422;
+  --surface:       #2e2d2a;
+  --raised:        #38362f;
+  --floating:      #423f37;
+  --abyss:         #1c1b1a;
+  --hairline:      #3d3b35;
+  --hairline-strong: #4a4842;
+  --lift:          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  /* legacy aliases */
+  --bg:            var(--canvas);
+  --panel:         var(--surface);
+  --panel-2:       var(--raised);
+  --border:        var(--hairline);
+
+  --text:          #ECEAE5;
+  --text-2:        #B5B0A6;
+  --muted:         #87827A;
+
+  --success:       #5DBF8A;
+  --warning:       #E8B14C;
+  --danger:        #E87474;
+  --info:          #6BA4E8;
+
+  /* legacy state aliases */
+  --good:          var(--success);
+  --warn:          var(--warning);
+  --bad:           var(--danger);
+  --accent:        var(--info);
+
   --mono: ui-monospace, "Cascadia Code", "Consolas", monospace;
 }
 
@@ -55,9 +76,9 @@ body {
 .note strong { color: var(--accent); }
 
 .frame {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--lift);
+  border-radius: 14px;
   overflow: hidden;
 }
 .frame-caption {
@@ -72,8 +93,8 @@ body {
 }
 
 .card {
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: var(--raised);
+  box-shadow: var(--lift);
   border-radius: 10px;
   padding: 12px 14px;
 }
