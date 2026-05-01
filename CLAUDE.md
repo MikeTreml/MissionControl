@@ -154,15 +154,6 @@ Then read these in order:
   surface, drive an approval workflow against journal `BREAKPOINT_OPENED`
   events instead of the dropped manual gate.
 - **pi-memory-md wire-up** — per-project memory at `~/.pi/memory-md/<project>/`.
-- **Pause/Resume affecting pi** — currently MC-state only. pi's
-  `session.steer()` / `session.followUp()` could interrupt mid-turn.
-- **Subagent spawn tracking** — surface `EFFECT_REQUESTED` /
-  `EFFECT_RESOLVED_OK` from `.a5c/runs/<runId>/journal/*.jsonl` as
-  first-class subagent rows in RightBar.
-- **Lane redesign** — Board still groups by run-state-derived bands
-  (Idle / Running / Waiting / Done / Failed). Phase chips on Task Detail
-  give the workflow-specific view; the kanban shell could be replaced
-  by a flat list grouped by state per the mockup.
 
 ## Dep notes
 
