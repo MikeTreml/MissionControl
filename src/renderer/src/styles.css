@@ -30,7 +30,7 @@
   /* ── Text — tuned for the lighter shell ──────────────────────── */
   --text:          #ECEAE5;
   --text-2:        #B5B0A6;
-  --muted:         #87827A;
+  --muted:         #61828F;
   --text-disabled: #5C5852;
 
   /* ── State (locked — never reassign) ─────────────────────────── */
@@ -237,7 +237,7 @@ body:has(.context-strip) .app-shell {
   gap: 10px;
   padding: 7px 10px;
   border-radius: var(--radius-md);
-  font-size: var(--fs-md);
+  font-size: 14px;
   color: var(--text-2);
   cursor: pointer;
   transition: background var(--dur-fast), color var(--dur-fast);
@@ -258,9 +258,13 @@ body:has(.context-strip) .app-shell {
   color: var(--text-disabled);
 }
 .nav-item .glyph {
-  width: 16px;
-  font-family: var(--font-mono);
-  font-size: var(--fs-sm);
+  width: 18px;
+  /* Use the system emoji stack so the colored OS-rendered emoji wins.
+   * Mono stack would force monochrome on some platforms. */
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
+               "Segoe UI Symbol", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1;
   color: var(--muted);
   text-align: center;
   flex: 0 0 auto;

@@ -128,14 +128,14 @@ export function Sidebar(): JSX.Element {
         <div className="section-label">Workspace</div>
         <div className="nav-list">
           <NavItem
-            glyph="▤"
+            glyph="📋"
             label="Board"
             badge={totalOpen}
             active={view === "dashboard"}
             onClick={() => setView("dashboard")}
           />
           <NavItem
-            glyph="≡"
+            glyph="📝"
             label="Drafts"
             badge={draftCount}
             // Drafts is a tab inside Board; sending the user to the
@@ -145,19 +145,19 @@ export function Sidebar(): JSX.Element {
             tooltip="Drafts tab on the Board"
           />
           <NavItem
-            glyph="◫"
+            glyph="📚"
             label="Library"
             active={view === "library"}
             onClick={() => setView("library")}
           />
           <NavItem
-            glyph="⟳"
+            glyph="⏱️"
             label="Run history"
             active={view === "run-history"}
             onClick={() => setView("run-history")}
           />
           <NavItem
-            glyph="⌥"
+            glyph="🤝"
             label="Hand-offs"
             badge={tasks.filter((t) => t.boardStage === "Review" || t.boardStage === "Blocked").length}
             active={view === "handoffs"}
@@ -171,19 +171,19 @@ export function Sidebar(): JSX.Element {
         <div className="section-label">System</div>
         <div className="nav-list">
           <NavItem
-            glyph="◐"
+            glyph="🧠"
             label="Models"
             active={view === "settings-models"}
             onClick={() => setView("settings-models")}
           />
           <NavItem
-            glyph="⌖"
+            glyph="🤖"
             label="Agents"
             active={view === "settings-agents"}
             onClick={() => setView("settings-agents")}
           />
           <NavItem
-            glyph="⚙"
+            glyph="⚙️"
             label="Settings"
             active={view === "settings-global"}
             onClick={() => setView("settings-global")}
