@@ -89,9 +89,15 @@ export class LibraryWalker {
 
       const base = path.basename(filePath);
       const ext = path.extname(filePath).toLowerCase();
-      const isExampleJson = ext === ".json" && base !== "_meta.json" && base !== "_index.json";
+      // Sidecar info files (<slug>.info.json next to flat sources, INFO.json
+      // next to AGENT.md/SKILL.md) are NOT items themselves — they're
+      // overlays merged into the item they describe.
+      const isSidecar = base === "INFO.json" || base.endsWith(".info.json");
+      const isExampleJson =
+        ext === ".json" && base !== "_meta.json" && base !== "_index.json" && !isSidecar;
       const isWorkflowJs = isWorkflowSource(rel, base, ext);
       if (!TARGET_FILES.has(base) && !isExampleJson && !isWorkflowJs) continue;
+      if (isSidecar) continue;
 
       const kind = classifyKind(base, isExampleJson, isWorkflowJs);
       if (!kind) continue;
@@ -170,11 +176,21 @@ export class LibraryWalker {
       containerReadmePath,
     };
 
+    let item: LibraryIndexItem = base;
     if (kind === "workflow") {
       const workflowData = await buildWorkflowFields(filePath, text);
-      return { ...base, ...workflowData };
+      item = { ...base, ...workflowData };
     }
-    return base;
+
+    // Sidecar overlay — last layer. The walker can't reliably derive
+    // most editorial fields (containerKind, domainGroup, hasParallel,
+    // etc.) from source files, so a sibling .info.json / INFO.json
+    // is the source of truth for anything in SIDECAR_OVERRIDE_FIELDS
+    // when present. Computed fields (id, diskPath, sizeBytes,
+    // modifiedAt) can never be overridden — they always reflect disk.
+    const sidecarPath = sidecarPathFor(filePath, kind);
+    const sidecar = await readSidecar(sidecarPath);
+    return applySidecar(item, sidecar);
   }
 
   private async walk(dir: string): Promise<string[]> {
@@ -219,6 +235,79 @@ export class LibraryWalker {
     this.metaCache.set(key, null);
     return null;
   }
+}
+
+/**
+ * Sidecar info-file resolver. Two file naming conventions because items
+ * have two structural shapes:
+ *
+ *   - AGENT.md / SKILL.md always live in their own folder; the sidecar
+ *     is `INFO.json` in that folder.
+ *   - Workflows (`<slug>.js` flat under a `<category>/workflows/` dir)
+ *     and examples (`<example>.json` flat) get a sibling sidecar named
+ *     `<stem>.info.json` next to the source file.
+ *
+ * Sidecars are optional. Missing sidecar → no overrides.
+ */
+export function sidecarPathFor(filePath: string, kind: LibraryItemKind): string {
+  const dir = path.dirname(filePath);
+  if (kind === "agent" || kind === "skill") {
+    return path.join(dir, "INFO.json");
+  }
+  const base = path.basename(filePath);
+  const stem = base.replace(/\.[^.]+$/, "");
+  return path.join(dir, `${stem}.info.json`);
+}
+
+async function readSidecar(sidecarPath: string): Promise<Record<string, unknown>> {
+  try {
+    const raw = await fs.readFile(sidecarPath, "utf8");
+    const parsed: unknown = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed as Record<string, unknown>;
+    }
+    return {};
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "ENOENT") return {};
+    // Corrupt JSON shouldn't crash the index build; treat as empty.
+    return {};
+  }
+}
+
+/**
+ * Fields a sidecar is allowed to override. Computed fields (id,
+ * diskPath, sizeBytes, modifiedAt, descriptionMdPath, etc.) are
+ * deliberately not in this list — they always reflect disk truth and
+ * the user can't usefully edit them in the UI.
+ */
+export const SIDECAR_OVERRIDE_FIELDS = [
+  "name",
+  "description",
+  "role",
+  "tags",
+  "languages",
+  "expertise",
+  "version",
+  "container",
+  "containerKind",
+  "domainGroup",
+  "originalSource",
+  "hasParallel",
+  "hasBreakpoints",
+  "estimatedSteps",
+  "usesAgents",
+  "usesSkills",
+] as const;
+
+function applySidecar(item: LibraryIndexItem, sidecar: Record<string, unknown>): LibraryIndexItem {
+  if (Object.keys(sidecar).length === 0) return item;
+  const out: Record<string, unknown> = { ...item };
+  for (const key of SIDECAR_OVERRIDE_FIELDS) {
+    if (sidecar[key] !== undefined) {
+      out[key] = sidecar[key];
+    }
+  }
+  return out as LibraryIndexItem;
 }
 
 function classifyKind(base: string, isExampleJson: boolean, isWorkflowJs: boolean): LibraryItemKind | null {

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { LibraryIndexItem, LibraryItemKind } from "../../types/library";
 import { deviconSvgUrl, languageToDeviconSlug } from "../../lib/devicon-languages";
+import { publish } from "../../hooks/data-bus";
+import { pushToast, pushErrorToast } from "../../hooks/useToasts";
 
 const KIND_OPTIONS: LibraryItemKind[] = ["agent", "skill", "workflow", "example"];
 
@@ -19,14 +21,19 @@ const DOMAIN_GROUP_OPTIONS = ["", "business", "science", "social-sciences-humani
 export function DetailPanel({ item }: { item: LibraryIndexItem | null }): JSX.Element {
   const [editMode, setEditMode] = useState(false);
   const [draft, setDraft] = useState<LibraryItemDraft | null>(null);
+  const [original, setOriginal] = useState<LibraryItemDraft | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!item) {
       setDraft(null);
+      setOriginal(null);
       setEditMode(false);
       return;
     }
-    setDraft(itemToDraft(item));
+    const d = itemToDraft(item);
+    setDraft(d);
+    setOriginal(d);
     setEditMode(false);
   }, [item?.id]);
 
@@ -34,6 +41,67 @@ export function DetailPanel({ item }: { item: LibraryIndexItem | null }): JSX.El
     if (!item || !draft) return null;
     return mergeDraft(item, draft);
   }, [item, draft]);
+
+  const dirty = useMemo(() => {
+    if (!draft || !original) return false;
+    return JSON.stringify(draft) !== JSON.stringify(original);
+  }, [draft, original]);
+
+  /**
+   * Persist edits to the item's sidecar (`INFO.json` next to AGENT.md/
+   * SKILL.md, or `<stem>.info.json` next to flat workflow/example
+   * sources). Only the SIDECAR_OVERRIDE_FIELDS subset reaches disk —
+   * the IPC drops anything else. Computed fields (id / diskPath /
+   * sizeBytes / modifiedAt) are recomputed by the walker on rebuild.
+   */
+  async function handleSave(): Promise<void> {
+    if (!item || !draft || !window.mc?.saveItemInfo) return;
+    setSaving(true);
+    try {
+      // Build a patch of only the editable fields. Empty strings → null
+      // so the sidecar reverts to source-derived values for that field.
+      const patch: Record<string, unknown> = {
+        name: draft.name.trim() || null,
+        description: draft.description.trim() || null,
+        role: draft.role.trim() || null,
+        version: draft.version.trim() || null,
+        container: draft.container.trim() || null,
+        containerKind: draft.containerKind.trim() || null,
+        domainGroup: draft.domainGroup.trim() || null,
+        tags: parseList(draft.tagsText),
+        languages: parseList(draft.languagesText),
+        expertise: parseList(draft.expertiseText),
+      };
+      if (item.kind === "workflow") {
+        patch.hasParallel = draft.hasParallel === "yes";
+        patch.hasBreakpoints = draft.hasBreakpoints === "yes";
+        const steps = Number(draft.estimatedStepsText);
+        patch.estimatedSteps = Number.isFinite(steps) && steps > 0 ? Math.floor(steps) : null;
+        patch.usesAgents = parseList(draft.usesAgentsText);
+        patch.usesSkills = parseList(draft.usesSkillsText);
+      }
+      await window.mc.saveItemInfo({
+        kind: item.kind,
+        diskPath: item.diskPath,
+        patch,
+      });
+      pushToast({ tone: "good", title: "Item saved", detail: item.name });
+      setOriginal(draft);
+      setEditMode(false);
+      // Refresh the library index so the new fields show up everywhere
+      // (tree, Run Workflow modal, etc.).
+      publish("workflows");
+    } catch (e) {
+      pushErrorToast("Failed to save item", e, item.id);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function handleDiscard(): void {
+    if (original) setDraft(original);
+    setEditMode(false);
+  }
 
   return (
     <div className="card" style={{ minHeight: 480 }}>
@@ -47,8 +115,10 @@ export function DetailPanel({ item }: { item: LibraryIndexItem | null }): JSX.El
               onChange={(e) => {
                 const on = e.target.checked;
                 setEditMode(on);
-                if (on && item) setDraft(itemToDraft(item));
-                if (!on && item) setDraft(itemToDraft(item));
+                // Reset draft from the original (which mirrors disk) on
+                // toggle. Same effect as Discard — keeps the toggle
+                // explicit + non-destructive of saved work.
+                if (item && original) setDraft(original);
               }}
             />
             Edit
@@ -63,9 +133,39 @@ export function DetailPanel({ item }: { item: LibraryIndexItem | null }): JSX.El
       {item && display && (
         <div style={{ display: "grid", gap: 12 }}>
           {editMode && (
-            <p className="muted" style={{ fontSize: 12, margin: 0, padding: 8, background: "var(--panel)", borderRadius: 6 }}>
-              Preview only — the library index is generated from files on disk. Changes here are not saved.
-            </p>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: 8,
+                background: "var(--panel)",
+                borderRadius: 6,
+                fontSize: 12,
+              }}
+            >
+              <span className="muted" style={{ flex: 1 }}>
+                Edits write to a sidecar (<code>INFO.json</code> or{" "}
+                <code>&lt;stem&gt;.info.json</code>) next to the source file. Source files
+                are not modified. Empty a field to clear the override.
+              </span>
+              <button
+                className="button ghost"
+                onClick={() => handleDiscard()}
+                disabled={saving || !dirty}
+                style={{ padding: "4px 10px", fontSize: 12 }}
+              >
+                Discard
+              </button>
+              <button
+                className="button"
+                onClick={() => void handleSave()}
+                disabled={saving || !dirty}
+                style={{ padding: "4px 10px", fontSize: 12 }}
+              >
+                {saving ? "Saving…" : "Save"}
+              </button>
+            </div>
           )}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button

@@ -55,6 +55,8 @@ const api = {
     ipcRenderer.invoke("library:createWorkflow", opts),
   createLibraryItem: (opts: unknown) =>
     ipcRenderer.invoke("library:createItem", opts),
+  saveItemInfo: (opts: unknown) =>
+    ipcRenderer.invoke("library:saveItemInfo", opts),
 
   // ── per-project memory (~/.pi/memory-md/<id>/MEMORY.md) ─────────────
   readProjectMemory: (projectId: string) =>

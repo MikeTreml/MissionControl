@@ -136,6 +136,20 @@ export interface McApi {
   createLibraryItem: (
     opts: CreateLibraryItemOpts,
   ) => Promise<{ diskPath: string; relPath: string }>;
+  /**
+   * Edit an item's sidecar metadata (INFO.json next to AGENT.md/SKILL.md,
+   * or <stem>.info.json next to flat workflow / example sources). The
+   * walker merges these on top of source-derived fields, so this is the
+   * place editorial fields like containerKind / hasParallel / display
+   * name overrides are persisted without modifying the source files.
+   * `null` in the patch removes that key (source value wins again).
+   * Triggers an in-process index rebuild before returning.
+   */
+  saveItemInfo: (opts: {
+    kind: "agent" | "skill" | "workflow" | "example";
+    diskPath: string;
+    patch: Record<string, unknown>;
+  }) => Promise<{ sidecarPath: string; contents: Record<string, unknown> }>;
 
   // per-project memory (~/.pi/memory-md/<projectId>/MEMORY.md). Pi will
   // consume this directly once it lands; MC reads/writes the same path

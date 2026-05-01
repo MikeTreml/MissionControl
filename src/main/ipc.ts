@@ -19,6 +19,7 @@ import type { LibraryIndexStore } from "./library-index.ts";
 import type { MemoryStore } from "./memory-store.ts";
 import type { WorkflowCreator, CreateWorkflowOpts } from "./workflow-creator.ts";
 import type { LibraryItemCreator, CreateLibraryItemOpts } from "./library-item-creator.ts";
+import type { ItemInfoStore, SaveItemInfoOpts } from "./item-info-store.ts";
 import { detectGit } from "./git-detect.ts";
 import type { Project, ProjectWithGit } from "../shared/models.ts";
 
@@ -41,6 +42,7 @@ export interface Stores {
   libraryIndex: LibraryIndexStore;
   workflowCreator: WorkflowCreator;
   libraryItemCreator: LibraryItemCreator;
+  itemInfo: ItemInfoStore;
   memory: MemoryStore;
 }
 
@@ -133,6 +135,16 @@ export function registerIpc(stores: Stores): void {
       stores.libraryItemCreator.create(opts),
     ),
   );
+  // Edit a library item's sidecar info file (INFO.json or <stem>.info.json)
+  // — the persistence path for DetailPanel's editable fields. Rebuilds the
+  // index after the write so the renderer sees the change on its next fetch.
+  ipcMain.handle("library:saveItemInfo", async (_e, opts: SaveItemInfoOpts) => {
+    return logged(`library:saveItemInfo ${opts.kind}`, async () => {
+      const result = await stores.itemInfo.save(opts);
+      await stores.itemInfo.rebuildIndex();
+      return result;
+    });
+  });
 
   // ── per-project memory (~/.pi/memory-md/<projectId>/MEMORY.md) ──────
   ipcMain.handle("memory:read", (_e, projectId: string) =>
