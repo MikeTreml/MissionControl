@@ -407,6 +407,22 @@ body:has(.context-strip) .app-shell {
   border: 1px solid var(--border);
 }
 
+.input {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--canvas);
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  outline: 1px solid transparent;
+  transition: outline-color var(--dur-fast), background var(--dur-fast);
+  font-family: inherit;
+  font-size: var(--fs-md);
+}
+.input:hover { outline-color: var(--hairline-strong); }
+.input:focus { outline-color: var(--info); }
+.input::placeholder { color: var(--muted); }
+
 .group { margin-bottom: 18px; }
 .project-list, .agent-list, .task-list { display: grid; gap: 10px; }
 
@@ -802,6 +818,205 @@ body:has(.context-strip) .app-shell {
 }
 @container drafts (max-width: 720px) {
   .drafts-table .col-project { width: 90px; }
+}
+
+/* ── Library browser tree — compact file-list style from the MC kit ── */
+.library-tree-panel {
+  min-height: 560px;
+  position: relative;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  background: var(--raised);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: var(--lift);
+}
+.library-tree-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.library-tree-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.library-tree-toolbar .button {
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+}
+.library-tree-scroll {
+  display: grid;
+  gap: 1px;
+  min-height: 360px;
+  max-height: calc(100vh - 330px);
+  overflow: auto;
+  padding-right: 4px;
+}
+.library-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 7px 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--dur-fast), box-shadow var(--dur-fast), color var(--dur-fast);
+}
+.library-tree-row:hover {
+  background: var(--floating);
+}
+.library-tree-row-folder {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+.library-tree-row-folder.has-selection {
+  background: color-mix(in oklch, var(--info) 8%, transparent);
+}
+.library-tree-row-file {
+  border: 1px solid transparent;
+  font-size: var(--fs-sm);
+}
+.library-tree-row-file.active {
+  background: var(--floating);
+  box-shadow: inset 2px 0 0 var(--info), var(--lift);
+  border-color: color-mix(in oklch, var(--info) 30%, transparent);
+}
+.library-tree-chevron {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  border-radius: var(--radius-sm);
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+.library-tree-chevron:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+.library-tree-glyph {
+  width: 18px;
+  flex: 0 0 auto;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+.library-tree-label {
+  min-width: 0;
+  flex: 1;
+}
+.library-tree-titleline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.library-tree-folder-name,
+.library-tree-file-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.library-tree-folder-name {
+  color: var(--text);
+  font-weight: var(--fw-semibold);
+}
+.library-tree-file-name {
+  color: var(--text);
+  font-weight: var(--fw-medium);
+  font-family: var(--font-mono);
+}
+.library-tree-path {
+  margin-top: 2px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.library-tree-count {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.library-tree-kind-counts {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 220px;
+}
+.library-tree-kind-counts .pill,
+.library-tree-row-file > .pill {
+  padding: 1px 6px;
+  font-size: var(--fs-2xs);
+}
+.library-tree-menu {
+  position: fixed;
+  z-index: 2000;
+  min-width: 180px;
+  padding: 8px;
+  display: grid;
+  gap: 6px;
+  background: var(--floating);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-menu);
+}
+.library-tree-menu .button {
+  justify-content: flex-start;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.library-creator-tabs {
+  display: flex;
+  gap: 2px;
+  margin: 0 0 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.library-creator-tabs .tab {
+  padding: 8px 12px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  font-family: inherit;
+  font-size: var(--fs-md);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  position: relative;
+  cursor: pointer;
+}
+.library-creator-tabs .tab:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+.library-creator-tabs .tab.active {
+  color: var(--text);
+  font-weight: var(--fw-medium);
+}
+.library-creator-tabs .tab.active::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -1px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
 }
 
 /* ── Context strip — pinned banner for highest-priority running task ── */

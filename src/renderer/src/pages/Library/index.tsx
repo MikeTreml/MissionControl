@@ -9,12 +9,13 @@ import { Tree } from "./Tree";
 import { DetailPanel } from "./DetailPanel";
 import { SelectionBag } from "./SelectionBag";
 import { RunWorkflowModal } from "./RunWorkflowModal";
-import { NewWorkflowModal } from "./NewWorkflowModal";
+import { LibraryCreatorModal } from "./LibraryCreatorModal";
 
 export function LibraryBrowser(): JSX.Element {
   const { setView } = useRoute();
   const {
     index,
+    items,
     loading,
     error,
     search,
@@ -39,10 +40,11 @@ export function LibraryBrowser(): JSX.Element {
   const [selectedSet, setSelectedSet] = useState<Set<string>>(() => loadStoredSet());
   const [templateWorkflowId, setTemplateWorkflowId] = useState<string | null>(() => loadStoredTemplate());
   const [runOpen, setRunOpen] = useState(false);
-  const [newOpen, setNewOpen] = useState(false);
+  const [creatorOpen, setCreatorOpen] = useState(false);
+  const [creatorKind, setCreatorKind] = useState<"workflow" | "agent" | "skill">("workflow");
   const itemById = useMemo(
-    () => new Map(filteredItems.map((item) => [item.id, item] as const)),
-    [filteredItems],
+    () => new Map(items.map((item) => [item.id, item] as const)),
+    [items],
   );
   const selectedItem = selectedId ? itemById.get(selectedId) ?? null : null;
   const selectedItems = [...selectedSet]
@@ -56,6 +58,26 @@ export function LibraryBrowser(): JSX.Element {
       else next.add(id);
       return next;
     });
+  }
+
+  function setChecked(ids: string[], checked: boolean): void {
+    setSelectedSet((prev) => {
+      const next = new Set(prev);
+      for (const id of ids) {
+        if (checked) next.add(id);
+        else next.delete(id);
+      }
+      return next;
+    });
+  }
+
+  function removeSelected(id: string): void {
+    setSelectedSet((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+    if (templateWorkflowId === id) setTemplateWorkflowId(null);
   }
 
   useEffect(() => {
@@ -86,7 +108,7 @@ export function LibraryBrowser(): JSX.Element {
               : "No index loaded"}
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
           <button
             className="button ghost"
             onClick={() => void rebuild()}
@@ -97,10 +119,33 @@ export function LibraryBrowser(): JSX.Element {
           </button>
           <button
             className="button ghost"
-            onClick={() => setNewOpen(true)}
-            title="Scaffold a new workflow.js under library/workflows/"
+            onClick={() => {
+              setCreatorKind("workflow");
+              setCreatorOpen(true);
+            }}
+            title="Build a new workflow.js under library/workflows/"
           >
-            + New workflow
+            + Workflow
+          </button>
+          <button
+            className="button ghost"
+            onClick={() => {
+              setCreatorKind("agent");
+              setCreatorOpen(true);
+            }}
+            title="Create a new AGENT.md under a library root"
+          >
+            + Agent
+          </button>
+          <button
+            className="button ghost"
+            onClick={() => {
+              setCreatorKind("skill");
+              setCreatorOpen(true);
+            }}
+            title="Create a new SKILL.md under a library root"
+          >
+            + Skill
           </button>
           <button
             className="button"
@@ -149,6 +194,7 @@ export function LibraryBrowser(): JSX.Element {
               selectedSet={selectedSet}
               onSelectItem={(item) => setSelectedId(item.id)}
               onToggleChecked={toggleChecked}
+              onSetChecked={setChecked}
               templateWorkflowId={templateWorkflowId}
               onToggleTemplateWorkflow={(workflowId) =>
                 setTemplateWorkflowId((prev) => (prev === workflowId ? null : workflowId))
@@ -166,6 +212,7 @@ export function LibraryBrowser(): JSX.Element {
             setSelectedSet(new Set());
             setTemplateWorkflowId(null);
           }}
+          onRemove={removeSelected}
         />
       </div>
       <RunWorkflowModal
@@ -173,7 +220,11 @@ export function LibraryBrowser(): JSX.Element {
         workflowItem={resolveWorkflowSelection(selectedItem, selectedItems, templateWorkflowId)}
         onClose={() => setRunOpen(false)}
       />
-      <NewWorkflowModal open={newOpen} onClose={() => setNewOpen(false)} />
+      <LibraryCreatorModal
+        open={creatorOpen}
+        initialKind={creatorKind}
+        onClose={() => setCreatorOpen(false)}
+      />
     </>
   );
 }

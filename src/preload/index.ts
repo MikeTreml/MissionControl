@@ -53,6 +53,8 @@ const api = {
     ipcRenderer.invoke("library:readJsonSchema", absPath),
   createLibraryWorkflow: (opts: unknown) =>
     ipcRenderer.invoke("library:createWorkflow", opts),
+  createLibraryItem: (opts: unknown) =>
+    ipcRenderer.invoke("library:createItem", opts),
 
   // ── per-project memory (~/.pi/memory-md/<id>/MEMORY.md) ─────────────
   readProjectMemory: (projectId: string) =>

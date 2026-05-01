@@ -70,6 +70,20 @@ export type CreateWorkflowOpts = {
   slug: string;
 };
 
+export type CreateLibraryItemOpts = {
+  kind: "agent" | "skill";
+  targetRoot: string;
+  slug: string;
+  name: string;
+  description: string;
+  role?: string;
+  philosophy?: string;
+  tags?: string[];
+  capabilities?: string[];
+  tools?: string[];
+  prerequisites?: string[];
+};
+
 export interface McApi {
   version: string;
 
@@ -117,6 +131,10 @@ export interface McApi {
   /** Generate a workflow.js from a WorkflowSpec and write it under library/workflows/. */
   createLibraryWorkflow: (
     opts: CreateWorkflowOpts,
+  ) => Promise<{ diskPath: string; relPath: string }>;
+  /** Generate an AGENT.md or SKILL.md and rebuild library/_index.json. */
+  createLibraryItem: (
+    opts: CreateLibraryItemOpts,
   ) => Promise<{ diskPath: string; relPath: string }>;
 
   // per-project memory (~/.pi/memory-md/<projectId>/MEMORY.md). Pi will

@@ -18,6 +18,7 @@ import type { SettingsStore } from "./settings-store.ts";
 import type { LibraryIndexStore } from "./library-index.ts";
 import type { MemoryStore } from "./memory-store.ts";
 import type { WorkflowCreator, CreateWorkflowOpts } from "./workflow-creator.ts";
+import type { LibraryItemCreator, CreateLibraryItemOpts } from "./library-item-creator.ts";
 import { detectGit } from "./git-detect.ts";
 import type { Project, ProjectWithGit } from "../shared/models.ts";
 
@@ -39,6 +40,7 @@ export interface Stores {
   settings: SettingsStore;
   libraryIndex: LibraryIndexStore;
   workflowCreator: WorkflowCreator;
+  libraryItemCreator: LibraryItemCreator;
   memory: MemoryStore;
 }
 
@@ -124,6 +126,11 @@ export function registerIpc(stores: Stores): void {
   ipcMain.handle("library:createWorkflow", (_e, opts: CreateWorkflowOpts) =>
     logged(`library:createWorkflow ${opts.category}/${opts.slug}`, () =>
       stores.workflowCreator.create(opts),
+    ),
+  );
+  ipcMain.handle("library:createItem", (_e, opts: CreateLibraryItemOpts) =>
+    logged(`library:createItem ${opts.kind}/${opts.targetRoot}/${opts.slug}`, () =>
+      stores.libraryItemCreator.create(opts),
     ),
   );
 
