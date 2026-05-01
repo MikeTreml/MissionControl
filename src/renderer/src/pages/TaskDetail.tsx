@@ -781,7 +781,7 @@ function Controls({ task }: { task: Task }): JSX.Element {
           style={{
             color: "var(--bad)",
             borderColor: "var(--bad)",
-            background: "rgba(255,123,123,0.08)",
+            background: "rgba(232, 116, 116,0.08)",
           }}
         >
           {error}
@@ -1090,7 +1090,7 @@ function BreakpointRow({
   return (
     <div
       style={{
-        background: "rgba(244,201,93,0.08)",
+        background: "rgba(232, 177, 76,0.08)",
         border: "1px solid var(--warn)",
         borderRadius: 8,
         padding: 12,
@@ -1326,7 +1326,7 @@ function ActiveSubagentChip({ entry }: { entry: SubagentEntry }): JSX.Element {
         padding: "6px 12px",
         border: "1px solid var(--warn)",
         borderRadius: 18,
-        background: "rgba(244,201,93,0.08)",
+        background: "rgba(232, 177, 76,0.08)",
         minHeight: 28,
       }}
     >
@@ -1432,8 +1432,8 @@ function PhaseChipStrip({ task, events }: { task: Task; events: TaskEvent[] }): 
   const currentSource: "sdk" | "journal" = sdkMatches ? "sdk" : "journal";
 
   const colorFor = (status: typeof phases[number]["status"]): { bg: string; fg: string } => {
-    if (status === "active") return { bg: "rgba(244,201,93,0.15)", fg: "var(--warn)" };
-    if (status === "failed") return { bg: "rgba(255,123,123,0.12)", fg: "var(--bad)" };
+    if (status === "active") return { bg: "rgba(232, 177, 76,0.15)", fg: "var(--warn)" };
+    if (status === "failed") return { bg: "rgba(232, 116, 116,0.12)", fg: "var(--bad)" };
     if (status === "done")   return { bg: "rgba(74,222,128,0.10)", fg: "var(--good)" };
     return { bg: "var(--panel-2)", fg: "var(--muted)" };
   };
@@ -1575,7 +1575,7 @@ function LaneTimeline({ task, events }: { task: Task; events: TaskEvent[] }): JS
                   borderRadius: "50%",
                   background: dotColor,
                   border: `2px solid ${dotColor}`,
-                  boxShadow: p.status === "active" ? "0 0 0 4px rgba(244,201,93,0.2)" : undefined,
+                  boxShadow: p.status === "active" ? "0 0 0 4px rgba(232, 177, 76,0.2)" : undefined,
                 }}
               />
               <h4 style={{ margin: "0 0 2px", fontSize: 14 }}>

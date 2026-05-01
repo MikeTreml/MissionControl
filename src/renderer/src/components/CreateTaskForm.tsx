@@ -331,7 +331,7 @@ export function CreateTaskForm({
               style={{
                 marginBottom: 14,
                 padding: "8px 10px",
-                background: "rgba(110,168,254,0.08)",
+                background: "rgba(107, 164, 232,0.08)",
                 border: "1px solid var(--accent)",
                 borderRadius: 8,
               }}
@@ -456,7 +456,7 @@ export function CreateTaskForm({
             <div
               style={{
                 color: "var(--bad)",
-                background: "rgba(255,123,123,0.1)",
+                background: "rgba(232, 116, 116,0.1)",
                 border: "1px solid var(--bad)",
                 borderRadius: 8,
                 padding: "8px 10px",

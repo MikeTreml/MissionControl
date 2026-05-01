@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
             padding: 24,
             border: "1px solid var(--bad)",
             borderRadius: 12,
-            background: "rgba(255,123,123,0.06)",
+            background: "rgba(232, 116, 116,0.06)",
           }}
         >
           <h1 style={{ marginTop: 0, color: "var(--bad)" }}>

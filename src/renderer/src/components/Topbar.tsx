@@ -60,7 +60,7 @@ export function Topbar(): JSX.Element {
             height: 9,
             borderRadius: "50%",
             background: bridgeOk ? "var(--good)" : "var(--bad)",
-            boxShadow: `0 0 0 2px ${bridgeOk ? "rgba(77,212,172,0.25)" : "rgba(255,123,123,0.25)"}`,
+            boxShadow: `0 0 0 2px ${bridgeOk ? "rgba(93, 191, 138,0.25)" : "rgba(232, 116, 116,0.25)"}`,
           }}
         />
         <span className="muted" style={{ fontSize: 11 }}>

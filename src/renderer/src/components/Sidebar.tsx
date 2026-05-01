@@ -56,7 +56,7 @@ export function Sidebar(): JSX.Element {
       {isDemo && (
         <div
           style={{
-            background: "rgba(244, 201, 93, 0.08)",
+            background: "rgba(232, 177, 76, 0.08)",
             border: "1px dashed var(--warn)",
             borderRadius: 8,
             padding: 8,
@@ -146,7 +146,7 @@ export function Sidebar(): JSX.Element {
               height: 8,
               borderRadius: "50%",
               background: bridgeOk ? "var(--good)" : "var(--bad)",
-              boxShadow: `0 0 0 2px ${bridgeOk ? "rgba(77,212,172,0.25)" : "rgba(255,123,123,0.25)"}`,
+              boxShadow: `0 0 0 2px ${bridgeOk ? "rgba(93, 191, 138,0.25)" : "rgba(232, 116, 116,0.25)"}`,
             }}
           />
           <span className="muted" style={{ fontSize: 11 }}>
@@ -193,7 +193,7 @@ function ProjectRow({
           style={{
             flex: "0 0 auto",
             background: bg,
-            color: "#0b0d12",
+            color: "var(--abyss)",
             border: `1px solid ${border}`,
             borderRadius: 6,
             padding: "2px 6px",
@@ -230,7 +230,7 @@ function ProjectRow({
               fontSize: 11,
               fontWeight: 600,
               color: "var(--accent)",
-              background: "rgba(110, 168, 254, 0.12)",
+              background: "rgba(107, 164, 232, 0.12)",
               borderRadius: 999,
               padding: "1px 6px",
               lineHeight: 1.25,

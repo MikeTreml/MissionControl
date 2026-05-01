@@ -103,7 +103,7 @@ function BoardTabButton({
         fontSize: 13,
         padding: "5px 12px",
         borderColor: active ? "var(--accent)" : "var(--border)",
-        background: active ? "rgba(110,168,254,0.08)" : "transparent",
+        background: active ? "rgba(107, 164, 232,0.08)" : "transparent",
         color: active ? "var(--text)" : "var(--muted)",
       }}
     >

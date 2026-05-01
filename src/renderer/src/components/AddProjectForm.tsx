@@ -242,7 +242,7 @@ export function AddProjectForm({
             className="muted"
             style={{
               color: "var(--bad)",
-              background: "rgba(255,123,123,0.1)",
+              background: "rgba(232, 116, 116,0.1)",
               border: "1px solid var(--bad)",
               borderRadius: 8,
               padding: "8px 10px",
@@ -365,7 +365,7 @@ function pickBtnStyle(selected: boolean): React.CSSProperties {
     padding: "6px 0",
     fontSize: 18,
     lineHeight: 1,
-    background: selected ? "rgba(110,168,254,0.15)" : "var(--bg)",
+    background: selected ? "rgba(107, 164, 232,0.15)" : "var(--bg)",
     border: `1px solid ${selected ? "var(--accent)" : "var(--border)"}`,
     borderRadius: 6,
     color: "var(--text)",

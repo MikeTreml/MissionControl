@@ -153,7 +153,7 @@ function GroupedItems({
                     borderRadius: 8,
                     padding: "6px 8px",
                     cursor: "pointer",
-                    background: active ? "rgba(110, 168, 254, 0.08)" : "var(--panel-2)",
+                    background: active ? "rgba(107, 164, 232, 0.08)" : "var(--panel-2)",
                   }}
                   title={item.id}
                 >
