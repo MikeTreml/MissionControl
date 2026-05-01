@@ -1,13 +1,15 @@
 /**
- * Left rail — Projects list only. Compact enough to fit ~20 projects.
+ * Left rail — projects list, workspace nav, system nav, identity footer.
  *
- * Design decisions:
- *   - No "Agent Runtime" section here. Agents live in Settings → Agents.
- *   - Each project = a colored prefix chip + name + single-line source hint.
- *   - The chip color is deterministic from the prefix (hash → hue) so every
- *     project has a consistent visual fingerprint. Users can override with
- *     the `icon` field on a project (emoji or short string).
- *   - Add Project is a single "+" icon button on the "Projects" header row.
+ * Layout matches NewUI/Mission Control Design System/ui_kits/mission-control/
+ * (sections labeled `Projects · N` / `Workspace` / `System`; nav-items with
+ * mono-glyph + label + optional badge; user-identity footer pinned bottom).
+ *
+ * Project accent: `colorForKey(prefix)` is injected as `--proj-accent`
+ * inline-style, picked up by the `.proj-row .dot` and active-row left bar.
+ *
+ * Workspace nav items wire to existing routes where they exist; "Run history"
+ * and "Hand-offs" are stubbed disabled until those views land.
  */
 import { useEffect, useState } from "react";
 
@@ -15,18 +17,16 @@ import { useProjects } from "../hooks/useProjects";
 import { useTasks } from "../hooks/useTasks";
 import { useRoute } from "../router";
 import { AddProjectForm } from "./AddProjectForm";
-import { colorForKey, colorForKeyBorder } from "../lib/color-hash";
+import { colorForKey } from "../lib/color-hash";
 
 export function Sidebar(): JSX.Element {
-  const { setView, openProject } = useRoute();
+  const { view, setView, selectedProjectId, openProject } = useRoute();
   const { projects, isDemo } = useProjects();
   const { tasks } = useTasks();
   const [addProjectOpen, setAddProjectOpen] = useState(false);
-  const [bridgeOk, setBridgeOk] = useState<boolean>(Boolean(window.mc));
   const [appVersion, setAppVersion] = useState<string>("");
 
   useEffect(() => {
-    setBridgeOk(Boolean(window.mc));
     void (async () => {
       try {
         if (!window.mc) return;
@@ -37,229 +37,195 @@ export function Sidebar(): JSX.Element {
     })();
   }, []);
 
-  // Open-task count per project: anything not in the Done lane. Cheaper than
-  // walking events; UiTask already carries the resolved lane label.
+  // Open-task counts per project (anything not in the Done lane).
   const openByProject = new Map<string, number>();
   for (const t of tasks) {
     if (t.lane === "Done") continue;
     openByProject.set(t.projectId, (openByProject.get(t.projectId) ?? 0) + 1);
   }
+  // Total open tasks for the Board badge.
+  const totalOpen = [...openByProject.values()].reduce((a, b) => a + b, 0);
+  const draftCount = tasks.filter((t) => t.boardStage === "Draft" && t.cycle === 0).length;
+  const runningCount = tasks.filter((t) => t.runState === "running").length;
 
   return (
     <aside className="sidebar">
-      <div
-        className="group"
-        style={{ cursor: "pointer", marginBottom: 12 }}
-        onClick={() => setView("dashboard")}
-      />
-
       {isDemo && (
-        <div
-          style={{
-            background: "rgba(232, 177, 76, 0.08)",
-            border: "1px dashed var(--warn)",
-            borderRadius: 8,
-            padding: 8,
-            fontSize: 11,
-            marginBottom: 12,
-          }}
-        >
-          <strong style={{ color: "var(--warn)" }}>Demo data</strong>
-          <div className="muted" style={{ marginTop: 2 }}>
-            Click + to add your first project.
+        <div className="demo-banner">
+          <b>Demo data</b>
+          <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>
+            Click + to add a project.
           </div>
         </div>
       )}
 
-      {/* ── Projects header + add button ── */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 8,
-        }}
-      >
-        <h3 style={{ margin: 0, fontSize: 13, color: "var(--muted)", textTransform: "uppercase", letterSpacing: 0.5 }}>
-          Projects ({projects.length})
-        </h3>
-        <button
-          className="button ghost"
-          onClick={() => setAddProjectOpen(true)}
-          title="Add Project"
-          style={{
-            padding: "2px 8px",
-            fontSize: 16,
-            lineHeight: 1,
-            minWidth: 28,
-          }}
-        >
-          +
-        </button>
-      </div>
-
-      <AddProjectForm
-        open={addProjectOpen}
-        onClose={() => setAddProjectOpen(false)}
-      />
-
-      {/* ── Compact project rows ── */}
-      <div style={{ display: "grid", gap: 4 }}>
-        {projects.map((p) => (
-          <ProjectRow
-            key={p.id}
-            project={p}
-            openCount={openByProject.get(p.id) ?? 0}
-            onClick={() => openProject(p.id)}
-          />
-        ))}
-        {projects.length === 0 && !isDemo && (
-          <div
-            style={{
-              fontSize: 12,
-              padding: "10px",
-              border: "1px dashed var(--border)",
-              borderRadius: 8,
-              background: "var(--panel-2)",
-              display: "grid",
-              gap: 6,
-            }}
+      {/* ── Projects ──────────────────────────────────────────────── */}
+      <div>
+        <div className="sidebar-section-head">
+          <div className="section-label">Projects · {projects.length}</div>
+          <button
+            className="button ghost"
+            onClick={() => setAddProjectOpen(true)}
+            title="Add project"
+            style={{ padding: "2px 8px", fontSize: 14, lineHeight: 1, minWidth: 24 }}
           >
-            <div className="muted">No projects yet.</div>
-            <button
-              className="button ghost"
-              onClick={() => setAddProjectOpen(true)}
-              style={{ fontSize: 12, padding: "4px 8px", justifySelf: "start" }}
+            +
+          </button>
+        </div>
+
+        <AddProjectForm open={addProjectOpen} onClose={() => setAddProjectOpen(false)} />
+
+        <div className="proj-list">
+          {projects.map((p) => {
+            const accent = colorForKey(p.prefix);
+            const isActive = view === "project" && selectedProjectId === p.id;
+            return (
+              <button
+                key={p.id}
+                className={isActive ? "proj-row active" : "proj-row"}
+                onClick={() => openProject(p.id)}
+                style={{ ["--proj-accent" as string]: accent }}
+                title={`${p.name} — ${p.sourceHint}`}
+              >
+                <span className="dot" />
+                <span className="name">{p.name}</span>
+                {openByProject.get(p.id) ? (
+                  <span className="count">{openByProject.get(p.id)}</span>
+                ) : (
+                  <span className="count" />
+                )}
+              </button>
+            );
+          })}
+          {projects.length === 0 && !isDemo && (
+            <div
+              className="muted"
+              style={{
+                fontSize: 12,
+                padding: "10px",
+                borderRadius: 8,
+                background: "var(--raised)",
+                boxShadow: "var(--lift)",
+                display: "grid",
+                gap: 6,
+              }}
             >
-              + Add your first project
-            </button>
-          </div>
-        )}
+              <div>No projects yet.</div>
+              <button
+                className="button ghost"
+                onClick={() => setAddProjectOpen(true)}
+                style={{ fontSize: 12, padding: "4px 8px", justifySelf: "start" }}
+              >
+                + Add your first project
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div style={{ marginTop: 14, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span
-            title={bridgeOk ? "Connected to main process" : "Preload not loaded — check terminal"}
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: bridgeOk ? "var(--good)" : "var(--bad)",
-              boxShadow: `0 0 0 2px ${bridgeOk ? "rgba(93, 191, 138,0.25)" : "rgba(232, 116, 116,0.25)"}`,
-            }}
+      {/* ── Workspace nav ─────────────────────────────────────────── */}
+      <div>
+        <div className="section-label">Workspace</div>
+        <div className="nav-list">
+          <NavItem
+            glyph="▤"
+            label="Board"
+            badge={totalOpen}
+            active={view === "dashboard"}
+            onClick={() => setView("dashboard")}
           />
-          <span className="muted" style={{ fontSize: 11 }}>
-            {bridgeOk ? "bridge ok" : "bridge offline"}
-          </span>
-          {appVersion && (
-            <span className="muted" style={{ fontSize: 11 }}>
-              v{appVersion}
-            </span>
-          )}
+          <NavItem
+            glyph="≡"
+            label="Drafts"
+            badge={draftCount}
+            // Drafts is a tab inside Board; sending the user to the
+            // dashboard is the closest current behavior.
+            active={false}
+            onClick={() => setView("dashboard")}
+            tooltip="Drafts tab on the Board"
+          />
+          <NavItem
+            glyph="◫"
+            label="Library"
+            active={view === "library"}
+            onClick={() => setView("library")}
+          />
+          <NavItem glyph="⟳" label="Run history" disabled tooltip="Coming soon" />
+          <NavItem glyph="⌥" label="Hand-offs" disabled tooltip="Coming soon" />
+        </div>
+      </div>
+
+      {/* ── System nav ───────────────────────────────────────────── */}
+      <div>
+        <div className="section-label">System</div>
+        <div className="nav-list">
+          <NavItem glyph="◐" label="Models" disabled tooltip="Coming soon" />
+          <NavItem glyph="⌖" label="Agents" disabled tooltip="Coming soon" />
+          <NavItem
+            glyph="⚙"
+            label="Settings"
+            active={view === "settings-global"}
+            onClick={() => setView("settings-global")}
+          />
+          <NavItem
+            glyph="📊"
+            label="Metrics"
+            active={view === "metrics"}
+            onClick={() => setView("metrics")}
+          />
+        </div>
+      </div>
+
+      {/* ── User identity ────────────────────────────────────────── */}
+      <div className="sidebar-footer">
+        <div className="avatar">MT</div>
+        <div className="who">
+          <div className="name">Michael Treml</div>
+          <div className="status">
+            {runningCount > 0
+              ? `${runningCount} agent${runningCount === 1 ? "" : "s"} running`
+              : appVersion
+              ? `v${appVersion}`
+              : "idle"}
+          </div>
         </div>
       </div>
     </aside>
   );
 }
 
-function ProjectRow({
-  project,
-  openCount,
+function NavItem({
+  glyph,
+  label,
+  badge,
+  active,
   onClick,
+  disabled,
+  tooltip,
 }: {
-  project: ReturnType<typeof useProjects>["projects"][number];
-  openCount: number;
-  onClick: () => void;
+  glyph: string;
+  label: string;
+  badge?: number;
+  active?: boolean;
+  onClick?: (() => void) | undefined;
+  disabled?: boolean;
+  tooltip?: string;
 }): JSX.Element {
-  const bg = colorForKey(project.prefix);
-  const border = colorForKeyBorder(project.prefix);
-
+  // Use a real <button> so keyboard nav + disabled state are free.
   return (
-    <div
+    <button
+      className={active ? "nav-item active" : "nav-item"}
       onClick={onClick}
-      className={project.active ? "project active" : "project"}
-      style={{
-        cursor: "pointer",
-        padding: "7px 9px",
-        borderRadius: 8,
-        background: "var(--panel-2)",
-        border: "1px solid var(--border)",
-      }}
-      title={`${project.name} — ${project.sourceHint}`}
+      disabled={disabled}
+      title={tooltip ?? label}
+      type="button"
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-        <div
-          style={{
-            flex: "0 0 auto",
-            background: bg,
-            color: "var(--abyss)",
-            border: `1px solid ${border}`,
-            borderRadius: 6,
-            padding: "2px 6px",
-            fontSize: 11,
-            fontWeight: 700,
-            lineHeight: 1.25,
-            minWidth: 28,
-            textAlign: "center",
-          }}
-        >
-          {project.prefix}
-        </div>
-
-        <div
-          style={{
-            minWidth: 0,
-            flex: 1,
-            fontWeight: 600,
-            fontSize: 13,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {project.name}
-        </div>
-
-        {openCount > 0 && (
-          <div
-            aria-label={`${openCount} open task${openCount === 1 ? "" : "s"}`}
-            title={`${openCount} open task${openCount === 1 ? "" : "s"}`}
-            style={{
-              flex: "0 0 auto",
-              fontSize: 11,
-              fontWeight: 600,
-              color: "var(--accent)",
-              background: "rgba(107, 164, 232, 0.12)",
-              borderRadius: 999,
-              padding: "1px 6px",
-              lineHeight: 1.25,
-            }}
-          >
-            {openCount}
-          </div>
-        )}
-
-        {project.icon && (
-          <div style={{ flex: "0 0 auto", fontSize: 13, lineHeight: 1 }}>
-            {project.icon}
-          </div>
-        )}
-      </div>
-
-      <div
-        className="muted"
-        style={{
-          marginTop: 4,
-          marginLeft: 36,
-          fontSize: 11,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        {project.sourceHint}
-      </div>
-    </div>
+      <span className="glyph">{glyph}</span>
+      <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        {label}
+      </span>
+      {typeof badge === "number" && badge > 0 && <span className="badge">{badge}</span>}
+    </button>
   );
 }
+
