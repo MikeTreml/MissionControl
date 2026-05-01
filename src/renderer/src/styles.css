@@ -1272,3 +1272,157 @@ body:has(.context-strip) .app-shell {
 .qa-cmd .send:hover:not(:disabled) {
   background: color-mix(in oklch, var(--info) 85%, white);
 }
+
+/* ── ⌘K command palette ──────────────────────────────────────────
+ * Modal overlay with a centered floating panel. Searches tasks +
+ * projects + library items; results grouped, ↑/↓ moves selection,
+ * Enter activates, Esc / backdrop-click closes. */
+.cmdk-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  backdrop-filter: blur(2px);
+}
+.cmdk-panel {
+  width: min(640px, calc(100vw - 32px));
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--floating);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-popover), var(--lift-strong);
+  overflow: hidden;
+  font-size: 14px;
+}
+.cmdk-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--surface);
+}
+.cmdk-input-row .cmdk-glyph {
+  color: var(--muted);
+  font-size: 16px;
+}
+.cmdk-input-row input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px;
+  min-width: 0;
+}
+.cmdk-input-row input::placeholder { color: var(--muted); }
+.cmdk-results {
+  flex: 1;
+  overflow: auto;
+  padding: 4px 0;
+  min-height: 0;
+}
+.cmdk-empty {
+  padding: 22px 18px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+.cmdk-section {
+  padding: 4px 0 6px;
+}
+.cmdk-section-label {
+  padding: 8px 18px 4px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--muted);
+}
+.cmdk-section-rows { display: grid; gap: 1px; }
+.cmdk-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 13px;
+  width: 100%;
+  transition: background var(--dur-fast);
+}
+.cmdk-row:hover, .cmdk-row.active {
+  background: var(--raised);
+}
+.cmdk-row.active {
+  box-shadow: inset 2px 0 0 var(--info);
+}
+.cmdk-dot {
+  width: 8px; height: 8px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+.cmdk-row-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cmdk-row-title {
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cmdk-row-subtitle {
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cmdk-row-badge {
+  flex: 0 0 auto;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-2);
+  background: var(--canvas);
+  font-family: var(--font-mono);
+}
+.cmdk-footer {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 16px;
+  border-top: 1px solid var(--hairline);
+  background: var(--surface);
+  font-size: 11px;
+  color: var(--muted);
+}
+.cmdk-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cmdk-kbd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  padding: 2px 6px;
+  background: var(--canvas);
+  border-radius: var(--radius-xs);
+}

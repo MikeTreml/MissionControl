@@ -15,6 +15,7 @@ import { useRoute } from "../router";
 import { useTasks } from "../hooks/useTasks";
 import { useProjects } from "../hooks/useProjects";
 import { CreateTaskForm } from "./CreateTaskForm";
+import { openCommandPalette } from "./CommandPalette";
 
 export function Topbar(): JSX.Element {
   const { setView, selectedProjectId } = useRoute();
@@ -99,9 +100,14 @@ export function Topbar(): JSX.Element {
           </span>
         )}
 
-        <button className="search" type="button" title="Search (⌘K wiring pending)">
+        <button
+          className="search"
+          type="button"
+          title="Search tasks, projects, and library — ⌘K"
+          onClick={() => openCommandPalette()}
+        >
           <span className="glyph">⌕</span>
-          <span>Search tasks</span>
+          <span>Search tasks, projects, library</span>
           <span className="kbd">⌘K</span>
         </button>
         <button className="button ghost" title="Filter (pending)" disabled>

@@ -12,6 +12,7 @@ import { RightBar } from "./components/RightBar";
 import { Toaster } from "./components/Toaster";
 import { ContextStrip } from "./components/ContextStrip";
 import { CommandBar } from "./components/CommandBar";
+import { CommandPalette } from "./components/CommandPalette";
 
 import { Dashboard } from "./pages/Dashboard";
 import { LibraryBrowser } from "./pages/Library";
@@ -76,6 +77,7 @@ export function App(): JSX.Element {
           <RightBar />
         </div>
         <CommandBar />
+        <CommandPalette />
         <Toaster />
       </>
     </RouteContext.Provider>
