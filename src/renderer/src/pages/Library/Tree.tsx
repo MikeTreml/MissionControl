@@ -25,6 +25,47 @@ type FileNode = {
 
 const KIND_ORDER: LibraryItemKind[] = ["agent", "skill", "workflow", "example"];
 
+const TABS: ReadonlyArray<{ kind: LibraryItemKind; label: string }> = [
+  { kind: "workflow", label: "Workflow" },
+  { kind: "agent", label: "Agent" },
+  { kind: "skill", label: "Skill" },
+  { kind: "example", label: "Misc" },
+];
+
+const STORAGE_KEY_EXPANDED = "mc.library.expandedFolders";
+
+/**
+ * Per-session folder open/closed state. On first session boot the key is
+ * missing → all folders default-collapsed (per the operator's spec). The
+ * empty array gets written so subsequent reads inside the same session
+ * return what the user actually toggled. sessionStorage is wiped when
+ * the Electron app is closed, so the next launch is fresh-collapsed
+ * again automatically — no manual reset needed.
+ */
+function loadExpandedFolders(): Set<string> {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY_EXPANDED);
+    if (raw === null) {
+      sessionStorage.setItem(STORAGE_KEY_EXPANDED, "[]");
+      return new Set();
+    }
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed.map(String));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveExpandedFolders(set: Set<string>): void {
+  try {
+    sessionStorage.setItem(STORAGE_KEY_EXPANDED, JSON.stringify([...set]));
+  } catch {
+    // sessionStorage can fail (private mode, quota); a stale Set in
+    // memory is fine — folders just won't survive an HMR reload.
+  }
+}
+
 export function Tree({
   items,
   selectedId,
@@ -48,24 +89,37 @@ export function Tree({
   onCopyLogicalPath: (item: LibraryIndexItem) => void;
   onOpenFile: (item: LibraryIndexItem) => void;
 }): JSX.Element {
-  const tree = useMemo(() => buildTree(items), [items]);
-  const folderIds = useMemo(() => collectFolderIds(tree.children), [tree]);
-  const visibleIds = useMemo(() => items.map((item) => item.id), [items]);
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
-  const [menu, setMenu] = useState<{ x: number; y: number; item: LibraryIndexItem } | null>(null);
-  const initialized = useRef(false);
+  // Group the (already-search-filtered) items by kind so each tab's
+  // tree only sees its own subset. Workflows / agents / skills /
+  // examples each get an independent folder hierarchy.
+  const itemsByKind = useMemo(() => {
+    const out: Record<LibraryItemKind, LibraryIndexItem[]> = {
+      agent: [],
+      skill: [],
+      workflow: [],
+      example: [],
+    };
+    for (const item of items) out[item.kind].push(item);
+    return out;
+  }, [items]);
 
-  useEffect(() => {
-    if (tree.children.length === 0) return;
-    if (!initialized.current) {
-      initialized.current = true;
-      setExpandedFolders(new Set(tree.children.filter((node): node is FolderNode => node.type === "folder").map((node) => node.id)));
-      return;
-    }
-    if (items.length <= 200) {
-      setExpandedFolders((prev) => new Set([...prev, ...folderIds]));
-    }
-  }, [folderIds, items.length, tree]);
+  const treesByKind = useMemo(
+    () => ({
+      workflow: buildTree(itemsByKind.workflow),
+      agent: buildTree(itemsByKind.agent),
+      skill: buildTree(itemsByKind.skill),
+      example: buildTree(itemsByKind.example),
+    }),
+    [itemsByKind],
+  );
+
+  // Default to Workflow — smallest set + the only kind the page's
+  // primary action ("Run workflow") can target. Tab choice is per-
+  // component-instance (resets on full renderer reload, persists for
+  // the life of the page mount).
+  const [activeTab, setActiveTab] = useState<LibraryItemKind>("workflow");
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(() => loadExpandedFolders());
+  const [menu, setMenu] = useState<{ x: number; y: number; item: LibraryIndexItem } | null>(null);
 
   useEffect(() => {
     const close = (): void => setMenu(null);
@@ -73,67 +127,130 @@ export function Tree({
     return () => window.removeEventListener("click", close);
   }, []);
 
-  const selectedVisible = visibleIds.reduce((count, id) => count + (selectedSet.has(id) ? 1 : 0), 0);
-
   function toggleFolder(id: string): void {
     setExpandedFolders((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+      saveExpandedFolders(next);
       return next;
     });
   }
+
+  function setExpandedTo(next: Set<string>): void {
+    setExpandedFolders(next);
+    saveExpandedFolders(next);
+  }
+
+  const activeTree = treesByKind[activeTab];
+  const activeFolderIds = useMemo(() => collectFolderIds(activeTree.children), [activeTree]);
+  const activeVisibleIds = useMemo(() => itemsByKind[activeTab].map((item) => item.id), [itemsByKind, activeTab]);
+  const selectedInActive = activeVisibleIds.reduce((count, id) => count + (selectedSet.has(id) ? 1 : 0), 0);
+  const totalSelected = items.reduce((count, item) => count + (selectedSet.has(item.id) ? 1 : 0), 0);
+  const activeLabel = TABS.find((tab) => tab.kind === activeTab)?.label ?? activeTab;
 
   return (
     <div className="library-tree-panel">
       <div className="library-tree-head">
         <div>
-          <h3 style={{ marginBottom: 4 }}>Library Tree</h3>
+          <h3 style={{ marginBottom: 4 }}>Library</h3>
           <div className="muted" style={{ fontSize: 12 }}>
-            {items.length} files visible · {selectedVisible} selected here
+            {items.length.toLocaleString()} files match · {totalSelected} checked across all kinds
           </div>
         </div>
         <div className="library-tree-toolbar">
-          <button className="button ghost" onClick={() => setExpandedFolders(new Set(folderIds))}>
+          <button
+            className="button ghost"
+            onClick={() => setExpandedTo(new Set([...expandedFolders, ...activeFolderIds]))}
+            disabled={activeFolderIds.length === 0}
+            title={`Expand every folder in the ${activeLabel} tab`}
+          >
             Expand all
           </button>
-          <button className="button ghost" onClick={() => setExpandedFolders(new Set())}>
+          <button
+            className="button ghost"
+            onClick={() => {
+              const next = new Set(expandedFolders);
+              for (const id of activeFolderIds) next.delete(id);
+              setExpandedTo(next);
+            }}
+            disabled={activeFolderIds.length === 0}
+            title={`Collapse every folder in the ${activeLabel} tab`}
+          >
             Collapse all
           </button>
-          <button className="button ghost" onClick={() => onSetChecked(visibleIds, true)} disabled={visibleIds.length === 0}>
+          <button
+            className="button ghost"
+            onClick={() => onSetChecked(activeVisibleIds, true)}
+            disabled={activeVisibleIds.length === 0}
+            title={`Check every visible ${activeLabel} item`}
+          >
             Select visible
           </button>
-          <button className="button ghost" onClick={() => onSetChecked(visibleIds, false)} disabled={selectedVisible === 0}>
+          <button
+            className="button ghost"
+            onClick={() => onSetChecked(activeVisibleIds, false)}
+            disabled={selectedInActive === 0}
+            title={`Uncheck every visible ${activeLabel} item`}
+          >
             Clear visible
           </button>
         </div>
       </div>
 
-      {items.length === 0 ? (
-        <p className="muted" style={{ fontSize: 13 }}>
-          No library files match the current filters.
-        </p>
-      ) : (
-        <div
-          className="library-tree-scroll"
-          role="tree"
-          aria-label="Library files"
-        >
-          <TreeRows
-            nodes={tree.children}
-            expandedFolders={expandedFolders}
-            selectedId={selectedId}
-            selectedSet={selectedSet}
-            onToggleFolder={toggleFolder}
-            onSelectItem={onSelectItem}
-            onToggleChecked={onToggleChecked}
-            onSetChecked={onSetChecked}
-            templateWorkflowId={templateWorkflowId}
-            onToggleTemplateWorkflow={onToggleTemplateWorkflow}
-            onContextMenu={(item, x, y) => setMenu({ item, x, y })}
-          />
-        </div>
-      )}
+      {/* Horizontal accordion: one tab body open at a time, others
+       * collapsed to header-only. Click a tab header → become the
+       * active tab. Counts reflect the current search-filtered set
+       * across all kinds, so the user can scan all four counts to
+       * pick the most useful tab to expand. */}
+      <div className="library-kind-tabs" role="tablist" aria-label="Library kind">
+        {TABS.map(({ kind, label }) => {
+          const count = itemsByKind[kind].length;
+          const active = activeTab === kind;
+          return (
+            <button
+              key={kind}
+              role="tab"
+              aria-selected={active}
+              className={`library-kind-tab${active ? " active" : ""}`}
+              onClick={() => setActiveTab(kind)}
+              title={`${label} · ${count.toLocaleString()} ${count === 1 ? "item" : "items"}`}
+            >
+              <span className="library-kind-tab-chevron">{active ? "▾" : "▸"}</span>
+              <span className="library-kind-tab-label">{label}</span>
+              <span className="library-kind-tab-count">{count.toLocaleString()}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div role="tabpanel" aria-label={`${activeLabel} tree`}>
+        {activeVisibleIds.length === 0 ? (
+          <p className="muted" style={{ fontSize: 13, padding: "12px 4px" }}>
+            No {activeLabel} items match the current search.
+          </p>
+        ) : (
+          <div
+            className="library-tree-scroll"
+            role="tree"
+            aria-label={`${activeLabel} tree`}
+          >
+            <TreeRows
+              nodes={activeTree.children}
+              expandedFolders={expandedFolders}
+              selectedId={selectedId}
+              selectedSet={selectedSet}
+              onToggleFolder={toggleFolder}
+              onSelectItem={onSelectItem}
+              onToggleChecked={onToggleChecked}
+              onSetChecked={onSetChecked}
+              templateWorkflowId={templateWorkflowId}
+              onToggleTemplateWorkflow={onToggleTemplateWorkflow}
+              onContextMenu={(item, x, y) => setMenu({ item, x, y })}
+            />
+          </div>
+        )}
+      </div>
 
       {menu && (
         <div

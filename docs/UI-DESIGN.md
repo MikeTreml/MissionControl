@@ -93,7 +93,14 @@ The chip row reads the running workflow's phase list and renders one chip per ph
 
 ## Library
 
-- Tree grouped by **kind first** (Agents / Skills / Workflows / Examples), not by source folder. Logical path is the subtitle for disambiguation.
+- Tree grouped by **kind first** via a horizontal-accordion at the top of
+  the panel (Workflow / Agent / Skill / Misc — Misc maps to `kind="example"`).
+  One kind expanded at a time; the others collapse to header-only with a
+  count badge. Inside each tab the items are organized by **source folder**
+  (collapsible folder hierarchy built from `logicalPath`). Logical path is
+  the subtitle for disambiguation. All folders default-collapsed on first
+  session boot; open/closed state persists in `sessionStorage` until the
+  Electron app closes.
 - Inspector has **three zones**:
   1. Identity — kind chip + name + path
   2. Description + tags

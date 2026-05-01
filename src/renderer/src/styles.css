@@ -850,6 +850,63 @@ body:has(.context-strip) .app-shell {
   border-radius: var(--radius-sm);
   font-size: var(--fs-sm);
 }
+/* ── Kind-tab accordion above the tree (Workflow / Agent / Skill / Misc).
+ * Horizontal strip; click a tab header to expand its body, the others
+ * collapse to header-only. Active header has a highlighted bar + open
+ * chevron. Counts come from the search-filtered subset, so all four
+ * tab counts react when the user types in the search box. */
+.library-kind-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px 0;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+.library-kind-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: var(--fs-md);
+  color: var(--text-2);
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: var(--lift);
+  transition: background var(--dur-fast), color var(--dur-fast),
+              box-shadow var(--dur-fast);
+}
+.library-kind-tab:hover {
+  background: var(--floating);
+  color: var(--text);
+}
+.library-kind-tab.active {
+  background: var(--floating);
+  color: var(--text);
+  box-shadow: inset 2px 0 0 var(--info), var(--lift-strong);
+}
+.library-kind-tab-chevron {
+  width: 14px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  text-align: center;
+}
+.library-kind-tab.active .library-kind-tab-chevron { color: var(--info); }
+.library-kind-tab-label {
+  font-weight: var(--fw-medium);
+}
+.library-kind-tab.active .library-kind-tab-label {
+  font-weight: var(--fw-semibold);
+}
+.library-kind-tab-count {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .library-tree-scroll {
   display: grid;
   gap: 1px;

@@ -13,6 +13,11 @@ import { LibraryCreatorModal } from "./LibraryCreatorModal";
 
 export function LibraryBrowser(): JSX.Element {
   const { setView } = useRoute();
+  // The kind/language/source/container/tag filters from useLibraryIndex
+  // are intentionally NOT destructured here. The kind axis is now driven
+  // by the kind-tab accordion inside Tree.tsx; the four facet axes were
+  // removed from the FilterBar. Hook state stays for a future per-group
+  // dropdown (see plan: graceful-floyd).
   const {
     index,
     items,
@@ -20,17 +25,6 @@ export function LibraryBrowser(): JSX.Element {
     error,
     search,
     setSearch,
-    kindFilter,
-    toggleKind,
-    languageFilter,
-    sourceFilter,
-    containerKindFilter,
-    tagFilter,
-    toggleLanguage,
-    toggleSource,
-    toggleContainerKind,
-    toggleTag,
-    facets,
     filteredItems,
     rebuild,
     rebuilding,
@@ -164,17 +158,6 @@ export function LibraryBrowser(): JSX.Element {
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          kindFilter={kindFilter}
-          onToggleKind={toggleKind}
-          facets={facets}
-          languageFilter={languageFilter}
-          sourceFilter={sourceFilter}
-          containerKindFilter={containerKindFilter}
-          tagFilter={tagFilter}
-          onToggleLanguage={toggleLanguage}
-          onToggleSource={toggleSource}
-          onToggleContainerKind={toggleContainerKind}
-          onToggleTag={toggleTag}
         />
         {loading && (
           <div className="card">
