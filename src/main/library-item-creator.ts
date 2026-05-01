@@ -8,7 +8,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import { LibraryWalker } from "./library-walker.ts";
+import { LibraryWalker, writeIndexFiles } from "./library-walker.ts";
 
 export type LibraryCreatableKind = "agent" | "skill";
 
@@ -73,10 +73,7 @@ export class LibraryItemCreator {
 
     const walker = new LibraryWalker(this.libraryRoot);
     const index = await walker.buildIndex();
-    await fs.writeFile(
-      path.join(this.libraryRoot, "_index.json"),
-      JSON.stringify(index, null, 2),
-    );
+    await writeIndexFiles(this.libraryRoot, index);
 
     return {
       diskPath: targetFile,

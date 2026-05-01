@@ -8,13 +8,12 @@ import os from "node:os";
 import path from "node:path";
 
 import { LibraryItemCreator } from "./library-item-creator.ts";
+import { readIndexFiles } from "./library-walker.ts";
 
 async function main(): Promise<void> {
   const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "mc-library-item-"));
-  await fs.writeFile(
-    path.join(tmpRoot, "_index.json"),
-    JSON.stringify({ generatedAt: new Date().toISOString(), summary: { agents: 0, skills: 0, workflows: 0, examples: 0 }, items: [] }, null, 2),
-  );
+  // No pre-scaffolded _index.json — the creator's rebuild step writes
+  // the four per-kind files from scratch.
 
   const creator = new LibraryItemCreator(tmpRoot);
   const agent = await creator.create({
@@ -45,9 +44,7 @@ async function main(): Promise<void> {
   assert(skillText.includes("allowed-tools:"), "skill includes allowed-tools");
   assert(skillText.includes("## Failure Modes"), "skill includes failure modes");
 
-  const index = JSON.parse(await fs.readFile(path.join(tmpRoot, "_index.json"), "utf8")) as {
-    items: Array<{ kind: string; logicalPath: string }>;
-  };
+  const index = await readIndexFiles(tmpRoot);
   assert(index.items.some((item) => item.kind === "agent" && item.logicalPath.endsWith("smoke-agent")), "index includes created agent");
   assert(index.items.some((item) => item.kind === "skill" && item.logicalPath.endsWith("smoke-skill")), "index includes created skill");
 

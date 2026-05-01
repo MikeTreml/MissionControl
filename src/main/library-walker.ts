@@ -68,6 +68,83 @@ export type LibraryIndex = {
   items: LibraryIndexItem[];
 };
 
+/**
+ * Per-kind index file map. The single combined `_index.json` was
+ * replaced with four per-kind files (one per tab in the Library
+ * Browser) so that adding/removing a single workflow doesn't churn
+ * a 6.5MB combined blob, and so each tab can be inspected in
+ * isolation.
+ */
+export const INDEX_FILES: Record<LibraryItemKind, string> = {
+  workflow: "_index.workflow.json",
+  agent: "_index.agent.json",
+  skill: "_index.skill.json",
+  example: "_index.example.json",
+};
+export const ALL_INDEX_FILE_NAMES = Object.values(INDEX_FILES);
+
+/**
+ * Write the combined `LibraryIndex` as four per-kind files. Each file
+ * carries the same outer shape as the legacy `_index.json` —
+ * `{ generatedAt, summary, items }` — so individual files are
+ * self-describing if you read them in isolation. The summary in each
+ * per-kind file reflects the FULL catalog (not just that kind), so
+ * tools that just need top-line counts can read any one file.
+ */
+export async function writeIndexFiles(libraryRoot: string, index: LibraryIndex): Promise<void> {
+  const byKind: Record<LibraryItemKind, LibraryIndexItem[]> = {
+    workflow: [],
+    agent: [],
+    skill: [],
+    example: [],
+  };
+  for (const item of index.items) byKind[item.kind].push(item);
+  await Promise.all(
+    (Object.keys(byKind) as LibraryItemKind[]).map(async (kind) => {
+      const file = path.join(libraryRoot, INDEX_FILES[kind]);
+      const slice: LibraryIndex = {
+        generatedAt: index.generatedAt,
+        summary: index.summary,
+        items: byKind[kind],
+      };
+      await fs.writeFile(file, JSON.stringify(slice, null, 2));
+    }),
+  );
+}
+
+/**
+ * Read the four per-kind files back into a combined index. Missing
+ * files are tolerated (treated as empty for that kind) so the renderer
+ * doesn't crash on a half-built library root.
+ */
+export async function readIndexFiles(libraryRoot: string): Promise<LibraryIndex> {
+  const items: LibraryIndexItem[] = [];
+  let generatedAt = new Date(0).toISOString();
+  for (const kind of Object.keys(INDEX_FILES) as LibraryItemKind[]) {
+    const file = path.join(libraryRoot, INDEX_FILES[kind]);
+    try {
+      const raw = await fs.readFile(file, "utf8");
+      const parsed = JSON.parse(raw) as LibraryIndex;
+      if (Array.isArray(parsed.items)) items.push(...parsed.items);
+      if (parsed.generatedAt && parsed.generatedAt > generatedAt) {
+        generatedAt = parsed.generatedAt;
+      }
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
+    }
+  }
+  return {
+    generatedAt,
+    summary: {
+      agents: items.filter((x) => x.kind === "agent").length,
+      skills: items.filter((x) => x.kind === "skill").length,
+      workflows: items.filter((x) => x.kind === "workflow").length,
+      examples: items.filter((x) => x.kind === "example").length,
+    },
+    items,
+  };
+}
+
 const TARGET_FILES = new Set(["AGENT.md", "SKILL.md", "workflow.js"]);
 const DOMAIN_GROUPS = new Set(["business", "science", "social-sciences-humanities"]);
 
@@ -94,7 +171,11 @@ export class LibraryWalker {
       // overlays merged into the item they describe.
       const isSidecar = base === "INFO.json" || base.endsWith(".info.json");
       const isExampleJson =
-        ext === ".json" && base !== "_meta.json" && base !== "_index.json" && !isSidecar;
+        ext === ".json" &&
+        base !== "_meta.json" &&
+        base !== "_index.json" &&
+        !ALL_INDEX_FILE_NAMES.includes(base) &&
+        !isSidecar;
       const isWorkflowJs = isWorkflowSource(rel, base, ext);
       if (!TARGET_FILES.has(base) && !isExampleJson && !isWorkflowJs) continue;
       if (isSidecar) continue;

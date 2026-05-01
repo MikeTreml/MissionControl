@@ -10,6 +10,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { WorkflowCreator } from "./workflow-creator.ts";
+import { readIndexFiles } from "./library-walker.ts";
 import type { WorkflowSpec } from "./workflow-generator.ts";
 
 function assert(cond: unknown, msg: string): asserts cond {
@@ -59,13 +60,9 @@ const minimalSpec: WorkflowSpec = {
 
 async function main(): Promise<void> {
   const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "wfcreator-"));
-  // Minimal library skeleton — needs an existing _index.json + category folder for
-  // the rebuild step to land somewhere sensible.
+  // Minimal library skeleton — just the category folder. The rebuild
+  // step writes the four per-kind index files from scratch.
   await fs.mkdir(path.join(tmpRoot, "methodologies", "atdd-tdd"), { recursive: true });
-  await fs.writeFile(
-    path.join(tmpRoot, "_index.json"),
-    JSON.stringify({ generatedAt: new Date().toISOString(), summary: { agents: 0, skills: 0, workflows: 0, examples: 0 }, items: [] }, null, 2),
-  );
 
   const creator = new WorkflowCreator(tmpRoot);
 
@@ -81,9 +78,8 @@ async function main(): Promise<void> {
   assert(written.includes("@process demo/created"), "written file contains the spec processId");
   assert(written.includes("export const doThingTask = defineTask('do-thing'"), "written file exports the task factory");
 
-  // Index rebuilt.
-  const indexRaw = await fs.readFile(path.join(tmpRoot, "_index.json"), "utf8");
-  const index = JSON.parse(indexRaw) as { items: Array<{ kind: string; logicalPath?: string }> };
+  // Index rebuilt — read the per-kind files and look for the workflow.
+  const index = await readIndexFiles(tmpRoot);
   const found = index.items.find(
     (i) => i.kind === "workflow" && (i.logicalPath ?? "").includes("methodologies/atdd-tdd/workflows/smoke-created"),
   );

@@ -10,7 +10,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import { LibraryWalker } from "./library-walker.ts";
+import { LibraryWalker, writeIndexFiles } from "./library-walker.ts";
 import { generateWorkflow, type WorkflowSpec } from "./workflow-generator.ts";
 
 export const VALID_WORKFLOW_CATEGORIES = [
@@ -79,13 +79,10 @@ export class WorkflowCreator {
     await fs.mkdir(targetDir, { recursive: true });
     await fs.writeFile(targetFile, source, "utf8");
 
-    // Rebuild library/_index.json so the new entry is visible to the UI.
+    // Rebuild the per-kind index files so the new entry is visible to the UI.
     const walker = new LibraryWalker(this.libraryRoot);
     const index = await walker.buildIndex();
-    await fs.writeFile(
-      path.join(this.libraryRoot, "_index.json"),
-      JSON.stringify(index, null, 2),
-    );
+    await writeIndexFiles(this.libraryRoot, index);
 
     return {
       diskPath: targetFile,

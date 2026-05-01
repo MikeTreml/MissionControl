@@ -107,7 +107,7 @@ export function LibraryBrowser(): JSX.Element {
             className="button ghost"
             onClick={() => void rebuild()}
             disabled={rebuilding}
-            title="Walk the library/ tree and rebuild _index.json — picks up any agents/skills/workflows added on disk"
+            title="Walk the library/ tree and rebuild the per-kind index files — picks up any agents/skills/workflows added on disk"
           >
             {rebuilding ? "Refreshing…" : "↻ Refresh"}
           </button>
@@ -166,7 +166,7 @@ export function LibraryBrowser(): JSX.Element {
         )}
         {error && (
           <div className="card" style={{ borderColor: "var(--bad)", color: "var(--bad)" }}>
-            Failed to load `library/_index.json`: {error.message}
+            Failed to load `library/_index.*.json`: {error.message}
           </div>
         )}
         {!loading && !error && (

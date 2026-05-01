@@ -24,6 +24,7 @@ import {
   LibraryWalker,
   SIDECAR_OVERRIDE_FIELDS,
   sidecarPathFor,
+  writeIndexFiles,
   type LibraryItemKind,
 } from "./library-walker.ts";
 
@@ -90,10 +91,7 @@ export class ItemInfoStore {
   async rebuildIndex(): Promise<void> {
     const walker = new LibraryWalker(this.libraryRoot);
     const index = await walker.buildIndex();
-    await fs.writeFile(
-      path.join(this.libraryRoot, "_index.json"),
-      JSON.stringify(index, null, 2),
-    );
+    await writeIndexFiles(this.libraryRoot, index);
   }
 }
 

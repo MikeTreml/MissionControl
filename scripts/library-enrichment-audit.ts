@@ -28,13 +28,18 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { LibraryWalker, type LibraryIndex, type LibraryIndexItem } from "../src/main/library-walker.ts";
+import {
+  LibraryWalker,
+  readIndexFiles,
+  type LibraryIndex,
+  type LibraryIndexItem,
+} from "../src/main/library-walker.ts";
 import { CampaignItemSchema, type CampaignItem } from "../src/shared/models.ts";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, "..");
 const LIBRARY_ROOT = path.join(REPO_ROOT, "library");
-const INDEX_PATH = path.join(LIBRARY_ROOT, "_index.json");
+const INDEX_LABEL = "library/_index.{workflow,agent,skill,example}.json";
 const OUT_DIR = path.join(REPO_ROOT, "out");
 const OUT_SHARDS_DIR = path.join(OUT_DIR, "library-enrichment-shards");
 const OUT_AUDIT = path.join(OUT_DIR, "library-enrichment-audit.json");
@@ -183,8 +188,7 @@ async function loadIndex(rebuild: boolean): Promise<LibraryIndex> {
     const walker = new LibraryWalker(LIBRARY_ROOT);
     return walker.buildIndex();
   }
-  const raw = await fs.readFile(INDEX_PATH, "utf8");
-  return JSON.parse(raw) as LibraryIndex;
+  return readIndexFiles(LIBRARY_ROOT);
 }
 
 async function main(): Promise<void> {
@@ -263,7 +267,7 @@ async function main(): Promise<void> {
 
   const payload = {
     generatedAt: new Date().toISOString(),
-    source: rebuild ? "LibraryWalker" : INDEX_PATH,
+    source: rebuild ? "LibraryWalker" : INDEX_LABEL,
     options: {
       minDescriptionChars: minDesc,
       skimBytes,

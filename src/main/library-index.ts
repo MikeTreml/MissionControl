@@ -1,43 +1,50 @@
-import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import { LibraryWalker, type LibraryIndex } from "./library-walker.ts";
+import {
+  LibraryWalker,
+  readIndexFiles,
+  writeIndexFiles,
+  type LibraryIndex,
+} from "./library-walker.ts";
+import { promises as fs } from "node:fs";
 
 /**
- * Reads (and on demand re-walks) the library index.
- * Source of truth is `library/_index.json`, built by
- * `scripts/build-library-index.ts` for cold starts. The Library page's
- * Refresh button calls `refresh()`, which walks the tree in-process
- * and writes back the index — no subprocess, no `npm run` step.
+ * Reads (and on demand re-walks) the library index. The catalog is
+ * persisted as four per-kind files — `_index.workflow.json`,
+ * `_index.agent.json`, `_index.skill.json`, `_index.example.json` —
+ * one per Library tab. `load()` reads all four and concatenates;
+ * `refresh()` re-walks the tree and writes all four back.
+ *
+ * Why split: the legacy combined `_index.json` was 6.5MB and churned
+ * any time a single item changed. Each tab now has a self-describing
+ * file that's roughly a quarter the size, easier to grep, and easier
+ * to inspect in isolation.
  */
 export class LibraryIndexStore {
-  private readonly indexPath: string;
   private readonly libraryRoot: string;
 
   constructor(libraryRoot: string) {
     this.libraryRoot = path.resolve(libraryRoot);
-    this.indexPath = path.join(libraryRoot, "_index.json");
   }
 
   async load(): Promise<LibraryIndex> {
-    const raw = await fs.readFile(this.indexPath, "utf8");
-    const parsed = JSON.parse(raw) as LibraryIndex;
-    if (!Array.isArray(parsed.items)) {
+    const index = await readIndexFiles(this.libraryRoot);
+    if (!Array.isArray(index.items)) {
       throw new Error("Invalid library index: expected items[]");
     }
-    return parsed;
+    return index;
   }
 
   /**
    * Walk the library tree in-process via LibraryWalker, write the
-   * resulting index back to `_index.json`, and return it. Same shape
-   * the cold-start `load()` returns; consumers can replace their
-   * cached index in place.
+   * resulting index back to the four per-kind files, and return the
+   * combined index. Same shape `load()` returns; consumers can
+   * replace their cached index in place.
    */
   async refresh(): Promise<LibraryIndex> {
     const walker = new LibraryWalker(this.libraryRoot);
     const index = await walker.buildIndex();
-    await fs.writeFile(this.indexPath, JSON.stringify(index, null, 2), "utf8");
+    await writeIndexFiles(this.libraryRoot, index);
     return index;
   }
 
@@ -52,4 +59,3 @@ export class LibraryIndexStore {
     return parsed;
   }
 }
-
