@@ -164,9 +164,15 @@ let bootstrappedTasks: TaskStore | null = null;
  */
 function attachCspHeader(): void {
   const dev = !app.isPackaged;
+  // Vite's React Fast Refresh injects a tiny inline `<script>` preamble
+  // for HMR. Without 'unsafe-inline' (or a per-build hash/nonce) the
+  // preamble is blocked and every component throws
+  //   "Error: @vitejs/plugin-react can't detect preamble".
+  // Only loosen in dev — packaged builds stay tight.
+  const scriptSrc = dev ? "script-src 'self' 'unsafe-inline'" : "script-src 'self'";
   const csp = [
     "default-src 'self'",
-    "script-src 'self'",
+    scriptSrc,
     "style-src 'self' 'unsafe-inline'",
     dev
       ? "connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:*"

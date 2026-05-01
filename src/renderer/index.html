@@ -6,7 +6,16 @@
     <!--
       Content Security Policy — addresses Electron's "Insecure CSP" warning.
         default-src 'self'              same-origin only by default
-        script-src 'self'               our own bundles; no eval / no inline
+        script-src 'self' 'unsafe-inline'
+                                         Vite's React Fast Refresh injects
+                                         an inline preamble at dev time;
+                                         without 'unsafe-inline' every
+                                         component throws "@vitejs/plugin-react
+                                         can't detect preamble". Production
+                                         tightens this back to 'self' via the
+                                         dev-aware header in src/main/index.ts
+                                         (when both meta + header are set, the
+                                         strictest wins per directive).
         style-src 'self' 'unsafe-inline' inline style attributes are pervasive
                                          in components (and in the React-style
                                          attribute prop); no inline <style>
@@ -15,12 +24,11 @@
                                          Vite HMR websocket + dev server
         img-src 'self' data:            small base64 icons inline
         font-src 'self' data:           any embedded webfonts
-      Tighten in production by setting CSP via session.webRequest in main if
-      the meta-tag-only surface ever needs to differ between dev and packaged.
+      Production tightening lives in src/main/index.ts attachCspHeader().
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:*; img-src 'self' data:; font-src 'self' data:;"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:*; img-src 'self' data:; font-src 'self' data:;"
     />
     <title>Mission Control</title>
     <link rel="stylesheet" href="./src/styles.css" />
