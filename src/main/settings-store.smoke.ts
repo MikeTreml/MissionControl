@@ -24,16 +24,17 @@ async function main(): Promise<void> {
   assert(existsSync(join(tmp, "settings.json")), "init seeds settings.json");
 
   const initial = await store.get();
-  assert(initial.babysitterMode === "plan", `default babysitterMode is "plan" (got "${initial.babysitterMode}")`);
+  assert(initial.runConcurrencyCap === 10, `default runConcurrencyCap is 10 (got ${initial.runConcurrencyCap})`);
+  assert(initial.showSampleData === true, `default showSampleData is true`);
 
-  const after = await store.save({ babysitterMode: "execute" });
-  assert(after.babysitterMode === "execute", "save returns the merged shape");
+  const after = await store.save({ runConcurrencyCap: 5 });
+  assert(after.runConcurrencyCap === 5, "save returns the merged shape");
 
   const reread = await store.get();
-  assert(reread.babysitterMode === "execute", "saved value persists across reads");
+  assert(reread.runConcurrencyCap === 5, "saved value persists across reads");
 
   // Unknown / passthrough fields survive a round-trip.
-  await store.save({ ...({ unrelated: "keep me" } as unknown as { babysitterMode?: never }) });
+  await store.save({ ...({ unrelated: "keep me" } as unknown as Record<string, never>) });
   const passthrough = await store.get();
   assert(
     (passthrough as Record<string, unknown>)["unrelated"] === "keep me",
@@ -41,9 +42,9 @@ async function main(): Promise<void> {
   );
 
   // Reverting flips back cleanly.
-  await store.save({ babysitterMode: "plan" });
+  await store.save({ runConcurrencyCap: 10 });
   const reverted = await store.get();
-  assert(reverted.babysitterMode === "plan", "revert to plan works");
+  assert(reverted.runConcurrencyCap === 10, "revert to default works");
 
   // Workflow run templates round-trip.
   await store.saveWorkflowRunTemplate({

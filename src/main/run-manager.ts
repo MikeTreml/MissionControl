@@ -393,7 +393,7 @@ export class RunManager {
     const chosenAgent = input.agentSlug ?? null;
     if (this.pi) {
       const cwd = await this.resolveCwd(task);
-      const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
+      const mode = task.babysitterMode ?? "plan";
       await this.tasks.writePromptFile(task.id, renderPromptFile(task, chosenAgent));
       const beforeRuns = await snapshotBabysitterRuns(cwd);
       await this.pi.start(task.id, {
@@ -459,7 +459,7 @@ export class RunManager {
     if (!this.pi) return;
     const cwd = await this.resolveCwd(task);
     const m = model ?? this.activeModel.get(task.id);
-    const mode = (await this.settings?.get())?.babysitterMode ?? "plan";
+    const mode = task.babysitterMode ?? "plan";
     await this.tasks.writePromptFile(task.id, renderPromptFile(task, null));
     await this.tasks.appendEvent(task.id, { type: "item-started", itemId: item.id });
     await this.tasks.appendStatus(task.id, `Item ${item.id} started — cycle ${task.cycle} · ${item.description}`);
@@ -888,7 +888,7 @@ function stepKey(stepId: string, cycle: number): string {
 function buildBabysitPrompt(
   task: Task,
   agentSlug: string | null,
-  mode: MCSettings["babysitterMode"] = "plan",
+  mode: Task["babysitterMode"] = "plan",
 ): string {
   // Per babysitter-pi's skill files (read 2026-04-26):
   //   /plan    — author process.js, do NOT execute it
@@ -939,7 +939,7 @@ function buildBabysitPrompt(
 function buildItemBabysitPrompt(
   task: Task,
   item: CampaignItem,
-  mode: MCSettings["babysitterMode"] = "plan",
+  mode: Task["babysitterMode"] = "plan",
 ): string {
   const prefix =
     mode === "execute" ? "/yolo " :

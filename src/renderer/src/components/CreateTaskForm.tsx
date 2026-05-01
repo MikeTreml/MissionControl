@@ -98,6 +98,7 @@ export function CreateTaskForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [kind, setKind] = useState<"single" | "campaign">("single");
+  const [babysitterMode, setBabysitterMode] = useState<"plan" | "execute" | "direct">("plan");
   // One item per line for campaigns. Blank lines ignored. Each becomes
   // a CampaignItem with description + auto-generated id.
   const [itemsText, setItemsText] = useState("");
@@ -266,6 +267,7 @@ export function CreateTaskForm({
         projectPrefix: activeProject.prefix,
         workflow: DEFAULT_WORKFLOW_LETTER,
         kind,
+        babysitterMode,
         ...(items ? { items } : {}),
         ...(preload?.parentTaskId ? { parentTaskId: preload.parentTaskId } : {}),
       });
@@ -414,6 +416,25 @@ export function CreateTaskForm({
             <div className="hint">
               Campaigns process a list of items, one session per item. Runtime
               iteration is not wired yet — items show up for planning only.
+            </div>
+          </div>
+          <div className="field">
+            <label>Babysitter mode</label>
+            <select
+              value={babysitterMode}
+              onChange={(e) => setBabysitterMode(e.target.value as "plan" | "execute" | "direct")}
+            >
+              <option value="plan">Plan only — /plan (author process.js, don't execute)</option>
+              <option value="execute">Plan + execute — /yolo (author + run end-to-end)</option>
+              <option value="direct">Direct — single-agent, skip babysitter</option>
+            </select>
+            <div className="hint">
+              How MC drives pi when you click Start on this task.{" "}
+              <strong>Plan only</strong> is the safest first try.{" "}
+              <strong>Plan + execute</strong> runs without breakpoints.{" "}
+              <strong>Direct</strong> skips babysitter entirely — use for
+              trivial tasks where the ~$0.30 + 90s investigation overhead
+              isn't worth it.
             </div>
           </div>
           <div className="field">

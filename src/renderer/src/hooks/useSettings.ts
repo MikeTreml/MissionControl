@@ -11,7 +11,6 @@ import type { MCSettings } from "../../../shared/models";
 import { useSubscribe } from "./data-bus";
 
 const DEFAULTS: MCSettings = {
-  babysitterMode: "plan",
   runConcurrencyCap: 10,
   showSampleData: true,
 };

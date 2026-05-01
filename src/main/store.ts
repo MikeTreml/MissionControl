@@ -305,6 +305,8 @@ export class TaskStore extends EventEmitter {
     items?: Task["items"];
     /** Source task id when this is a re-run / clone / spin-off. Empty = no parent. */
     parentTaskId?: string;
+    /** Babysitter mode for this task's runs. Defaults to "plan". */
+    babysitterMode?: Task["babysitterMode"];
   }): Promise<Task> {
     const workflow = (input.workflow ?? "F").toUpperCase();
     const id = await this.nextTaskId(input.projectPrefix, workflow);
@@ -316,6 +318,7 @@ export class TaskStore extends EventEmitter {
       ...(input.kind ? { kind: input.kind } : {}),
       ...(input.items ? { items: input.items } : {}),
       ...(input.parentTaskId ? { parentTaskId: input.parentTaskId } : {}),
+      ...(input.babysitterMode ? { babysitterMode: input.babysitterMode } : {}),
     });
     await this.scaffold(task);
     await this.saveTask(task);

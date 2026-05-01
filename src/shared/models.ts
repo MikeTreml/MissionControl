@@ -102,6 +102,19 @@ export const TaskSchema = z.object({
   createdAt: z.string().datetime(),            // ISO 8601
   updatedAt: z.string().datetime(),
   /**
+   * How MC should drive pi when this task is Started. Was global in
+   * MCSettings; moved to per-task on 2026-05-01 so different tasks can
+   * use different modes without flipping a global setting between runs.
+   *
+   *   - "plan"    → /plan   (author a process.js + run scaffold, don't run)
+   *   - "execute" → /yolo   (author + run end-to-end, no breakpoints)
+   *   - "direct"  → no slash command — send the task brief as a regular
+   *                 pi prompt. Skips babysitter entirely. Cheapest.
+   *
+   * Defaults to "plan" — the safest first test.
+   */
+  babysitterMode: z.enum(["plan", "execute", "direct"]).default("plan"),
+  /**
    * Marker for sample/demo records that ship with the app under
    * `library/samples/`. Tagged at read-time by TaskStore when loaded
    * from the sample root; never written back to user data. The
@@ -161,19 +174,11 @@ export interface ProjectWithGit extends Project {
  * from the LLM model roster (models.json) and from pi's own settings
  * (~/.pi/agent/settings.json). MC owns this file.
  *
- * `babysitterMode` controls which slash command `RunManager.start`
- * sends to babysitter-pi:
- *   - "plan"    → /plan   (author a process.js + run scaffold, don't run)
- *   - "execute" → /yolo   (author + run end-to-end, no breakpoints)
- *   - "direct"  → no slash command — send the task brief as a regular pi
- *                 prompt. Skips babysitter entirely. Use for trivial
- *                 tasks where babysitter's investigation overhead
- *                 (~$0.30 + 90s before any work happens) isn't worth it.
- *
- * Default is "plan" because it's the safest first test. Flip per task.
+ * Babysitter mode used to live here as a global; it was moved to
+ * Task.babysitterMode on 2026-05-01 so different tasks can use
+ * different modes without flipping a global setting between runs.
  */
 export const MCSettingsSchema = z.object({
-  babysitterMode: z.enum(["plan", "execute", "direct"]).default("plan"),
   // Max number of tasks MC should actively run at once.
   runConcurrencyCap: z.number().int().min(1).max(50).default(10),
   /**
