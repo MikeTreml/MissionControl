@@ -36,6 +36,18 @@ export type WorkflowSpec = {
    * final task result (e.g. `'prResult.success'` or `'converged'`).
    */
   successExpression?: string;
+  /**
+   * Additional named imports to emit alongside the SDK import. Used by
+   * curated workflows that pull shared task helpers from
+   * `methodologies/shared/...`. Names declared here are also accepted as
+   * valid `taskRef`s in phases (no need to redeclare them in `tasks[]`).
+   */
+  extraImports?: ImportSpec[];
+};
+
+export type ImportSpec = {
+  source: string;
+  named: string[];
 };
 
 export type WorkflowInput = {
@@ -55,7 +67,9 @@ export type Phase =
   | ParallelPhase
   | BreakpointPhase
   | RetryPhase
-  | ConditionalPhase;
+  | ConditionalPhase
+  | ConditionalBlockPhase
+  | ConfirmLoopPhase;
 
 export type SequentialPhase = {
   kind: "sequential";
@@ -64,6 +78,8 @@ export type SequentialPhase = {
   resultVar: string;
   taskRef: string;
   args: Record<string, string>;
+  /** Emit `let` instead of `const` — required when a later phase reassigns this var. */
+  mutable?: boolean;
 };
 
 export type ParallelPhase = {
@@ -96,6 +112,15 @@ export type RetryPhase = {
   options?: string[];
   expert?: string;
   tags?: string[];
+  /**
+   * When `'every-iteration'` (default) the task runs every loop pass.
+   * When `'retry-only'` it only runs after a "request changes" feedback —
+   * use this when a prior phase already produced an initial result and
+   * we just want to gate / refine it. Pair with `initialValue`.
+   */
+  runTaskOn?: "every-iteration" | "retry-only";
+  /** JS expression used to seed `resultVar` before the loop. Defaults to `'null'`. */
+  initialValue?: string;
 };
 
 export type ConditionalPhase = {
@@ -105,6 +130,36 @@ export type ConditionalPhase = {
   resultVar: string;
   taskRef: string;
   args: Record<string, string>;
+};
+
+/**
+ * Conditional that wraps another phase (typically a retry loop). Models the
+ * `if (cond) { for (let attempt ...) { ... } }` pattern observed in
+ * cradle/bug-report's duplicate-issue branch.
+ */
+export type ConditionalBlockPhase = {
+  kind: "conditional-block";
+  title: string;
+  condition: string;
+  body: Phase;
+};
+
+/**
+ * Retry-shaped breakpoint loop with no task body — pure confirmation gate
+ * with feedback collection. Used by cradle/bug-report Phase 6 and the final
+ * submit confirmation in cradle/bugfix.
+ */
+export type ConfirmLoopPhase = {
+  kind: "confirm-loop";
+  title: string;
+  logMessage?: string;
+  maxAttempts: number;
+  question: string;
+  bpTitle: string;
+  feedbackVar: string;
+  options?: string[];
+  expert?: string;
+  tags?: string[];
 };
 
 export type TaskDef = AgentTask | ShellTask;
@@ -147,6 +202,9 @@ export function generateWorkflow(spec: WorkflowSpec): string {
   parts.push(renderHeader(spec));
   parts.push("");
   parts.push("import { defineTask } from '@a5c-ai/babysitter-sdk';");
+  for (const imp of spec.extraImports ?? []) {
+    parts.push(`import { ${imp.named.join(", ")} } from ${jsString(imp.source)};`);
+  }
   parts.push("");
   parts.push(renderProcess(spec));
   parts.push("");
@@ -172,35 +230,23 @@ function validateSpec(spec: WorkflowSpec): void {
     taskKeys.add(task.factoryName);
   }
 
+  // Names from extraImports are also valid task refs (shared helpers).
+  for (const imp of spec.extraImports ?? []) {
+    for (const name of imp.named) {
+      if (!isValidJsIdentifier(name)) {
+        throw new Error(`extraImports: "${name}" is not a valid JS identifier`);
+      }
+      if (taskKeys.has(name)) {
+        throw new Error(
+          `extraImports: "${name}" collides with a task factoryName`,
+        );
+      }
+      taskKeys.add(name);
+    }
+  }
+
   for (const phase of spec.phases) {
-    const refs = collectTaskRefs(phase);
-    for (const ref of refs) {
-      if (!taskKeys.has(ref)) {
-        throw new Error(`Phase "${phase.title}" references unknown task "${ref}"`);
-      }
-    }
-    if (phase.kind === "parallel" && phase.resultVars.length !== phase.branches.length) {
-      throw new Error(
-        `Parallel phase "${phase.title}" must define exactly one resultVar per branch ` +
-          `(got ${phase.resultVars.length} vars / ${phase.branches.length} branches)`,
-      );
-    }
-    if (phase.kind === "retry" && (!Number.isInteger(phase.maxAttempts) || phase.maxAttempts < 1)) {
-      throw new Error(
-        `Retry phase "${phase.title}" maxAttempts must be a positive integer (got ${phase.maxAttempts})`,
-      );
-    }
-    // Phase args become bare identifiers in the emitted JS — guard the keys.
-    const phaseArgs = collectPhaseArgs(phase);
-    for (const argSet of phaseArgs) {
-      for (const key of Object.keys(argSet)) {
-        if (!isValidJsIdentifier(key)) {
-          throw new Error(
-            `Phase "${phase.title}" arg key "${key}" is not a valid JS identifier`,
-          );
-        }
-      }
-    }
+    validatePhase(phase, taskKeys);
   }
 
   // Output schema property names are also rendered as bare identifiers.
@@ -208,6 +254,51 @@ function validateSpec(spec: WorkflowSpec): void {
     if (task.kind === "agent") {
       validateSchemaIdentifiers(task.outputSchema, `${task.factoryName}.outputSchema`);
     }
+  }
+}
+
+function validatePhase(phase: Phase, taskKeys: Set<string>): void {
+  const refs = collectTaskRefs(phase);
+  for (const ref of refs) {
+    if (!taskKeys.has(ref)) {
+      throw new Error(`Phase "${phase.title}" references unknown task "${ref}"`);
+    }
+  }
+  if (phase.kind === "parallel" && phase.resultVars.length !== phase.branches.length) {
+    throw new Error(
+      `Parallel phase "${phase.title}" must define exactly one resultVar per branch ` +
+        `(got ${phase.resultVars.length} vars / ${phase.branches.length} branches)`,
+    );
+  }
+  if (
+    (phase.kind === "retry" || phase.kind === "confirm-loop") &&
+    (!Number.isInteger(phase.maxAttempts) || phase.maxAttempts < 1)
+  ) {
+    throw new Error(
+      `${phase.kind} phase "${phase.title}" maxAttempts must be a positive integer (got ${phase.maxAttempts})`,
+    );
+  }
+  if (phase.kind === "retry" && phase.runTaskOn === "retry-only" && !phase.initialValue) {
+    throw new Error(
+      `Retry phase "${phase.title}" with runTaskOn='retry-only' must set initialValue ` +
+        `(the prior task result the loop is gating)`,
+    );
+  }
+  if (phase.kind === "confirm-loop" && !isValidJsIdentifier(phase.feedbackVar)) {
+    throw new Error(
+      `confirm-loop phase "${phase.title}" feedbackVar "${phase.feedbackVar}" is not a valid JS identifier`,
+    );
+  }
+  // Phase args become bare identifiers in the emitted JS — guard the keys.
+  for (const argSet of collectPhaseArgs(phase)) {
+    for (const key of Object.keys(argSet)) {
+      if (!isValidJsIdentifier(key)) {
+        throw new Error(`Phase "${phase.title}" arg key "${key}" is not a valid JS identifier`);
+      }
+    }
+  }
+  if (phase.kind === "conditional-block") {
+    validatePhase(phase.body, taskKeys);
   }
 }
 
@@ -220,7 +311,10 @@ function collectPhaseArgs(phase: Phase): Array<Record<string, string>> {
     case "parallel":
       return phase.branches.map((b) => b.args);
     case "breakpoint":
+    case "confirm-loop":
       return [];
+    case "conditional-block":
+      return collectPhaseArgs(phase.body);
   }
 }
 
@@ -250,7 +344,10 @@ function collectTaskRefs(phase: Phase): string[] {
     case "parallel":
       return phase.branches.map((b) => b.taskRef);
     case "breakpoint":
+    case "confirm-loop":
       return [];
+    case "conditional-block":
+      return collectTaskRefs(phase.body);
   }
 }
 
@@ -324,13 +421,18 @@ function renderPhase(phase: Phase): string {
       return renderRetry(phase);
     case "conditional":
       return renderConditional(phase);
+    case "conditional-block":
+      return renderConditionalBlock(phase);
+    case "confirm-loop":
+      return renderConfirmLoop(phase);
   }
 }
 
 function renderSequential(phase: SequentialPhase): string {
   const lines: string[] = [];
   if (phase.logMessage) lines.push(`ctx.log('info', ${jsString(phase.logMessage)});`);
-  lines.push(`const ${phase.resultVar} = await ctx.task(${phase.taskRef}, ${renderArgs(phase.args)});`);
+  const decl = phase.mutable ? "let" : "const";
+  lines.push(`${decl} ${phase.resultVar} = await ctx.task(${phase.taskRef}, ${renderArgs(phase.args)});`);
   return lines.join("\n");
 }
 
@@ -356,16 +458,39 @@ function renderRetry(phase: RetryPhase): string {
   const lines: string[] = [];
   if (phase.logMessage) lines.push(`ctx.log('info', ${jsString(phase.logMessage)});`);
   const feedbackVar = `${phase.resultVar}LastFeedback`;
-  lines.push(`let ${phase.resultVar} = null;`);
+  const runTaskOn = phase.runTaskOn ?? "every-iteration";
+  const initial = phase.initialValue ?? "null";
+
+  // For 'retry-only' the var was usually populated by a prior phase — but we
+  // still emit `let ... = initialValue` here so the loop is self-contained
+  // and the caller doesn't need to know whether to use let/const externally.
+  // When the resultVar matches a prior var the caller should set `mutable` on
+  // that prior phase and either skip the redeclaration here or rename. We
+  // assume distinct vars; for the bug-report Phase 5 case the spec uses a
+  // fresh resultVar (e.g. `currentIssueComposition`).
+  lines.push(`let ${phase.resultVar} = ${initial};`);
   lines.push(`let ${feedbackVar} = null;`);
   lines.push(`for (let attempt = 0; attempt < ${phase.maxAttempts}; attempt++) {`);
-  lines.push(`  ${phase.resultVar} = await ctx.task(${phase.taskRef}, {`);
-  for (const [k, v] of Object.entries(phase.args)) {
-    lines.push(`    ${k}: ${v},`);
+
+  if (runTaskOn === "retry-only") {
+    lines.push(`  if (${feedbackVar}) {`);
+    lines.push(`    ${phase.resultVar} = await ctx.task(${phase.taskRef}, {`);
+    for (const [k, v] of Object.entries(phase.args)) {
+      lines.push(`      ${k}: ${v},`);
+    }
+    lines.push(`      feedback: ${feedbackVar},`);
+    lines.push(`      attempt: attempt + 1`);
+    lines.push(`    });`);
+    lines.push(`  }`);
+  } else {
+    lines.push(`  ${phase.resultVar} = await ctx.task(${phase.taskRef}, {`);
+    for (const [k, v] of Object.entries(phase.args)) {
+      lines.push(`    ${k}: ${v},`);
+    }
+    lines.push(`    feedback: ${feedbackVar},`);
+    lines.push(`    attempt: attempt + 1`);
+    lines.push(`  });`);
   }
-  lines.push(`    feedback: ${feedbackVar},`);
-  lines.push(`    attempt: attempt + 1`);
-  lines.push(`  });`);
 
   // Breakpoint inside the retry loop. Matches bugfix/workflow.js exactly:
   // previousFeedback wires the last "request changes" message into the gate,
@@ -397,6 +522,37 @@ function renderConditional(phase: ConditionalPhase): string {
   lines.push(`let ${phase.resultVar} = null;`);
   lines.push(`if (${phase.condition}) {`);
   lines.push(`  ${phase.resultVar} = await ctx.task(${phase.taskRef}, ${renderArgs(phase.args, 2)});`);
+  lines.push(`}`);
+  return lines.join("\n");
+}
+
+function renderConditionalBlock(phase: ConditionalBlockPhase): string {
+  const body = indentBlock(renderPhase(phase.body), 2);
+  return `if (${phase.condition}) {\n${body}\n}`;
+}
+
+function renderConfirmLoop(phase: ConfirmLoopPhase): string {
+  const lines: string[] = [];
+  if (phase.logMessage) lines.push(`ctx.log('info', ${jsString(phase.logMessage)});`);
+  lines.push(`let ${phase.feedbackVar} = null;`);
+  lines.push(`for (let attempt = 0; attempt < ${phase.maxAttempts}; attempt++) {`);
+  const bpLines: string[] = ["{"];
+  bpLines.push(`    question: ${renderQuestion(phase.question)},`);
+  bpLines.push(`    previousFeedback: ${phase.feedbackVar} || undefined,`);
+  bpLines.push(`    attempt: attempt > 0 ? attempt + 1 : undefined,`);
+  bpLines.push(`    title: ${jsString(phase.bpTitle)},`);
+  if (phase.options && phase.options.length > 0) {
+    bpLines.push(`    options: [${phase.options.map((o) => jsString(o)).join(", ")}],`);
+  }
+  if (phase.expert) bpLines.push(`    expert: ${jsString(phase.expert)},`);
+  if (phase.tags && phase.tags.length > 0) {
+    bpLines.push(`    tags: [${phase.tags.map((t) => jsString(t)).join(", ")}],`);
+  }
+  bpLines.push(`    context: { runId: ctx.runId }`);
+  bpLines.push(`  }`);
+  lines.push(`  const approval = await ctx.breakpoint(${bpLines.join("\n  ")});`);
+  lines.push(`  if (approval.approved) break;`);
+  lines.push(`  ${phase.feedbackVar} = approval.response || approval.feedback || 'Changes requested';`);
   lines.push(`}`);
   return lines.join("\n");
 }

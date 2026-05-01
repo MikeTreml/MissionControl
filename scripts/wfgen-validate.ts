@@ -43,16 +43,17 @@ const bugReportSpec: WorkflowSpec = {
   ],
   successExpression: "submitResult.success",
   phases: [
-    // Phase 1: Sequential — fits cleanly.
+    // Phase 1: Sequential, mutable — `bugDetails` gets reassigned in Phase 3.
     {
       kind: "sequential",
       title: "Gather bug details",
       logMessage: "Phase 1: Gathering bug details",
+      mutable: true,
       resultVar: "bugDetails",
       taskRef: "gatherBugDetailsTask",
       args: { bugDescription: "bugDescription", component: "component", additionalContext: "additionalContext" },
     },
-    // Phase 2: Parallel — fits cleanly.
+    // Phase 2: Parallel.
     {
       kind: "parallel",
       title: "Reproduction steps & environment",
@@ -83,18 +84,27 @@ const bugReportSpec: WorkflowSpec = {
         labels: "bugDetails.labels",
       },
     },
-    // Phase 3b: ── GAP #1 ── conditional wrapping a retry-with-feedback loop.
-    // The original wraps a retry inside `if (existingIssues.duplicateFound)`.
-    // Our ConditionalPhase only supports a single task body, not a nested phase.
-    // For now, downgrade to a plain conditional task — loses the duplicate-check
-    // approval-gate loop entirely.
+    // Phase 3b: conditional-block wrapping a retry-only loop that reassigns
+    // `bugDetails`. Closes original gaps #1 + #2 + #5.
     {
-      kind: "conditional",
+      kind: "conditional-block",
       title: "Maybe handle duplicate",
       condition: "existingIssues.duplicateFound",
-      resultVar: "duplicateAck",
-      taskRef: "duplicateAckPlaceholderTask", // GAP: would be inline retry
-      args: {},
+      body: {
+        kind: "retry",
+        title: "Refine details on duplicate",
+        maxAttempts: 3,
+        runTaskOn: "retry-only",
+        initialValue: "bugDetails",
+        resultVar: "bugDetails",
+        taskRef: "gatherBugDetailsTask",
+        args: { bugDescription: "bugDescription", component: "component", additionalContext: "additionalContext" },
+        question: "A similar issue may already exist.\nApprove to continue, or request changes.",
+        bpTitle: "Potential Duplicate Issue Found",
+        options: ["Approve", "Request changes"],
+        expert: "owner",
+        tags: ["approval-gate", "duplicate-check"],
+      },
     },
     // Phase 4: Sequential compose.
     {
@@ -110,16 +120,14 @@ const bugReportSpec: WorkflowSpec = {
         existingIssues: "existingIssues",
       },
     },
-    // Phase 5: ── GAP #2 ── retry-with-feedback that ONLY re-runs the task
-    // on retry, not on every iteration. The first iteration just hits the
-    // breakpoint because composeIssueTask already ran in Phase 4.
-    // Our RetryPhase always re-runs the task, so we'd duplicate composeIssueTask.
-    // The shape we'd want: { runTaskOn: 'retry-only' }.
+    // Phase 5: retry-only loop, seeded from Phase 4's result. Closes gap #2.
     {
       kind: "retry",
       title: "Review before submit",
       maxAttempts: 3,
-      resultVar: "issueComposition", // intentional reuse (would need mutable)
+      runTaskOn: "retry-only",
+      initialValue: "issueComposition",
+      resultVar: "currentIssueComposition",
       taskRef: "composeIssueTask",
       args: {
         bugDetails: "bugDetails",
@@ -133,15 +141,15 @@ const bugReportSpec: WorkflowSpec = {
       expert: "owner",
       tags: ["approval-gate", "review"],
     },
-    // Phase 6: ── GAP #3 ── confirmation loop with NO task body.
-    // The original has a retry-shaped breakpoint loop that gates submission
-    // without running any task on retry. RetryPhase requires a taskRef.
-    // We'd want a `ConfirmLoopPhase` kind, or `taskRef?: null`.
-    // Workaround here: emit it as a single breakpoint (loses retry behavior).
+    // Phase 6: confirm-loop — no task, just a retry-shaped gate. Closes gap #3.
     {
-      kind: "breakpoint",
+      kind: "confirm-loop",
       title: "Confirm submit",
+      logMessage: "Phase 6: Submitting issue to GitHub",
+      maxAttempts: 3,
+      feedbackVar: "submitLastFeedback",
       question: "Confirm: Open this issue on a5c-ai/babysitter GitHub repository?",
+      bpTitle: "Confirm GitHub Issue Submission",
       options: ["Approve", "Request changes"],
       expert: "owner",
       tags: ["approval-gate", "submit"],
@@ -150,7 +158,6 @@ const bugReportSpec: WorkflowSpec = {
     {
       kind: "sequential",
       title: "Submit issue",
-      logMessage: "Phase 6: Submitting issue to GitHub",
       resultVar: "submitResult",
       taskRef: "submitIssueTask",
       args: {
@@ -250,20 +257,6 @@ const bugReportSpec: WorkflowSpec = {
         },
       },
       labels: ["agent", "bug-report", "search"],
-    },
-    {
-      kind: "agent",
-      factoryName: "duplicateAckPlaceholderTask",
-      taskKey: "duplicate-ack-placeholder",
-      title: "Acknowledge duplicate",
-      agentName: "general-purpose",
-      role: "Operator confirming duplicate resolution",
-      taskDescription: "Placeholder to satisfy the conditional gap",
-      contextKeys: [],
-      instructions: ["GAP placeholder"],
-      outputFormat: "JSON",
-      outputSchema: { type: "object", properties: {} },
-      labels: ["agent", "bug-report", "gap-placeholder"],
     },
     {
       kind: "agent",
@@ -377,43 +370,26 @@ async function main(): Promise<void> {
   console.log(tableRow("let X = await ...", a.letDeclarations, b.letDeclarations));
   console.log("");
   console.log("=".repeat(72));
-  console.log("GAPS SURFACED");
+  console.log("GAP STATUS");
   console.log("=".repeat(72));
   const gaps = [
-    "GAP #1  Conditional that wraps a nested phase (e.g. retry-with-feedback)",
-    "        — current ConditionalPhase only wraps a single task body.",
-    "GAP #2  Retry-with-feedback that re-runs the task ONLY on retry",
-    "        — current RetryPhase always re-runs every iteration.",
-    "        Pattern shape: `if (lastFeedback) { result = await task(...) }`",
-    "GAP #3  Confirmation loop with NO task body — just a breakpoint loop",
-    "        gating the next sequential step. RetryPhase requires a taskRef.",
-    "GAP #4  Shared-helper imports (e.g. cradle/bugfix imports rootCauseDiagnosisTask",
-    "        from methodologies/shared/workflows/root-cause-diagnosis.js).",
-    "        Spec has no `imports` field; the SDK import is hardcoded.",
-    "GAP #5  Mutable result vars — Phase 1 in bug-report uses `let` because",
-    "        Phase 3 reassigns inside a retry. SequentialPhase always emits `const`.",
-    "GAP #6  Multi-line phase descriptions in JSDoc header. Spec only carries",
-    "        Phase.title; the original lists each phase as 'Title - description'.",
-    "GAP #7  Header note block (separator text between @description and the",
-    "        phase list, e.g. 'Bug Report Contribution Process').",
-    "GAP #8  Breakpoint `question` rendered from a code expression rather than a",
-    "        string literal — bugfix uses `diagnosisBreakpointQuestion(diagnosis)`.",
+    "GAP #1  conditional-block wraps a nested phase                     CLOSED",
+    "GAP #2  RetryPhase.runTaskOn: 'every-iteration' | 'retry-only'     CLOSED",
+    "GAP #3  ConfirmLoopPhase — retry-shaped gate, no task body         CLOSED",
+    "GAP #4  WorkflowSpec.extraImports                                  CLOSED",
+    "GAP #5  SequentialPhase.mutable: boolean                           CLOSED",
+    "GAP #6  Per-phase JSDoc descriptions                               OPEN (cosmetic)",
+    "GAP #7  Header note block                                          OPEN (cosmetic)",
+    "GAP #8  Function-call breakpoint question                          OPEN (rare)",
   ];
   for (const g of gaps) console.log(g);
   console.log("");
   console.log("=".repeat(72));
   console.log("VERDICT");
   console.log("=".repeat(72));
-  console.log("  Structural primitives covered:    sequential, parallel, breakpoint,");
-  console.log("                                    retry, conditional (single-task)");
-  console.log("");
-  console.log("  Smallest set of additions to cover bug-report + bugfix faithfully:");
-  console.log("  1. ConditionalPhase: wrap-other-phase variant (covers GAP #1 and #3)");
-  console.log("  2. RetryPhase.runTaskOn: 'every-iteration' | 'retry-only'  (#2)");
-  console.log("  3. SequentialPhase.mutable: boolean                         (#5)");
-  console.log("  4. WorkflowSpec.extraImports: ImportSpec[]                  (#4)");
-  console.log("  5. Phase.description?: string + WorkflowSpec.headerNote     (#6, #7)");
-  console.log("  6. Breakpoint.question: string | { call: string }           (#8)");
+  console.log("  All structural primitives needed for cradle/bug-report and");
+  console.log("  cradle/bugfix are now covered. Remaining gaps are cosmetic");
+  console.log("  (JSDoc polish) or rare (function-call breakpoint questions).");
   console.log("");
   console.log("validation OK");
 }

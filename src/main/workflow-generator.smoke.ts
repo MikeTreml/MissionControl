@@ -423,6 +423,232 @@ async function main(): Promise<void> {
     "not a valid JS identifier",
   );
 
+  // ── New-construct positive coverage ────────────────────────────────────────
+
+  // extraImports + shared task ref + mutable + retry runTaskOn:'retry-only'
+  // + initialValue + conditional-block + confirm-loop, all in one spec.
+  const extendedSpec: WorkflowSpec = {
+    processId: "demo/extended",
+    description: "Spec exercising the post-validation extensions",
+    inputs: [{ name: "input1", jsDocType: "string", defaultLiteral: "''" }],
+    outputs: [{ name: "result", jsDocType: "string", expression: "submitResult.summary" }],
+    successExpression: "submitResult.success",
+    extraImports: [
+      {
+        source: "../../../methodologies/shared/workflows/root-cause-diagnosis.js",
+        named: ["sharedDiagnosisTask"],
+      },
+    ],
+    phases: [
+      // Mutable result var — gets reassigned later inside the conditional-block.
+      {
+        kind: "sequential",
+        title: "Gather",
+        mutable: true,
+        resultVar: "details",
+        taskRef: "sharedDiagnosisTask",
+        args: { input1: "input1" },
+      },
+      // Conditional wrapping a retry that only runs the task on retry.
+      {
+        kind: "conditional-block",
+        title: "Maybe refine",
+        condition: "details.duplicate === true",
+        body: {
+          kind: "retry",
+          title: "Refine via feedback",
+          maxAttempts: 3,
+          runTaskOn: "retry-only",
+          initialValue: "details",
+          resultVar: "details",
+          taskRef: "sharedDiagnosisTask",
+          args: { input1: "input1" },
+          question: "Refine?",
+          bpTitle: "Refine",
+          options: ["Approve", "Request changes"],
+        },
+      },
+      // Pure confirmation loop with no task body.
+      {
+        kind: "confirm-loop",
+        title: "Confirm submit",
+        maxAttempts: 3,
+        feedbackVar: "submitFeedback",
+        question: "Submit?",
+        bpTitle: "Submit",
+        options: ["Approve", "Request changes"],
+      },
+      {
+        kind: "sequential",
+        title: "Submit",
+        resultVar: "submitResult",
+        taskRef: "submitTask",
+        args: { details: "details" },
+      },
+    ],
+    tasks: [
+      {
+        kind: "agent",
+        factoryName: "submitTask",
+        taskKey: "submit",
+        title: "Submit",
+        agentName: "general-purpose",
+        role: "Submitter",
+        taskDescription: "Submit",
+        contextKeys: ["details"],
+        instructions: ["Submit"],
+        outputFormat: "JSON with success, summary",
+        outputSchema: {
+          type: "object",
+          required: ["success"],
+          properties: { success: { type: "boolean" }, summary: { type: "string" } },
+        },
+        labels: ["agent", "submit"],
+      },
+    ],
+  };
+
+  const extendedSource = generateWorkflow(extendedSpec);
+  assert(
+    extendedSource.includes(
+      "import { sharedDiagnosisTask } from '../../../methodologies/shared/workflows/root-cause-diagnosis.js'",
+    ),
+    "extraImports renders the shared import",
+  );
+  assert(extendedSource.includes("let details = await ctx.task(sharedDiagnosisTask"), "mutable sequential emits let");
+  assert(extendedSource.includes("if (details.duplicate === true) {"), "conditional-block emits if");
+  assert(extendedSource.includes("let details = details;"), "retry-only initialValue propagated");
+  assert(
+    extendedSource.match(/if \(detailsLastFeedback\) \{\s+details = await ctx\.task/),
+    "retry-only renders task call inside if(feedback) guard",
+  );
+  assert(extendedSource.includes("let submitFeedback = null;"), "confirm-loop emits feedback var");
+  assert(
+    extendedSource.match(/let submitFeedback = null;\s+for \(let attempt/),
+    "confirm-loop loop directly follows feedback var (no task in between)",
+  );
+  // confirm-loop must NOT have an `await ctx.task` in its body.
+  const confirmLoopBlock = extendedSource.slice(
+    extendedSource.indexOf("let submitFeedback"),
+    extendedSource.indexOf("submitFeedback = approval.response"),
+  );
+  assert(!confirmLoopBlock.includes("ctx.task("), "confirm-loop has no task body");
+
+  // confirm-loop also round-trips through the SDK shim import path.
+  const ext2Dir = await fs.mkdtemp(path.join(os.tmpdir(), "wfgen-ext-"));
+  const ext2Shim = path.join(ext2Dir, "sdk-shim.mjs");
+  await fs.writeFile(
+    ext2Shim,
+    "export function defineTask(name, factory) { return Object.assign(factory, { __taskKey: name }); }\n",
+    "utf8",
+  );
+  const ext2File = path.join(ext2Dir, "workflow.mjs");
+  // Also stub the extraImport source so import resolution works.
+  const sharedShim = path.join(ext2Dir, "shared-shim.mjs");
+  await fs.writeFile(sharedShim, "export function sharedDiagnosisTask() {}\n", "utf8");
+  const rewritten = extendedSource
+    .replace(
+      "from '@a5c-ai/babysitter-sdk'",
+      `from ${JSON.stringify(pathToFileURL(ext2Shim).href)}`,
+    )
+    .replace(
+      "from '../../../methodologies/shared/workflows/root-cause-diagnosis.js'",
+      `from ${JSON.stringify(pathToFileURL(sharedShim).href)}`,
+    );
+  await fs.writeFile(ext2File, rewritten, "utf8");
+  const extMod = await import(pathToFileURL(ext2File).href);
+  assert(typeof extMod.process === "function", "extended spec round-trips and imports");
+  await fs.rm(ext2Dir, { recursive: true, force: true });
+
+  // Negative: retry-only without initialValue.
+  expectThrow(
+    "retry-only requires initialValue",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        phases: [
+          {
+            kind: "retry",
+            title: "RetryOnlyNoInit",
+            maxAttempts: 3,
+            runTaskOn: "retry-only",
+            resultVar: "x",
+            taskRef: "applyFixTask",
+            args: { details: "details" },
+            question: "?",
+            bpTitle: "?",
+          },
+        ],
+      }),
+    "must set initialValue",
+  );
+
+  // Negative: extraImports name collides with a task factoryName.
+  expectThrow(
+    "extraImports collision",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        extraImports: [{ source: "./somewhere.js", named: ["gatherDetailsTask"] }],
+      }),
+    "collides with a task factoryName",
+  );
+
+  // Negative: extraImports name not a valid identifier.
+  expectThrow(
+    "extraImports bad identifier",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        extraImports: [{ source: "./somewhere.js", named: ["bad-name"] }],
+      }),
+    "not a valid JS identifier",
+  );
+
+  // Negative: confirm-loop bad feedbackVar.
+  expectThrow(
+    "confirm-loop bad feedbackVar",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        phases: [
+          {
+            kind: "confirm-loop",
+            title: "Bad",
+            maxAttempts: 3,
+            feedbackVar: "bad-name",
+            question: "?",
+            bpTitle: "?",
+          },
+        ],
+      }),
+    "feedbackVar",
+  );
+
+  // Negative: conditional-block validates the body recursively.
+  expectThrow(
+    "conditional-block body validates",
+    () =>
+      generateWorkflow({
+        ...sampleSpec,
+        phases: [
+          {
+            kind: "conditional-block",
+            title: "Bad nested",
+            condition: "true",
+            body: {
+              kind: "sequential",
+              title: "Bad inner",
+              resultVar: "x",
+              taskRef: "doesNotExistTask",
+              args: {},
+            },
+          },
+        ],
+      }),
+    "doesNotExistTask",
+  );
+
   console.log("\n--- generated workflow.js ---\n");
   console.log(source);
   console.log("\n--- end ---");
