@@ -15,8 +15,22 @@ export type MockLane =
   | "Waiting"
   | "Done"
   | "Failed";
-export type MockRoleLabel = MockLane;
-export type MockPill = "good" | "warn" | "bad" | "info";
+/**
+ * Pill text on each card. Aligned to the design canvas
+ * (NewUI/.../index.html) so cards read "running" / "paused" /
+ * "awaiting review" / "blocked" / "merged" / "failed" — not the lane name.
+ * Empty string suppresses the pill (Drafting + Archived).
+ */
+export type MockRoleLabel =
+  | ""
+  | "running"
+  | "paused"
+  | "awaiting review"
+  | "blocked"
+  | "merged"
+  | "failed";
+/** Empty string suppresses the pill render in TaskCard. */
+export type MockPill = "" | "good" | "warn" | "bad" | "info";
 
 export interface MockProject {
   id: string;
@@ -80,8 +94,8 @@ export const mockTasks: MockTask[] = [
     id: "DA-015F",
     summary: "Add task-linked diff and doc registry",
     lane: "Running",
-    roleLabel: "Running",
-    rolePill: "warn",
+    roleLabel: "running",
+    rolePill: "info",
     stepLine: "Cycle 1",
     active: true,
   },
@@ -89,23 +103,23 @@ export const mockTasks: MockTask[] = [
     id: "DA-011F",
     summary: "Dashboard shell UI",
     lane: "Idle",
-    roleLabel: "Idle",
-    rolePill: "info",
+    roleLabel: "",
+    rolePill: "",
     stepLine: "Cycle 1",
   },
   {
     id: "DA-012F",
     summary: "Task detail page",
     lane: "Running",
-    roleLabel: "Running",
-    rolePill: "warn",
+    roleLabel: "running",
+    rolePill: "info",
     stepLine: "Cycle 1",
   },
   {
     id: "DA-010F",
     summary: "Azure DevOps adapter",
     lane: "Waiting",
-    roleLabel: "Waiting",
+    roleLabel: "awaiting review",
     rolePill: "warn",
     stepLine: "Cycle 1",
     sub: "Awaiting human review",
@@ -114,7 +128,7 @@ export const mockTasks: MockTask[] = [
     id: "DA-005F",
     summary: "Task CRUD + key generation",
     lane: "Done",
-    roleLabel: "Done",
+    roleLabel: "merged",
     rolePill: "good",
     stepLine: "Merged and logged",
   },

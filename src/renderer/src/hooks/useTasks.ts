@@ -39,26 +39,25 @@ export type UiTask = MockTask & {
 };
 
 /**
- * Derive the UI lane label + role/pill style from runState + status. The
- * legacy task.lane field used to drive this; now phase chips on Task
- * Detail (lib/derive-phases.ts) carry the workflow-driven view, and the
- * board collapses to the run state axis.
- *
- *   status=done           → "Done" (good)
- *   status=failed         → "Failed" (bad)
- *   status=waiting OR
- *     runState=paused     → "Waiting" (warn)
- *   runState=running      → "Running" (warn)
- *   else                  → "Idle" (info)
+ * Derive the pill label + tone for a task card from its boardStage.
+ * Canvas (NewUI/.../index.html) uses one of:
+ *   running (info, with dot) · paused (warning) · awaiting review (warning) ·
+ *   blocked (danger) · merged (success) · failed (danger)
+ * Drafting + Archived render no pill — return null. The lane title above
+ * the cards already conveys those states.
  */
 function deriveLaneStyle(t: Task): { lane: MockLane; role: MockRoleLabel; pill: MockPill } {
-  if (t.status === "done")    return { lane: "Done",     role: "Done",     pill: "good" };
-  if (t.status === "failed")  return { lane: "Failed",   role: "Failed",   pill: "bad"  };
-  if (t.runState === "paused" || t.status === "waiting" || t.blocker.trim()) {
-    return { lane: "Waiting", role: "Waiting", pill: "warn" };
+  const stage = deriveBoardStage(t);
+  if (stage === "Done")    return { lane: "Done",    role: "merged",          pill: "good" };
+  if (stage === "Failed")  return { lane: "Failed",  role: "failed",          pill: "bad"  };
+  if (stage === "Review")  return { lane: "Waiting", role: "awaiting review", pill: "warn" };
+  if (stage === "Blocked") return { lane: "Waiting", role: "blocked",         pill: "bad"  };
+  if (stage === "Running") {
+    if (t.runState === "paused") return { lane: "Waiting", role: "paused",  pill: "warn" };
+    return { lane: "Running", role: "running", pill: "info" };
   }
-  if (t.runState === "running") return { lane: "Running", role: "Running", pill: "warn" };
-  return { lane: "Idle", role: "Idle", pill: "info" };
+  // Drafting + Archived — no pill. Empty rolePill suppresses render in TaskCard.
+  return { lane: "Idle", role: "", pill: "" as MockPill };
 }
 
 function toUiTask(t: Task, projectIcon: string, currentModel: string): UiTask {

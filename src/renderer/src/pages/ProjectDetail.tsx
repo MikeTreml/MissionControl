@@ -360,9 +360,10 @@ function StuckTable({ tasks }: { tasks: UiTask[] }): JSX.Element {
   // Same definition as computeStats: lane=Waiting (paused / blocker /
   // status=waiting derived in useTasks) or idle > 24h while still live.
   const stuck = tasks.filter((t) =>
-    t.lane !== "Done" &&
-    t.lane !== "Failed" &&
-    (t.lane === "Waiting" || t.roleLabel === "Waiting" || idleHours(t) > 24),
+    t.boardStage !== "Done" &&
+    t.boardStage !== "Failed" &&
+    t.boardStage !== "Archived" &&
+    (t.boardStage === "Blocked" || t.boardStage === "Review" || idleHours(t) > 24),
   );
   const { openTask } = useRoute();
   if (stuck.length === 0) {
@@ -392,9 +393,13 @@ function StuckTable({ tasks }: { tasks: UiTask[] }): JSX.Element {
           >
             <td style={{ padding: "8px 10px" }}><strong>{t.id}</strong></td>
             <td style={{ padding: "8px 10px" }}>{t.summary}</td>
-            <td style={{ padding: "8px 10px" }}>{t.lane}</td>
+            <td style={{ padding: "8px 10px" }}>{t.boardStage}</td>
             <td style={{ padding: "8px 10px" }}>
-              <span className={`pill ${t.rolePill}`}>{t.roleLabel}</span>
+              {t.rolePill ? (
+                <span className={`pill ${t.rolePill}`}>{t.roleLabel}</span>
+              ) : (
+                <span className="muted">—</span>
+              )}
             </td>
             <td style={{ padding: "8px 10px", color: "var(--muted)" }}>{fmtIdle(idleHours(t))}</td>
           </tr>
@@ -426,13 +431,14 @@ function computeStats(tasks: UiTask[]): ProjectStats {
   const now = Date.now();
   const idleHours = (t: UiTask): number =>
     Math.max(0, (now - new Date(t.updatedAt).getTime()) / 3_600_000);
-  const liveTasks = tasks.filter((t) => t.lane !== "Done" && t.lane !== "Failed");
+  const liveTasks = tasks.filter(
+    (t) => t.boardStage !== "Done" && t.boardStage !== "Failed" && t.boardStage !== "Archived",
+  );
 
-  // "Stuck" = lane=Waiting (paused, status=waiting, or has a blocker —
-  // see deriveLaneStyle in useTasks) OR idle > 24h while still live.
+  // "Stuck" = boardStage in {Blocked, Review} OR idle > 24h while still live.
   // Both are operationally useful; either alone misses real cases.
-  const stuck = liveTasks.filter((t) =>
-    t.lane === "Waiting" || t.roleLabel === "Waiting" || idleHours(t) > 24,
+  const stuck = liveTasks.filter(
+    (t) => t.boardStage === "Blocked" || t.boardStage === "Review" || idleHours(t) > 24,
   ).length;
 
   const avgCycles = total === 0

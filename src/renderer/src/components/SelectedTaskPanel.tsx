@@ -37,7 +37,7 @@ export function SelectedTaskPanel(): JSX.Element {
       <div>
         <h2>Selected Task — {active.id}</h2>
         <p className="muted" style={{ marginTop: 4 }}>
-          Lane: {active.lane} · {active.roleLabel}
+          Lane: {active.boardStage}{active.roleLabel ? ` · ${active.roleLabel}` : ""}
         </p>
         <div
           style={{
@@ -47,8 +47,12 @@ export function SelectedTaskPanel(): JSX.Element {
             flexWrap: "wrap",
           }}
         >
-          <span className={`pill ${active.rolePill}`}>{active.roleLabel}</span>
-          {active.active && <span className="pill warn">Running</span>}
+          {active.rolePill && (
+            <span className={`pill ${active.rolePill}`}>{active.roleLabel}</span>
+          )}
+          {active.active && active.roleLabel !== "running" && (
+            <span className="pill info"><span className="dot" />running</span>
+          )}
         </div>
         <div style={{ marginTop: 16 }}>
           <div className="file">

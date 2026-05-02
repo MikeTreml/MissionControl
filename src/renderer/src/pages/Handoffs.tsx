@@ -112,9 +112,11 @@ function Section({
                     <span className="pfx">{pfx}</span>
                     {t.id.slice(pfx.length)}
                   </span>
-                  <span className={`pill ${t.rolePill}`} style={{ marginLeft: "auto" }}>
-                    {t.roleLabel.toLowerCase()}
-                  </span>
+                  {t.rolePill && (
+                    <span className={`pill ${t.rolePill}`} style={{ marginLeft: "auto" }}>
+                      {t.roleLabel}
+                    </span>
+                  )}
                 </div>
                 <div className="summary">{t.summary}</div>
                 <div className="row">

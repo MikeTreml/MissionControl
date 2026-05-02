@@ -112,10 +112,12 @@ export function TaskCard({ task }: { task: UiTask }): JSX.Element {
         <span className="tid">
           {pfx && <span className="pfx">{pfx}</span>}{rest}
         </span>
-        <span className={`pill ${task.rolePill}`} style={{ marginLeft: "auto" }}>
-          {isRunning && <span className="dot" />}
-          {task.roleLabel.toLowerCase()}
-        </span>
+        {task.rolePill && (
+          <span className={`pill ${task.rolePill}`} style={{ marginLeft: "auto" }}>
+            {task.roleLabel === "running" && <span className="dot" />}
+            {task.roleLabel}
+          </span>
+        )}
         {task.projectIcon && (
           <span style={{ marginLeft: 4, fontSize: 14, lineHeight: 1 }}>
             {task.projectIcon}

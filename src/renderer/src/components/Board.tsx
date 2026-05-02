@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useTasks, type BoardStage, type UiTask } from "../hooks/useTasks";
+import { useAllTaskEvents } from "../hooks/useAllTaskEvents";
 import { useProjects } from "../hooks/useProjects";
 import { useLibraryIndex } from "../hooks/useLibraryIndex";
 import { usePiModels } from "../hooks/usePiModels";
@@ -9,6 +10,13 @@ import { publish } from "../hooks/data-bus";
 import { pushErrorToast } from "../hooks/useToasts";
 import { TaskCard } from "./TaskCard";
 import { SkeletonCard } from "./Skeleton";
+import {
+  buildRunningHistory,
+  buildShippedHistory,
+  DEMO_RUNNING_CHIPS,
+  DEMO_SHIPPED_CHIPS,
+  type LaneChip,
+} from "../lib/lane-history";
 
 // 6-lane Kanban (matches NewUI canvas): Drafting / Running / Review /
 // Blocked / Done / Archived. Archived is always rendered — empty state
@@ -75,6 +83,8 @@ export function Board(): JSX.Element {
       {tab === "kanban" ? (
         <KanbanView
           byStage={byStage}
+          tasks={tasks}
+          isDemo={isDemo}
           showFailed={failedCount > 0}
           loadingCold={loading && tasks.length === 0}
         />
@@ -115,15 +125,26 @@ function BoardTabButton({
 
 function KanbanView({
   byStage,
+  tasks,
+  isDemo,
   showFailed,
   loadingCold,
 }: {
   byStage: Record<BoardStage, UiTask[]>;
+  tasks: UiTask[];
+  isDemo: boolean;
   showFailed: boolean;
   loadingCold: boolean;
 }): JSX.Element {
+  const { perTask } = useAllTaskEvents();
   const stages: BoardStage[] = [...DEFAULT_STAGES];
   if (showFailed) stages.splice(stages.indexOf("Done"), 0, "Failed");
+
+  // Lane history strips: Running → recent runs · last 24h, Done → shipped · last 7d.
+  // Demo mode shows the canvas's hardcoded chips so the strip isn't empty.
+  const runningChips: LaneChip[] = isDemo ? DEMO_RUNNING_CHIPS : buildRunningHistory(perTask);
+  const shippedChips: LaneChip[] = isDemo ? DEMO_SHIPPED_CHIPS : buildShippedHistory(tasks);
+
   return (
     <div className="lanes">
       {stages.map((stage) => (
@@ -156,10 +177,42 @@ function KanbanView({
               {byStage[stage].map((t) => (
                 <TaskCard key={t.id} task={t} />
               ))}
+              {stage === "Running" && runningChips.length > 0 && (
+                <LaneHistory label="Recent runs · last 24h" chips={runningChips} />
+              )}
+              {stage === "Done" && shippedChips.length > 0 && (
+                <LaneHistory label="Shipped · last 7d" chips={shippedChips} />
+              )}
             </>
           )}
         </div>
       ))}
+    </div>
+  );
+}
+
+function LaneHistory({ label, chips }: { label: string; chips: LaneChip[] }): JSX.Element {
+  const { openTask } = useRoute();
+  return (
+    <div className="lane-history">
+      <div className="label">{label}</div>
+      <div className="strip">
+        {chips.map((c, i) => (
+          <button
+            key={`${c.taskId}-${i}`}
+            className="chip"
+            data-state={c.state}
+            onClick={() => openTask(c.taskId)}
+            title={`Open ${c.taskId}`}
+          >
+            <div className="top">
+              <span className="dot" />
+              {c.taskId}
+            </div>
+            <div className="when">{c.whenLabel}</div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
