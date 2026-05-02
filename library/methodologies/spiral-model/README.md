@@ -1,4 +1,4 @@
-# Spiral Model
+﻿# Spiral Model
 
 **Creator**: Barry Boehm (1986)
 **Category**: Risk-Driven Iterative Development
@@ -146,7 +146,7 @@ Each spiral iteration progresses through four quadrants:
 ## Usage Example
 
 ```javascript
-import { process } from './spiral-model.js';
+import { process } from 'workflows\spiral-model.js';
 
 const inputs = {
   projectName: "Enterprise Risk Management System",
@@ -232,6 +232,8 @@ Use with Babysitter SDK:
 ```bash
 babysitter run:create \
   --process-id methodologies/spiral-model \
-  --entry spiral-model.js#process \
+  --entry workflows\spiral-model.js#process \
   --inputs inputs.json
 ```
+
+

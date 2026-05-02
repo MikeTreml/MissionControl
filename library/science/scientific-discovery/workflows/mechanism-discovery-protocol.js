@@ -47,6 +47,7 @@ export async function process(inputs, ctx) {
     networkMapping,
     metaphor: metaphorSelection.selectedMetaphor,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -492,3 +493,4 @@ export const synthesizeMechanismDiscoveryTask = defineTask('synthesize-mechanism
   },
   labels: ['agent', 'mechanism-discovery', 'synthesis']
 }));
+

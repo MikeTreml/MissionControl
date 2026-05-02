@@ -141,6 +141,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...securityAudit.artifacts);
 
   // Quality Gate: Security Review
+  if (securityAudit.criticalFindings > 0) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -517,3 +518,4 @@ export const deploymentPreparationTask = defineTask('deployment-preparation', (a
   },
   labels: ['blockchain', 'erc20', 'deployment']
 }));
+

@@ -1,4 +1,4 @@
-# Cloud Chaos Monkey — Babysitter Process Template
+﻿# Cloud Chaos Monkey â€” Babysitter Process Template
 
 A generic, cloud-agnostic chaos monkey process that drives an AI agent through a
 structured 12-phase resilience testing pipeline: from service discovery through
@@ -7,7 +7,7 @@ resilience scoring across 5 dimensions (0-100), and interactive HTML report
 generation.
 
 The process is **cloud-agnostic** (supports GCP, AWS, Azure, and custom
-providers), **safety-first** (shadow environments only — never touches
+providers), **safety-first** (shadow environments only â€” never touches
 production), **quality-scored** (resilience score 0-100 across 5 dimensions),
 and **safe** (breakpoints pause for human approval at key decision points).
 
@@ -114,7 +114,7 @@ See `cloud-chaos-monkey-inputs.schema.json` for the full JSON Schema (draft-07).
 | `report` | object or null | Phase 11 HTML report generation result. |
 | `teardown` | object or null | Phase 12 shadow environment teardown result. |
 | `resilienceScore` | number | Overall resilience score (0-100). |
-| `metadata` | object | `{ processId, provider, timestamp }` — process identification. |
+| `metadata` | object | `{ processId, provider, timestamp }` â€” process identification. |
 
 ---
 
@@ -255,30 +255,30 @@ without hardcoding any provider-specific logic:
 
 ## Usage Examples
 
-### Full chaos test — GCP project
+### Full chaos test â€” GCP project
 
 ```bash
 babysitter run:create \
   --process-id cloud-chaos-monkey \
-  --entry cloud-chaos-monkey.js \
-  --inputs examples/cloud-chaos-monkey/gcp-full-run.json
+  --entry workflows\cloud-chaos-monkey.js \
+  --inputs examples\cloud-chaos-monkey\gcp-full-run.json
 ```
 
-### Full chaos test — AWS account
+### Full chaos test â€” AWS account
 
 ```bash
 babysitter run:create \
   --process-id cloud-chaos-monkey \
-  --entry cloud-chaos-monkey.js \
-  --inputs examples/cloud-chaos-monkey/aws-full-run.json
+  --entry workflows\cloud-chaos-monkey.js \
+  --inputs examples\cloud-chaos-monkey\aws-full-run.json
 ```
 
-### Minimal run — discovery only
+### Minimal run â€” discovery only
 
 ```bash
 babysitter run:create \
   --process-id cloud-chaos-monkey \
-  --entry cloud-chaos-monkey.js \
+  --entry workflows\cloud-chaos-monkey.js \
   --inputs examples/cloud-chaos-monkey/discovery-only.json
 ```
 
@@ -291,10 +291,10 @@ Four ready-to-use example input files are provided in the
 
 | File | Provider | Scenario |
 |---|---|---|
-| `gcp-full-run.json` | GCP | Finance SaaS with Firebase Hosting, Cloud Run, Firestore — full 12-phase chaos test |
-| `aws-full-run.json` | AWS | E-commerce platform with API Gateway, Lambda, DynamoDB, RDS — full 12-phase chaos test |
-| `azure-full-run.json` | Azure | B2B API platform with Container Apps, Azure Functions, CosmosDB — full 12-phase chaos test |
-| `minimal-defaults.json` | GCP | Minimal input with only required fields, all defaults applied |
+| `examples\cloud-chaos-monkey\gcp-full-run.json` | GCP | Finance SaaS with Firebase Hosting, Cloud Run, Firestore â€” full 12-phase chaos test |
+| `examples\cloud-chaos-monkey\aws-full-run.json` | AWS | E-commerce platform with API Gateway, Lambda, DynamoDB, RDS â€” full 12-phase chaos test |
+| `examples\cloud-chaos-monkey\azure-full-run.json` | Azure | B2B API platform with Container Apps, Azure Functions, CosmosDB â€” full 12-phase chaos test |
+| `examples\cloud-chaos-monkey\minimal-defaults.json` | GCP | Minimal input with only required fields, all defaults applied |
 
 ---
 
@@ -349,7 +349,9 @@ To add a new example input file:
 
 To modify the process itself:
 
-1. Edit `cloud-chaos-monkey.js`.
+1. Edit `workflows\cloud-chaos-monkey.js`.
 2. Update the input schema if you add or change input fields.
 3. Update this documentation to reflect any phase or parameter changes.
-4. Verify syntax with `node -c cloud-chaos-monkey.js`.
+4. Verify syntax with `node -c workflows\cloud-chaos-monkey.js`.
+
+

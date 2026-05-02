@@ -65,6 +65,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...receiptValidation.artifacts);
 
   // Quality Gate: Review discrepancies
+  if (receiptValidation.discrepancies.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -306,3 +307,4 @@ export const receivingPerformanceTask = defineTask('receiving-performance', (arg
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'logistics', 'receiving', 'performance']
 }));
+

@@ -75,6 +75,7 @@ export async function process(inputs, ctx) {
     lastFeedback_phase2Review = phase2Review.response || phase2Review.feedback || 'Changes requested';
   }
   // Quality Gate: Power-on must pass
+  if (!powerOnValidation.passed) {
       let lastFeedback_phase2Review2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review2) {
@@ -177,6 +178,7 @@ export async function process(inputs, ctx) {
     ...stressTesting.issues
   ];
 
+  if (allIssues.length > 0) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -587,3 +589,4 @@ export const validationReportTask = defineTask('validation-report', (args, taskC
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['ee', 'validation', 'report']
 }));
+

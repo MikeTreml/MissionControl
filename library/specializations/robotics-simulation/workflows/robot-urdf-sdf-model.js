@@ -157,6 +157,7 @@ export async function process(inputs, ctx) {
   if (modelValidation.issues) issues.push(...modelValidation.issues);
 
   // Quality Gate: Model validation
+  if (!modelValidation.validationPassed) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -673,3 +674,4 @@ export const modelDocumentationTask = defineTask('model-documentation', (args, t
   },
   labels: ['robotics-simulation', 'urdf-sdf', 'documentation']
 }));
+

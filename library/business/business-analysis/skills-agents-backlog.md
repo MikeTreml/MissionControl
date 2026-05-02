@@ -1,4 +1,4 @@
-# Business Analysis and Consulting - Skills and Agents Backlog
+﻿# Business Analysis and Consulting - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Business Analysis processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized tooling.
 
@@ -23,41 +23,41 @@ All 25 implemented processes in this specialization currently use the `general-p
 ### Implemented Processes
 
 #### Requirements Elicitation and Documentation
-1. `requirements-elicitation-workshop.js` - Structured stakeholder workshop facilitation
-2. `brd-creation.js` - Business Requirements Document creation
-3. `user-story-development.js` - User story writing with INVEST principles
-4. `requirements-traceability.js` - Requirements traceability matrix management
+1. `workflows\requirements-elicitation-workshop.js` - Structured stakeholder workshop facilitation
+2. `workflows\brd-creation.js` - Business Requirements Document creation
+3. `workflows\user-story-development.js` - User story writing with INVEST principles
+4. `workflows\requirements-traceability.js` - Requirements traceability matrix management
 
 #### Process Modeling and Analysis
-5. `bpmn-process-modeling.js` - BPMN 2.0 process modeling
-6. `value-stream-mapping.js` - Lean value stream analysis
-7. `sipoc-process-definition.js` - SIPOC diagram creation
-8. `process-gap-analysis.js` - Current vs future state gap analysis
+5. `workflows\bpmn-process-modeling.js` - BPMN 2.0 process modeling
+6. `workflows\value-stream-mapping.js` - Lean value stream analysis
+7. `workflows\sipoc-process-definition.js` - SIPOC diagram creation
+8. `workflows\process-gap-analysis.js` - Current vs future state gap analysis
 
 #### Stakeholder Analysis and Management
-9. `stakeholder-analysis.js` - Power-Interest and Salience analysis
-10. `raci-matrix-development.js` - RACI matrix creation
-11. `stakeholder-communication-planning.js` - Communication plan development
+9. `workflows\stakeholder-analysis.js` - Power-Interest and Salience analysis
+10. `workflows\raci-matrix-development.js` - RACI matrix creation
+11. `workflows\stakeholder-communication-planning.js` - Communication plan development
 
 #### Solution Assessment and Validation
-12. `business-case-development.js` - Business case with ROI/NPV/IRR analysis
-13. `solution-options-analysis.js` - Multi-criteria options evaluation
-14. `uat-planning.js` - User Acceptance Testing planning
-15. `solution-performance-assessment.js` - Solution performance measurement
+12. `workflows\business-case-development.js` - Business case with ROI/NPV/IRR analysis
+13. `workflows\solution-options-analysis.js` - Multi-criteria options evaluation
+14. `workflows\uat-planning.js` - User Acceptance Testing planning
+15. `workflows\solution-performance-assessment.js` - Solution performance measurement
 
 #### Consulting Engagement Management
-16. `consulting-engagement-planning.js` - McKinsey-style engagement planning
-17. `hypothesis-driven-analysis.js` - Issue trees and MECE structuring
-18. `executive-presentation.js` - Pyramid Principle presentations
-19. `knowledge-transfer.js` - Capability building programs
+16. `workflows\consulting-engagement-planning.js` - McKinsey-style engagement planning
+17. `workflows\hypothesis-driven-analysis.js` - Issue trees and MECE structuring
+18. `workflows\executive-presentation.js` - Pyramid Principle presentations
+19. `workflows\knowledge-transfer.js` - Capability building programs
 
 #### Change Management Implementation
-20. `change-readiness-assessment.js` - ADKAR readiness assessment
-21. `change-impact-analysis.js` - Change impact on people/process/technology
-22. `change-management-strategy.js` - Comprehensive change strategy
-23. `training-enablement-design.js` - Training curriculum design
-24. `resistance-management.js` - Resistance identification and mitigation
-25. `change-adoption-tracking.js` - Adoption metrics and sustainment
+20. `workflows\change-readiness-assessment.js` - ADKAR readiness assessment
+21. `workflows\change-impact-analysis.js` - Change impact on people/process/technology
+22. `workflows\change-management-strategy.js` - Comprehensive change strategy
+23. `workflows\training-enablement-design.js` - Training curriculum design
+24. `workflows\resistance-management.js` - Resistance identification and mitigation
+25. `workflows\change-adoption-tracking.js` - Adoption metrics and sustainment
 
 ### Goals
 - Provide deep expertise in BABOK, IEEE 29148, and consulting methodologies
@@ -86,10 +86,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate quality improvement recommendations
 
 **Process Integration**:
-- requirements-elicitation-workshop.js
-- brd-creation.js
-- user-story-development.js
-- requirements-traceability.js
+- workflows\requirements-elicitation-workshop.js
+- workflows\brd-creation.js
+- workflows\user-story-development.js
+- workflows\requirements-traceability.js
 
 **Dependencies**: NLP for ambiguity detection, BABOK templates
 
@@ -111,10 +111,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Integrate with Camunda, Bizagi, and Signavio formats
 
 **Process Integration**:
-- bpmn-process-modeling.js
-- sipoc-process-definition.js
-- value-stream-mapping.js
-- process-gap-analysis.js
+- workflows\bpmn-process-modeling.js
+- workflows\sipoc-process-definition.js
+- workflows\value-stream-mapping.js
+- workflows\process-gap-analysis.js
 
 **Dependencies**: BPMN 2.0 library, diagram rendering
 
@@ -137,9 +137,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Perform break-even analysis
 
 **Process Integration**:
-- business-case-development.js
-- solution-options-analysis.js
-- solution-performance-assessment.js
+- workflows\business-case-development.js
+- workflows\solution-options-analysis.js
+- workflows\solution-performance-assessment.js
 
 **Dependencies**: Numerical computation libraries
 
@@ -161,10 +161,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Calculate stakeholder engagement index
 
 **Process Integration**:
-- stakeholder-analysis.js
-- raci-matrix-development.js
-- stakeholder-communication-planning.js
-- consulting-engagement-planning.js
+- workflows\stakeholder-analysis.js
+- workflows\raci-matrix-development.js
+- workflows\stakeholder-communication-planning.js
+- workflows\consulting-engagement-planning.js
 
 **Dependencies**: Visualization libraries, matrix templates
 
@@ -186,10 +186,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Track gap closure progress
 
 **Process Integration**:
-- process-gap-analysis.js
-- change-readiness-assessment.js
-- change-impact-analysis.js
-- solution-options-analysis.js
+- workflows\process-gap-analysis.js
+- workflows\change-readiness-assessment.js
+- workflows\change-impact-analysis.js
+- workflows\solution-options-analysis.js
 
 **Dependencies**: Prioritization algorithms, visualization
 
@@ -211,9 +211,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Convert between user stories and job stories
 
 **Process Integration**:
-- user-story-development.js
-- requirements-elicitation-workshop.js
-- brd-creation.js
+- workflows\user-story-development.js
+- workflows\requirements-elicitation-workshop.js
+- workflows\brd-creation.js
 
 **Dependencies**: Story templates, estimation models
 
@@ -235,10 +235,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Export to requirements management tools (Jira, Azure DevOps)
 
 **Process Integration**:
-- requirements-traceability.js
-- brd-creation.js
-- uat-planning.js
-- solution-performance-assessment.js
+- workflows\requirements-traceability.js
+- workflows\brd-creation.js
+- workflows\uat-planning.js
+- workflows\solution-performance-assessment.js
 
 **Dependencies**: Requirements data structures, export formats
 
@@ -260,9 +260,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Track improvement progress
 
 **Process Integration**:
-- value-stream-mapping.js
-- process-gap-analysis.js
-- sipoc-process-definition.js
+- workflows\value-stream-mapping.js
+- workflows\process-gap-analysis.js
+- workflows\sipoc-process-definition.js
 
 **Dependencies**: VSM templates, Lean metrics
 
@@ -284,10 +284,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Benchmark against change management standards
 
 **Process Integration**:
-- change-readiness-assessment.js
-- change-management-strategy.js
-- change-adoption-tracking.js
-- resistance-management.js
+- workflows\change-readiness-assessment.js
+- workflows\change-management-strategy.js
+- workflows\change-adoption-tracking.js
+- workflows\resistance-management.js
 
 **Dependencies**: ADKAR model, assessment templates
 
@@ -309,10 +309,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Create slide-by-slide storyboards
 
 **Process Integration**:
-- executive-presentation.js
-- business-case-development.js
-- hypothesis-driven-analysis.js
-- consulting-engagement-planning.js
+- workflows\executive-presentation.js
+- workflows\business-case-development.js
+- workflows\hypothesis-driven-analysis.js
+- workflows\consulting-engagement-planning.js
 
 **Dependencies**: Document structuring, presentation templates
 
@@ -334,10 +334,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Export to visual tree diagrams
 
 **Process Integration**:
-- hypothesis-driven-analysis.js
-- consulting-engagement-planning.js
-- process-gap-analysis.js
-- business-case-development.js
+- workflows\hypothesis-driven-analysis.js
+- workflows\consulting-engagement-planning.js
+- workflows\process-gap-analysis.js
+- workflows\business-case-development.js
 
 **Dependencies**: Tree data structures, visualization
 
@@ -359,9 +359,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Export to test management tools
 
 **Process Integration**:
-- uat-planning.js
-- user-story-development.js
-- requirements-traceability.js
+- workflows\uat-planning.js
+- workflows\user-story-development.js
+- workflows\requirements-traceability.js
 
 **Dependencies**: Test templates, test management formats
 
@@ -383,10 +383,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Create multi-channel communication strategies
 
 **Process Integration**:
-- stakeholder-communication-planning.js
-- change-management-strategy.js
-- consulting-engagement-planning.js
-- stakeholder-analysis.js
+- workflows\stakeholder-communication-planning.js
+- workflows\change-management-strategy.js
+- workflows\consulting-engagement-planning.js
+- workflows\stakeholder-analysis.js
 
 **Dependencies**: Communication templates, scheduling
 
@@ -408,9 +408,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate recommendation confidence levels
 
 **Process Integration**:
-- solution-options-analysis.js
-- business-case-development.js
-- requirements-elicitation-workshop.js
+- workflows\solution-options-analysis.js
+- workflows\business-case-development.js
+- workflows\requirements-elicitation-workshop.js
 
 **Dependencies**: Decision analysis algorithms, visualization
 
@@ -432,9 +432,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate training schedule and logistics
 
 **Process Integration**:
-- training-enablement-design.js
-- knowledge-transfer.js
-- change-management-strategy.js
+- workflows\training-enablement-design.js
+- workflows\knowledge-transfer.js
+- workflows\change-management-strategy.js
 
 **Dependencies**: Learning design templates, Bloom's taxonomy
 
@@ -456,10 +456,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Design hybrid/remote workshop adaptations
 
 **Process Integration**:
-- requirements-elicitation-workshop.js
-- stakeholder-analysis.js
-- consulting-engagement-planning.js
-- change-readiness-assessment.js
+- workflows\requirements-elicitation-workshop.js
+- workflows\stakeholder-analysis.js
+- workflows\consulting-engagement-planning.js
+- workflows\change-readiness-assessment.js
 
 **Dependencies**: Workshop templates, activity libraries
 
@@ -481,10 +481,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate metric trend analysis
 
 **Process Integration**:
-- solution-performance-assessment.js
-- change-adoption-tracking.js
-- business-case-development.js
-- consulting-engagement-planning.js
+- workflows\solution-performance-assessment.js
+- workflows\change-adoption-tracking.js
+- workflows\business-case-development.js
+- workflows\consulting-engagement-planning.js
 
 **Dependencies**: Dashboard templates, visualization libraries
 
@@ -506,10 +506,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate risk reports for governance
 
 **Process Integration**:
-- business-case-development.js
-- solution-options-analysis.js
-- change-management-strategy.js
-- consulting-engagement-planning.js
+- workflows\business-case-development.js
+- workflows\solution-options-analysis.js
+- workflows\change-management-strategy.js
+- workflows\consulting-engagement-planning.js
 
 **Dependencies**: Risk templates, scoring algorithms
 
@@ -537,10 +537,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: IIBA certified, Agile BA training
 
 **Process Integration**:
-- requirements-elicitation-workshop.js (all phases)
-- brd-creation.js (all phases)
-- user-story-development.js (all phases)
-- requirements-traceability.js (all phases)
+- workflows\requirements-elicitation-workshop.js (all phases)
+- workflows\brd-creation.js (all phases)
+- workflows\user-story-development.js (all phases)
+- workflows\requirements-traceability.js (all phases)
 
 ---
 
@@ -564,10 +564,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Manufacturing and service operations
 
 **Process Integration**:
-- bpmn-process-modeling.js (all phases)
-- value-stream-mapping.js (all phases)
-- sipoc-process-definition.js (all phases)
-- process-gap-analysis.js (root cause analysis)
+- workflows\bpmn-process-modeling.js (all phases)
+- workflows\value-stream-mapping.js (all phases)
+- workflows\sipoc-process-definition.js (all phases)
+- workflows\process-gap-analysis.js (root cause analysis)
 
 ---
 
@@ -591,10 +591,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Strategy and operations consulting
 
 **Process Integration**:
-- consulting-engagement-planning.js (all phases)
-- hypothesis-driven-analysis.js (all phases)
-- executive-presentation.js (all phases)
-- business-case-development.js (recommendation)
+- workflows\consulting-engagement-planning.js (all phases)
+- workflows\hypothesis-driven-analysis.js (all phases)
+- workflows\executive-presentation.js (all phases)
+- workflows\business-case-development.js (recommendation)
 
 ---
 
@@ -618,9 +618,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: CFA, MBA Finance
 
 **Process Integration**:
-- business-case-development.js (cost-benefit, financials)
-- solution-options-analysis.js (cost analysis)
-- solution-performance-assessment.js (ROI tracking)
+- workflows\business-case-development.js (cost-benefit, financials)
+- workflows\solution-options-analysis.js (cost analysis)
+- workflows\solution-performance-assessment.js (ROI tracking)
 
 ---
 
@@ -644,10 +644,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Large transformation programs
 
 **Process Integration**:
-- stakeholder-analysis.js (all phases)
-- raci-matrix-development.js (all phases)
-- stakeholder-communication-planning.js (all phases)
-- consulting-engagement-planning.js (stakeholder aspects)
+- workflows\stakeholder-analysis.js (all phases)
+- workflows\raci-matrix-development.js (all phases)
+- workflows\stakeholder-communication-planning.js (all phases)
+- workflows\consulting-engagement-planning.js (stakeholder aspects)
 
 ---
 
@@ -671,11 +671,11 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Prosci certified, large transformation experience
 
 **Process Integration**:
-- change-readiness-assessment.js (all phases)
-- change-impact-analysis.js (all phases)
-- change-management-strategy.js (all phases)
-- resistance-management.js (all phases)
-- change-adoption-tracking.js (all phases)
+- workflows\change-readiness-assessment.js (all phases)
+- workflows\change-impact-analysis.js (all phases)
+- workflows\change-management-strategy.js (all phases)
+- workflows\resistance-management.js (all phases)
+- workflows\change-adoption-tracking.js (all phases)
 
 ---
 
@@ -699,9 +699,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Corporate training, ATD certified
 
 **Process Integration**:
-- training-enablement-design.js (all phases)
-- knowledge-transfer.js (all phases)
-- change-management-strategy.js (training aspects)
+- workflows\training-enablement-design.js (all phases)
+- workflows\knowledge-transfer.js (all phases)
+- workflows\change-management-strategy.js (training aspects)
 
 ---
 
@@ -725,10 +725,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Enterprise architecture, delivery experience
 
 **Process Integration**:
-- solution-options-analysis.js (all phases)
-- business-case-development.js (options analysis)
-- uat-planning.js (technical aspects)
-- solution-performance-assessment.js (technical metrics)
+- workflows\solution-options-analysis.js (all phases)
+- workflows\business-case-development.js (options analysis)
+- workflows\uat-planning.js (technical aspects)
+- workflows\solution-performance-assessment.js (technical metrics)
 
 ---
 
@@ -752,10 +752,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Design thinking, Agile facilitation
 
 **Process Integration**:
-- requirements-elicitation-workshop.js (facilitation phases)
-- stakeholder-analysis.js (workshop sessions)
-- consulting-engagement-planning.js (client workshops)
-- change-readiness-assessment.js (assessment workshops)
+- workflows\requirements-elicitation-workshop.js (facilitation phases)
+- workflows\stakeholder-analysis.js (workshop sessions)
+- workflows\consulting-engagement-planning.js (client workshops)
+- workflows\change-readiness-assessment.js (assessment workshops)
 
 ---
 
@@ -779,10 +779,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: BA documentation, regulatory submissions
 
 **Process Integration**:
-- brd-creation.js (document generation)
-- executive-presentation.js (slide creation)
-- business-case-development.js (document writing)
-- knowledge-transfer.js (materials creation)
+- workflows\brd-creation.js (document generation)
+- workflows\executive-presentation.js (slide creation)
+- workflows\business-case-development.js (document writing)
+- workflows\knowledge-transfer.js (materials creation)
 
 ---
 
@@ -806,10 +806,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: BA QA, test management
 
 **Process Integration**:
-- requirements-elicitation-workshop.js (quality scoring)
-- brd-creation.js (quality validation)
-- uat-planning.js (all phases)
-- requirements-traceability.js (coverage validation)
+- workflows\requirements-elicitation-workshop.js (quality scoring)
+- workflows\brd-creation.js (quality validation)
+- workflows\uat-planning.js (all phases)
+- workflows\requirements-traceability.js (coverage validation)
 
 ---
 
@@ -833,10 +833,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Project risk, enterprise risk management
 
 **Process Integration**:
-- business-case-development.js (risk assessment)
-- solution-options-analysis.js (risk analysis)
-- change-management-strategy.js (change risks)
-- consulting-engagement-planning.js (engagement risks)
+- workflows\business-case-development.js (risk assessment)
+- workflows\solution-options-analysis.js (risk analysis)
+- workflows\change-management-strategy.js (change risks)
+- workflows\consulting-engagement-planning.js (engagement risks)
 
 ---
 
@@ -860,9 +860,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Business intelligence, analytics
 
 **Process Integration**:
-- solution-performance-assessment.js (all phases)
-- change-adoption-tracking.js (all phases)
-- business-case-development.js (success metrics)
+- workflows\solution-performance-assessment.js (all phases)
+- workflows\change-adoption-tracking.js (all phases)
+- workflows\business-case-development.js (success metrics)
 
 ---
 
@@ -872,31 +872,31 @@ All 25 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| requirements-elicitation-workshop.js | SK-001, SK-016 | AG-001, AG-009 |
-| brd-creation.js | SK-001, SK-006, SK-007 | AG-001, AG-010 |
-| user-story-development.js | SK-006, SK-001 | AG-001 |
-| requirements-traceability.js | SK-007, SK-001 | AG-001, AG-011 |
-| bpmn-process-modeling.js | SK-002 | AG-002 |
-| value-stream-mapping.js | SK-008 | AG-002 |
-| sipoc-process-definition.js | SK-002 | AG-002 |
-| process-gap-analysis.js | SK-005, SK-011 | AG-002, AG-003 |
-| stakeholder-analysis.js | SK-004 | AG-005, AG-009 |
-| raci-matrix-development.js | SK-004 | AG-005 |
-| stakeholder-communication-planning.js | SK-013, SK-004 | AG-005, AG-006 |
-| business-case-development.js | SK-003, SK-014, SK-018 | AG-004, AG-003, AG-012 |
-| solution-options-analysis.js | SK-014, SK-003, SK-018 | AG-008, AG-004 |
-| uat-planning.js | SK-012, SK-007 | AG-011 |
-| solution-performance-assessment.js | SK-017, SK-003 | AG-013, AG-004 |
-| consulting-engagement-planning.js | SK-010, SK-018 | AG-003, AG-005 |
-| hypothesis-driven-analysis.js | SK-011, SK-010 | AG-003 |
-| executive-presentation.js | SK-010 | AG-003, AG-010 |
-| knowledge-transfer.js | SK-015 | AG-007, AG-010 |
-| change-readiness-assessment.js | SK-009, SK-016 | AG-006, AG-009 |
-| change-impact-analysis.js | SK-005, SK-009 | AG-006 |
-| change-management-strategy.js | SK-009, SK-013 | AG-006, AG-007 |
-| training-enablement-design.js | SK-015 | AG-007 |
-| resistance-management.js | SK-009, SK-013 | AG-006 |
-| change-adoption-tracking.js | SK-017, SK-009 | AG-013, AG-006 |
+| workflows\requirements-elicitation-workshop.js | SK-001, SK-016 | AG-001, AG-009 |
+| workflows\brd-creation.js | SK-001, SK-006, SK-007 | AG-001, AG-010 |
+| workflows\user-story-development.js | SK-006, SK-001 | AG-001 |
+| workflows\requirements-traceability.js | SK-007, SK-001 | AG-001, AG-011 |
+| workflows\bpmn-process-modeling.js | SK-002 | AG-002 |
+| workflows\value-stream-mapping.js | SK-008 | AG-002 |
+| workflows\sipoc-process-definition.js | SK-002 | AG-002 |
+| workflows\process-gap-analysis.js | SK-005, SK-011 | AG-002, AG-003 |
+| workflows\stakeholder-analysis.js | SK-004 | AG-005, AG-009 |
+| workflows\raci-matrix-development.js | SK-004 | AG-005 |
+| workflows\stakeholder-communication-planning.js | SK-013, SK-004 | AG-005, AG-006 |
+| workflows\business-case-development.js | SK-003, SK-014, SK-018 | AG-004, AG-003, AG-012 |
+| workflows\solution-options-analysis.js | SK-014, SK-003, SK-018 | AG-008, AG-004 |
+| workflows\uat-planning.js | SK-012, SK-007 | AG-011 |
+| workflows\solution-performance-assessment.js | SK-017, SK-003 | AG-013, AG-004 |
+| workflows\consulting-engagement-planning.js | SK-010, SK-018 | AG-003, AG-005 |
+| workflows\hypothesis-driven-analysis.js | SK-011, SK-010 | AG-003 |
+| workflows\executive-presentation.js | SK-010 | AG-003, AG-010 |
+| workflows\knowledge-transfer.js | SK-015 | AG-007, AG-010 |
+| workflows\change-readiness-assessment.js | SK-009, SK-016 | AG-006, AG-009 |
+| workflows\change-impact-analysis.js | SK-005, SK-009 | AG-006 |
+| workflows\change-management-strategy.js | SK-009, SK-013 | AG-006, AG-007 |
+| workflows\training-enablement-design.js | SK-015 | AG-007 |
+| workflows\resistance-management.js | SK-009, SK-013 | AG-006 |
+| workflows\change-adoption-tracking.js | SK-017, SK-009 | AG-013, AG-006 |
 
 ---
 
@@ -989,3 +989,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

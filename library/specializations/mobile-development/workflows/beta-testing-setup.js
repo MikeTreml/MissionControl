@@ -57,6 +57,7 @@ export async function process(inputs, ctx) {
       appName, platforms, testerGroups, feedbackChannels, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -129,3 +130,4 @@ export const notificationSystemTask = createBetaTestingTask('notification-system
 export const complianceSetupTask = createBetaTestingTask('compliance-setup', 'Compliance and Privacy Setup');
 export const automationSetupTask = createBetaTestingTask('automation-setup', 'Distribution Automation');
 export const documentationTask = createBetaTestingTask('documentation', 'Beta Program Documentation');
+

@@ -97,6 +97,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Pre-test readiness
+  if (!preTestCheckout.allSystemsGo) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -820,3 +821,4 @@ export const testReportTask = defineTask('test-report', (args, taskCtx) => ({
   },
   labels: ['propulsion', 'testing', 'reporting', 'aerospace']
 }));
+

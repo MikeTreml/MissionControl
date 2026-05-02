@@ -248,6 +248,7 @@ export async function process(inputs, ctx) {
   migrationGuides = migrationResult.guides || [];
 
   // Quality Gate: Migration guides required
+  if (acceptanceCriteria.requireMigrationGuides && migrationGuides.length === 0 && previousVersions.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -451,6 +452,7 @@ export async function process(inputs, ctx) {
   const totalBrokenLinks = validationResults.reduce((sum, r) => sum + r.brokenLinksCount, 0);
 
   // Quality Gate: Link validation
+  if (acceptanceCriteria.allLinksValid && totalBrokenLinks > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -503,6 +505,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...retentionResult.artifacts);
 
+  if (retentionResult.versionsArchived.length > 0) {
       let lastFeedback_phase10Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase10Review) {
@@ -646,6 +649,7 @@ export async function process(inputs, ctx) {
   const readyForRelease = releaseValidation.passed;
 
   // Quality Gate: Release validation
+  if (!readyForRelease) {
       let lastFeedback_phase14Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase14Review) {
@@ -1917,3 +1921,4 @@ export const releasePackageTask = defineTask('release-package', (args, taskCtx) 
   },
   labels: ['agent', 'versioning', 'release']
 }));
+

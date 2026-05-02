@@ -171,6 +171,7 @@ export async function process(inputs, ctx) {
     f => f.confidencePercent < minimumConfidence
   );
 
+  if (lowConfidenceFeatures.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -1611,3 +1612,4 @@ export const qualityValidationTask = defineTask('quality-validation', (args, tas
   },
   labels: ['agent', 'rice-prioritization', 'quality-validation']
 }));
+

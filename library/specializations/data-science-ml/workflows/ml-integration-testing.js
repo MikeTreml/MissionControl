@@ -81,6 +81,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...envSetup.artifacts);
 
   // Quality Gate: Verify all required components are available
+  if (envSetup.unavailableComponents.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -154,6 +155,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...healthCheckResults.flatMap(r => r.artifacts));
 
   // Quality Gate: All components must be healthy
+  if (unhealthyComponents.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -268,6 +270,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Unit integration pass rate: ${unitIntegrationPassRate.toFixed(2)}%`);
 
   // Quality Gate: Minimum pass rate for unit integration
+  if (unitIntegrationPassRate < 80) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -334,6 +337,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...e2eResult.artifacts);
 
     // Quality Gate: Critical E2E scenarios must pass
+    if (scenario.critical && !e2eResult.passed) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -399,6 +403,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Performance requirements must be met
   const performanceViolations = performanceResults.filter(r => !r.meetsRequirements);
+  if (performanceViolations.length > 0) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -556,6 +561,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Coverage threshold
   const actualCoverage = coverageAnalysis.overallCoverage;
+  if (actualCoverage < targetCoverage) {
       let lastFeedback_phase11Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase11Review) {
@@ -1902,3 +1908,4 @@ export const finalIntegrationReviewTask = defineTask('final-integration-review',
   },
   labels: ['agent', 'integration-testing', 'final-review', 'deployment-approval']
 }));
+

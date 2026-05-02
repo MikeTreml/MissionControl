@@ -363,6 +363,7 @@ export async function process(inputs, ctx) {
   const validationPassed = validation.overallScore >= 80;
 
   // Quality Gate: Validation must pass
+  if (!validationPassed) {
       let lastFeedback_phase11Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase11Review) {
@@ -1761,3 +1762,4 @@ export const finalReviewTask = defineTask('final-review', (args, taskCtx) => ({
   },
   labels: ['security', 'sast', 'final-review']
 }));
+

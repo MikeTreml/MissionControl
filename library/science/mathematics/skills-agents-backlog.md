@@ -1,4 +1,4 @@
-# Mathematics: Skills and Agents Backlog
+﻿# Mathematics: Skills and Agents Backlog
 
 This document catalogs specialized skills and agents that could enhance the processes in the Mathematics specialization beyond general-purpose capabilities.
 
@@ -1137,44 +1137,44 @@ These skills and agents could be shared with other specializations:
 ### Completed Process Files
 
 #### Proof and Theorem Development
-- [x] theorem-proof-verification.js - Updated with theorem-prover-expert agent, lean-proof-assistant, coq-proof-assistant, counterexample-generator skills
-- [x] conjecture-exploration.js - Updated with proof-strategist/conjecture-analyst agents, counterexample-generator, sympy-computer-algebra skills
-- [x] proof-writing-assistance.js - Updated with proof-strategist/mathematics-writer agents, lean-proof-assistant, proof-structure-analyzer skills
+- [x] workflows\theorem-proof-verification.js - Updated with theorem-prover-expert agent, lean-proof-assistant, coq-proof-assistant, counterexample-generator skills
+- [x] workflows\conjecture-exploration.js - Updated with proof-strategist/conjecture-analyst agents, counterexample-generator, sympy-computer-algebra skills
+- [x] workflows\proof-writing-assistance.js - Updated with proof-strategist/mathematics-writer agents, lean-proof-assistant, proof-structure-analyzer skills
 
 #### Numerical Analysis and Computation
-- [x] numerical-stability-analysis.js - Updated with numerical-analyst agent, numerical-linear-algebra-toolkit, floating-point-analysis skills
-- [x] algorithm-complexity-analysis.js - Updated with numerical-analyst agent, sympy-computer-algebra, graph-algorithm-library skills
-- [x] pde-solver-selection.js - Updated with numerical-analyst/pde-expert agents, pde-solver-library, mathematica-wolfram-interface skills
-- [x] matrix-computation-optimization.js - Updated with numerical-analyst agent, numerical-linear-algebra-toolkit skills
+- [x] workflows\numerical-stability-analysis.js - Updated with numerical-analyst agent, numerical-linear-algebra-toolkit, floating-point-analysis skills
+- [x] workflows\algorithm-complexity-analysis.js - Updated with numerical-analyst agent, sympy-computer-algebra, graph-algorithm-library skills
+- [x] workflows\pde-solver-selection.js - Updated with numerical-analyst/pde-expert agents, pde-solver-library, mathematica-wolfram-interface skills
+- [x] workflows\matrix-computation-optimization.js - Updated with numerical-analyst agent, numerical-linear-algebra-toolkit skills
 
 #### Statistical Analysis
-- [x] experimental-design-planning.js - Updated with experimental-design-expert agent, power-sample-size-calculator, multiple-testing-correction skills
-- [x] statistical-model-selection.js - Updated with bayesian-statistician/statistical-modeler agents, stan-bayesian-modeling, pymc-probabilistic-programming skills
-- [x] bayesian-inference-workflow.js - Updated with bayesian-statistician agent, stan-bayesian-modeling, pymc-probabilistic-programming, mcmc-diagnostics skills
-- [x] hypothesis-testing-framework.js - Updated with experimental-design-expert/statistical-modeler agents, power-sample-size-calculator, multiple-testing-correction skills
+- [x] workflows\experimental-design-planning.js - Updated with experimental-design-expert agent, power-sample-size-calculator, multiple-testing-correction skills
+- [x] workflows\statistical-model-selection.js - Updated with bayesian-statistician/statistical-modeler agents, stan-bayesian-modeling, pymc-probabilistic-programming skills
+- [x] workflows\bayesian-inference-workflow.js - Updated with bayesian-statistician agent, stan-bayesian-modeling, pymc-probabilistic-programming, mcmc-diagnostics skills
+- [x] workflows\hypothesis-testing-framework.js - Updated with experimental-design-expert/statistical-modeler agents, power-sample-size-calculator, multiple-testing-correction skills
 
 #### Optimization
-- [x] optimization-problem-formulation.js - Updated with optimization-expert agent, cvxpy-optimization-modeling, convex-optimization-solver, mixed-integer-optimization skills
-- [x] convex-analysis-verification.js - Updated with optimization-expert agent, cvxpy-optimization-modeling, convex-optimization-solver, nonlinear-optimization-solver skills
-- [x] sensitivity-analysis-optimization.js - Updated with optimization-expert agent, cvxpy-optimization-modeling, sensitivity-analysis-toolkit, convex-optimization-solver skills
+- [x] workflows\optimization-problem-formulation.js - Updated with optimization-expert agent, cvxpy-optimization-modeling, convex-optimization-solver, mixed-integer-optimization skills
+- [x] workflows\convex-analysis-verification.js - Updated with optimization-expert agent, cvxpy-optimization-modeling, convex-optimization-solver, nonlinear-optimization-solver skills
+- [x] workflows\sensitivity-analysis-optimization.js - Updated with optimization-expert agent, cvxpy-optimization-modeling, sensitivity-analysis-toolkit, convex-optimization-solver skills
 
 #### Mathematical Modeling
-- [x] model-formulation-workflow.js - Updated with applied-mathematician agent, sympy-computer-algebra, pde-solver-library, numerical-linear-algebra-toolkit skills
-- [x] uncertainty-quantification.js - Updated with uq-specialist agent, monte-carlo-simulation, sensitivity-analysis-uq, polynomial-chaos-expansion skills
-- [x] model-validation-framework.js - Updated with mathematical-modeler/uq-specialist agents, interpolation-approximation, robust-statistics-toolkit, monte-carlo-simulation skills
+- [x] workflows\model-formulation-workflow.js - Updated with applied-mathematician agent, sympy-computer-algebra, pde-solver-library, numerical-linear-algebra-toolkit skills
+- [x] workflows\uncertainty-quantification.js - Updated with uq-specialist agent, monte-carlo-simulation, sensitivity-analysis-uq, polynomial-chaos-expansion skills
+- [x] workflows\model-validation-framework.js - Updated with mathematical-modeler/uq-specialist agents, interpolation-approximation, robust-statistics-toolkit, monte-carlo-simulation skills
 
 #### Symbolic Computation
-- [x] symbolic-simplification.js - Updated with symbolic-computation-expert agent, sympy-computer-algebra, mathematica-wolfram-interface, sage-math-interface skills
-- [x] symbolic-integration-differentiation.js - Updated with symbolic-computation-expert agent, sympy-computer-algebra, mathematica-wolfram-interface, special-functions-library skills
+- [x] workflows\symbolic-simplification.js - Updated with symbolic-computation-expert agent, sympy-computer-algebra, mathematica-wolfram-interface, sage-math-interface skills
+- [x] workflows\symbolic-integration-differentiation.js - Updated with symbolic-computation-expert agent, sympy-computer-algebra, mathematica-wolfram-interface, special-functions-library skills
 
 #### Research and Documentation
-- [x] mathematical-literature-review.js - Updated with literature-reviewer agent, arxiv-search-interface, scientific-literature-search, bibtex-reference-manager skills
-- [x] latex-document-generation.js - Updated with mathematics-writer agent, latex-math-formatter, sympy-computer-algebra, bibtex-reference-manager skills
-- [x] mathematical-notation-standardization.js - Updated with mathematics-writer agent, latex-math-formatter, sympy-computer-algebra, special-functions-library skills
+- [x] workflows\mathematical-literature-review.js - Updated with literature-reviewer agent, arxiv-search-interface, scientific-literature-search, bibtex-reference-manager skills
+- [x] workflows\latex-document-generation.js - Updated with mathematics-writer agent, latex-math-formatter, sympy-computer-algebra, bibtex-reference-manager skills
+- [x] workflows\mathematical-notation-standardization.js - Updated with mathematics-writer agent, latex-math-formatter, sympy-computer-algebra, special-functions-library skills
 
 #### Computational Reproducibility
-- [x] reproducible-computation-setup.js - Updated with scientific-computing-specialist agent, version-control-for-math, jupyter-notebook-interface, reproducible-research-tools skills
-- [x] benchmark-validation.js - Updated with numerical-analyst agent, benchmark-suite-manager, numerical-linear-algebra-toolkit, floating-point-analysis skills
+- [x] workflows\reproducible-computation-setup.js - Updated with scientific-computing-specialist agent, version-control-for-math, jupyter-notebook-interface, reproducible-research-tools skills
+- [x] workflows\benchmark-validation.js - Updated with numerical-analyst agent, benchmark-suite-manager, numerical-linear-algebra-toolkit, floating-point-analysis skills
 
 ### Integration Notes
 - All process files now use the standardized pattern with `skills: [...]` array inside agent objects
@@ -1182,3 +1182,4 @@ These skills and agents could be shared with other specializations:
 - Agent objects include skills arrays for multi-skill capability
 - Process-to-Skills/Agents mapping table used as reference for integration
 - Old `skill: { name: '...' }` task-level pattern has been removed from all files
+

@@ -1,4 +1,4 @@
----
+﻿---
 name: formal-methods
 description: Formal verification specialist for smart contract correctness using Certora, K Framework, and SMT solvers. Expert in property specification, invariant formulation, and counterexample analysis.
 role: Formal Verification Engineer
@@ -264,5 +264,6 @@ rule depositWithdrawCommute(uint256 amount) {
 
 - `skills/certora-prover/SKILL.md` - Certora verification
 - `skills/slither-analysis/SKILL.md` - Static analysis
-- `agents/solidity-auditor/AGENT.md` - Security auditor
+- `AGENT.md` - Security auditor
 - [Certora Documentation](https://docs.certora.com/)
+

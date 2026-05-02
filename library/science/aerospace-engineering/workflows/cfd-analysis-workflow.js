@@ -98,6 +98,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Mesh quality must meet minimum standards
   if (meshGeneration.qualityMetrics.minOrthogonality < 0.1 ||
+      meshGeneration.qualityMetrics.maxSkewness > 0.95) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -143,6 +144,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check solution convergence
+  if (!solutionExecution.converged) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -864,3 +866,5 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['cfd', 'reporting', 'documentation', 'aerospace']
 }));
+
+

@@ -66,6 +66,7 @@ export async function process(inputs, ctx) {
       phase: 'requisition-intake',
       requisitionId
     };
+  }
     let lastFeedback_phase1Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase1Review) {
@@ -269,6 +270,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...backgroundChecks.artifacts);
 
   // Quality Gate: Background check must pass
+  if (!backgroundChecks.passed) {
       let lastFeedback_phase10Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase10Review) {
@@ -1072,3 +1074,5 @@ export const pipelineAnalyticsTask = defineTask('pipeline-analytics', (args, tas
   },
   labels: ['hr', 'recruiting', 'analytics']
 }));
+
+

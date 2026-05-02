@@ -61,6 +61,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Legal Soundness
+  if (ruleApplication.confidenceScore < 0.5) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -543,3 +544,4 @@ export const developRecommendationsTask = defineTask('legal-recommendations', (a
   },
   labels: ['legal-reasoning', 'recommendations']
 }));
+

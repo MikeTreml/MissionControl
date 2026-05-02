@@ -110,6 +110,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Parallelization strategy must be viable
+  if (!parallelizationStrategy.viable) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -177,6 +178,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Memory requirements must fit available resources
+  if (memoryOptimization.memoryExceeded) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -313,6 +315,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Cost must be within budget
+  if (budgetLimit && costAnalysis.estimatedCost > budgetLimit) {
       let lastFeedback_phase14Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase14Review) {
@@ -2594,3 +2597,4 @@ export const trainingPlanDocumentationTask = defineTask('training-plan-documenta
   },
   labels: ['distributed-training', 'documentation', 'planning']
 }));
+

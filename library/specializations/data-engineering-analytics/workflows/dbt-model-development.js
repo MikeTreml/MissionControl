@@ -148,6 +148,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...namingValidation.artifacts);
 
+  if (!namingValidation.compliant) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -405,6 +406,7 @@ export async function process(inputs, ctx) {
     const reviewScore = codeReview.overallScore;
     const reviewPassed = reviewScore >= 80;
 
+    if (!reviewPassed) {
         let lastFeedback_phase10Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase10Review) {
@@ -1350,3 +1352,4 @@ export const deploymentChecklistTask = defineTask('deployment-checklist', (args,
   },
   labels: ['dbt', 'deployment', 'checklist', 'operations']
 }));
+

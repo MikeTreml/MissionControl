@@ -281,6 +281,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Actionability assessment complete - ${actionabilityResult.actionableVariants} actionable variants`);
 
   // Breakpoint: Review actionable findings
+  if (actionabilityResult.actionableVariants > 0) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -936,3 +937,4 @@ export const generateClinicalReportTask = defineTask('generate-clinical-report',
   },
   labels: ['bioinformatics', 'clinical-interpretation', 'report-generation']
 }));
+

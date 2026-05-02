@@ -1,4 +1,4 @@
----
+﻿---
 name: mythril-symbolic
 description: Symbolic execution analysis using Mythril for deep vulnerability detection in smart contracts. Supports configurable transaction depth, timeout settings, and proof-of-concept exploit generation.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -298,7 +298,8 @@ myth analyze Contract.sol --solc-json solc.json
 
 ## See Also
 
-- `skills/slither-analysis/SKILL.md` - Static analysis
-- `skills/echidna-fuzzer/SKILL.md` - Property-based fuzzing
+- `SKILL.md` - Static analysis
+- `SKILL.md` - Property-based fuzzing
 - `agents/solidity-auditor/AGENT.md` - Security auditor
 - [Mythril Documentation](https://mythril-classic.readthedocs.io/)
+

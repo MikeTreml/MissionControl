@@ -1,4 +1,4 @@
-# Public Relations and Communications - Skills and Agents Backlog
+﻿# Public Relations and Communications - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Public Relations processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized PR platforms and media monitoring tools.
 
@@ -50,10 +50,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Trend detection and spike alerts
 
 **Process Integration**:
-- reputation-monitoring.js
-- reputation-risk-identification.js
-- media-coverage-analysis.js
-- pr-measurement-framework.js
+- workflows\reputation-monitoring.js
+- workflows\reputation-risk-identification.js
+- workflows\media-coverage-analysis.js
+- workflows\pr-measurement-framework.js
 
 **Dependencies**: Cision API, Meltwater API, Brandwatch API
 
@@ -78,9 +78,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Viral content detection
 
 **Process Integration**:
-- reputation-monitoring.js
-- reputation-risk-identification.js
-- crisis-response-execution.js
+- workflows\reputation-monitoring.js
+- workflows\reputation-risk-identification.js
+- workflows\crisis-response-execution.js
 - social-listening-pr.js
 
 **Dependencies**: Sprinklr API, Talkwalker API, native social APIs
@@ -106,10 +106,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Coverage linkage to outreach
 
 **Process Integration**:
-- media-relations-strategy.js
-- media-pitching-campaigns.js
-- press-release-development.js
-- executive-visibility-program.js
+- workflows\media-relations-strategy.js
+- workflows\media-pitching-campaigns.js
+- workflows\press-release-development.js
+- workflows\executive-visibility-program.js
 
 **Dependencies**: Cision API, Muck Rack API, Propel API
 
@@ -134,10 +134,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Pickup monitoring
 
 **Process Integration**:
-- press-release-development.js
-- investor-communications-support.js
-- csr-communications.js
-- annual-report-production.js
+- workflows\press-release-development.js
+- workflows\investor-communications-support.js
+- workflows\csr-communications.js
+- workflows\annual-report-production.js
 
 **Dependencies**: PR Newswire API, Business Wire API, GlobeNewswire API
 
@@ -162,10 +162,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Post-crisis report generation
 
 **Process Integration**:
-- crisis-communications-plan.js
-- crisis-response-execution.js
-- crisis-simulation-training.js
-- post-crisis-analysis.js
+- workflows\crisis-communications-plan.js
+- workflows\crisis-response-execution.js
+- workflows\crisis-simulation-training.js
+- workflows\post-crisis-analysis.js
 
 **Dependencies**: Crisis management platform APIs, Slack/Teams APIs
 
@@ -190,10 +190,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Brand health dashboards
 
 **Process Integration**:
-- reputation-monitoring.js
-- reputation-risk-identification.js
-- reputation-recovery-strategy.js
-- executive-visibility-program.js
+- workflows\reputation-monitoring.js
+- workflows\reputation-risk-identification.js
+- workflows\reputation-recovery-strategy.js
+- workflows\executive-visibility-program.js
 
 **Dependencies**: RepTrak API, YouGov API, review platform APIs
 
@@ -218,10 +218,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Analytics and engagement tracking
 
 **Process Integration**:
-- internal-communications-strategy.js
-- change-management-communications.js
-- town-hall-event-planning.js
-- employee-advocacy-program.js
+- workflows\internal-communications-strategy.js
+- workflows\change-management-communications.js
+- workflows\town-hall-event-planning.js
+- workflows\employee-advocacy-program.js
 
 **Dependencies**: Staffbase API, Microsoft Graph API, Slack API
 
@@ -246,9 +246,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Panel placement coordination
 
 **Process Integration**:
-- executive-visibility-program.js
-- community-relations-program.js
-- town-hall-event-planning.js
+- workflows\executive-visibility-program.js
+- workflows\community-relations-program.js
+- workflows\town-hall-event-planning.js
 
 **Dependencies**: Event platform APIs, webinar platform APIs
 
@@ -273,9 +273,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Data visualization (Tableau, Power BI integration)
 
 **Process Integration**:
-- pr-measurement-framework.js
-- media-coverage-analysis.js
-- reputation-monitoring.js
+- workflows\pr-measurement-framework.js
+- workflows\media-coverage-analysis.js
+- workflows\reputation-monitoring.js
 - marketing-performance-dashboard.js
 
 **Dependencies**: BI platform APIs, media monitoring data exports
@@ -301,9 +301,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Industry awards nomination tracking
 
 **Process Integration**:
-- media-relations-strategy.js
-- executive-visibility-program.js
-- stakeholder-mapping.js
+- workflows\media-relations-strategy.js
+- workflows\executive-visibility-program.js
+- workflows\stakeholder-mapping.js
 - influencer-relationship.js
 
 **Dependencies**: Analyst relations platforms, CRM systems
@@ -329,10 +329,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Legal/compliance flag detection
 
 **Process Integration**:
-- press-release-development.js
-- corporate-messaging-architecture.js
-- csr-communications.js
-- internal-communications-strategy.js
+- workflows\press-release-development.js
+- workflows\corporate-messaging-architecture.js
+- workflows\csr-communications.js
+- workflows\internal-communications-strategy.js
 
 **Dependencies**: AP Stylebook API, Grammarly Business API
 
@@ -357,10 +357,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Investor relations contact management
 
 **Process Integration**:
-- stakeholder-mapping.js
-- government-affairs-communications.js
-- investor-communications-support.js
-- community-relations-program.js
+- workflows\stakeholder-mapping.js
+- workflows\government-affairs-communications.js
+- workflows\investor-communications-support.js
+- workflows\community-relations-program.js
 
 **Dependencies**: CRM APIs (Salesforce, HubSpot), specialized stakeholder platforms
 
@@ -385,9 +385,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Best practice video library
 
 **Process Integration**:
-- media-interview-preparation.js
-- crisis-simulation-training.js
-- executive-visibility-program.js
+- workflows\media-interview-preparation.js
+- workflows\crisis-simulation-training.js
+- workflows\executive-visibility-program.js
 
 **Dependencies**: Video conferencing APIs, learning management systems
 
@@ -412,9 +412,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Public affairs coalition management
 
 **Process Integration**:
-- government-affairs-communications.js
-- stakeholder-mapping.js
-- reputation-risk-identification.js
+- workflows\government-affairs-communications.js
+- workflows\stakeholder-mapping.js
+- workflows\reputation-risk-identification.js
 
 **Dependencies**: FiscalNote API, Quorum API, government data feeds
 
@@ -439,9 +439,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Social selling integration
 
 **Process Integration**:
-- employee-advocacy-program.js
-- internal-communications-strategy.js
-- executive-visibility-program.js
+- workflows\employee-advocacy-program.js
+- workflows\internal-communications-strategy.js
+- workflows\executive-visibility-program.js
 
 **Dependencies**: Sociabble API, EveryoneSocial API, LinkedIn API
 
@@ -466,9 +466,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Investor day event management
 
 **Process Integration**:
-- investor-communications-support.js
-- annual-report-production.js
-- stakeholder-mapping.js
+- workflows\investor-communications-support.js
+- workflows\annual-report-production.js
+- workflows\stakeholder-mapping.js
 
 **Dependencies**: Q4 API, Notified API, financial data providers
 
@@ -503,9 +503,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: PRSA APR
 
 **Process Integration**:
-- media-relations-strategy.js (all phases)
-- media-pitching-campaigns.js (all phases)
-- press-release-development.js (strategy phases)
+- workflows\media-relations-strategy.js (all phases)
+- workflows\media-pitching-campaigns.js (all phases)
+- workflows\press-release-development.js (strategy phases)
 
 ---
 
@@ -534,9 +534,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Specialization: Financial, technology, healthcare writing
 
 **Process Integration**:
-- press-release-development.js (all phases)
-- investor-communications-support.js (written content)
-- csr-communications.js (report writing)
+- workflows\press-release-development.js (all phases)
+- workflows\investor-communications-support.js (written content)
+- workflows\csr-communications.js (report writing)
 
 ---
 
@@ -565,10 +565,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Track record: Major corporate crisis experience
 
 **Process Integration**:
-- crisis-communications-plan.js (all phases)
-- crisis-response-execution.js (all phases)
-- crisis-simulation-training.js (scenario development)
-- post-crisis-analysis.js (all phases)
+- workflows\crisis-communications-plan.js (all phases)
+- workflows\crisis-response-execution.js (all phases)
+- workflows\crisis-simulation-training.js (scenario development)
+- workflows\post-crisis-analysis.js (all phases)
 
 ---
 
@@ -597,9 +597,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Specialization: Reputation research and measurement
 
 **Process Integration**:
-- reputation-monitoring.js (all phases)
-- reputation-risk-identification.js (all phases)
-- reputation-recovery-strategy.js (all phases)
+- workflows\reputation-monitoring.js (all phases)
+- workflows\reputation-risk-identification.js (all phases)
+- workflows\reputation-recovery-strategy.js (all phases)
 
 ---
 
@@ -628,10 +628,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Specialization: Strategic counsel to C-suite
 
 **Process Integration**:
-- corporate-messaging-architecture.js (all phases)
-- executive-visibility-program.js (strategy phases)
-- csr-communications.js (strategy phases)
-- annual-report-production.js (messaging phases)
+- workflows\corporate-messaging-architecture.js (all phases)
+- workflows\executive-visibility-program.js (strategy phases)
+- workflows\csr-communications.js (strategy phases)
+- workflows\annual-report-production.js (messaging phases)
 
 ---
 
@@ -660,9 +660,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Network: Strong speaking bureau and media relationships
 
 **Process Integration**:
-- executive-visibility-program.js (all phases)
-- media-interview-preparation.js (all phases)
-- corporate-messaging-architecture.js (executive voice)
+- workflows\executive-visibility-program.js (all phases)
+- workflows\media-interview-preparation.js (all phases)
+- workflows\corporate-messaging-architecture.js (executive voice)
 
 ---
 
@@ -691,10 +691,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: Prosci Change Management
 
 **Process Integration**:
-- internal-communications-strategy.js (all phases)
-- change-management-communications.js (all phases)
-- town-hall-event-planning.js (all phases)
-- employee-advocacy-program.js (all phases)
+- workflows\internal-communications-strategy.js (all phases)
+- workflows\change-management-communications.js (all phases)
+- workflows\town-hall-event-planning.js (all phases)
+- workflows\employee-advocacy-program.js (all phases)
 
 ---
 
@@ -723,9 +723,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Specialization: Multi-stakeholder complex environments
 
 **Process Integration**:
-- stakeholder-mapping.js (all phases)
-- community-relations-program.js (all phases)
-- government-affairs-communications.js (stakeholder engagement)
+- workflows\stakeholder-mapping.js (all phases)
+- workflows\community-relations-program.js (all phases)
+- workflows\government-affairs-communications.js (stakeholder engagement)
 
 ---
 
@@ -754,9 +754,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Network: Strong Capitol Hill and regulatory relationships
 
 **Process Integration**:
-- government-affairs-communications.js (all phases)
-- stakeholder-mapping.js (government stakeholders)
-- reputation-risk-identification.js (political risk)
+- workflows\government-affairs-communications.js (all phases)
+- workflows\stakeholder-mapping.js (government stakeholders)
+- workflows\reputation-risk-identification.js (political risk)
 
 ---
 
@@ -785,9 +785,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: AMEC measurement training
 
 **Process Integration**:
-- pr-measurement-framework.js (all phases)
-- media-coverage-analysis.js (all phases)
-- reputation-monitoring.js (metrics phases)
+- workflows\pr-measurement-framework.js (all phases)
+- workflows\media-coverage-analysis.js (all phases)
+- workflows\reputation-monitoring.js (metrics phases)
 
 ---
 
@@ -816,9 +816,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: NIRI certification
 
 **Process Integration**:
-- investor-communications-support.js (all phases)
-- annual-report-production.js (all phases)
-- stakeholder-mapping.js (investor stakeholders)
+- workflows\investor-communications-support.js (all phases)
+- workflows\annual-report-production.js (all phases)
+- workflows\stakeholder-mapping.js (investor stakeholders)
 
 ---
 
@@ -847,9 +847,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: GRI-certified professional
 
 **Process Integration**:
-- csr-communications.js (all phases)
-- annual-report-production.js (ESG sections)
-- community-relations-program.js (CSR integration)
+- workflows\csr-communications.js (all phases)
+- workflows\annual-report-production.js (ESG sections)
+- workflows\community-relations-program.js (CSR integration)
 
 ---
 
@@ -859,31 +859,31 @@ All 25 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| media-relations-strategy.js | SK-001, SK-003, SK-010 | AG-001 |
-| press-release-development.js | SK-004, SK-011, SK-003 | AG-002, AG-001 |
-| media-pitching-campaigns.js | SK-003, SK-001 | AG-001 |
-| media-interview-preparation.js | SK-013, SK-003 | AG-006, AG-001 |
-| crisis-communications-plan.js | SK-005, SK-002 | AG-003 |
-| crisis-response-execution.js | SK-005, SK-002, SK-007 | AG-003 |
-| crisis-simulation-training.js | SK-013, SK-005 | AG-003 |
-| post-crisis-analysis.js | SK-001, SK-009, SK-005 | AG-003, AG-010 |
-| corporate-messaging-architecture.js | SK-011 | AG-005 |
-| executive-visibility-program.js | SK-008, SK-003, SK-010 | AG-006, AG-005 |
-| csr-communications.js | SK-011, SK-004 | AG-012, AG-005 |
-| annual-report-production.js | SK-016, SK-011 | AG-011, AG-012 |
-| reputation-monitoring.js | SK-001, SK-002, SK-006, SK-009 | AG-004, AG-010 |
-| reputation-risk-identification.js | SK-001, SK-002, SK-006 | AG-004 |
-| reputation-recovery-strategy.js | SK-006, SK-001, SK-009 | AG-004, AG-003 |
-| stakeholder-mapping.js | SK-012, SK-014 | AG-008 |
-| government-affairs-communications.js | SK-014, SK-012 | AG-009, AG-008 |
-| community-relations-program.js | SK-012, SK-008 | AG-008 |
-| investor-communications-support.js | SK-016, SK-004 | AG-011 |
-| internal-communications-strategy.js | SK-007, SK-015 | AG-007 |
-| change-management-communications.js | SK-007 | AG-007 |
-| town-hall-event-planning.js | SK-007, SK-008 | AG-007 |
-| employee-advocacy-program.js | SK-015, SK-007 | AG-007 |
-| pr-measurement-framework.js | SK-009, SK-001 | AG-010 |
-| media-coverage-analysis.js | SK-001, SK-009 | AG-010, AG-001 |
+| workflows\media-relations-strategy.js | SK-001, SK-003, SK-010 | AG-001 |
+| workflows\press-release-development.js | SK-004, SK-011, SK-003 | AG-002, AG-001 |
+| workflows\media-pitching-campaigns.js | SK-003, SK-001 | AG-001 |
+| workflows\media-interview-preparation.js | SK-013, SK-003 | AG-006, AG-001 |
+| workflows\crisis-communications-plan.js | SK-005, SK-002 | AG-003 |
+| workflows\crisis-response-execution.js | SK-005, SK-002, SK-007 | AG-003 |
+| workflows\crisis-simulation-training.js | SK-013, SK-005 | AG-003 |
+| workflows\post-crisis-analysis.js | SK-001, SK-009, SK-005 | AG-003, AG-010 |
+| workflows\corporate-messaging-architecture.js | SK-011 | AG-005 |
+| workflows\executive-visibility-program.js | SK-008, SK-003, SK-010 | AG-006, AG-005 |
+| workflows\csr-communications.js | SK-011, SK-004 | AG-012, AG-005 |
+| workflows\annual-report-production.js | SK-016, SK-011 | AG-011, AG-012 |
+| workflows\reputation-monitoring.js | SK-001, SK-002, SK-006, SK-009 | AG-004, AG-010 |
+| workflows\reputation-risk-identification.js | SK-001, SK-002, SK-006 | AG-004 |
+| workflows\reputation-recovery-strategy.js | SK-006, SK-001, SK-009 | AG-004, AG-003 |
+| workflows\stakeholder-mapping.js | SK-012, SK-014 | AG-008 |
+| workflows\government-affairs-communications.js | SK-014, SK-012 | AG-009, AG-008 |
+| workflows\community-relations-program.js | SK-012, SK-008 | AG-008 |
+| workflows\investor-communications-support.js | SK-016, SK-004 | AG-011 |
+| workflows\internal-communications-strategy.js | SK-007, SK-015 | AG-007 |
+| workflows\change-management-communications.js | SK-007 | AG-007 |
+| workflows\town-hall-event-planning.js | SK-007, SK-008 | AG-007 |
+| workflows\employee-advocacy-program.js | SK-015, SK-007 | AG-007 |
+| workflows\pr-measurement-framework.js | SK-009, SK-001 | AG-010 |
+| workflows\media-coverage-analysis.js | SK-001, SK-009 | AG-010, AG-001 |
 
 ---
 
@@ -974,3 +974,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

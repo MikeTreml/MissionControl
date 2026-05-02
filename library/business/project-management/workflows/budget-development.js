@@ -119,6 +119,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Estimates must converge within acceptable variance
   const estimateVariance = reconciledEstimate.variancePercentage || 100;
+  if (estimateVariance > 25) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -1112,3 +1113,4 @@ export const budgetDocumentGenerationTask = defineTask('budget-document-generati
   },
   labels: ['budget', 'planning', 'documentation', 'cost-management']
 }));
+

@@ -107,6 +107,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: SMART objectives must be defined
+  if (!objectivesAndCriteria.objectives || objectivesAndCriteria.objectives.length === 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -1157,3 +1158,4 @@ export const charterDocumentGenerationTask = defineTask('charter-document-genera
   },
   labels: ['charter', 'initiation', 'documentation']
 }));
+

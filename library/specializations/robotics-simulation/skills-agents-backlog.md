@@ -1,4 +1,4 @@
-# Robotics and Simulation Engineering - Skills and Agents Backlog
+﻿# Robotics and Simulation Engineering - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Robotics and Simulation Engineering processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, ROS/ROS2 integration, physics simulation, motion planning, and specialized robotics tooling.
 
@@ -51,11 +51,11 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Configure tf2 transform broadcasts
 
 **Process Integration**:
-- robot-system-design.js
-- robot-calibration.js
-- gazebo-simulation-setup.js
-- nav2-navigation-setup.js
-- multi-robot-coordination.js
+- workflows\robot-system-design.js
+- workflows\robot-calibration.js
+- workflows\gazebo-simulation-setup.js
+- workflows\nav2-navigation-setup.js
+- workflows\multi-robot-coordination.js
 
 **Dependencies**: ROS/ROS2 installation, colcon build tools, rosdep
 
@@ -80,11 +80,11 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Set up multi-robot simulation instances
 
 **Process Integration**:
-- gazebo-simulation-setup.js
-- digital-twin-development.js
-- synthetic-data-pipeline.js
-- simulation-performance-optimization.js
-- hil-testing.js
+- workflows\gazebo-simulation-setup.js
+- workflows\digital-twin-development.js
+- workflows\synthetic-data-pipeline.js
+- workflows\simulation-performance-optimization.js
+- workflows\hil-testing.js
 
 **Dependencies**: Gazebo/Ignition, gazebo_ros_pkgs, SDF specification
 
@@ -109,10 +109,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Export datasets in standard formats (COCO, KITTI)
 
 **Process Integration**:
-- isaac-sim-photorealistic.js
-- synthetic-data-pipeline.js
-- digital-twin-development.js
-- rl-robot-control.js
+- workflows\isaac-sim-photorealistic.js
+- workflows\synthetic-data-pipeline.js
+- workflows\digital-twin-development.js
+- workflows\rl-robot-control.js
 
 **Dependencies**: NVIDIA Isaac Sim, Omniverse, NVIDIA GPU with RTX
 
@@ -137,10 +137,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Visualize and debug in RViz
 
 **Process Integration**:
-- robot-urdf-sdf-model.js
-- robot-system-design.js
-- moveit-manipulation-planning.js
-- gazebo-simulation-setup.js
+- workflows\robot-urdf-sdf-model.js
+- workflows\robot-system-design.js
+- workflows\moveit-manipulation-planning.js
+- workflows\gazebo-simulation-setup.js
 
 **Dependencies**: urdfdom, xacro, mesh processing tools (MeshLab, Blender)
 
@@ -165,9 +165,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Debug IK failures and planning issues
 
 **Process Integration**:
-- moveit-manipulation-planning.js
-- trajectory-optimization.js
-- robot-system-design.js
+- workflows\moveit-manipulation-planning.js
+- workflows\trajectory-optimization.js
+- workflows\robot-system-design.js
 
 **Dependencies**: MoveIt/MoveIt2, OMPL, IK solvers
 
@@ -192,10 +192,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Debug navigation failures and path planning issues
 
 **Process Integration**:
-- nav2-navigation-setup.js
-- path-planning-algorithm.js
-- dynamic-obstacle-avoidance.js
-- autonomous-exploration.js
+- workflows\nav2-navigation-setup.js
+- workflows\path-planning-algorithm.js
+- workflows\dynamic-obstacle-avoidance.js
+- workflows\autonomous-exploration.js
 
 **Dependencies**: Nav2, BehaviorTree.CPP, navigation2 plugins
 
@@ -220,10 +220,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Configure map saving and loading
 
 **Process Integration**:
-- visual-slam-implementation.js
-- lidar-mapping-localization.js
-- autonomous-exploration.js
-- sensor-fusion-framework.js
+- workflows\visual-slam-implementation.js
+- workflows\lidar-mapping-localization.js
+- workflows\autonomous-exploration.js
+- workflows\sensor-fusion-framework.js
 
 **Dependencies**: ORB-SLAM3, RTAB-Map, Cartographer, LIO-SAM, g2o, GTSAM
 
@@ -248,10 +248,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Configure LiDAR-camera fusion
 
 **Process Integration**:
-- lidar-mapping-localization.js
-- object-detection-pipeline.js
-- sensor-fusion-framework.js
-- synthetic-data-pipeline.js
+- workflows\lidar-mapping-localization.js
+- workflows\object-detection-pipeline.js
+- workflows\sensor-fusion-framework.js
+- workflows\synthetic-data-pipeline.js
 
 **Dependencies**: PCL, Open3D, pcl_ros, laser_geometry
 
@@ -276,10 +276,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Implement sensor delay compensation
 
 **Process Integration**:
-- sensor-fusion-framework.js
-- visual-slam-implementation.js
-- lidar-mapping-localization.js
-- robot-calibration.js
+- workflows\sensor-fusion-framework.js
+- workflows\visual-slam-implementation.js
+- workflows\lidar-mapping-localization.js
+- workflows\robot-calibration.js
 
 **Dependencies**: robot_localization, imu_complementary_filter, GTSAM
 
@@ -304,10 +304,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Set up hand-eye calibration
 
 **Process Integration**:
-- robot-calibration.js
-- visual-slam-implementation.js
-- object-detection-pipeline.js
-- digital-twin-development.js
+- workflows\robot-calibration.js
+- workflows\visual-slam-implementation.js
+- workflows\object-detection-pipeline.js
+- workflows\digital-twin-development.js
 
 **Dependencies**: OpenCV, cv_bridge, image_geometry, camera_calibration
 
@@ -332,10 +332,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Configure multi-camera detection fusion
 
 **Process Integration**:
-- object-detection-pipeline.js
-- synthetic-data-pipeline.js
+- workflows\object-detection-pipeline.js
+- workflows\synthetic-data-pipeline.js
 - nn-model-optimization.js
-- moveit-manipulation-planning.js
+- workflows\moveit-manipulation-planning.js
 
 **Dependencies**: YOLO, Detectron2, TensorRT, ONNX Runtime, vision_msgs
 
@@ -360,10 +360,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Implement impedance and admittance control
 
 **Process Integration**:
-- robot-system-design.js
-- moveit-manipulation-planning.js
-- mpc-controller-design.js
-- robot-calibration.js
+- workflows\robot-system-design.js
+- workflows\moveit-manipulation-planning.js
+- workflows\mpc-controller-design.js
+- workflows\robot-calibration.js
 
 **Dependencies**: KDL, Pinocchio, RBDL, eigen
 
@@ -388,10 +388,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Optimize solver parameters for real-time execution
 
 **Process Integration**:
-- mpc-controller-design.js
-- trajectory-optimization.js
-- dynamic-obstacle-avoidance.js
-- path-planning-algorithm.js
+- workflows\mpc-controller-design.js
+- workflows\trajectory-optimization.js
+- workflows\dynamic-obstacle-avoidance.js
+- workflows\path-planning-algorithm.js
 
 **Dependencies**: CasADi, ACADO, OSQP, qpOASES, Ipopt
 
@@ -416,10 +416,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Configure asymptotically optimal planners
 
 **Process Integration**:
-- path-planning-algorithm.js
-- trajectory-optimization.js
-- moveit-manipulation-planning.js
-- nav2-navigation-setup.js
+- workflows\path-planning-algorithm.js
+- workflows\trajectory-optimization.js
+- workflows\moveit-manipulation-planning.js
+- workflows\nav2-navigation-setup.js
 
 **Dependencies**: OMPL, MoveIt, TrajOpt, FCL
 
@@ -444,8 +444,8 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Export policies for deployment (ONNX, TorchScript)
 
 **Process Integration**:
-- rl-robot-control.js
-- imitation-learning.js
+- workflows\rl-robot-control.js
+- workflows\imitation-learning.js
 - sim-to-real-validation.js
 - nn-model-optimization.js
 
@@ -473,9 +473,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 
 **Process Integration**:
 - sim-to-real-validation.js
-- digital-twin-development.js
-- rl-robot-control.js
-- field-testing-validation.js
+- workflows\digital-twin-development.js
+- workflows\rl-robot-control.js
+- workflows\field-testing-validation.js
 
 **Dependencies**: Simulation environments, physical robot access
 
@@ -500,10 +500,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Generate calibration reports and validation
 
 **Process Integration**:
-- robot-calibration.js
-- sensor-fusion-framework.js
-- visual-slam-implementation.js
-- lidar-mapping-localization.js
+- workflows\robot-calibration.js
+- workflows\sensor-fusion-framework.js
+- workflows\visual-slam-implementation.js
+- workflows\lidar-mapping-localization.js
 
 **Dependencies**: Kalibr, camera_calibration, robot_calibration, easy_handeye
 
@@ -528,9 +528,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Generate safety documentation
 
 **Process Integration**:
-- safety-system-validation.js
-- robot-system-design.js
-- field-testing-validation.js
+- workflows\safety-system-validation.js
+- workflows\robot-system-design.js
+- workflows\field-testing-validation.js
 - hri-interface.js
 
 **Dependencies**: Safety PLCs, force/torque sensors, safety scanners
@@ -556,10 +556,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Implement traffic management zones
 
 **Process Integration**:
-- multi-robot-coordination.js
+- workflows\multi-robot-coordination.js
 - fleet-management-system.js
-- path-planning-algorithm.js
-- dynamic-obstacle-avoidance.js
+- workflows\path-planning-algorithm.js
+- workflows\dynamic-obstacle-avoidance.js
 
 **Dependencies**: multimaster_fkie, free_fleet, Open-RMF
 
@@ -584,10 +584,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Debug TF_REPEATED_DATA and other issues
 
 **Process Integration**:
-- robot-system-design.js
-- robot-calibration.js
-- sensor-fusion-framework.js
-- visual-slam-implementation.js
+- workflows\robot-system-design.js
+- workflows\robot-calibration.js
+- workflows\sensor-fusion-framework.js
+- workflows\visual-slam-implementation.js
 
 **Dependencies**: tf2_ros, tf2_geometry_msgs, tf_transformations
 
@@ -612,10 +612,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Set up sensor data overlays
 
 **Process Integration**:
-- robot-urdf-sdf-model.js
-- moveit-manipulation-planning.js
-- visual-slam-implementation.js
-- path-planning-algorithm.js
+- workflows\robot-urdf-sdf-model.js
+- workflows\moveit-manipulation-planning.js
+- workflows\visual-slam-implementation.js
+- workflows\path-planning-algorithm.js
 
 **Dependencies**: RViz2, rviz_visual_tools, interactive_markers
 
@@ -640,9 +640,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Debug controller loading and activation
 
 **Process Integration**:
-- robot-system-design.js
-- mpc-controller-design.js
-- moveit-manipulation-planning.js
+- workflows\robot-system-design.js
+- workflows\mpc-controller-design.js
+- workflows\moveit-manipulation-planning.js
 - robot-bring-up.js
 
 **Dependencies**: ros2_control, ros2_controllers, hardware_interface
@@ -668,9 +668,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Implement parallel and sequence nodes
 
 **Process Integration**:
-- nav2-navigation-setup.js
-- autonomous-exploration.js
-- multi-robot-coordination.js
+- workflows\nav2-navigation-setup.js
+- workflows\autonomous-exploration.js
+- workflows\multi-robot-coordination.js
 - hri-interface.js
 
 **Dependencies**: BehaviorTree.CPP, Groot, nav2_behavior_tree
@@ -696,9 +696,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Configure collision-aware grasp selection
 
 **Process Integration**:
-- moveit-manipulation-planning.js
-- object-detection-pipeline.js
-- rl-robot-control.js
+- workflows\moveit-manipulation-planning.js
+- workflows\object-detection-pipeline.js
+- workflows\rl-robot-control.js
 - hri-interface.js
 
 **Dependencies**: MoveIt grasps, GPD, GraspIt!, moveit_simple_grasps
@@ -725,9 +725,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 
 **Process Integration**:
 - nn-model-optimization.js
-- object-detection-pipeline.js
-- rl-robot-control.js
-- field-testing-validation.js
+- workflows\object-detection-pipeline.js
+- workflows\rl-robot-control.js
+- workflows\field-testing-validation.js
 
 **Dependencies**: TensorRT, ONNX Runtime, NVIDIA Jetson SDK, DeepStream
 
@@ -759,10 +759,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Industrial automation, mobile robots, manipulation systems
 
 **Process Integration**:
-- robot-system-design.js (all phases)
-- digital-twin-development.js (architecture phases)
-- multi-robot-coordination.js (system design)
-- safety-system-validation.js (architecture)
+- workflows\robot-system-design.js (all phases)
+- workflows\digital-twin-development.js (architecture phases)
+- workflows\multi-robot-coordination.js (system design)
+- workflows\safety-system-validation.js (architecture)
 
 ---
 
@@ -788,10 +788,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Autonomous vehicles, warehouse robots, drones
 
 **Process Integration**:
-- visual-slam-implementation.js (all phases)
-- lidar-mapping-localization.js (all phases)
-- object-detection-pipeline.js (all phases)
-- sensor-fusion-framework.js (all phases)
+- workflows\visual-slam-implementation.js (all phases)
+- workflows\lidar-mapping-localization.js (all phases)
+- workflows\object-detection-pipeline.js (all phases)
+- workflows\sensor-fusion-framework.js (all phases)
 
 ---
 
@@ -817,10 +817,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Manipulation systems, mobile robots, autonomous navigation
 
 **Process Integration**:
-- path-planning-algorithm.js (all phases)
-- moveit-manipulation-planning.js (all phases)
-- trajectory-optimization.js (all phases)
-- nav2-navigation-setup.js (planning phases)
+- workflows\path-planning-algorithm.js (all phases)
+- workflows\moveit-manipulation-planning.js (all phases)
+- workflows\trajectory-optimization.js (all phases)
+- workflows\nav2-navigation-setup.js (planning phases)
 
 ---
 
@@ -846,10 +846,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Industrial robots, mobile platforms, drones
 
 **Process Integration**:
-- mpc-controller-design.js (all phases)
-- trajectory-optimization.js (control phases)
-- robot-system-design.js (control architecture)
-- moveit-manipulation-planning.js (trajectory control)
+- workflows\mpc-controller-design.js (all phases)
+- workflows\trajectory-optimization.js (control phases)
+- workflows\robot-system-design.js (control architecture)
+- workflows\moveit-manipulation-planning.js (trajectory control)
 
 ---
 
@@ -875,11 +875,11 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Game engines, physics simulation, synthetic data
 
 **Process Integration**:
-- gazebo-simulation-setup.js (all phases)
-- isaac-sim-photorealistic.js (all phases)
-- digital-twin-development.js (all phases)
-- synthetic-data-pipeline.js (all phases)
-- simulation-performance-optimization.js (all phases)
+- workflows\gazebo-simulation-setup.js (all phases)
+- workflows\isaac-sim-photorealistic.js (all phases)
+- workflows\digital-twin-development.js (all phases)
+- workflows\synthetic-data-pipeline.js (all phases)
+- workflows\simulation-performance-optimization.js (all phases)
 
 ---
 
@@ -905,10 +905,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Autonomous vehicles, indoor robots, AR/VR
 
 **Process Integration**:
-- visual-slam-implementation.js (all phases)
-- lidar-mapping-localization.js (all phases)
-- autonomous-exploration.js (mapping phases)
-- robot-calibration.js (SLAM validation)
+- workflows\visual-slam-implementation.js (all phases)
+- workflows\lidar-mapping-localization.js (all phases)
+- workflows\autonomous-exploration.js (mapping phases)
+- workflows\robot-calibration.js (SLAM validation)
 
 ---
 
@@ -934,8 +934,8 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Deep RL, computer vision, manipulation learning
 
 **Process Integration**:
-- rl-robot-control.js (all phases)
-- imitation-learning.js (all phases)
+- workflows\rl-robot-control.js (all phases)
+- workflows\imitation-learning.js (all phases)
 - nn-model-optimization.js (all phases)
 - sim-to-real-validation.js (all phases)
 
@@ -963,10 +963,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Warehouse robots, delivery robots, service robots
 
 **Process Integration**:
-- nav2-navigation-setup.js (all phases)
-- dynamic-obstacle-avoidance.js (all phases)
-- autonomous-exploration.js (all phases)
-- path-planning-algorithm.js (navigation aspects)
+- workflows\nav2-navigation-setup.js (all phases)
+- workflows\dynamic-obstacle-avoidance.js (all phases)
+- workflows\autonomous-exploration.js (all phases)
+- workflows\path-planning-algorithm.js (navigation aspects)
 
 ---
 
@@ -992,10 +992,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Precision robotics, autonomous vehicles, industrial vision
 
 **Process Integration**:
-- robot-calibration.js (all phases)
-- sensor-fusion-framework.js (calibration phases)
-- visual-slam-implementation.js (calibration)
-- digital-twin-development.js (calibration validation)
+- workflows\robot-calibration.js (all phases)
+- workflows\sensor-fusion-framework.js (calibration phases)
+- workflows\visual-slam-implementation.js (calibration)
+- workflows\digital-twin-development.js (calibration validation)
 
 ---
 
@@ -1021,9 +1021,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Industrial automation, collaborative robots, medical devices
 
 **Process Integration**:
-- safety-system-validation.js (all phases)
-- robot-system-design.js (safety requirements)
-- field-testing-validation.js (safety validation)
+- workflows\safety-system-validation.js (all phases)
+- workflows\robot-system-design.js (safety requirements)
+- workflows\field-testing-validation.js (safety validation)
 - hri-interface.js (safety aspects)
 
 ---
@@ -1050,9 +1050,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Automotive testing, drone testing, industrial robots
 
 **Process Integration**:
-- hil-testing.js (all phases)
+- workflows\hil-testing.js (all phases)
 - robot-bring-up.js (all phases)
-- field-testing-validation.js (all phases)
+- workflows\field-testing-validation.js (all phases)
 - sim-to-real-validation.js (validation phases)
 
 ---
@@ -1079,10 +1079,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Industrial assembly, bin picking, logistics
 
 **Process Integration**:
-- moveit-manipulation-planning.js (all phases)
-- trajectory-optimization.js (manipulation aspects)
-- rl-robot-control.js (manipulation tasks)
-- object-detection-pipeline.js (perception for manipulation)
+- workflows\moveit-manipulation-planning.js (all phases)
+- workflows\trajectory-optimization.js (manipulation aspects)
+- workflows\rl-robot-control.js (manipulation tasks)
+- workflows\object-detection-pipeline.js (perception for manipulation)
 
 ---
 
@@ -1108,10 +1108,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Warehouse automation, delivery fleets, mining robots
 
 **Process Integration**:
-- multi-robot-coordination.js (all phases)
+- workflows\multi-robot-coordination.js (all phases)
 - fleet-management-system.js (all phases)
-- nav2-navigation-setup.js (multi-robot aspects)
-- path-planning-algorithm.js (multi-agent planning)
+- workflows\nav2-navigation-setup.js (multi-robot aspects)
+- workflows\path-planning-algorithm.js (multi-agent planning)
 
 ---
 
@@ -1138,9 +1138,9 @@ All 20 implemented processes in this specialization currently use generic agent 
 
 **Process Integration**:
 - hri-interface.js (all phases)
-- multi-robot-coordination.js (human interaction)
-- safety-system-validation.js (collaborative safety)
-- field-testing-validation.js (user validation)
+- workflows\multi-robot-coordination.js (human interaction)
+- workflows\safety-system-validation.js (collaborative safety)
+- workflows\field-testing-validation.js (user validation)
 
 ---
 
@@ -1166,10 +1166,10 @@ All 20 implemented processes in this specialization currently use generic agent 
 - Background: Open source robotics, industrial systems, research
 
 **Process Integration**:
-- robot-system-design.js (ROS architecture)
-- nav2-navigation-setup.js (ROS integration)
-- moveit-manipulation-planning.js (ROS integration)
-- multi-robot-coordination.js (ROS communication)
+- workflows\robot-system-design.js (ROS architecture)
+- workflows\nav2-navigation-setup.js (ROS integration)
+- workflows\moveit-manipulation-planning.js (ROS integration)
+- workflows\multi-robot-coordination.js (ROS communication)
 
 ---
 
@@ -1179,35 +1179,35 @@ All 20 implemented processes in this specialization currently use generic agent 
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| robot-system-design.js | SK-001, SK-004, SK-012, SK-020 | AG-001, AG-015 |
-| robot-urdf-sdf-model.js | SK-004, SK-021 | AG-001, AG-005 |
-| robot-calibration.js | SK-010, SK-017, SK-009 | AG-009, AG-002 |
-| gazebo-simulation-setup.js | SK-002, SK-004 | AG-005 |
-| isaac-sim-photorealistic.js | SK-003 | AG-005, AG-007 |
-| digital-twin-development.js | SK-002, SK-003, SK-016 | AG-005, AG-001 |
-| synthetic-data-pipeline.js | SK-003, SK-008, SK-011 | AG-005, AG-007 |
-| simulation-performance-optimization.js | SK-002, SK-003 | AG-005 |
-| visual-slam-implementation.js | SK-007, SK-010, SK-009 | AG-006, AG-002 |
-| lidar-mapping-localization.js | SK-007, SK-008, SK-009 | AG-006, AG-002 |
-| object-detection-pipeline.js | SK-011, SK-025, SK-008 | AG-002, AG-007 |
-| sensor-fusion-framework.js | SK-009, SK-017, SK-020 | AG-002, AG-009 |
-| path-planning-algorithm.js | SK-014, SK-006, SK-013 | AG-003, AG-008 |
-| mpc-controller-design.js | SK-013, SK-012, SK-022 | AG-004 |
-| moveit-manipulation-planning.js | SK-005, SK-012, SK-024 | AG-012, AG-003 |
-| trajectory-optimization.js | SK-014, SK-013, SK-005 | AG-003, AG-004 |
-| nav2-navigation-setup.js | SK-006, SK-023, SK-007 | AG-008, AG-003 |
-| dynamic-obstacle-avoidance.js | SK-006, SK-014, SK-013 | AG-008, AG-003 |
-| autonomous-exploration.js | SK-006, SK-007, SK-023 | AG-008, AG-006 |
-| rl-robot-control.js | SK-015, SK-016, SK-025 | AG-007 |
-| imitation-learning.js | SK-015, SK-025 | AG-007 |
+| workflows\robot-system-design.js | SK-001, SK-004, SK-012, SK-020 | AG-001, AG-015 |
+| workflows\robot-urdf-sdf-model.js | SK-004, SK-021 | AG-001, AG-005 |
+| workflows\robot-calibration.js | SK-010, SK-017, SK-009 | AG-009, AG-002 |
+| workflows\gazebo-simulation-setup.js | SK-002, SK-004 | AG-005 |
+| workflows\isaac-sim-photorealistic.js | SK-003 | AG-005, AG-007 |
+| workflows\digital-twin-development.js | SK-002, SK-003, SK-016 | AG-005, AG-001 |
+| workflows\synthetic-data-pipeline.js | SK-003, SK-008, SK-011 | AG-005, AG-007 |
+| workflows\simulation-performance-optimization.js | SK-002, SK-003 | AG-005 |
+| workflows\visual-slam-implementation.js | SK-007, SK-010, SK-009 | AG-006, AG-002 |
+| workflows\lidar-mapping-localization.js | SK-007, SK-008, SK-009 | AG-006, AG-002 |
+| workflows\object-detection-pipeline.js | SK-011, SK-025, SK-008 | AG-002, AG-007 |
+| workflows\sensor-fusion-framework.js | SK-009, SK-017, SK-020 | AG-002, AG-009 |
+| workflows\path-planning-algorithm.js | SK-014, SK-006, SK-013 | AG-003, AG-008 |
+| workflows\mpc-controller-design.js | SK-013, SK-012, SK-022 | AG-004 |
+| workflows\moveit-manipulation-planning.js | SK-005, SK-012, SK-024 | AG-012, AG-003 |
+| workflows\trajectory-optimization.js | SK-014, SK-013, SK-005 | AG-003, AG-004 |
+| workflows\nav2-navigation-setup.js | SK-006, SK-023, SK-007 | AG-008, AG-003 |
+| workflows\dynamic-obstacle-avoidance.js | SK-006, SK-014, SK-013 | AG-008, AG-003 |
+| workflows\autonomous-exploration.js | SK-006, SK-007, SK-023 | AG-008, AG-006 |
+| workflows\rl-robot-control.js | SK-015, SK-016, SK-025 | AG-007 |
+| workflows\imitation-learning.js | SK-015, SK-025 | AG-007 |
 | nn-model-optimization.js | SK-025, SK-011 | AG-007, AG-002 |
-| hil-testing.js | SK-002, SK-001, SK-022 | AG-011, AG-005 |
+| workflows\hil-testing.js | SK-002, SK-001, SK-022 | AG-011, AG-005 |
 | robot-bring-up.js | SK-001, SK-020, SK-022 | AG-011, AG-015 |
-| field-testing-validation.js | SK-018, SK-016 | AG-011, AG-010 |
-| multi-robot-coordination.js | SK-019, SK-006, SK-001 | AG-013, AG-008 |
+| workflows\field-testing-validation.js | SK-018, SK-016 | AG-011, AG-010 |
+| workflows\multi-robot-coordination.js | SK-019, SK-006, SK-001 | AG-013, AG-008 |
 | fleet-management-system.js | SK-019, SK-001 | AG-013 |
 | hri-interface.js | SK-023, SK-001, SK-018 | AG-014, AG-010 |
-| safety-system-validation.js | SK-018 | AG-010, AG-001 |
+| workflows\safety-system-validation.js | SK-018 | AG-010, AG-001 |
 | sim-to-real-validation.js | SK-016, SK-015, SK-003 | AG-007, AG-011 |
 
 ---
@@ -1318,3 +1318,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Implementation Summary**:
 - 25 Skills implemented (20 new + 5 existing)
 - 15 Agents implemented (12 new + 3 existing)
+
+

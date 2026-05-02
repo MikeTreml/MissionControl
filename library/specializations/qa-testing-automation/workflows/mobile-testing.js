@@ -150,6 +150,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Sufficient test coverage planned
   const scenarioCount = scenarioPlanning.plannedScenarios.length;
+  if (scenarioCount < 10) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -203,6 +204,7 @@ export async function process(inputs, ctx) {
 
   if (platforms.includes('iOS') && platforms.includes('Android')) {
     const parity = Math.min(iosScreens, androidScreens) / Math.max(iosScreens, androidScreens) * 100;
+    if (parity < 80) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -333,6 +335,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Initial pass rate
   const initialPassRate = initialExecution.passRate;
+  if (initialPassRate < 40) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -406,6 +409,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Platform parity
   const parityScore = parityValidation.parityScore;
+  if (parityScore < acceptanceCriteria.platformParity) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -462,6 +466,7 @@ export async function process(inputs, ctx) {
   const expectedGestures = ['tap', 'swipe', 'scroll', 'long-press', 'pinch', 'drag'];
   const gestureCoverage = (gesturesCovered.length / expectedGestures.length) * 100;
 
+  if (gestureCoverage < 70) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -549,6 +554,7 @@ export async function process(inputs, ctx) {
     const emulatorPassRate = initialExecution.passRate;
     const deviceParity = Math.abs(realDevicePassRate - emulatorPassRate);
 
+    if (deviceParity > 10) {
         let lastFeedback_qualityGateApproval4 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval4) {
@@ -601,6 +607,7 @@ export async function process(inputs, ctx) {
   const flakinessRate = finalExecution.flakinessRate;
 
   // Quality Gate: Final pass rate
+  if (finalPassRate < acceptanceCriteria.passRate) {
       let lastFeedback_phase13Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase13Review) {
@@ -635,6 +642,7 @@ export async function process(inputs, ctx) {
     } }
 
   // Quality Gate: Flakiness rate
+  if (flakinessRate > acceptanceCriteria.flakiness) {
       let lastFeedback_qualityGateApproval5 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval5) {
@@ -690,6 +698,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...codeReview.artifacts);
 
   // Quality Gate: Code review
+  if (codeReview.criticalIssues.length > 0) {
       let lastFeedback_phase14Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase14Review) {
@@ -2360,3 +2369,4 @@ export const finalAssessmentTask = defineTask('final-assessment', (args, taskCtx
   },
   labels: ['agent', 'mobile-testing', 'final-assessment', 'metrics']
 }));
+

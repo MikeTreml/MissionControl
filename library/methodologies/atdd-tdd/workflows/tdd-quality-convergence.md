@@ -1,4 +1,4 @@
-# TDD Quality Convergence Process
+﻿# TDD Quality Convergence Process
 
 Advanced TDD workflow with iterative quality convergence, agent-based planning and scoring, parallel execution, and human-in-the-loop breakpoints.
 
@@ -46,42 +46,42 @@ This process demonstrates ALL advanced babysitter patterns:
 
 ```
 START
-  ↓
-┌─────────────────────────┐
-│ PHASE 1: PLANNING       │
-├─────────────────────────┤
-│ • Agent generates plan  │
-│ • Breakpoint: Review    │
-└─────────────────────────┘
-  ↓
-┌─────────────────────────────────────────┐
-│ PHASE 2: TDD CONVERGENCE LOOP           │
-│ (Iterate until quality target reached)  │
-├─────────────────────────────────────────┤
-│ For each iteration:                     │
-│   1. Write/update tests                 │
-│   2. Run tests (expect fail initially)  │
-│   3. Implement/refine code              │
-│   4. Run tests (should pass)            │
-│   5. Parallel quality checks:           │
-│      ├─ Coverage                        │
-│      ├─ Lint                            │
-│      ├─ Types                           │
-│      └─ Security                        │
-│   6. Agent quality scoring              │
-│   7. Check convergence                  │
-│   8. Breakpoint: Review iteration       │
-└─────────────────────────────────────────┘
-  ↓
-┌─────────────────────────┐
-│ PHASE 3: FINAL REVIEW   │
-├─────────────────────────┤
-│ • Parallel final checks │
-│ • Integration tests     │
-│ • Agent final review    │
-│ • Breakpoint: Approve   │
-└─────────────────────────┘
-  ↓
+  â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ PHASE 1: PLANNING       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â€¢ Agent generates plan  â”‚
+â”‚ â€¢ Breakpoint: Review    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ PHASE 2: TDD CONVERGENCE LOOP           â”‚
+â”‚ (Iterate until quality target reached)  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ For each iteration:                     â”‚
+â”‚   1. Write/update tests                 â”‚
+â”‚   2. Run tests (expect fail initially)  â”‚
+â”‚   3. Implement/refine code              â”‚
+â”‚   4. Run tests (should pass)            â”‚
+â”‚   5. Parallel quality checks:           â”‚
+â”‚      â”œâ”€ Coverage                        â”‚
+â”‚      â”œâ”€ Lint                            â”‚
+â”‚      â”œâ”€ Types                           â”‚
+â”‚      â””â”€ Security                        â”‚
+â”‚   6. Agent quality scoring              â”‚
+â”‚   7. Check convergence                  â”‚
+â”‚   8. Breakpoint: Review iteration       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ PHASE 3: FINAL REVIEW   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â€¢ Parallel final checks â”‚
+â”‚ â€¢ Integration tests     â”‚
+â”‚ â€¢ Agent final review    â”‚
+â”‚ â€¢ Breakpoint: Approve   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  â†“
 END (merged or rejected)
 ```
 
@@ -248,7 +248,7 @@ CLI="npx -y @a5c-ai/babysitter-sdk"
 # Create run
 $CLI run:create \
   --process-id babysitter/tdd-quality-convergence \
-  --entry library/tdd-quality-convergence.js#process \
+  --entry tdd-quality-convergence.js#process \
   --inputs inputs.json
 
 # Run orchestration
@@ -286,7 +286,7 @@ $CLI run:continue .a5c/runs/<runId> --auto-node-tasks --auto-node-max 10
 - Tests passing: 22
 - Implementation: Security hardening
 - Quality checks: Pass
-- Quality score: 91/90 ✓
+- Quality score: 91/90 âœ“
 - **Converged!**
 
 ## See Also
@@ -294,3 +294,4 @@ $CLI run:continue .a5c/runs/<runId> --auto-node-tasks --auto-node-max 10
 - `plugins/babysitter/skills/babysit/SKILL.md` - Core orchestration workflow
 - `plugins/babysitter/skills/babysit/reference/ADVANCED_PATTERNS.md` - Pattern 5 (Agent), Pattern 6 (Skill), Pattern 7 (Iterative Convergence)
 - `packages/sdk/sdk.md` - SDK API reference
+

@@ -149,6 +149,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Must pass limiting case validation
   const validationPassed = limitingCaseValidation.allCasesPassed;
+  if (!validationPassed) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -990,3 +991,4 @@ export const documentationTask = defineTask('documentation', (args, taskCtx) => 
   },
   labels: ['physics', 'theoretical', 'documentation', 'model-derivation']
 }));
+

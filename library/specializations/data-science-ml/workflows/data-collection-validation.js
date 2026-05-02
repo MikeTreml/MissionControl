@@ -76,6 +76,7 @@ export async function process(inputs, ctx) {
   validationResults.schema = schemaValidation;
 
   // Quality Gate: Schema must be valid or inferrable
+  if (!schemaValidation.schemaValid && !schemaValidation.schemaInferred) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -212,6 +213,7 @@ export async function process(inputs, ctx) {
   const qualityMet = overallScore >= targetQuality;
 
   // Quality Gate: Quality threshold
+  if (!qualityMet) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -1183,3 +1185,4 @@ export const remediationPlanningTask = defineTask('remediation-planning', (args,
   },
   labels: ['remediation', 'planning', 'quality-improvement']
 }));
+

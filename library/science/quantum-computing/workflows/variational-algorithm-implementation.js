@@ -177,6 +177,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...(convergenceResult.artifacts || []));
 
+  if (!convergenceResult.converged) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -646,3 +647,4 @@ export const resultAnalysisTask = defineTask('vqa-result-analysis', (args, taskC
   },
   labels: ['quantum-computing', 'variational', 'analysis', 'documentation']
 }));
+

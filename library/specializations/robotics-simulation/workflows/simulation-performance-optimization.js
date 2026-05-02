@@ -156,6 +156,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...benchmarking.artifacts);
 
   // Quality Gate: Performance targets
+  if (benchmarking.achievedRTF < targetRTF * 0.9) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -601,3 +602,4 @@ export const performanceBenchmarkingTask = defineTask('performance-benchmarking'
   },
   labels: ['robotics-simulation', 'performance', 'benchmarking']
 }));
+

@@ -1,4 +1,4 @@
----
+﻿---
 name: slither-analysis
 description: Expert integration with Slither static analyzer for smart contract vulnerability detection, code quality analysis, and security reporting. Supports all Slither detectors and custom analysis configurations.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -277,7 +277,8 @@ jobs:
 
 ## See Also
 
-- `skills/mythril-symbolic/SKILL.md` - Symbolic execution analysis
-- `skills/echidna-fuzzer/SKILL.md` - Property-based fuzzing
+- `SKILL.md` - Symbolic execution analysis
+- `SKILL.md` - Property-based fuzzing
 - `agents/solidity-auditor/AGENT.md` - Security auditor agent
 - [Slither Documentation](https://github.com/crytic/slither)
+

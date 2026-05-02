@@ -65,6 +65,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Causal effect must be identifiable
+  if (!identificationAnalysis.isIdentifiable) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -935,3 +936,4 @@ export const causalValidationTask = defineTask('causal-validation', (args, taskC
   },
   labels: ['causal-inference', 'validation', 'evidence-synthesis']
 }));
+

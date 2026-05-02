@@ -120,6 +120,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Environmental coverage
+  if (environmentalValidation.coverage < 80) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -706,3 +707,4 @@ export const calibrationReleaseTask = defineTask('calibration-release', (args, t
   },
   labels: ['automotive', 'calibration', 'release', 'documentation']
 }));
+

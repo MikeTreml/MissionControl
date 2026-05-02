@@ -83,6 +83,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check structure consistency
+  if (!integratedStructure.isConsistent) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -1046,3 +1047,4 @@ export const structureValidationTask = defineTask('structure-validation', (args,
   },
   labels: ['causal-discovery', 'validation', 'quality-assessment']
 }));
+

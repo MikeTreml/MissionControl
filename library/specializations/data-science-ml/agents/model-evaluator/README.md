@@ -1,4 +1,4 @@
-# Model Evaluator Agent
+﻿# Model Evaluator Agent
 
 ## Overview
 
@@ -336,10 +336,10 @@ def expected_cost(y_true, y_pred, fp_cost, fn_cost):
 ### With Other Agents
 
 ```
-model-trainer ──> model-evaluator ──> deployment-engineer
-                       │
-                       ├──> explainability-analyst
-                       └──> ab-test-analyst
+model-trainer â”€â”€> model-evaluator â”€â”€> deployment-engineer
+                       â”‚
+                       â”œâ”€â”€> explainability-analyst
+                       â””â”€â”€> ab-test-analyst
 ```
 
 ### Usage Example
@@ -372,4 +372,5 @@ if (evaluationResult.overallMetrics.roc_auc.value >= 0.85) {
 - Skills: `mlflow-experiment-tracker/SKILL.md`
 - Skills: `great-expectations-validator/SKILL.md`
 - Process: `model-evaluation.js`
-- Agent: `model-trainer/AGENT.md`
+- Agent: `AGENT.md`
+

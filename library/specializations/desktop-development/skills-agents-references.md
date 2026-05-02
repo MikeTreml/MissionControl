@@ -1,4 +1,4 @@
-# Desktop Development Skills and Agents - Community References
+﻿# Desktop Development Skills and Agents - Community References
 
 This document catalogs community-created Claude skills, agents, plugins, and MCP servers that align with the skills and agents identified in the Desktop Development backlog. These resources can be leveraged, adapted, or serve as references for implementing the identified capabilities.
 
@@ -115,7 +115,7 @@ This document catalogs community-created Claude skills, agents, plugins, and MCP
 | Accessibility Engineer | [Claude Plugins](https://claude-plugins.dev/skills/@daffy0208/ai-dev-standards/accessibility-engineer) | SK-T05, SK-Q03, AG-T03 | WCAG compliance, screen readers, keyboard navigation, ARIA |
 | accessibility-testing | [Claude Plugins](https://claude-plugins.dev/skills/@conorluddy/xclaude-plugin/accessibility-testing) | SK-T05, AG-T03 | Accessibility testing skill |
 | accessibility-test-scanner | [Claude Plugins](https://claude-plugins.dev/skills/@jeremylongshore/claude-code-plugins-plus/accessibility-test-scanner) | SK-T05, AG-T03 | WCAG 2.1/2.2 compliance scanning with ARIA validation |
-| Chrome DevTools MCP Skill | [Claude Plugins](https://claude-plugins.dev/skills/@justfinethanku/cc_chrome_devtools_mcp_skill/SKILL.md) | SK-T05, SK-P01 | Accessibility tree inspection for WCAG compliance |
+| Chrome DevTools MCP Skill | [Claude Plugins](https://claude-plugins.dev/skills/@skills\accessibility-test-runner\SKILL.md) | SK-T05, SK-P01 | Accessibility tree inspection for WCAG compliance |
 
 ### Performance and Profiling Skills
 
@@ -343,3 +343,4 @@ The following skills/agents have **no direct community references** and require 
 **Total References Found**: 84
 **Categories Covered**: 10
 **Status**: Phase 5 Complete - Ready for Implementation
+

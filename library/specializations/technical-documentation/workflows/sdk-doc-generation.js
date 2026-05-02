@@ -99,6 +99,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...sdkAnalysis.artifacts);
 
   // Quality Gate: Minimum API surface
+  if (sdkAnalysis.publicApiCount < 5) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -184,6 +185,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Documentation coverage
   const currentCoverage = docAudit.coverageMetrics.overallCoverage;
+  if (currentCoverage < acceptanceCriteria.minCoverage) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -290,6 +292,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: Minimum examples per class
     const examplesPerClass = totalExamples / sdkAnalysis.classes.length;
+    if (examplesPerClass < acceptanceCriteria.examplesPerClass) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -426,6 +429,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...linksValidation.artifacts);
 
   // Quality Gate: Broken links
+  if (linksValidation.brokenLinks.length > acceptanceCriteria.brokenLinksAllowed) {
       let lastFeedback_phase10Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase10Review) {
@@ -516,6 +520,7 @@ export async function process(inputs, ctx) {
   documentationStats = qualityAssessment.stats;
 
   // Quality Gate: Documentation quality score
+  if (qualityScore < acceptanceCriteria.minQualityScore) {
       let lastFeedback_phase13Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase13Review) {
@@ -1730,3 +1735,4 @@ export const finalReviewPackageTask = defineTask('final-review-package', (args, 
   },
   labels: ['agent', 'sdk', 'review-package']
 }));
+

@@ -114,6 +114,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...methylationResult.artifacts);
 
     ctx.log('info', `Methylation analysis complete. ${methylationResult.cpgSites} CpG sites analyzed`);
+  }
     let lastFeedback_phase9Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase9Review) {
@@ -380,3 +381,4 @@ export const generateLongreadReportTask = defineTask('generate-longread-report',
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['bioinformatics', 'long-read', 'report-generation']
 }));
+

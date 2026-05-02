@@ -265,6 +265,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...ensembleResults.artifacts);
 
     // Breakpoint: Review ensemble results
+    if (ensembleResults.ensembles.length > 0) {
         let lastFeedback_phase4Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase4Review) {
@@ -1207,3 +1208,4 @@ export const deploymentPackageTask = defineTask('deployment-package', (args, tas
   },
   labels: ['agent', 'automl', 'deployment', 'packaging']
 }));
+

@@ -1,4 +1,4 @@
-# CCPM - Claude Code PM Methodology
+﻿# CCPM - Claude Code PM Methodology
 
 Spec-driven development methodology adapted from [CCPM](https://github.com/automazeio/ccpm). Enforces the principle: "Every line of code must trace back to a specification." Five strict phases with zero shortcuts.
 
@@ -10,15 +10,15 @@ CCPM provides a complete project management lifecycle for AI-driven development,
 
 | Phase | Process | Description |
 |-------|---------|-------------|
-| 1. Product Planning | `ccpm-prd-workflow.js` | Brainstorm, draft PRD, review, refine, finalize |
-| 2. Implementation Planning | `ccpm-epic-planning.js` | Parse PRD, architecture decisions, tech approach, dependencies |
-| 3. Task Decomposition | `ccpm-task-decomposition.js` | Break epic into streams, set criteria, estimate, build dependency graph |
+| 1. Product Planning | `workflows\ccpm-prd-workflow.js` | Brainstorm, draft PRD, review, refine, finalize |
+| 2. Implementation Planning | `workflows\ccpm-epic-planning.js` | Parse PRD, architecture decisions, tech approach, dependencies |
+| 3. Task Decomposition | `workflows\ccpm-task-decomposition.js` | Break epic into streams, set criteria, estimate, build dependency graph |
 | 4. GitHub Sync | (in orchestrator) | Create issues, sync labels, bidirectional updates |
-| 5. Parallel Execution | `ccpm-parallel-execution.js` | Dispatch specialized agents, quality gates, integration |
+| 5. Parallel Execution | `workflows\ccpm-parallel-execution.js` | Dispatch specialized agents, quality gates, integration |
 
-**Full Lifecycle:** `ccpm-orchestrator.js` - Runs all five phases end-to-end.
+**Full Lifecycle:** `workflows\ccpm-orchestrator.js` - Runs all five phases end-to-end.
 
-**Progress Tracking:** `ccpm-tracking.js` - Standups, dashboards, blocked task management.
+**Progress Tracking:** `workflows\ccpm-tracking.js` - Standups, dashboards, blocked task management.
 
 ## Agents (9)
 
@@ -62,26 +62,26 @@ CCPM provides a complete project management lifecycle for AI-driven development,
 ```bash
 babysitter run:create \
   --process-id ccpm/orchestrator \
-  --entry ccpm/ccpm-orchestrator.js#process \
+  --entry workflows\ccpm-orchestrator.js#process \
   --inputs inputs.json
 ```
 
 ### Individual Phases
 ```bash
 # PRD only
-babysitter run:create --process-id ccpm/prd --entry ccpm/ccpm-prd-workflow.js#process --inputs prd-inputs.json
+babysitter run:create --process-id ccpm/prd --entry workflows\ccpm-prd-workflow.js#process --inputs prd-inputs.json
 
 # Epic planning only
-babysitter run:create --process-id ccpm/epic --entry ccpm/ccpm-epic-planning.js#process --inputs epic-inputs.json
+babysitter run:create --process-id ccpm/epic --entry workflows\ccpm-epic-planning.js#process --inputs epic-inputs.json
 
 # Task decomposition only
-babysitter run:create --process-id ccpm/tasks --entry ccpm/ccpm-task-decomposition.js#process --inputs tasks-inputs.json
+babysitter run:create --process-id ccpm/tasks --entry workflows\ccpm-task-decomposition.js#process --inputs tasks-inputs.json
 
 # Parallel execution only
-babysitter run:create --process-id ccpm/execute --entry ccpm/ccpm-parallel-execution.js#process --inputs exec-inputs.json
+babysitter run:create --process-id ccpm/execute --entry workflows\ccpm-parallel-execution.js#process --inputs exec-inputs.json
 
 # Tracking
-babysitter run:create --process-id ccpm/tracking --entry ccpm/ccpm-tracking.js#process --inputs tracking-inputs.json
+babysitter run:create --process-id ccpm/tracking --entry workflows\ccpm-tracking.js#process --inputs tracking-inputs.json
 ```
 
 ## File Organization
@@ -90,12 +90,12 @@ babysitter run:create --process-id ccpm/tracking --entry ccpm/ccpm-tracking.js#p
 ccpm/
   README.md                           # This file
   references.md                       # Attribution
-  ccpm-orchestrator.js                # Full lifecycle
-  ccpm-prd-workflow.js                # Phase 1: PRD
-  ccpm-epic-planning.js               # Phase 2: Epic
-  ccpm-task-decomposition.js          # Phase 3: Tasks
-  ccpm-parallel-execution.js          # Phase 5: Execution
-  ccpm-tracking.js                    # Progress tracking
+  workflows\ccpm-orchestrator.js                # Full lifecycle
+  workflows\ccpm-prd-workflow.js                # Phase 1: PRD
+  workflows\ccpm-epic-planning.js               # Phase 2: Epic
+  workflows\ccpm-task-decomposition.js          # Phase 3: Tasks
+  workflows\ccpm-parallel-execution.js          # Phase 5: Execution
+  workflows\ccpm-tracking.js                    # Progress tracking
   agents/
     product-planner/                  # PRD and user stories
     architect/                        # Epic and architecture
@@ -116,12 +116,12 @@ ccpm/
     audit-trail/                      # PRD-to-code traceability
     context-management/               # Context loading and isolation
   examples/
-    full-lifecycle.json               # Full orchestrator example
-    prd-workflow.json                 # PRD-only example
-    epic-planning.json                # Epic planning example
-    task-decomposition.json           # Task decomposition example
-    parallel-execution.json           # Parallel execution example
-    tracking.json                     # Tracking example
+    examples\full-lifecycle.json               # Full orchestrator example
+    examples\prd-workflow.json                 # PRD-only example
+    examples\epic-planning.json                # Epic planning example
+    examples\task-decomposition.json           # Task decomposition example
+    examples\parallel-execution.json           # Parallel execution example
+    examples\tracking.json                     # Tracking example
 ```
 
 ## Integration with Babysitter SDK
@@ -140,3 +140,6 @@ ccpm/
 3. **Quality Gates**: Built-in convergence loops with configurable thresholds
 4. **Agent Dispatch**: Automatic stream-type to agent mapping
 5. **Composability**: Each phase is a standalone process that can be imported and composed
+
+
+

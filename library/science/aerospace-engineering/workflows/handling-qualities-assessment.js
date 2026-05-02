@@ -115,6 +115,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: PIO susceptibility
+  if (pioAssessment.category > 2) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -710,3 +711,4 @@ export const hqReportTask = defineTask('hq-report', (args, taskCtx) => ({
   },
   labels: ['handling-qualities', 'reporting', 'aerospace']
 }));
+

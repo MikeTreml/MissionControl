@@ -111,6 +111,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Unacceptable risks must be addressed
   const unacceptableRisks = riskEvaluation.unacceptableRisks || [];
+  if (unacceptableRisks.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -991,3 +992,4 @@ export const riskManagementFileTask = defineTask('risk-management-file', (args, 
   },
   labels: ['risk-management', 'iso-14971', 'documentation', 'medical-device']
 }));
+

@@ -21,6 +21,7 @@ export async function process(inputs, ctx) {
     scope,
     participantCount,
     workshopDuration
+  });
   let lastFeedback_phase1Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -53,6 +54,7 @@ export async function process(inputs, ctx) {
   const timeline = await ctx.task(enforceTimelineTask, {
     domain,
     events: eventsDiscovery.events
+  });
     let lastFeedback_phase3Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase3Review) {
@@ -121,6 +123,7 @@ export async function process(inputs, ctx) {
     aggregates: aggregates.aggregates,
     commands: commandsResult.commands,
     actors: actorsResult.actors
+  });
     let lastFeedback_phase7Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase7Review) {
@@ -185,6 +188,7 @@ export async function process(inputs, ctx) {
     targetQuality: 85
   });
 
+  if (validation.score < 85) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -952,3 +956,5 @@ export const validateDomainModelTask = defineTask('validate-domain-model', (args
   },
   labels: ['agent', 'event-storming', 'validation', 'quality-gate']
 }));
+
+

@@ -79,6 +79,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Material models defined - ${materialResult.materialCount} materials`);
 
   // Breakpoint: Review material models
+  if (nonlinearityType.includes('material')) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -180,6 +181,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Solver complete - Status: ${solveResult.convergenceStatus}`);
 
   // Quality Gate: Convergence issues
+  if (solveResult.convergenceStatus !== 'converged') {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -841,3 +843,4 @@ export const generateNonlinearReportTask = defineTask('generate-nonlinear-report
   },
   labels: ['mechanical-engineering', 'nonlinear', 'reporting']
 }));
+

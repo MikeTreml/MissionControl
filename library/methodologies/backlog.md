@@ -1,4 +1,4 @@
-# Methodology Backlog
+﻿# Methodology Backlog
 
 This document contains researched methodologies that can be adapted to the Babysitter SDK orchestration framework. Each methodology should be implemented in its own directory under `methodologies/[name]/`.
 
@@ -7,12 +7,12 @@ This document contains researched methodologies that can be adapted to the Babys
 ### Directory Structure
 ```
 methodologies/
-├── [methodology-name]/
-│   ├── README.md              # Overview and usage
-│   ├── [workflow-name].js     # Main process workflow, with embedded agentic or skill based tasks, breakpoints, etc.
-│   └── examples/              # Example inputs
-│       ├── examples.json
-│       └── ...
+â”œâ”€â”€ [methodology-name]/
+â”‚   â”œâ”€â”€ README.md              # Overview and usage
+â”‚   â”œâ”€â”€ [workflow-name].js     # Main process workflow, with embedded agentic or skill based tasks, breakpoints, etc.
+â”‚   â””â”€â”€ examples/              # Example inputs
+â”‚       â”œâ”€â”€ bdd-specification-by-example\examples\examples.json
+â”‚       â””â”€â”€ ...
 ```
 
 ### File Patterns
@@ -27,7 +27,7 @@ methodologies/
 
 ## Priority Matrix
 
-### 🔥 High Priority (Implement First)
+### ðŸ”¥ High Priority (Implement First)
 **Process-heavy methodologies similar to Spec-Kit:**
 1. **BDD/Specification by Example** - Executable specifications with Gherkin
 2. **Domain-Driven Design (DDD)** - Strategic and tactical design patterns
@@ -36,7 +36,7 @@ methodologies/
 5. **ATDD/TDD** - Test-driven development approaches
 6. **Hypothesis-Driven Development** - Experimentation framework
 
-### ⭐ Medium Priority (Modern Methodologies)
+### â­ Medium Priority (Modern Methodologies)
 7. **Shape Up** - Modern 6-week cycle product development
 8. **Kanban** - Pull system with WIP limits
 9. **Extreme Programming (XP)** - Engineering practices framework
@@ -44,12 +44,12 @@ methodologies/
 11. **Jobs to Be Done** - Outcome-focused development
 12. **Impact Mapping** - Goal-to-feature traceability
 
-### 📋 Classic Priority (Foundational Methodologies)
+### ðŸ“‹ Classic Priority (Foundational Methodologies)
 13. **Waterfall** - Sequential SDLC
 14. **RUP (Rational Unified Process)** - Iterative with 4 phases
 15. **Spiral Model** - Risk-driven iterative
 16. **V-Model** - Verification and validation
-17. **Cleanroom Software Engineering** ✅ - Formal methods with statistical testing
+17. **Cleanroom Software Engineering** âœ… - Formal methods with statistical testing
 18. **Event Storming** - Domain modeling workshop
 19. **Double Diamond** - Design thinking framework
 
@@ -59,8 +59,8 @@ methodologies/
 
 **Creator**: Basecamp (Ryan Singer)
 **Year**: Modern (2019)
-**Priority**: 🔥 High
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ”¥ High
+**Implementation Status**: âœ… Implemented
 **Category**: Product Development / Project Management
 
 ### Overview
@@ -80,7 +80,7 @@ Shape Up is Basecamp's methodology for building products through 6-week cycles w
 **Directory**: `methodologies/shape-up/`
 
 **Files to Create**:
-1. **`shape-up.js`** - Main orchestration process
+1. **`shape-up\workflows\shape-up.js`** - Main orchestration process
    - Shaping phase (appetite definition, breadboarding, fat marker sketching)
    - Betting phase (pitch writing, betting table decision)
    - Building phase (scope mapping, hill chart tracking, QA integration)
@@ -127,8 +127,8 @@ Shape Up is Basecamp's methodology for building products through 6-week cycles w
 
 **Creator**: Clayton Christensen (popularized by Intercom, Alan Klement)
 **Year**: Modern framework (2016-present)
-**Priority**: ⭐ Medium
-**Implementation Status**: ✅ Implemented
+**Priority**: â­ Medium
+**Implementation Status**: âœ… Implemented
 **Category**: Product Strategy / Requirements
 
 ### Overview
@@ -190,15 +190,15 @@ JTBD focuses on the progress customers are trying to make in their lives rather 
 
 **Creator**: Gojko Adzic
 **Year**: Modern (2012)
-**Priority**: ⭐ Medium
-**Implementation Status**: ✅ Implemented
+**Priority**: â­ Medium
+**Implementation Status**: âœ… Implemented
 **Category**: Strategic Planning / Requirements
 
 ### Overview
 Impact Mapping is a strategic planning technique that prevents organizations from getting lost in implementation details. It creates a visual map connecting business goals to features through actors and impacts.
 
 ### Key Principles
-- **Goal → Actor → Impact → Deliverable** hierarchy
+- **Goal â†’ Actor â†’ Impact â†’ Deliverable** hierarchy
 - **Goal**: Why are we doing this? (Business objective)
 - **Actor**: Who can create the impact? (Users, stakeholders)
 - **Impact**: How should their behavior change? (Desired effect)
@@ -211,7 +211,7 @@ Impact Mapping is a strategic planning technique that prevents organizations fro
 **Directory**: `methodologies/impact-mapping/`
 
 **Files to Create**:
-1. **`impact-mapping.js`** - Main impact mapping process
+1. **`impact-mapping\workflows\impact-mapping.js`** - Main impact mapping process
    - Goal definition
    - Actor identification
    - Impact analysis
@@ -262,8 +262,8 @@ Impact Mapping is a strategic planning technique that prevents organizations fro
 
 **Creator**: Alberto Brandolini
 **Year**: Modern (2013)
-**Priority**: ⭐ Medium
-**Implementation Status**: ✅ Implemented
+**Priority**: â­ Medium
+**Implementation Status**: âœ… Implemented
 **Category**: Domain Modeling / System Design
 
 ### Overview
@@ -274,7 +274,7 @@ Event Storming is a workshop-based method for rapidly exploring complex business
 - **Color coding**: Orange (events), Blue (commands), Yellow (actors), Pink (external systems), Purple (policies), Green (read models)
 - **Timeline layout**: Left to right, chronological flow
 - **Hot spots**: Mark conflicts, questions, or problems with red notes
-- **Big Picture → Process Modeling → Software Design**: Three levels of detail
+- **Big Picture â†’ Process Modeling â†’ Software Design**: Three levels of detail
 - **Collaborative discovery**: Bring domain experts and developers together
 
 ### Implementation Plan
@@ -282,7 +282,7 @@ Event Storming is a workshop-based method for rapidly exploring complex business
 **Directory**: `methodologies/event-storming/`
 
 **Files to Create**:
-1. **`event-storming.js`** - Main event storming process
+1. **`event-storming\workflows\event-storming.js`** - Main event storming process
    - Big Picture storming
    - Process Modeling
    - Software Design
@@ -337,8 +337,8 @@ Event Storming is a workshop-based method for rapidly exploring complex business
 
 **Creator**: Popularized by Lean Startup, practiced at Microsoft, Amazon
 **Year**: Modern practice (2011-present)
-**Priority**: 🔥 High
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ”¥ High
+**Implementation Status**: âœ… Implemented
 **Category**: Experimentation / Validation
 
 ### Overview
@@ -350,7 +350,7 @@ Hypothesis-Driven Development treats every feature as an experiment. Instead of 
 - **Fail fast**: Invalidate bad ideas quickly
 - **Metrics-driven**: Define success criteria upfront
 - **A/B testing**: Compare treatments
-- **Learning loop**: Hypothesis → Experiment → Measurement → Learning
+- **Learning loop**: Hypothesis â†’ Experiment â†’ Measurement â†’ Learning
 
 ### Implementation Plan
 
@@ -417,18 +417,18 @@ Hypothesis-Driven Development treats every feature as an experiment. Instead of 
 
 **Creator**: British Design Council (2005)
 **Year**: Established design thinking framework
-**Priority**: ⭐ Medium
-**Implementation Status**: ✅ Implemented
+**Priority**: â­ Medium
+**Implementation Status**: âœ… Implemented
 **Category**: Design Thinking / Innovation
 
 ### Overview
 Double Diamond represents the design thinking process through four phases: Discover, Define, Develop, Deliver. Two diamonds represent divergent (exploring) and convergent (focusing) thinking in problem and solution spaces.
 
 ### Key Principles
-- **First Diamond (Problem Space)**: Discover → Define
+- **First Diamond (Problem Space)**: Discover â†’ Define
   - Discover: Explore the problem broadly
   - Define: Narrow to specific problem statement
-- **Second Diamond (Solution Space)**: Develop → Deliver
+- **Second Diamond (Solution Space)**: Develop â†’ Deliver
   - Develop: Explore many possible solutions
   - Deliver: Narrow to final solution and implement
 - **Divergent thinking**: Generate many options
@@ -441,7 +441,7 @@ Double Diamond represents the design thinking process through four phases: Disco
 **Directory**: `methodologies/double-diamond/`
 
 **Files to Create**:
-1. **`double-diamond.js`** - Main Double Diamond process
+1. **`double-diamond\workflows\double-diamond.js`** - Main Double Diamond process
    - Discover phase
    - Define phase
    - Develop phase
@@ -498,8 +498,8 @@ Double Diamond represents the design thinking process through four phases: Disco
 
 **Creator**: Dan North (BDD), Gojko Adzic (Specification by Example)
 **Year**: Modern practice (2006-present)
-**Priority**: 🔥 High
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ”¥ High
+**Implementation Status**: âœ… Implemented
 **Category**: Requirements / Testing / Executable Specifications
 
 ### Overview
@@ -520,7 +520,7 @@ Behavior-Driven Development (BDD), also known as Specification by Example, captu
 **Directory**: `methodologies/bdd-specification-by-example/`
 
 **Files to Create**:
-1. **`bdd-process.js`** - Main BDD workflow
+1. **`bdd-specification-by-example\workflows\bdd-process.js`** - Main BDD workflow
    - Discovery workshop (Example Mapping style)
    - Formulation (Gherkin generation)
    - Automation (test generation)
@@ -581,8 +581,8 @@ Behavior-Driven Development (BDD), also known as Specification by Example, captu
 
 **Creator**: Eric Evans
 **Year**: Established (2003), still highly relevant
-**Priority**: 🔥 High
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ”¥ High
+**Implementation Status**: âœ… Implemented
 **Category**: Strategic Design / Tactical Design / Architecture
 
 ### Overview
@@ -667,8 +667,8 @@ Domain-Driven Design is an approach for building complex software systems that p
 
 **Creator**: Jeff De Luca and Peter Coad
 **Year**: Established Agile (1997)
-**Priority**: 🔥 High
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ”¥ High
+**Implementation Status**: âœ… Implemented
 **Category**: Feature-Centric Agile / Progress Tracking
 
 ### Overview
@@ -759,8 +759,8 @@ FDD is an Agile methodology that organizes work around building small, client-va
 
 **Creator**: Matt Wynne (Cucumber Ltd)
 **Year**: Modern BDD practice (2015)
-**Priority**: 🔥 High
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ”¥ High
+**Implementation Status**: âœ… Implemented
 **Category**: Requirements / BDD / Testing
 
 ### Overview
@@ -782,7 +782,7 @@ Example Mapping is a simple workshop technique for exploring and understanding r
 **Directory**: `methodologies/example-mapping/`
 
 **Files to Create**:
-1. **`example-mapping.js`** - Example mapping session process
+1. **`example-mapping\workflows\example-mapping.js`** - Example mapping session process
    - Story preparation
    - Collaborative session simulation
    - Rule extraction
@@ -842,8 +842,8 @@ Example Mapping is a simple workshop technique for exploring and understanding r
 
 **Creator**: Kent Beck (TDD), Brian Marick (ATDD concepts)
 **Year**: Established practice (1999-present)
-**Priority**: 🔥 High
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ”¥ High
+**Implementation Status**: âœ… Implemented
 **Category**: Testing / Development Process
 
 ### Overview
@@ -851,7 +851,7 @@ Test-Driven Development (TDD) and Acceptance Test-Driven Development (ATDD) are 
 
 ### Key Principles
 **TDD (Unit Level)**:
-- **Red-Green-Refactor**: Write failing test → Make it pass → Refactor
+- **Red-Green-Refactor**: Write failing test â†’ Make it pass â†’ Refactor
 - **Unit tests first**: Tests written before production code
 - **Small iterations**: Tiny test-code cycles
 - **Design emerges**: Tests drive better design
@@ -934,13 +934,13 @@ Test-Driven Development (TDD) and Acceptance Test-Driven Development (ATDD) are 
 
 **Creator**: Winston W. Royce (1970)
 **Year**: Classic SDLC
-**Priority**: 📋 Classic
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ“‹ Classic
+**Implementation Status**: âœ… Implemented
 **Category**: Sequential SDLC
 
 **Implementation Files**:
-- `methodologies/waterfall/waterfall.js` - Main process with all inline task definitions
-- `methodologies/waterfall/README.md` - Comprehensive documentation
+- `waterfall\workflows\waterfall.js` - Main process with all inline task definitions
+- `atdd-tdd\README.md` - Comprehensive documentation
 - `methodologies/waterfall/examples/*.json` - 6 example input files
 
 ### Overview
@@ -1032,8 +1032,8 @@ The Waterfall model is a linear and sequential approach to software development.
 
 **Creator**: Rational Software (Grady Booch, Ivar Jacobson, James Rumbaugh)
 **Year**: Established iterative process (1990s)
-**Priority**: 📋 Classic
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ“‹ Classic
+**Implementation Status**: âœ… Implemented
 **Category**: Iterative / Use-Case Driven / Architecture-Centric
 
 ### Overview
@@ -1125,8 +1125,8 @@ The Rational Unified Process is an iterative software development framework crea
 
 **Creator**: Barry Boehm (1986)
 **Year**: Classic risk-driven (1988)
-**Priority**: 📋 Classic
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ“‹ Classic
+**Implementation Status**: âœ… Implemented
 **Category**: Risk-Driven Iterative
 
 ### Overview
@@ -1212,8 +1212,8 @@ The Spiral Model is a risk-driven software development process model created by 
 
 **Creator**: Evolved from waterfall in the 1980s
 **Year**: Classic verification/validation
-**Priority**: 📋 Classic
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ“‹ Classic
+**Implementation Status**: âœ… Implemented
 **Category**: Verification & Validation / Testing
 
 ### Overview
@@ -1222,17 +1222,17 @@ The V-Model is an SDLC model where execution happens in a sequential V-shape. It
 ### Key Principles
 - **Verification and Validation**: "Are you building it right?" (verification) vs "Are you building the right thing?" (validation)
 - **Testing parallel to development**: Testing phases planned alongside development phases
-- **V-shape mapping**: Requirements → Unit Tests, Design → Integration Tests, Architecture → System Tests
+- **V-shape mapping**: Requirements â†’ Unit Tests, Design â†’ Integration Tests, Architecture â†’ System Tests
 - **Early test planning**: Test design starts during corresponding dev phase
 - **High discipline**: Rigorous documentation and phase completion
 - **Best for**: Safety-critical systems (aerospace, automotive, healthcare)
 
 **V-Model Phases**:
 **Left side (Development)**:
-1. Requirements Analysis → Acceptance Testing
-2. System Design → System Testing
-3. Architectural Design → Integration Testing
-4. Module Design → Unit Testing
+1. Requirements Analysis â†’ Acceptance Testing
+2. System Design â†’ System Testing
+3. Architectural Design â†’ Integration Testing
+4. Module Design â†’ Unit Testing
 
 **Bottom**: Implementation (Coding)
 
@@ -1312,8 +1312,8 @@ The V-Model is an SDLC model where execution happens in a sequential V-shape. It
 
 **Creator**: Harlan Mills and colleagues at IBM
 **Year**: Classic formal methods (1980s)
-**Priority**: 📋 Classic
-**Implementation Status**: ✅ Implemented
+**Priority**: ðŸ“‹ Classic
+**Implementation Status**: âœ… Implemented
 **Category**: Formal Methods / Statistical Testing
 
 ### Overview
@@ -1385,7 +1385,7 @@ Cleanroom Software Engineering is a process intended to produce software with ce
 **Integration Points**:
 - Extreme contrast to TDD (no unit testing by developers)
 - Can combine formal specification with spec-driven-development
-- Usage modeling aligns with JTBD (job scenarios → usage scenarios)
+- Usage modeling aligns with JTBD (job scenarios â†’ usage scenarios)
 - Agent tasks for formal verification assistance
 - Statistical analysis via node tasks
 - Best for high-reliability/safety-critical systems
@@ -1401,8 +1401,8 @@ Cleanroom Software Engineering is a process intended to produce software with ce
 
 **Creator**: Adapted from Toyota Production System by David J. Anderson (2007)
 **Year**: Modern flow-based (2007-present)
-**Priority**: ⭐ Medium
-**Implementation Status**: ✅ Implemented
+**Priority**: â­ Medium
+**Implementation Status**: âœ… Implemented
 **Category**: Flow Management / Continuous Delivery
 
 ### Overview
@@ -1489,8 +1489,8 @@ Kanban is a visual workflow management method for defining, managing, and improv
 
 **Creator**: Kent Beck, Ward Cunningham, Ron Jeffries
 **Year**: Established Agile (1996-present)
-**Priority**: ⭐ Medium
-**Implementation Status**: ✅ Implemented
+**Priority**: â­ Medium
+**Implementation Status**: âœ… Implemented
 **Category**: Agile Engineering Practices
 
 ### Overview
@@ -1524,7 +1524,7 @@ Extreme Programming (XP) is an agile software development methodology that advoc
 **Directory**: `methodologies/extreme-programming/`
 
 **Files to Create**:
-1. **`xp-process.js`** - Complete XP workflow
+1. **`extreme-programming\workflows\xp-process.js`** - Complete XP workflow
    - Release planning
    - Iteration planning
    - Daily practice (pair programming, TDD, CI)
@@ -1597,8 +1597,8 @@ Extreme Programming (XP) is an agile software development methodology that advoc
 
 **Creator**: Ken Schwaber and Jeff Sutherland
 **Year**: Dominant Agile framework (1995-present)
-**Priority**: ⭐ Medium
-**Implementation Status**: ✅ Implemented
+**Priority**: â­ Medium
+**Implementation Status**: âœ… Implemented
 **Category**: Agile Sprint-Based Framework
 
 ### Overview
@@ -1710,14 +1710,14 @@ Scrum is an agile framework for developing, delivering, and sustaining complex p
 Some powerful combinations:
 
 ### Specification & Testing Chains
-1. **Example Mapping → BDD → ATDD/TDD**: Map examples → Generate Gherkin scenarios → Acceptance tests → TDD implementation
-2. **DDD + Event Storming → BDD**: Domain discovery → Strategic design → Executable specifications
+1. **Example Mapping â†’ BDD â†’ ATDD/TDD**: Map examples â†’ Generate Gherkin scenarios â†’ Acceptance tests â†’ TDD implementation
+2. **DDD + Event Storming â†’ BDD**: Domain discovery â†’ Strategic design â†’ Executable specifications
 3. **V-Model + ATDD/TDD**: V-Model structure with test-first practices at each level
 
 ### Product Development Chains
-4. **JTBD → Impact Mapping → Spec-Kit**: Discover jobs → Map impacts → Specify solution → Implement with quality gates
-5. **Shape Up + Hypothesis-Driven + Example Mapping**: Shape with hypotheses → Bet on experiments → Map examples → Build and measure in 6-week cycles
-6. **Double Diamond + DDD + FDD**: Discover problem → Define solution → DDD design → FDD implementation with parking lots
+4. **JTBD â†’ Impact Mapping â†’ Spec-Kit**: Discover jobs â†’ Map impacts â†’ Specify solution â†’ Implement with quality gates
+5. **Shape Up + Hypothesis-Driven + Example Mapping**: Shape with hypotheses â†’ Bet on experiments â†’ Map examples â†’ Build and measure in 6-week cycles
+6. **Double Diamond + DDD + FDD**: Discover problem â†’ Define solution â†’ DDD design â†’ FDD implementation with parking lots
 
 ### Agile Combinations
 7. **Scrum + XP Practices**: Sprint framework with pair programming, TDD, CI practices
@@ -1746,7 +1746,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 **Composition**: BDD + DDD + Hypothesis-Driven + Kanban
 
-**Implementation Status**: 📝 Not Implemented
+**Implementation Status**: ðŸ“ Not Implemented
 
 **Process Flow**:
 1. **BDD Discovery**: Example Mapping workshop with product team
@@ -1778,7 +1778,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
    ```
 
 5. **Kanban Flow**: Track work through board
-   - Columns: Backlog → Ready → In Progress (WIP=3) → Review → Testing → Done
+   - Columns: Backlog â†’ Ready â†’ In Progress (WIP=3) â†’ Review â†’ Testing â†’ Done
    - Pull work as capacity available
    - Track cycle time and throughput
 
@@ -1804,7 +1804,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 **Composition**: V-Model + DDD + Cleanroom + Waterfall
 
-**Implementation Status**: 📝 Not Implemented
+**Implementation Status**: ðŸ“ Not Implemented
 
 **Process Flow**:
 1. **Waterfall Requirements Phase**:
@@ -1820,11 +1820,11 @@ Real-world scenarios showing how to combine methodologies for specific project t
    - Identify core vs. supporting vs. generic subdomains
 
 3. **V-Model Test Planning** (parallel to requirements/design):
-   - Requirements → Acceptance test design (UAT scenarios)
-   - System design → System test design (integration tests)
-   - Architecture → Integration test design (API tests)
-   - Module design → Unit test design (component tests)
-   - Traceability matrix (requirements → tests)
+   - Requirements â†’ Acceptance test design (UAT scenarios)
+   - System design â†’ System test design (integration tests)
+   - Architecture â†’ Integration test design (API tests)
+   - Module design â†’ Unit test design (component tests)
+   - Traceability matrix (requirements â†’ tests)
 
 4. **Cleanroom Formal Specification** (for critical components):
    - Authentication/Authorization module (formal specification)
@@ -1873,7 +1873,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 **Composition**: Shape Up + Example Mapping + TDD + Scrum
 
-**Implementation Status**: 📝 Not Implemented
+**Implementation Status**: ðŸ“ Not Implemented
 
 **Process Flow**:
 1. **Shape Up: Shaping Phase** (pre-sprint):
@@ -1886,7 +1886,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 2. **Shape Up: Betting Table**:
    - Founders and tech lead review pitch
    - Decision: Bet on it or pass
-   - If bet → proceed to Scrum implementation
+   - If bet â†’ proceed to Scrum implementation
 
 3. **Scrum Sprint Planning**:
    - Sprint Goal: "Users can log workouts and see progress"
@@ -1956,7 +1956,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 **Composition**: Event Storming + DDD + FDD + Strangler Fig Pattern + RUP
 
-**Implementation Status**: 📝 Not Implemented
+**Implementation Status**: ðŸ“ Not Implemented
 
 **Process Flow**:
 1. **RUP Inception Phase**:
@@ -2031,7 +2031,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 11. **RUP Transition Phase**:
     - Beta testing with select customers
-    - Gradual rollout (1% → 10% → 50% → 100%)
+    - Gradual rollout (1% â†’ 10% â†’ 50% â†’ 100%)
     - Training for operations team
     - Final production deployment
     - Post-deployment support
@@ -2064,7 +2064,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 **Composition**: JTBD + Impact Mapping + Spec-Kit + Kanban + XP Practices
 
-**Implementation Status**: 📝 Not Implemented
+**Implementation Status**: ðŸ“ Not Implemented
 
 **Process Flow**:
 1. **JTBD Discovery**:
@@ -2112,11 +2112,11 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 6. **Spec-Kit: Quality Checklist**:
    - Checklist for specification:
-     - ☐ All job stories addressed
-     - ☐ Performance targets specified
-     - ☐ Security requirements defined
-     - ☐ Accessibility criteria included
-     - ☐ Edge cases covered
+     - â˜ All job stories addressed
+     - â˜ Performance targets specified
+     - â˜ Security requirements defined
+     - â˜ Accessibility criteria included
+     - â˜ Edge cases covered
    - Validation against checklist
 
 7. **Spec-Kit: Plan**:
@@ -2132,7 +2132,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
    - Estimation
 
 9. **Kanban Board Setup**:
-   - Columns: Backlog → Design → Dev (WIP=3) → Code Review → QA → Done
+   - Columns: Backlog â†’ Design â†’ Dev (WIP=3) â†’ Code Review â†’ QA â†’ Done
    - Tasks flow through board
    - WIP limits enforced
    - Pull when capacity available
@@ -2159,7 +2159,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 **Artifacts**:
 - JTBD research report with job stories
-- Impact map (goal → actors → impacts → deliverables)
+- Impact map (goal â†’ actors â†’ impacts â†’ deliverables)
 - Constitution document (performance, UX, data, quality standards)
 - Detailed specification with mockups and API specs
 - Quality checklists
@@ -2185,7 +2185,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 **Composition**: Waterfall + V-Model + Cleanroom + Formal Verification
 
-**Implementation Status**: 📝 Not Implemented
+**Implementation Status**: ðŸ“ Not Implemented
 
 **Process Flow**:
 1. **Waterfall Requirements Phase**:
@@ -2258,7 +2258,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 11. **Certification**:
     - DO-178C Level A compliance demonstration
-    - Complete traceability (requirements → design → code → tests)
+    - Complete traceability (requirements â†’ design â†’ code â†’ tests)
     - Tool qualification (compilers, analyzers)
     - Configuration management evidence
     - Regulatory approval
@@ -2268,7 +2268,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 - Design documents (architecture, detailed design)
 - Formal specifications (mathematical notation)
 - Correctness proofs
-- Traceability matrices (requirements ↔ design ↔ code ↔ tests)
+- Traceability matrices (requirements â†” design â†” code â†” tests)
 - Static analysis reports
 - Test plans and test results
 - Usage models (Markov chains)
@@ -2293,7 +2293,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 **Composition**: TDD + BDD + Kanban + XP + Continuous Deployment
 
-**Implementation Status**: 📝 Not Implemented
+**Implementation Status**: ðŸ“ Not Implemented
 
 **Process Flow**:
 1. **Community Requirements Gathering**:
@@ -2337,7 +2337,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
    - **Small Releases**: Frequent npm releases (semantic versioning)
 
 5. **Kanban Board** (GitHub Projects):
-   - Columns: Backlog → In Progress → Review → Done
+   - Columns: Backlog â†’ In Progress â†’ Review â†’ Done
    - No WIP limit (open source, contributors work when available)
    - Issues flow through board
    - Labels: bug, feature, documentation, good-first-issue
@@ -2388,7 +2388,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 
 ## Implementation Priority Rationale
 
-### 🔥 High Priority (Process-Heavy like Spec-Kit)
+### ðŸ”¥ High Priority (Process-Heavy like Spec-Kit)
 - **BDD/Specification by Example**: Executable specifications with Gherkin, directly enhances requirements quality, similar structured approach to Spec-Kit
 - **Domain-Driven Design (DDD)**: Strategic and tactical patterns provide comprehensive design framework, integrates with Event Storming and architectural planning
 - **Feature-Driven Development (FDD)**: Feature-centric with clear 5-step process, parking lot diagrams provide excellent progress tracking
@@ -2396,7 +2396,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 - **ATDD/TDD**: Test-driven approaches provide clear Red-Green-Refactor workflow, critical for quality
 - **Hypothesis-Driven Development**: Critical for product validation, experimentation framework aligns with modern practices
 
-### ⭐ Medium Priority (Modern Methodologies)
+### â­ Medium Priority (Modern Methodologies)
 - **Shape Up**: Modern product development with appetite-driven scoping, betting table, hill charts
 - **Kanban**: Continuous flow with WIP limits, excellent for operational work and flow optimization
 - **Extreme Programming (XP)**: Engineering practices framework (pair programming, CI, refactoring), complements any methodology
@@ -2404,7 +2404,7 @@ Real-world scenarios showing how to combine methodologies for specific project t
 - **Jobs to Be Done**: Strategic but requires domain expertise, excellent for understanding customer needs
 - **Impact Mapping**: Goal-to-feature traceability, great for strategic alignment
 
-### 📋 Classic Priority (Foundational Methodologies)
+### ðŸ“‹ Classic Priority (Foundational Methodologies)
 - **Waterfall**: Sequential SDLC, still relevant for regulated industries and stable requirements
 - **RUP**: Iterative with 4 phases, architecture-centric, use-case driven, good for complex enterprise projects
 - **Spiral Model**: Risk-driven iterative, excellent for high-risk projects, prototype-heavy
@@ -2462,3 +2462,4 @@ All methodologies include source links. Additional resources:
 - [ThoughtWorks Technology Radar](https://www.thoughtworks.com/radar)
 - [InfoQ Software Development Trends](https://www.infoq.com/software-development-trends/)
 - [Agile Alliance Resources](https://www.agilealliance.org/)
+

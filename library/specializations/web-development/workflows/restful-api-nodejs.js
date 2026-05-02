@@ -47,6 +47,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...authSetup.artifacts);
 
   let apiDocumentation = await ctx.task(apiDocumentationTask, { projectName, documentation, routingSetup, outputDir });
+  artifacts.push(...apiDocumentation.artifacts);
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -67,8 +68,8 @@ export async function process(inputs, ctx) {
   const testingSetup = await ctx.task(testingSetupTask, { projectName, outputDir });
   artifacts.push(...testingSetup.artifacts);
 
-  const documentation = await ctx.task(documentationTask, { projectName, routingSetup, apiDocumentation, outputDir });
-  artifacts.push(...documentation.artifacts);
+  const documentationOutput = await ctx.task(documentationTask, { projectName, routingSetup, apiDocumentation, outputDir });
+  artifacts.push(...documentationOutput.artifacts);
 
   return {
     success: true,

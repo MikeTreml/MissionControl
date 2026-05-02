@@ -89,6 +89,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Mesh quality
+  if (meshGeneration.qualityMetrics.worstJacobian < 0.3) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -720,3 +721,4 @@ export const feaReportTask = defineTask('fea-report', (args, taskCtx) => ({
   },
   labels: ['fea', 'reporting', 'aerospace']
 }));
+

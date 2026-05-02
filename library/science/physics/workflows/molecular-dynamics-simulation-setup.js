@@ -84,6 +84,7 @@ export async function process(inputs, ctx) {
   const result = await ctx.task(analyzeTask, {
     problem: inputs.problem,
     context: inputs.context
+  });
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -100,3 +101,4 @@ export async function process(inputs, ctx) {
     confidence: result.confidence
   };
 }
+

@@ -152,6 +152,7 @@ export async function process(inputs, ctx) {
     ...assemblyReview.issues.filter(i => i.severity === 'critical')
   ];
 
+  if (criticalIssues.length > 0) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -553,3 +554,4 @@ export const dfmReportTask = defineTask('dfm-report', (args, taskCtx) => ({
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['ee', 'dfm', 'report']
 }));
+

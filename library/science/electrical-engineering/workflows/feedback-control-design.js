@@ -148,6 +148,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: System must be stable with adequate margins
+  if (!stabilityAnalysis.stable || stabilityAnalysis.marginsInadequate) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -711,3 +712,4 @@ export const hilValidationTask = defineTask('hil-validation', (args, taskCtx) =>
   },
   labels: ['ee', 'control', 'validation', 'hil']
 }));
+

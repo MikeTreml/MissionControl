@@ -1,4 +1,4 @@
-# Spec Kit Methodology
+﻿# Spec Kit Methodology
 
 **Source**: [github/spec-kit](https://github.com/github/spec-kit) by GitHub
 **Category**: Spec-Driven Development / Progressive Refinement
@@ -21,10 +21,10 @@ Spec Kit implements Spec-Driven Development, where specifications define **what*
 
 | Process | File | Description | Task Count |
 |---------|------|-------------|------------|
-| Orchestrator | `spec-kit-orchestrator.js` | Full pipeline: constitution -> specify -> plan -> tasks -> implement | 8 |
-| Specification | `spec-kit-specification.js` | Constitution + specification + clarification workflow | 7 |
-| Planning | `spec-kit-planning.js` | Planning + task breakdown + analysis | 7 |
-| Implementation | `spec-kit-implementation.js` | Implementation + quality validation + checklist | 7 |
+| Orchestrator | `workflows\spec-kit-orchestrator.js` | Full pipeline: constitution -> specify -> plan -> tasks -> implement | 8 |
+| Specification | `workflows\spec-kit-specification.js` | Constitution + specification + clarification workflow | 7 |
+| Planning | `workflows\spec-kit-planning.js` | Planning + task breakdown + analysis | 7 |
+| Implementation | `workflows\spec-kit-implementation.js` | Implementation + quality validation + checklist | 7 |
 
 ## Skills Catalog
 
@@ -87,3 +87,4 @@ Quality gates applied throughout:
 - **Validate continuously** - Cross-artifact analysis ensures consistency
 - **Scale to any stack** - Technology-independent methodology
 - **Preserve human judgment** - Quality gates are approval points, not blockers
+

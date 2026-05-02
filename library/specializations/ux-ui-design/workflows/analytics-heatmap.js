@@ -74,6 +74,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Strategy completeness
   const strategyCompleteness = analyticsStrategy.completenessScore || 0;
+  if (strategyCompleteness < 70) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -127,6 +128,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...toolSetup.artifacts);
 
   // Quality Gate: Tool integration status
+  if (!toolSetup.allToolsIntegrated) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -244,6 +246,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Data quality
   const dataQualityScore = dataValidation.qualityScore;
+  if (dataQualityScore < 80) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -337,6 +340,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Sample size
   const sampleSizeAdequate = heatmapGeneration.totalSessions >= minimumSampleSize;
+  if (!sampleSizeAdequate) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -2484,3 +2488,4 @@ export const qualityScoringTask = defineTask('quality-scoring', (args, taskCtx) 
   },
   labels: ['agent', 'analytics-heatmap', 'quality-scoring', 'validation']
 }));
+

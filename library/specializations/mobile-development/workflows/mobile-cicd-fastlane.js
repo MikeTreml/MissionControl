@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, ciProvider, deployTargets, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -134,3 +135,4 @@ export const secretsManagementTask = createCICDTask('secrets-management', 'Secre
 export const notificationSetupTask = createCICDTask('notification-setup', 'Build Notification Setup');
 export const versioningAutomationTask = createCICDTask('versioning-automation', 'Version Automation');
 export const pipelineDocumentationTask = createCICDTask('pipeline-documentation', 'Pipeline Documentation');
+

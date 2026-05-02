@@ -55,6 +55,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Check if stories meet definition of done
   const unacceptedStories = acceptanceVerification.results?.filter(r => !r.accepted) || [];
+  if (unacceptedStories.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -575,3 +576,4 @@ export const outcomeDocumentationTask = defineTask('outcome-documentation', (arg
   },
   labels: ['agile', 'documentation', 'review']
 }));
+

@@ -1,4 +1,4 @@
-# Meta Specialization - Skills and Agents Backlog
+﻿# Meta Specialization - Skills and Agents Backlog
 
 This file contains the skills and agents needed to support the Meta Specialization processes.
 
@@ -15,7 +15,7 @@ This file contains the skills and agents needed to support the Meta Specializati
 ### Generation and Creation Skills
 
 - [x] SK-META-006: process-generator - Generate process JS files following SDK patterns
-- [x] SK-META-007: skill-generator - Generate SKILL.md files with proper frontmatter and documentation
+- [x] SK-META-007: skill-generator - Generate harnesses\claude-code\examples\SKILL.md files with proper frontmatter and documentation
 - [x] SK-META-008: agent-generator - Generate AGENT.md files with proper frontmatter and documentation
 - [ ] SK-META-009: documentation-generator - Generate README.md and supporting documentation files
 - [ ] SK-META-010: prompt-engineer - Create effective prompt templates for agents
@@ -24,7 +24,7 @@ This file contains the skills and agents needed to support the Meta Specializati
 
 - [x] SK-META-011: specialization-validator - Validate specialization completeness across all phases
 - [x] SK-META-012: process-validator - Validate process JS files for correct patterns and syntax
-- [ ] SK-META-013: skill-validator - Validate SKILL.md files for proper format and content
+- [ ] SK-META-013: skill-validator - Validate harnesses\claude-code\examples\SKILL.md files for proper format and content
 - [ ] SK-META-014: agent-validator - Validate AGENT.md files for proper format and content
 - [ ] SK-META-015: backlog-validator - Validate backlog files for completeness and format
 
@@ -60,11 +60,11 @@ This file contains the skills and agents needed to support the Meta Specializati
 
 | Process | Skills | Agents |
 |---------|--------|--------|
-| specialization-creation.js | SK-META-001, SK-META-002, SK-META-003, SK-META-004, SK-META-005, SK-META-006, SK-META-007, SK-META-008, SK-META-011, SK-META-016 | AG-META-001, AG-META-003, AG-META-004, AG-META-006 |
-| process-creation.js | SK-META-002, SK-META-006, SK-META-012 | AG-META-003, AG-META-006 |
-| skill-creation.js | SK-META-003, SK-META-007, SK-META-009, SK-META-013 | AG-META-004, AG-META-006, AG-META-007 |
-| agent-creation.js | SK-META-004, SK-META-008, SK-META-009, SK-META-010, SK-META-014 | AG-META-005, AG-META-006, AG-META-007 |
-| specialization-validator.js | SK-META-011, SK-META-012, SK-META-013, SK-META-014, SK-META-015 | AG-META-006 |
+| workflows\specialization-creation.js | SK-META-001, SK-META-002, SK-META-003, SK-META-004, SK-META-005, SK-META-006, SK-META-007, SK-META-008, SK-META-011, SK-META-016 | AG-META-001, AG-META-003, AG-META-004, AG-META-006 |
+| workflows\process-creation.js | SK-META-002, SK-META-006, SK-META-012 | AG-META-003, AG-META-006 |
+| workflows\skill-creation.js | SK-META-003, SK-META-007, SK-META-009, SK-META-013 | AG-META-004, AG-META-006, AG-META-007 |
+| workflows\agent-creation.js | SK-META-004, SK-META-008, SK-META-009, SK-META-010, SK-META-014 | AG-META-005, AG-META-006, AG-META-007 |
+| workflows\specialization-validator.js | SK-META-011, SK-META-012, SK-META-013, SK-META-014, SK-META-015 | AG-META-006 |
 | domain-creation.js | SK-META-001, SK-META-009 | AG-META-001, AG-META-007 |
 | phase1-research-readme.js | SK-META-001, SK-META-009 | AG-META-001, AG-META-007 |
 | phase2-identify-processes.js | SK-META-002 | AG-META-003 |
@@ -148,7 +148,7 @@ This file contains the skills and agents needed to support the Meta Specializati
 **Expertise**:
 - Skill capability definition
 - Tool permission management
-- SKILL.md format and structure
+- harnesses\claude-code\examples\SKILL.md format and structure
 - Documentation best practices
 - MCP server integration
 
@@ -175,3 +175,5 @@ This file contains the skills and agents needed to support the Meta Specializati
 - Agents should have clear, non-overlapping expertise
 - Process integration should reference exact skill/agent names
 - Validation should be comprehensive but not blocking
+
+

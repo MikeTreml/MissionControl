@@ -431,6 +431,7 @@ export async function process(inputs, ctx) {
   });
 
   // Breakpoint: Review monitoring results and retraining recommendation
+  if (driftDetected || performanceDegraded) {
       let lastFeedback_reviewApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_reviewApproval) {
@@ -2074,3 +2075,4 @@ export const updateModelRegistryTask = defineTask('update-model-registry', (args
   },
   labels: ['ml-monitoring', 'registry', 'metadata']
 }));
+

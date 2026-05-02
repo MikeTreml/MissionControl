@@ -123,6 +123,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...sampleValidation.artifacts);
 
   // Quality Gate: Sample validation
+  if (!sampleValidation.allPassed) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -489,3 +490,4 @@ export const dataValidationTask = defineTask('data-validation', (args, taskCtx) 
   },
   labels: ['data-format', 'validation', 'quality']
 }));
+

@@ -56,6 +56,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...storageVerification.artifacts);
 
+  if (!storageVerification.compatible) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -528,3 +529,4 @@ export const rollbackDocumentationTask = defineTask('rollback-documentation', (a
   },
   labels: ['blockchain', 'upgrade', 'rollback', 'documentation']
 }));
+

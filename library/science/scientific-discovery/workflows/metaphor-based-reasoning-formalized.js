@@ -45,6 +45,7 @@ export async function process(inputs, ctx) {
     problemAnalysis,
     metaphorAnalysis,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -500,3 +501,4 @@ export const synthesizeMetaphorFindingsTask = defineTask('synthesize-metaphor-fi
   },
   labels: ['agent', 'metaphor-reasoning', 'synthesis']
 }));
+

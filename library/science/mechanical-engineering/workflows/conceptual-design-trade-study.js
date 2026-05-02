@@ -47,6 +47,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: At least 3 concepts required
+  if (conceptGeneration.concepts.length < 3) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -809,3 +810,4 @@ export const tradeStudyReportTask = defineTask('trade-study-report', (args, task
   },
   labels: ['mechanical-engineering', 'trade-study', 'documentation']
 }));
+

@@ -1,4 +1,4 @@
-# Scientific Discovery and Problem Solving - Skills and Agents Backlog (Phase 4)
+﻿# Scientific Discovery and Problem Solving - Skills and Agents Backlog (Phase 4)
 
 ## Overview
 
@@ -1280,101 +1280,101 @@ These skills and agents could be shared with other specializations:
 ### Completed Process Files
 
 #### Formal and Mathematical Reasoning
-- [x] deductive-reasoning.js - Updated with assumption-auditor agent, formal-logic-reasoner, hypothesis-generator skills
-- [x] mathematical-proof-reasoning.js - Updated with formal-logic-reasoner, hypothesis-generator skills
-- [x] constructive-intuitionistic-reasoning.js - Updated with formal-logic-reasoner skills
-- [x] equational-algebraic-reasoning.js - Updated with formal-logic-reasoner skills
-- [x] model-theoretic-semantic-reasoning.js - Updated with formal-logic-reasoner skills
-- [x] constraint-satisfiability-reasoning.js - Updated with formal-logic-reasoner skills
-- [x] type-theoretic-reasoning.js - Updated with formal-logic-reasoner skills
-- [x] counterexample-guided-reasoning.js - Updated with formal-logic-reasoner skills
+- [x] workflows\deductive-reasoning.js - Updated with assumption-auditor agent, formal-logic-reasoner, hypothesis-generator skills
+- [x] workflows\mathematical-proof-reasoning.js - Updated with formal-logic-reasoner, hypothesis-generator skills
+- [x] workflows\constructive-intuitionistic-reasoning.js - Updated with formal-logic-reasoner skills
+- [x] workflows\equational-algebraic-reasoning.js - Updated with formal-logic-reasoner skills
+- [x] workflows\model-theoretic-semantic-reasoning.js - Updated with formal-logic-reasoner skills
+- [x] workflows\constraint-satisfiability-reasoning.js - Updated with formal-logic-reasoner skills
+- [x] workflows\type-theoretic-reasoning.js - Updated with formal-logic-reasoner skills
+- [x] workflows\counterexample-guided-reasoning.js - Updated with formal-logic-reasoner skills
 
 #### Ampliative Reasoning
-- [x] inductive-reasoning.js - Updated with hypothesis-architect agent, hypothesis-generator, statistical-test-selector skills
-- [x] abductive-reasoning.js - Updated with hypothesis-architect agent, hypothesis-generator, causal-inference-engine, formal-logic-reasoner skills
-- [x] analogical-reasoning.js - Updated with analogical-reasoner agent, analogy-mapper, semantic-scholar-search, hypothesis-generator skills
-- [x] bayesian-probabilistic-reasoning.js - Updated with bayesian-analyst agent, bayesian-inference-engine, statistical-test-selector, scientific-figure-generator skills
-- [x] statistical-reasoning.js - Updated with statistical-consultant agent, statistical-test-selector, regression-analyzer, power-analysis-calculator skills
-- [x] likelihood-based-reasoning.js - Updated with bayesian-inference-engine skills
-- [x] case-based-reasoning.js - Updated with analogy-mapper skills
-- [x] explanation-based-learning.js - Updated with hypothesis-generator skills
+- [x] workflows\inductive-reasoning.js - Updated with hypothesis-architect agent, hypothesis-generator, statistical-test-selector skills
+- [x] workflows\abductive-reasoning.js - Updated with hypothesis-architect agent, hypothesis-generator, causal-inference-engine, formal-logic-reasoner skills
+- [x] workflows\analogical-reasoning.js - Updated with analogical-reasoner agent, analogy-mapper, semantic-scholar-search, hypothesis-generator skills
+- [x] workflows\bayesian-probabilistic-reasoning.js - Updated with bayesian-analyst agent, bayesian-inference-engine, statistical-test-selector, scientific-figure-generator skills
+- [x] workflows\statistical-reasoning.js - Updated with statistical-consultant agent, statistical-test-selector, regression-analyzer, power-analysis-calculator skills
+- [x] workflows\likelihood-based-reasoning.js - Updated with bayesian-inference-engine skills
+- [x] workflows\case-based-reasoning.js - Updated with analogy-mapper skills
+- [x] workflows\explanation-based-learning.js - Updated with hypothesis-generator skills
 
 #### Causal Reasoning
-- [x] causal-inference.js - Updated with causal-reasoning-analyst agent, causal-inference-engine, statistical-test-selector, checklist-validator skills
-- [x] causal-discovery.js - Updated with causal-inference-engine, bayesian-inference-engine skills
-- [x] counterfactual-reasoning.js - Updated with causal-inference-engine, formal-logic-reasoner skills
-- [x] causal-loop-diagram-development.js - Updated with systems-dynamics-modeler, causal-inference-engine skills
-- [x] causal-inference-observational.js - Updated with causal-inference-engine, statistical-test-selector skills
+- [x] workflows\causal-inference.js - Updated with causal-reasoning-analyst agent, causal-inference-engine, statistical-test-selector, checklist-validator skills
+- [x] workflows\causal-discovery.js - Updated with causal-inference-engine, bayesian-inference-engine skills
+- [x] workflows\counterfactual-reasoning.js - Updated with causal-inference-engine, formal-logic-reasoner skills
+- [x] workflows\causal-loop-diagram-development.js - Updated with systems-dynamics-modeler, causal-inference-engine skills
+- [x] workflows\causal-inference-observational.js - Updated with causal-inference-engine, statistical-test-selector skills
 
 #### Systems Thinking
-- [x] systems-thinking.js - Updated with systems-thinker agent, systems-dynamics-modeler, causal-inference-engine, network-visualizer skills
+- [x] workflows\systems-thinking.js - Updated with systems-thinker agent, systems-dynamics-modeler, causal-inference-engine, network-visualizer skills
 
 #### Diagnostic and Root Cause Analysis
-- [x] five-whys-analysis.js - Updated with root-cause-analyst agent, causal-inference-engine, systems-dynamics-modeler skills
-- [x] diagnostic-reasoning.js - Updated with causal-inference-engine, bayesian-inference-engine skills
+- [x] workflows\five-whys-analysis.js - Updated with root-cause-analyst agent, causal-inference-engine, systems-dynamics-modeler skills
+- [x] workflows\diagnostic-reasoning.js - Updated with causal-inference-engine, bayesian-inference-engine skills
 
 #### Hypothesis and Experimental Design
-- [x] hypothesis-formulation-testing.js - Updated with hypothesis-architect agent, hypothesis-generator, power-analysis-calculator, protocol-builder skills
+- [x] workflows\hypothesis-formulation-testing.js - Updated with hypothesis-architect agent, hypothesis-generator, power-analysis-calculator, protocol-builder skills
 
 #### Creative Problem Solving
-- [x] triz-contradiction-resolution.js - Updated with innovation-facilitator agent, triz-contradiction-solver, analogy-mapper skills
-- [x] lateral-thinking-idea-generation.js - Updated with triz-contradiction-solver, analogy-mapper, hypothesis-generator skills
-- [x] analogical-cross-domain-transfer.js - Updated with analogical-reasoner agent, analogy-mapper, hypothesis-generator, semantic-scholar-search skills
+- [x] workflows\triz-contradiction-resolution.js - Updated with innovation-facilitator agent, triz-contradiction-solver, analogy-mapper skills
+- [x] workflows\lateral-thinking-idea-generation.js - Updated with triz-contradiction-solver, analogy-mapper, hypothesis-generator skills
+- [x] workflows\analogical-cross-domain-transfer.js - Updated with analogical-reasoner agent, analogy-mapper, hypothesis-generator, semantic-scholar-search skills
 
 #### Decision and Game Theory
-- [x] decision-theoretic-reasoning.js - Updated with decision-theorist agent, bayesian-inference-engine skills
-- [x] multi-criteria-decision-analysis.js - Updated with decision-theorist agent, bayesian-inference-engine skills
-- [x] game-theoretic-strategic-reasoning.js - Updated with bayesian-inference-engine, formal-logic-reasoner skills
-- [x] negotiation-coalition-reasoning.js - Updated with bayesian-inference-engine skills
-- [x] theory-of-mind-reasoning.js - Updated with bayesian-inference-engine skills
+- [x] workflows\decision-theoretic-reasoning.js - Updated with decision-theorist agent, bayesian-inference-engine skills
+- [x] workflows\multi-criteria-decision-analysis.js - Updated with decision-theorist agent, bayesian-inference-engine skills
+- [x] workflows\game-theoretic-strategic-reasoning.js - Updated with bayesian-inference-engine, formal-logic-reasoner skills
+- [x] workflows\negotiation-coalition-reasoning.js - Updated with bayesian-inference-engine skills
+- [x] workflows\theory-of-mind-reasoning.js - Updated with bayesian-inference-engine skills
 
 #### Quality Assurance and Meta-Cognitive
-- [x] cognitive-bias-mitigation.js - Updated with bias-detective agent, checklist-validator, peer-review-simulator skills
-- [x] calibration-epistemic-humility.js - Updated with bayesian-inference-engine, statistical-test-selector skills
-- [x] analysis-competing-hypotheses.js - Updated with hypothesis-architect agent, bayesian-inference-engine, formal-logic-reasoner skills
-- [x] adversarial-red-team-reasoning.js - Updated with red-team-analyst agent, peer-review-simulator, hypothesis-generator skills
-- [x] clinical-operational-troubleshooting.js - Updated with causal-inference-engine, bayesian-inference-engine skills
+- [x] workflows\cognitive-bias-mitigation.js - Updated with bias-detective agent, checklist-validator, peer-review-simulator skills
+- [x] workflows\calibration-epistemic-humility.js - Updated with bayesian-inference-engine, statistical-test-selector skills
+- [x] workflows\analysis-competing-hypotheses.js - Updated with hypothesis-architect agent, bayesian-inference-engine, formal-logic-reasoner skills
+- [x] workflows\adversarial-red-team-reasoning.js - Updated with red-team-analyst agent, peer-review-simulator, hypothesis-generator skills
+- [x] workflows\clinical-operational-troubleshooting.js - Updated with causal-inference-engine, bayesian-inference-engine skills
 
 #### Additional Reasoning Processes (Batch 2)
-- [x] fishbone-ishikawa-analysis.js - Updated with root-cause-analyst agent, causal-inference-engine, systems-dynamics-modeler skills
-- [x] heuristic-reasoning.js - Updated with heuristic-analyst agent, hypothesis-generator, bayesian-inference-engine skills
-- [x] hermeneutic-interpretive-reasoning.js - Updated with hermeneutic-analyst agent, hypothesis-generator, analogy-mapper skills
-- [x] historical-investigative-reasoning.js - Updated with historical-analyst agent, causal-inference-engine, hypothesis-generator skills
-- [x] key-assumptions-check.js - Updated with assumption-auditor agent, formal-logic-reasoner, hypothesis-generator skills
+- [x] workflows\fishbone-ishikawa-analysis.js - Updated with root-cause-analyst agent, causal-inference-engine, systems-dynamics-modeler skills
+- [x] workflows\heuristic-reasoning.js - Updated with heuristic-analyst agent, hypothesis-generator, bayesian-inference-engine skills
+- [x] workflows\hermeneutic-interpretive-reasoning.js - Updated with hermeneutic-analyst agent, hypothesis-generator, analogy-mapper skills
+- [x] workflows\historical-investigative-reasoning.js - Updated with historical-analyst agent, causal-inference-engine, hypothesis-generator skills
+- [x] workflows\key-assumptions-check.js - Updated with assumption-auditor agent, formal-logic-reasoner, hypothesis-generator skills
 
 #### Additional Reasoning Processes (Batch 3)
-- [x] mechanistic-reasoning.js - Updated with mechanistic-analyst agent, causal-inference-engine, hypothesis-generator skills
-- [x] model-based-scientific-reasoning.js - Updated with model-builder agent, hypothesis-generator, statistical-test-selector skills
+- [x] workflows\mechanistic-reasoning.js - Updated with mechanistic-analyst agent, causal-inference-engine, hypothesis-generator skills
+- [x] workflows\scientific-reasoning.js - Updated with model-builder agent, hypothesis-generator, statistical-test-selector skills
 - [x] multi-model-ensemble-reasoning.js - Updated with ensemble-analyst agent, bayesian-inference-engine, statistical-test-selector skills
-- [x] multiple-working-hypotheses.js - Updated with hypothesis-architect agent, hypothesis-generator, bayesian-inference-engine skills
-- [x] narrative-causal-storytelling.js - Updated with narrative-analyst agent, causal-inference-engine, hypothesis-generator skills
-- [x] network-pathway-reasoning.js - Updated with network-analyst agent, network-visualizer, causal-inference-engine skills
+- [x] workflows\multiple-working-hypotheses.js - Updated with hypothesis-architect agent, hypothesis-generator, bayesian-inference-engine skills
+- [x] workflows\narrative-causal-storytelling.js - Updated with narrative-analyst agent, causal-inference-engine, hypothesis-generator skills
+- [x] workflows\network-pathway-reasoning.js - Updated with network-analyst agent, network-visualizer, causal-inference-engine skills
 - [x] paradigm-shift-kuhnian-crisis.js - Updated with paradigm-analyst agent, hypothesis-generator, analogy-mapper skills
 - [x] phenomenological-reasoning.js - Updated with phenomenological-analyst agent, hypothesis-generator, analogy-mapper skills
-- [x] probabilistic-forecasting-calibration.js - Updated with probabilistic-forecaster agent, bayesian-inference-engine, statistical-test-selector skills
-- [x] multi-criteria-decision-analysis-structured.js - Updated with decision-analyst agent, hypothesis-generator, bayesian-inference-engine skills
+- [x] workflows\probabilistic-forecasting-calibration.js - Updated with probabilistic-forecaster agent, bayesian-inference-engine, statistical-test-selector skills
+- [x] workflows\multi-criteria-decision-analysis-structured.js - Updated with decision-analyst agent, hypothesis-generator, bayesian-inference-engine skills
 
 #### Additional Reasoning Processes (Batch 4)
-- [x] reference-class-reasoning.js - Updated with reference-class-analyst agent, bayesian-inference-engine, statistical-test-selector skills
-- [x] reflective-equilibrium.js - Updated with equilibrium-analyst agent, formal-logic-reasoner, hypothesis-generator skills
-- [x] reproducible-research-pipeline.js - Updated with research-software-engineer agent, hypothesis-generator, statistical-test-selector skills
-- [x] rhetorical-reasoning.js - Updated with rhetorical-analyst agent, hypothesis-generator, analogy-mapper skills
-- [x] robust-worst-case-reasoning.js - Updated with robust-decision-analyst agent, bayesian-inference-engine, hypothesis-generator skills
-- [x] satisficing-reasoning.js - Updated with satisficing-analyst agent, hypothesis-generator, bayesian-inference-engine skills
-- [x] scientific-reasoning.js - Updated with scientific-method-analyst agent, hypothesis-generator, statistical-test-selector, causal-inference-engine skills
-- [x] search-based-algorithmic-reasoning.js - Updated with search-algorithm-analyst agent, hypothesis-generator, formal-logic-reasoner skills
+- [x] workflows\reference-class-reasoning.js - Updated with reference-class-analyst agent, bayesian-inference-engine, statistical-test-selector skills
+- [x] workflows\reflective-equilibrium.js - Updated with equilibrium-analyst agent, formal-logic-reasoner, hypothesis-generator skills
+- [x] workflows\reproducible-research-pipeline.js - Updated with research-software-engineer agent, hypothesis-generator, statistical-test-selector skills
+- [x] workflows\rhetorical-reasoning.js - Updated with rhetorical-analyst agent, hypothesis-generator, analogy-mapper skills
+- [x] workflows\robust-worst-case-reasoning.js - Updated with robust-decision-analyst agent, bayesian-inference-engine, hypothesis-generator skills
+- [x] workflows\satisficing-reasoning.js - Updated with satisficing-analyst agent, hypothesis-generator, bayesian-inference-engine skills
+- [x] workflows\scientific-reasoning.js - Updated with scientific-method-analyst agent, hypothesis-generator, statistical-test-selector, causal-inference-engine skills
+- [x] workflows\search-based-algorithmic-reasoning.js - Updated with search-algorithm-analyst agent, hypothesis-generator, formal-logic-reasoner skills
 
 #### Additional Reasoning Processes (Batch 5)
-- [x] transcendental-reasoning.js - Updated with transcendental-analyst agent, formal-logic-reasoner, hypothesis-generator skills
-- [x] value-of-information-reasoning.js - Updated with voi-analyst agent, bayesian-inference-engine, statistical-test-selector skills
-- [x] spatial-diagrammatic-reasoning.js - Updated with spatial-reasoning-analyst agent, formal-logic-reasoner, analogy-mapper skills
-- [x] temporal-reasoning.js - Updated with temporal-logic-analyst agent, formal-logic-reasoner, causal-inference-engine skills
-- [x] experimental-design-controls.js - Updated with experimental-design-methodologist agent, statistical-test-selector, hypothesis-generator skills
-- [x] simplicity-compression-reasoning.js - Updated with complexity-analyst agent, hypothesis-generator, bayesian-inference-engine skills
-- [x] sensemaking-frame-building.js - Updated with sensemaking-analyst agent, hypothesis-generator, analogy-mapper skills
-- [x] system-archetype-analysis.js - Updated with systems-thinking-analyst agent, hypothesis-generator, causal-inference-engine skills
-- [x] system-dynamics-modeling.js - Updated with system-dynamics-modeler agent, hypothesis-generator, causal-inference-engine skills
-- [x] premortem-red-team-analysis.js - Updated with risk-analyst agent, hypothesis-generator, root-cause-analyzer skills
+- [x] workflows\transcendental-reasoning.js - Updated with transcendental-analyst agent, formal-logic-reasoner, hypothesis-generator skills
+- [x] workflows\value-of-information-reasoning.js - Updated with voi-analyst agent, bayesian-inference-engine, statistical-test-selector skills
+- [x] workflows\spatial-diagrammatic-reasoning.js - Updated with spatial-reasoning-analyst agent, formal-logic-reasoner, analogy-mapper skills
+- [x] workflows\temporal-reasoning.js - Updated with temporal-logic-analyst agent, formal-logic-reasoner, causal-inference-engine skills
+- [x] workflows\experimental-design-controls.js - Updated with experimental-design-methodologist agent, statistical-test-selector, hypothesis-generator skills
+- [x] workflows\simplicity-compression-reasoning.js - Updated with complexity-analyst agent, hypothesis-generator, bayesian-inference-engine skills
+- [x] workflows\sensemaking-frame-building.js - Updated with sensemaking-analyst agent, hypothesis-generator, analogy-mapper skills
+- [x] workflows\system-archetype-analysis.js - Updated with systems-thinking-analyst agent, hypothesis-generator, causal-inference-engine skills
+- [x] workflows\system-dynamics-modeling.js - Updated with system-dynamics-modeler agent, hypothesis-generator, causal-inference-engine skills
+- [x] workflows\premortem-red-team-analysis.js - Updated with risk-analyst agent, hypothesis-generator, root-cause-analyzer skills
 
 ### Integration Notes
 - All process files now use the standardized pattern with `skills: [...]` array inside agent objects
@@ -1382,3 +1382,5 @@ These skills and agents could be shared with other specializations:
 - Agent objects include skills arrays for multi-skill capability
 - Process-to-Skills/Agents mapping table used as reference for integration
 - Old `skill: { name: '...' }` task-level pattern has been removed from all files
+
+

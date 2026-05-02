@@ -1,4 +1,4 @@
-# GitBook/Notion Integration Skill
+﻿# GitBook/Notion Integration Skill
 
 Integration with hosted documentation platforms.
 
@@ -77,7 +77,7 @@ structure:
 # Summary
 
 * [Introduction](README.md)
-* [Getting Started](getting-started/README.md)
+* [Getting Started](README.md)
   * [Installation](getting-started/installation.md)
 ```
 
@@ -147,3 +147,4 @@ node scripts/notion-import.js --input ./docs
 **Backlog ID:** SK-011
 **Category:** Documentation Platforms
 **Status:** Active
+

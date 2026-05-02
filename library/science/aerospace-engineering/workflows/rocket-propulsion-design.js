@@ -96,6 +96,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check nozzle performance
+  if (nozzleDesign.specificImpulse < missionRequirements.isp * 0.95) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -1074,3 +1075,4 @@ export const rocketReportTask = defineTask('rocket-report', (args, taskCtx) => (
   },
   labels: ['rocket', 'reporting', 'documentation', 'aerospace']
 }));
+

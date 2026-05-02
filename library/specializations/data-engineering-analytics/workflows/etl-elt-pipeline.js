@@ -458,6 +458,7 @@ export async function process(inputs, ctx) {
   const validationPassed = pipelineScore >= 75;
 
   // Quality Gate: Pipeline must meet quality criteria
+  if (!validationPassed) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -2565,3 +2566,4 @@ export const finalReviewTask = defineTask('final-review', (args, taskCtx) => ({
   },
   labels: ['data-engineering', 'etl-elt', 'final-review', 'handoff']
 }));
+

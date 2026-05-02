@@ -106,6 +106,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Simulation results check
+  if (crashSimulation.failedScenarios && crashSimulation.failedScenarios.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -661,3 +662,4 @@ export const ncapComplianceTask = defineTask('ncap-compliance', (args, taskCtx) 
   },
   labels: ['automotive', 'crashworthiness', 'NCAP', 'compliance']
 }));
+

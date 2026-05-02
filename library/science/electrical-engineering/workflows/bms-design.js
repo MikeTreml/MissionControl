@@ -147,6 +147,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Safety compliance check
+  if (!safetyProtection.compliant) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -547,3 +548,4 @@ export const designValidationTask = defineTask('design-validation', (args, taskC
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['ee', 'bms', 'validation']
 }));
+

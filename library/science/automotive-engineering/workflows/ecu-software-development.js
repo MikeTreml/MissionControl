@@ -89,6 +89,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: MISRA compliance
+  if (staticAnalysis.misraViolations > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -367,3 +368,4 @@ export const softwareTestingTask = defineTask('software-testing', (args, taskCtx
   },
   labels: ['automotive', 'software', 'testing', 'ASPICE']
 }));
+

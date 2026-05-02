@@ -1,4 +1,4 @@
-# RPIKit Methodology
+﻿# RPIKit Methodology
 
 **Source**: [bostonaholic/rpikit](https://github.com/bostonaholic/rpikit) by Matthew Boston
 **Category**: Structured Software Development / Research-Plan-Implement Framework
@@ -21,12 +21,12 @@ RPIKit implements the Research-Plan-Implement (RPI) framework for disciplined AI
 
 | Process | File | Description | Task Count |
 |---------|------|-------------|------------|
-| Brainstorm | `rpikit-brainstorm.js` | Clarify vague requirements through exploration | 3 |
-| Research | `rpikit-research.js` | Systematic codebase exploration (Iron Law) | 5 |
-| Plan | `rpikit-plan.js` | Stakes-based implementation planning with test-first | 7 |
-| Implement | `rpikit-implement.js` | Disciplined plan execution with verification | 7 |
-| Review | `rpikit-review.js` | Combined code quality and security review | 4 |
-| Decision | `rpikit-decision.js` | Architecture Decision Records (ADRs) | 3 |
+| Brainstorm | `workflows\rpikit-brainstorm.js` | Clarify vague requirements through exploration | 3 |
+| Research | `workflows\rpikit-research.js` | Systematic codebase exploration (Iron Law) | 5 |
+| Plan | `workflows\rpikit-plan.js` | Stakes-based implementation planning with test-first | 7 |
+| Implement | `workflows\rpikit-implement.js` | Disciplined plan execution with verification | 7 |
+| Review | `workflows\rpikit-review.js` | Combined code quality and security review | 4 |
+| Decision | `workflows\rpikit-decision.js` | Architecture Decision Records (ADRs) | 3 |
 
 ## Skills Catalog
 
@@ -91,3 +91,4 @@ Cross-cutting concerns applied throughout:
 - **Implement with discipline** - Step-by-step verification
 - **Scale rigor to risk** - Stakes-based planning depth
 - **Preserve autonomy** - Reviews are soft gates, humans decide
+

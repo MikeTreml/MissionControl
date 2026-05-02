@@ -97,6 +97,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Identified ${riskAssessment.riskCount} compliance risks`);
 
   // Quality Gate: High risk areas
+  if (riskAssessment.highRiskCount > 5) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -800,3 +801,4 @@ export const implementationRoadmapTask = defineTask('implementation-roadmap', (a
   },
   labels: ['agent', 'compliance-program', 'implementation']
 }));
+

@@ -30,6 +30,7 @@ export async function process(inputs, ctx) {
   const faultTreeAnalysis = await ctx.task(faultTreeTask, { projectName, pssa, systemDefinition });
   let ccaAnalysis = await ctx.task(ccaTask, { projectName, faultTreeAnalysis, systemDefinition });
 
+  if (ccaAnalysis.commonCauses.length > 0) {
       let lastFeedback_reviewApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_reviewApproval) {
@@ -152,3 +153,4 @@ export const safetyReportTask = defineTask('safety-report', (args, taskCtx) => (
   }, outputSchema: { type: 'object', required: ['report', 'markdown'], properties: { report: { type: 'object' }, markdown: { type: 'string' } } } },
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['safety', 'aerospace', 'arp4761']
 }));
+

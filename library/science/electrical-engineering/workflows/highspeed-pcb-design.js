@@ -143,6 +143,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: SI must meet requirements
+  if (!siSimulation.allChannelsPass) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -672,3 +673,4 @@ export const manufacturingOutputsTask = defineTask('manufacturing-outputs', (arg
   },
   labels: ['ee', 'pcb', 'manufacturing', 'documentation']
 }));
+

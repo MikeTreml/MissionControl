@@ -106,6 +106,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Design completeness check
   const missingDesigns = designAudit.missingDesigns || [];
+  if (missingDesigns.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -310,6 +311,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: Touch target compliance
     const touchIssues = touchOptimization.violations || [];
+    if (touchIssues.length > 0) {
         let lastFeedback_phase7Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase7Review) {
@@ -449,6 +451,7 @@ export async function process(inputs, ctx) {
   }
   // Quality Gate: Cross-device testing results
   const testPassRate = (testResults.passed / testResults.total) * 100;
+  if (testPassRate < 95) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -2296,3 +2299,4 @@ export const finalResponsiveReviewTask = defineTask('final-responsive-review', (
   },
   labels: ['agent', 'responsive-design', 'final-review', 'approval']
 }));
+

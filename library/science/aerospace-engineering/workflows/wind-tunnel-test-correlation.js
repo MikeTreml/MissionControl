@@ -101,6 +101,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check correlation metrics
+  if (correlationAnalysis.r2 < 0.9) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -733,3 +734,4 @@ export const correlationReportTask = defineTask('correlation-report', (args, tas
   },
   labels: ['correlation', 'reporting', 'documentation', 'aerospace']
 }));
+

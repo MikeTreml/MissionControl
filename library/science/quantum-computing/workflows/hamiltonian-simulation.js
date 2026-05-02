@@ -158,6 +158,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...(errorResult.artifacts || []));
 
+  if (errorResult.estimatedError > errorTolerance) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -671,3 +672,4 @@ export const hamiltonianSimulationReportTask = defineTask('hs-report', (args, ta
   },
   labels: ['quantum-computing', 'simulation', 'reporting']
 }));
+

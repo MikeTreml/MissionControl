@@ -51,6 +51,7 @@ export async function process(inputs, ctx) {
   });
   artifacts.push(...verification.artifacts);
 
+  if (!verification.verified) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -278,3 +279,4 @@ export const dsrComplianceDocTask = defineTask('dsr-compliance-doc', (args, task
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'dsr']
 }));
+

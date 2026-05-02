@@ -78,6 +78,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check data coverage
+  if (dataGeneration.coveragePercentage < 95) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -840,3 +841,4 @@ export const databaseDocumentationTask = defineTask('database-documentation', (a
   },
   labels: ['aero-database', 'documentation', 'aerospace']
 }));
+

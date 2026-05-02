@@ -64,6 +64,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `QC complete - ${qcResult.passedSamples.length}/${samples.length} samples passed quality filters`);
 
   // Quality Gate: Sample quality check
+  if (qcResult.failedSamples.length > 0) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -182,6 +183,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Batch effect assessment complete - Batch effect detected: ${batchCorrectionResult.batchEffectDetected}`);
 
     // Breakpoint: Review batch effect
+    if (batchCorrectionResult.batchEffectDetected) {
         let lastFeedback_phase4Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase4Review) {
@@ -884,3 +886,4 @@ export const generateRNAseqReportTask = defineTask('generate-rnaseq-report', (ar
   },
   labels: ['bioinformatics', 'rnaseq', 'report-generation']
 }));
+

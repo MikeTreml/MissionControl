@@ -47,6 +47,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...(readinessAssessment.artifacts || []));
 
   // Quality Gate
+  if (readinessAssessment.readinessScore < 50) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -721,3 +722,4 @@ export const closingProcessTask = defineTask('closing-process', (args, taskCtx) 
   },
   labels: ['entrepreneurship', 'fundraising', 'closing']
 }));
+

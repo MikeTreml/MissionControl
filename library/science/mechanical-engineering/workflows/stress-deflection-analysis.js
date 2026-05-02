@@ -104,6 +104,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Stress calculations complete - Max stress: ${stressResult.maxStress} MPa`);
 
   // Quality Gate: Stress exceeds yield
+  if (stressResult.maxStress > material.yieldStrength) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -160,6 +161,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Deflection exceeds limit
   const deflectionLimit = designCriteria.deflectionLimit || geometry.length / 250;
+  if (deflectionResult.maxDeflection > deflectionLimit) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -232,6 +234,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Safety factor below requirement
   const requiredSF = designCriteria.safetyFactor || 2.0;
+  if (safetyResult.yieldSF < requiredSF) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -840,3 +843,4 @@ export const generateStressReportTask = defineTask('generate-stress-report', (ar
   },
   labels: ['mechanical-engineering', 'stress-analysis', 'reporting']
 }));
+

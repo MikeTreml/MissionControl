@@ -82,6 +82,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: High risk findings
   const highRisks = riskAssessment.risks.filter(r => r.level === 'high');
+  if (highRisks.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -379,3 +380,4 @@ export const piaApprovalTask = defineTask('pia-approval', (args, taskCtx) => ({
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'pia']
 }));
+

@@ -416,6 +416,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Observability testing complete - Coverage: ${testingResult.actualCoverage}%`);
 
   // Quality Gate: Testing results validation
+  if (testingResult.actualCoverage < targetCoverage) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -1568,3 +1569,4 @@ export const documentationTask = defineTask('documentation', (args, taskCtx) => 
   },
   labels: ['agent', 'observability-implementation', 'documentation']
 }));
+

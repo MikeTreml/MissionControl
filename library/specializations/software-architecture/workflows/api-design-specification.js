@@ -97,6 +97,7 @@ export async function process(inputs, ctx) {
            requirementsAnalysis.requirementCategories[cat].length === 0
   );
 
+  if (missingCategories.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -298,6 +299,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...authDesign.artifacts);
 
   // Quality Gate: Security review
+  if (targetAudience !== 'internal' && authDesign.securityScore < 80) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -389,6 +391,7 @@ export async function process(inputs, ctx) {
   apiSpecification = formalSpecification.specification;
 
   // Quality Gate: Specification validation
+  if (!formalSpecification.validationPassed) {
       let lastFeedback_phase10Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase10Review) {
@@ -520,6 +523,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Performance requirements
   const performanceMet = performanceDesign.estimatedP95Latency <= parseInt(constraints.latency);
+  if (!performanceMet) {
       let lastFeedback_phase15Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase15Review) {
@@ -637,6 +641,7 @@ export async function process(inputs, ctx) {
   const designQualityScore = designReview.qualityScore;
 
   // Quality Gate: Overall design quality
+  if (designQualityScore < 75) {
       let lastFeedback_phase19Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase19Review) {
@@ -2792,3 +2797,4 @@ export const designReviewTask = defineTask('design-review', (args, taskCtx) => (
   },
   labels: ['agent', 'api-design', 'design-review', 'quality-assessment']
 }));
+

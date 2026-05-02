@@ -60,6 +60,7 @@ export async function process(inputs, ctx) {
     methodDesigns: methodDesigns.methods,
     methodResults,
     domain
+  });
     let lastFeedback_phase3Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase3Review) {
@@ -127,6 +128,7 @@ export async function process(inputs, ctx) {
     discrepancyResolution,
     independenceAssessment,
     domain
+  });
     let lastFeedback_finalApproval = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_finalApproval) {
@@ -497,3 +499,4 @@ export const synthesizeTriangulationTask = defineTask('synthesize-triangulation'
   },
   labels: ['agent', 'triangulation', 'synthesis']
 }));
+

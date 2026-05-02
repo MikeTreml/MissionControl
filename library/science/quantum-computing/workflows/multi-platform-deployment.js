@@ -123,6 +123,7 @@ export async function process(inputs, ctx) {
 
     deployments[platform].execution = executionResult;
     artifacts.push(...(executionResult.artifacts || []));
+  }
     let lastFeedback_phase4Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase4Review) {
@@ -641,3 +642,4 @@ export const bestPracticesDocumentationTask = defineTask('mp-best-practices', (a
   },
   labels: ['quantum-computing', 'multi-platform', 'best-practices']
 }));
+

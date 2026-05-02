@@ -60,6 +60,7 @@ export async function process(inputs, ctx) {
     idealDesign,
     sculptedDesign,
     timestamp: ctx.now()
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -628,3 +629,4 @@ export const synthesizeRobustDesignTask = defineTask('synthesize-robust-design',
   },
   labels: ['agent', 'robust-mas-design', 'synthesis']
 }));
+

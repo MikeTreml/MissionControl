@@ -1,4 +1,4 @@
-# Hypothesis-Driven Development Examples
+﻿# Hypothesis-Driven Development Examples
 
 This directory contains example inputs for the Hypothesis-Driven Development methodology demonstrating various experiment types and use cases.
 
@@ -100,11 +100,11 @@ Examples demonstrate different segmentation strategies:
 ```bash
 # Using babysitter CLI
 babysitter run methodologies/hypothesis-driven-development \
-  --input examples/one-click-checkout.json
+  --input one-click-checkout.json
 
 # Using SDK
 import { run } from '@a5c-ai/babysitter-sdk';
-const example = require('./examples/one-click-checkout.json');
+const example = require('./one-click-checkout.json');
 const result = await run('methodologies/hypothesis-driven-development', example.inputs);
 ```
 
@@ -207,3 +207,4 @@ After running these examples:
 - See main README.md for methodology overview
 - See hypothesis-driven-development.js for implementation details
 - See backlog.md for methodology research and best practices
+

@@ -55,6 +55,7 @@ export async function process(inputs, ctx) {
 
   // Breakpoint: Review triggered risks
   const triggeredRisks = riskAssessment.triggeredRisks || [];
+  if (triggeredRisks.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -609,3 +610,4 @@ export const riskDocumentationTask = defineTask('risk-documentation', (args, tas
   },
   labels: ['risk', 'documentation', 'deliverable']
 }));
+

@@ -118,6 +118,7 @@ export async function process(inputs, ctx) {
     // Check for convergence
     converged = theorySelection.confidenceScore >= convergenceThreshold;
 
+    if (!converged && iteration < iterations) {
         let lastFeedback = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback) {
@@ -512,3 +513,4 @@ export const synthesizeTheorySketchTask = defineTask('synthesize-theory-sketch',
   },
   labels: ['agent', 'theory-sketching', 'synthesis']
 }));
+

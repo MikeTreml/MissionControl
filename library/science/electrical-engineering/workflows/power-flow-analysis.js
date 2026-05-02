@@ -104,6 +104,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Power flow must converge
+  if (!baseCasePowerFlow.converged) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -181,6 +182,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check for critical contingencies
+  if (contingencyAnalysis.criticalContingencies && contingencyAnalysis.criticalContingencies.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -784,3 +786,4 @@ export const recommendationsAndDocumentationTask = defineTask('recommendations-d
   },
   labels: ['ee', 'power-systems', 'planning', 'documentation']
 }));
+

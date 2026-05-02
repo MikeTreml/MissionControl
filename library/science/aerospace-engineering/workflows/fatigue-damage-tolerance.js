@@ -103,6 +103,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Critical crack size
+  if (crackGrowthAnalysis.criticalCrackSize < initialFlawAssumption.initialFlawSize * 2) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -642,3 +643,4 @@ export const dtReportTask = defineTask('dt-report', (args, taskCtx) => ({
   },
   labels: ['fatigue', 'reporting', 'aerospace']
 }));
+

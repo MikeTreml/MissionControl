@@ -366,6 +366,7 @@ export async function process(inputs, ctx) {
       ctx.log('info', `Health check PASSED at ${targetPercentage}% traffic. Health score: ${healthAnalysis.healthScore}/100`);
 
       // Optional breakpoint for review (can be skipped for full automation)
+      if (targetPercentage < 100 && i < canaryPercentages.length - 1) {
           let lastFeedback_iterationApproval4 = null;
         for (let attempt = 0; attempt < 3; attempt++) {
           if (lastFeedback_iterationApproval4) {
@@ -1843,3 +1844,4 @@ export const deploymentReportGenerationTask = defineTask('deployment-report-gene
   },
   labels: ['ml-deployment', 'canary', 'reporting', 'documentation']
 }));
+

@@ -91,6 +91,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `DR Plan Review Complete - Plan Status: ${planReview.planStatus}, Gaps: ${planReview.gapsIdentified}`);
 
   // Quality Gate: DR Plan Readiness
+  if (planReview.planStatus !== 'current' || planReview.gapsIdentified > 5) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -216,6 +217,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Stakeholder Coordination Complete - ${stakeholderCoordination.stakeholdersNotified} notified, ${stakeholderCoordination.rolesAssigned} roles assigned`);
 
   // Quality Gate: Stakeholder Readiness
+  if (!stakeholderCoordination.allRolesAssigned) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -383,6 +385,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Recovery Execution Complete - Success: ${recoveryExecution.recoverySuccessful}, Systems Recovered: ${recoveryExecution.systemsRecovered}/${recoveryExecution.totalSystems}, RTO Achieved: ${rtoAchieved.toFixed(2)}h`);
 
   // Quality Gate: Recovery Success Verification
+  if (!recoveryExecution.recoverySuccessful) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -479,6 +482,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Validation Complete - Data Integrity: ${dataIntegrityValidation.integrityScore}%, RPO Achieved: ${rpoAchieved.toFixed(2)}h, Application Functionality: ${applicationValidation.functionalityScore}%`);
 
   // Quality Gate: Data Integrity Check
+  if (dataIntegrityValidation.integrityScore < 95 || dataIntegrityValidation.dataLossDetected) {
       let lastFeedback_qualityGateApproval5 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval5) {
@@ -550,6 +554,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Failback Complete - Success: ${failbackResult.failbackSuccessful}, Systems Restored: ${failbackResult.systemsRestoredToPrimary}/${failbackResult.totalSystems}`);
 
     // Quality Gate: Failback Verification
+    if (!failbackResult.failbackSuccessful) {
         let lastFeedback_qualityGateApproval6 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval6) {
@@ -2742,3 +2747,4 @@ export const calculateDRScoresTask = defineTask('calculate-dr-scores', (args, ta
   },
   labels: ['agent', 'disaster-recovery', 'scoring']
 }));
+

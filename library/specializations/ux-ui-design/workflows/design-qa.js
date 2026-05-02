@@ -375,6 +375,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Pixel-perfect comparison: Score ${pixelPerfectScore}/100, ${pixelComparison.differences.length} differences found`);
 
   // Quality Gate: Pixel-perfect review
+  if (pixelComparison.criticalDifferences.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -558,6 +559,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Cross-browser testing: ${crossBrowserScore}/100, ${crossBrowserTest.inconsistencies.length} inconsistencies found`);
 
   // Quality Gate: Cross-browser review
+  if (crossBrowserTest.criticalInconsistencies.length > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -2943,3 +2945,4 @@ export const finalDesignQaAssessmentTask = defineTask('final-design-qa-assessmen
   },
   labels: ['agent', 'design-qa', 'assessment', 'verdict']
 }));
+

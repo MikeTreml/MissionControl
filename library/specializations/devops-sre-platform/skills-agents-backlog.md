@@ -1,4 +1,4 @@
-# DevOps, SRE, and Platform Engineering - Skills and Agents Backlog
+﻿# DevOps, SRE, and Platform Engineering - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the DevOps/SRE/Platform processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized tooling.
 
@@ -45,10 +45,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Analyze HPA metrics and scaling behavior
 
 **Process Integration**:
-- kubernetes-setup.js
-- service-mesh.js
-- auto-scaling.js
-- container-image-management.js
+- workflows\kubernetes-setup.js
+- workflows\service-mesh.js
+- workflows\auto-scaling.js
+- workflows\container-image-management.js
 
 **Dependencies**: kubectl CLI, kubeconfig access
 
@@ -70,9 +70,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Pulumi and CloudFormation awareness
 
 **Process Integration**:
-- iac-implementation.js
-- iac-testing.js
-- disaster-recovery-plan.js
+- workflows\iac-implementation.js
+- workflows\iac-testing.js
+- workflows\disaster-recovery-plan.js
 
 **Dependencies**: Terraform CLI, provider credentials
 
@@ -93,9 +93,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Interpret metric patterns and anomalies
 
 **Process Integration**:
-- monitoring-setup.js
-- slo-sli-tracking.js
-- error-budget-management.js
+- workflows\monitoring-setup.js
+- workflows\slo-sli-tracking.js
+- workflows\error-budget-management.js
 
 **Dependencies**: Prometheus API, Grafana API
 
@@ -116,9 +116,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Set up artifact caching strategies
 
 **Process Integration**:
-- cicd-pipeline-setup.js
-- pipeline-optimization.js
-- security-scanning.js
+- workflows\cicd-pipeline-setup.js
+- workflows\pipeline-optimization.js
+- workflows\security-scanning.js
 
 **Dependencies**: CI/CD platform APIs
 
@@ -139,9 +139,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Helm release management and rollback
 
 **Process Integration**:
-- kubernetes-setup.js
-- service-mesh.js
-- idp-setup.js
+- workflows\kubernetes-setup.js
+- workflows\service-mesh.js
+- workflows\idp-setup.js
 
 **Dependencies**: Helm CLI
 
@@ -162,9 +162,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Configure log shipping and parsing
 
 **Process Integration**:
-- log-aggregation.js
-- monitoring-setup.js
-- incident-response.js
+- workflows\log-aggregation.js
+- workflows\monitoring-setup.js
+- workflows\incident-response.js
 
 **Dependencies**: Loki/ELK API access
 
@@ -186,9 +186,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Registry operations (push, pull, tag)
 
 **Process Integration**:
-- container-image-management.js
-- security-scanning.js
-- cicd-pipeline-setup.js
+- workflows\container-image-management.js
+- workflows\security-scanning.js
+- workflows\cicd-pipeline-setup.js
 
 **Dependencies**: Docker CLI, registry access
 
@@ -210,9 +210,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Access policy configuration
 
 **Process Integration**:
-- secrets-management.js
-- security-scanning.js
-- kubernetes-setup.js
+- workflows\secrets-management.js
+- workflows\security-scanning.js
+- workflows\kubernetes-setup.js
 
 **Dependencies**: Vault CLI, cloud provider SDKs
 
@@ -233,8 +233,8 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Service mesh observability integration
 
 **Process Integration**:
-- service-mesh.js
-- kubernetes-setup.js
+- workflows\service-mesh.js
+- workflows\kubernetes-setup.js
 
 **Dependencies**: istioctl/linkerd CLI
 
@@ -255,9 +255,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Secret management with SOPS/Sealed Secrets
 
 **Process Integration**:
-- cicd-pipeline-setup.js
-- kubernetes-setup.js
-- idp-setup.js
+- workflows\cicd-pipeline-setup.js
+- workflows\kubernetes-setup.js
+- workflows\idp-setup.js
 
 **Dependencies**: argocd/flux CLI
 
@@ -279,10 +279,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - AWS service integration patterns
 
 **Process Integration**:
-- iac-implementation.js
-- kubernetes-setup.js
-- cost-optimization.js
-- disaster-recovery-plan.js
+- workflows\iac-implementation.js
+- workflows\kubernetes-setup.js
+- workflows\cost-optimization.js
+- workflows\disaster-recovery-plan.js
 
 **Dependencies**: AWS CLI, credentials
 
@@ -304,9 +304,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Cloud Functions/Run deployment
 
 **Process Integration**:
-- iac-implementation.js
-- kubernetes-setup.js
-- cost-optimization.js
+- workflows\iac-implementation.js
+- workflows\kubernetes-setup.js
+- workflows\cost-optimization.js
 
 **Dependencies**: gcloud CLI, credentials
 
@@ -328,9 +328,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - ARM/Bicep template generation
 
 **Process Integration**:
-- iac-implementation.js
-- kubernetes-setup.js
-- cost-optimization.js
+- workflows\iac-implementation.js
+- workflows\kubernetes-setup.js
+- workflows\cost-optimization.js
 
 **Dependencies**: az CLI, credentials
 
@@ -351,9 +351,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Postmortem template generation
 
 **Process Integration**:
-- incident-response.js
-- oncall-setup.js
-- monitoring-setup.js
+- workflows\incident-response.js
+- workflows\oncall-setup.js
+- workflows\monitoring-setup.js
 
 **Dependencies**: PagerDuty/Opsgenie API
 
@@ -375,9 +375,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Cost allocation and tagging
 
 **Process Integration**:
-- cost-optimization.js
-- auto-scaling.js
-- iac-implementation.js
+- workflows\cost-optimization.js
+- workflows\auto-scaling.js
+- workflows\iac-implementation.js
 
 **Dependencies**: Cloud billing APIs
 
@@ -407,9 +407,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Certifications: CKA, CKAD, CKS equivalent knowledge
 
 **Process Integration**:
-- kubernetes-setup.js (all phases)
-- service-mesh.js (installation, sidecar injection)
-- auto-scaling.js (HPA configuration)
+- workflows\kubernetes-setup.js (all phases)
+- workflows\service-mesh.js (installation, sidecar injection)
+- workflows\auto-scaling.js (HPA configuration)
 
 ---
 
@@ -433,10 +433,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Google SRE methodology trained
 
 **Process Integration**:
-- slo-sli-tracking.js (all phases)
-- error-budget-management.js (all phases)
-- incident-response.js (framework design, review)
-- oncall-setup.js (rotation design)
+- workflows\slo-sli-tracking.js (all phases)
+- workflows\error-budget-management.js (all phases)
+- workflows\incident-response.js (framework design, review)
+- workflows\oncall-setup.js (rotation design)
 
 ---
 
@@ -460,10 +460,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Enterprise architecture experience
 
 **Process Integration**:
-- iac-implementation.js (architecture design)
-- disaster-recovery-plan.js (DR architecture)
-- idp-setup.js (platform architecture)
-- cost-optimization.js (architecture review)
+- workflows\iac-implementation.js (architecture design)
+- workflows\disaster-recovery-plan.js (DR architecture)
+- workflows\idp-setup.js (platform architecture)
+- workflows\cost-optimization.js (architecture review)
 
 ---
 
@@ -487,10 +487,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Penetration testing, security auditing
 
 **Process Integration**:
-- security-scanning.js (all phases)
-- secrets-management.js (policy design, audit)
-- container-image-management.js (image security)
-- kubernetes-setup.js (security configuration)
+- workflows\security-scanning.js (all phases)
+- workflows\secrets-management.js (policy design, audit)
+- workflows\container-image-management.js (image security)
+- workflows\kubernetes-setup.js (security configuration)
 
 ---
 
@@ -514,9 +514,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Multi-platform pipeline experience
 
 **Process Integration**:
-- cicd-pipeline-setup.js (all phases)
-- pipeline-optimization.js (all phases)
-- container-image-management.js (build pipelines)
+- workflows\cicd-pipeline-setup.js (all phases)
+- workflows\pipeline-optimization.js (all phases)
+- workflows\container-image-management.js (build pipelines)
 
 ---
 
@@ -540,9 +540,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: High-scale systems monitoring
 
 **Process Integration**:
-- monitoring-setup.js (all phases)
-- log-aggregation.js (all phases)
-- slo-sli-tracking.js (measurement, dashboards)
+- workflows\monitoring-setup.js (all phases)
+- workflows\log-aggregation.js (all phases)
+- workflows\slo-sli-tracking.js (measurement, dashboards)
 
 ---
 
@@ -566,9 +566,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: High-pressure operations environments
 
 **Process Integration**:
-- incident-response.js (response phases)
-- oncall-setup.js (escalation design)
-- disaster-recovery-plan.js (DR execution)
+- workflows\incident-response.js (response phases)
+- workflows\oncall-setup.js (escalation design)
+- workflows\disaster-recovery-plan.js (DR execution)
 
 ---
 
@@ -592,9 +592,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Developer tools and productivity
 
 **Process Integration**:
-- idp-setup.js (all phases)
-- kubernetes-setup.js (developer access)
-- cicd-pipeline-setup.js (developer workflows)
+- workflows\idp-setup.js (all phases)
+- workflows\kubernetes-setup.js (developer access)
+- workflows\cicd-pipeline-setup.js (developer workflows)
 
 ---
 
@@ -618,9 +618,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Finance + engineering hybrid
 
 **Process Integration**:
-- cost-optimization.js (all phases)
-- auto-scaling.js (cost-aware scaling)
-- iac-implementation.js (cost tagging)
+- workflows\cost-optimization.js (all phases)
+- workflows\auto-scaling.js (cost-aware scaling)
+- workflows\iac-implementation.js (cost tagging)
 
 ---
 
@@ -644,9 +644,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Enterprise BC/DR programs
 
 **Process Integration**:
-- disaster-recovery-plan.js (all phases)
-- backup-restore-automation.js (all phases)
-- iac-implementation.js (DR infrastructure)
+- workflows\disaster-recovery-plan.js (all phases)
+- workflows\backup-restore-automation.js (all phases)
+- workflows\iac-implementation.js (DR infrastructure)
 
 ---
 
@@ -656,26 +656,26 @@ All 20 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| kubernetes-setup.js | SK-001, SK-005, SK-009 | AG-001, AG-004 |
-| cicd-pipeline-setup.js | SK-004, SK-007, SK-010 | AG-005 |
-| monitoring-setup.js | SK-003, SK-006, SK-014 | AG-006 |
-| incident-response.js | SK-006, SK-014 | AG-007, AG-002 |
-| iac-implementation.js | SK-002, SK-011/12/13 | AG-003 |
-| iac-testing.js | SK-002 | AG-003, AG-004 |
-| slo-sli-tracking.js | SK-003, SK-014 | AG-002, AG-006 |
-| error-budget-management.js | SK-003 | AG-002 |
-| service-mesh.js | SK-009, SK-001 | AG-001 |
-| secrets-management.js | SK-008 | AG-004 |
-| container-image-management.js | SK-007, SK-004 | AG-005, AG-004 |
-| pipeline-optimization.js | SK-004 | AG-005 |
-| log-aggregation.js | SK-006, SK-003 | AG-006 |
-| auto-scaling.js | SK-001, SK-015 | AG-001, AG-009 |
-| idp-setup.js | SK-005, SK-010 | AG-008 |
-| oncall-setup.js | SK-014 | AG-007, AG-002 |
-| disaster-recovery-plan.js | SK-002, SK-011/12/13 | AG-010, AG-003 |
-| security-scanning.js | SK-007, SK-008 | AG-004 |
-| backup-restore-automation.js | SK-002, SK-011/12/13 | AG-010 |
-| cost-optimization.js | SK-015, SK-011/12/13 | AG-009 |
+| workflows\kubernetes-setup.js | SK-001, SK-005, SK-009 | AG-001, AG-004 |
+| workflows\cicd-pipeline-setup.js | SK-004, SK-007, SK-010 | AG-005 |
+| workflows\monitoring-setup.js | SK-003, SK-006, SK-014 | AG-006 |
+| workflows\incident-response.js | SK-006, SK-014 | AG-007, AG-002 |
+| workflows\iac-implementation.js | SK-002, SK-011/12/13 | AG-003 |
+| workflows\iac-testing.js | SK-002 | AG-003, AG-004 |
+| workflows\slo-sli-tracking.js | SK-003, SK-014 | AG-002, AG-006 |
+| workflows\error-budget-management.js | SK-003 | AG-002 |
+| workflows\service-mesh.js | SK-009, SK-001 | AG-001 |
+| workflows\secrets-management.js | SK-008 | AG-004 |
+| workflows\container-image-management.js | SK-007, SK-004 | AG-005, AG-004 |
+| workflows\pipeline-optimization.js | SK-004 | AG-005 |
+| workflows\log-aggregation.js | SK-006, SK-003 | AG-006 |
+| workflows\auto-scaling.js | SK-001, SK-015 | AG-001, AG-009 |
+| workflows\idp-setup.js | SK-005, SK-010 | AG-008 |
+| workflows\oncall-setup.js | SK-014 | AG-007, AG-002 |
+| workflows\disaster-recovery-plan.js | SK-002, SK-011/12/13 | AG-010, AG-003 |
+| workflows\security-scanning.js | SK-007, SK-008 | AG-004 |
+| workflows\backup-restore-automation.js | SK-002, SK-011/12/13 | AG-010 |
+| workflows\cost-optimization.js | SK-015, SK-011/12/13 | AG-009 |
 
 ---
 
@@ -756,3 +756,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

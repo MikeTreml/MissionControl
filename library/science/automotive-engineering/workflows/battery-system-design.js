@@ -111,6 +111,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Safety analysis must pass
+  if (safetyAnalysis.criticalIssues && safetyAnalysis.criticalIssues.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -662,3 +663,4 @@ export const designDocumentationTask = defineTask('design-documentation', (args,
   },
   labels: ['automotive', 'battery', 'documentation', 'design-review']
 }));
+

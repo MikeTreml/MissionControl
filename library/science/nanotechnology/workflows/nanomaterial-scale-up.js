@@ -44,6 +44,7 @@ export async function process(inputs, ctx) {
       barriers: feasibilityAssessment.barriers,
       recommendations: feasibilityAssessment.recommendations
     };
+  }
     let lastFeedback_phase1Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase1Review) {
@@ -83,6 +84,7 @@ export async function process(inputs, ctx) {
     targetScale,
     transferAnalysis,
     productionRequirements
+  });
     let lastFeedback_phase3Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase3Review) {
@@ -143,6 +145,7 @@ export async function process(inputs, ctx) {
       consistencyScore
     });
 
+    if (consistencyScore < consistencyTarget && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -195,6 +198,7 @@ export async function process(inputs, ctx) {
     scaleUpProtocol,
     reactorDesign,
     targetScale
+  });
     let lastFeedback_finalApproval = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_finalApproval) {
@@ -629,3 +633,6 @@ export const scaleUpRiskAssessmentTask = defineTask('scale-up-risk-assessment', 
   },
   labels: ['nanotechnology', 'scale-up', 'risk-assessment']
 }));
+
+
+

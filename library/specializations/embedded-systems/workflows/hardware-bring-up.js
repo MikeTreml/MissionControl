@@ -80,6 +80,7 @@ export async function process(inputs, ctx) {
   if (powerValidation.issues) issues.push(...powerValidation.issues);
 
   // Quality Gate: Power validation must pass before proceeding
+  if (!powerValidation.allRailsValid) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -145,6 +146,7 @@ export async function process(inputs, ctx) {
   if (debugValidation.issues) issues.push(...debugValidation.issues);
 
   // Quality Gate: Debug connection
+  if (!debugValidation.connectionSuccessful) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -265,6 +267,7 @@ export async function process(inputs, ctx) {
   const overallSuccess = powerValidation.allRailsValid &&
     debugValidation.connectionSuccessful &&
     memoryTesting.allTestsPassed &&
+    firmwareLoadTest.loadSuccessful;
     let lastFeedback_finalApproval = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_finalApproval) {
@@ -710,3 +713,5 @@ export const bringUpReportTask = defineTask('bring-up-report', (args, taskCtx) =
   },
   labels: ['embedded-systems', 'hardware-bring-up', 'documentation']
 }));
+
+

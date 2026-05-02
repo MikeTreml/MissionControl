@@ -358,6 +358,7 @@ export async function process(inputs, ctx) {
   const validationPassed = pipelineScore >= 75;
 
   // Quality Gate: Pipeline must meet quality criteria
+  if (!validationPassed) {
       let lastFeedback_phase13Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase13Review) {
@@ -1753,3 +1754,4 @@ export const finalReviewTask = defineTask('final-review', (args, taskCtx) => ({
   },
   labels: ['devops', 'cicd', 'final-review', 'deployment']
 }));
+

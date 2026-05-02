@@ -204,6 +204,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Duplicate terms check
   const duplicateTerms = normalization.duplicateTerms.length;
+  if (duplicateTerms > acceptanceCriteria.maxDuplicateTerms) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -301,6 +302,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Consistency check complete: ${consistencyScore.toFixed(1)}% consistent, ${violations.length} violations found`);
 
   // Quality Gate: Consistency score
+  if (consistencyScore < acceptanceCriteria.minConsistencyScore) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -338,6 +340,7 @@ export async function process(inputs, ctx) {
     } }
 
   // Quality Gate: Maximum violations
+  if (violations.length > acceptanceCriteria.maxViolations) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -451,6 +454,7 @@ export async function process(inputs, ctx) {
   const termCoverage = coverageAnalysis.coveragePercentage;
 
   // Quality Gate: Term coverage
+  if (termCoverage < acceptanceCriteria.requiredTermCoverage) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -1681,3 +1685,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['agent', 'terminology', 'reporting']
 }));
+

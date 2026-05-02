@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, releaseStrategy, rolloutPercentage, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -134,3 +135,4 @@ export const rollbackProceduresTask = createReleaseTask('rollback-procedures', '
 export const hotfixProcessTask = createReleaseTask('hotfix-process', 'Hotfix Process Setup');
 export const releaseCommunicationTask = createReleaseTask('release-communication', 'Release Communication Automation');
 export const postReleaseValidationTask = createReleaseTask('post-release-validation', 'Post-Release Validation');
+

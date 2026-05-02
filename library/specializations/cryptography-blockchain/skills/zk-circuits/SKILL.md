@@ -1,4 +1,4 @@
----
+﻿---
 name: zk-circuits
 description: Zero-knowledge circuit development using Circom and Noir languages. Supports constraint optimization, ZK-friendly cryptographic primitives, proof generation (Groth16, PLONK), and Merkle tree implementations.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -330,7 +330,8 @@ template RangeCheck(n) {
 
 ## See Also
 
-- `skills/crypto-primitives/SKILL.md` - Cryptographic primitives
+- `SKILL.md` - Cryptographic primitives
 - `agents/zk-cryptographer/AGENT.md` - ZK expert agent
 - [Circom Documentation](https://docs.circom.io/)
 - [Noir Documentation](https://noir-lang.org/docs/)
+

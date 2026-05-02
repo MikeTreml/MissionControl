@@ -117,6 +117,7 @@ export async function process(inputs, ctx) {
       particleCharacteristics: encapsulationResults.particleCharacteristics
     });
 
+    if (encapsulationEfficiency < encapsulationTarget && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -152,6 +153,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Release profile must meet requirements
+  if (!releaseKinetics.meetsRequirements) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -193,6 +195,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Targeting must meet efficiency requirements
+  if (targetingValidation.efficiency < deliveryRequirements.targetingEfficiency) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -228,6 +231,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Must pass cytotoxicity threshold
+  if (cytotoxicityAssessment.emptyCarrierToxicity > cytotoxicityThreshold) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -853,3 +857,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['nanotechnology', 'drug-delivery', 'reporting']
 }));
+

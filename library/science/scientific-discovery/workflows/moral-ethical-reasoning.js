@@ -81,6 +81,7 @@ export async function process(inputs, ctx) {
     options: dilemmaAnalysis.availableOptions
   });
 
+  if (convergenceAnalysis.significantConflict) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -605,3 +606,4 @@ export const developJustificationTask = defineTask('ethical-justification', (arg
   },
   labels: ['ethical-reasoning', 'justification']
 }));
+

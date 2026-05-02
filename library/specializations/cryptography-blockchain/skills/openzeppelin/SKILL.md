@@ -1,4 +1,4 @@
----
+﻿---
 name: openzeppelin
 description: Expert usage of OpenZeppelin Contracts library for secure smart contract development. Covers access control, token standards, governance, upgrades, and security utilities.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -359,6 +359,7 @@ contract Airdrop {
 
 ## See Also
 
-- `skills/solidity-dev/SKILL.md` - Solidity development
+- `SKILL.md` - Solidity development
 - [OpenZeppelin Docs](https://docs.openzeppelin.com/)
 - [Contracts Wizard](https://wizard.openzeppelin.com/)
+

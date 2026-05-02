@@ -1,4 +1,4 @@
----
+﻿---
 name: blockchain-infra
 description: Expert in blockchain node operations and infrastructure including Ethereum execution and consensus clients, validator operations, MEV-Boost, and multi-chain infrastructure management.
 role: Senior Blockchain Infrastructure Engineer
@@ -286,6 +286,7 @@ volumes:
 ## Related Resources
 
 - `skills/node-operations/SKILL.md` - Node operations
-- `agents/incident-response/AGENT.md` - Incident handling
+- `AGENT.md` - Incident handling
 - [Ethereum.org Staking](https://ethereum.org/staking)
 - [EthStaker](https://ethstaker.cc/)
+

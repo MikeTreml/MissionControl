@@ -146,6 +146,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Identified ${interactionResult.interactions.length} drug-gene interactions`);
 
   // Breakpoint: Review drug interactions
+  if (interactionResult.highRiskInteractions.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -754,3 +755,4 @@ export const generatePgxReportTask = defineTask('generate-pgx-report', (args, ta
   },
   labels: ['bioinformatics', 'pharmacogenomics', 'report-generation']
 }));
+

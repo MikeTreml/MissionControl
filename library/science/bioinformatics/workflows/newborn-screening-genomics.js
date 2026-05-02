@@ -52,6 +52,7 @@ export async function process(inputs, ctx) {
   let pathogenicResult = await ctx.task(pathogenicIdentificationTask, { projectName, panelVariants: panelResult.panelVariants, screeningPanel, outputDir });
   artifacts.push(...pathogenicResult.artifacts);
 
+  if (pathogenicResult.actionableFindings > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -292,3 +293,4 @@ export const followupRecommendationsTask = defineTask('followup-recommendations'
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['bioinformatics', 'newborn-screening', 'followup']
 }));
+

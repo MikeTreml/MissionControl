@@ -540,6 +540,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Accessibility validation: ${accessibilityResults.issuesFound} issue(s) found, ${accessibilityResults.wcagCompliance}% WCAG 2.1 AA compliance`);
 
     // Quality Gate: Accessibility review
+    if (accessibilityResults.issuesFound > 0) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -2821,3 +2822,4 @@ export const prototypeValidationTask = defineTask('prototype-validation', (args,
   },
   labels: ['agent', 'ux-ui', 'validation', 'quality-assurance']
 }));
+

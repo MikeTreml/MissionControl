@@ -206,6 +206,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Data Subject Rights Assessment Complete - Rights Implemented: ${dataSubjectRights.rightsImplemented.length}/8, Implementation Score: ${dataSubjectRights.implementationScore}%`);
 
   // Quality Gate: Data subject rights review
+  if (dataSubjectRights.criticalGaps.length > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -261,6 +262,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `DPIA Complete - High Risk Activities: ${dpiaResult.highRiskActivities.length}, DPIA Required: ${dpiaResult.dpiaRequired}, Overall Risk Level: ${dpiaResult.overallRiskLevel}`);
 
     // Quality Gate: High-risk processing review
+    if (dpiaResult.dpiaRequired && dpiaResult.overallRiskLevel === 'high') {
         let lastFeedback_qualityGateApproval3 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval3) {
@@ -373,6 +375,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Data Transfers Assessment Complete - International Transfers: ${dataTransfers.internationalTransfers.length}, Compliant: ${dataTransfers.transfersCompliant}`);
 
   // Quality Gate: International transfers review
+  if (dataTransfers.internationalTransfers.length > 0 && !dataTransfers.transfersCompliant) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -494,6 +497,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Gap Analysis Complete - Compliance Score: ${complianceScore}%, Critical Gaps: ${gapAnalysis.criticalGaps.length}, High Priority Gaps: ${gapAnalysis.highPriorityGaps.length}`);
 
   // Quality Gate: Critical gaps review
+  if (gapAnalysis.criticalGaps.length > 0) {
       let lastFeedback_qualityGateApproval5 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval5) {
@@ -1797,3 +1801,5 @@ export const documentationGenerationTask = defineTask('documentation-generation'
   },
   labels: ['agent', 'gdpr-compliance', 'documentation']
 }));
+
+

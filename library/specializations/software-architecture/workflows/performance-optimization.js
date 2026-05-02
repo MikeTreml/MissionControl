@@ -122,6 +122,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Identified ${profilingResult.bottlenecks.length} bottlenecks (${criticalBottlenecks.length} critical)`);
 
   // Quality Gate: Bottleneck review
+  if (profilingResult.bottlenecks.length === 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -335,6 +336,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...loadTestResults.artifacts);
 
     // Quality Gate: Load test validation
+    if (!loadTestResults.passed) {
         let lastFeedback_phase5Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase5Review) {
@@ -1293,3 +1295,4 @@ export const monitoringSetupTask = defineTask('monitoring-setup', (args, taskCtx
   },
   labels: ['agent', 'performance-optimization', 'monitoring']
 }));
+

@@ -53,6 +53,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...currentStateAssessment.artifacts);
 
   // Quality Gate: Current state must be sufficiently documented
+  if (currentStateAssessment.completenessScore < 70) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -166,6 +167,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...migrationStrategy.artifacts);
 
   // Quality Gate: Migration strategy must be feasible within constraints
+  if (!migrationStrategy.feasibilityAssessment.withinConstraints) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -219,6 +221,7 @@ export async function process(inputs, ctx) {
     risk => risk.severity === 'critical' && !risk.mitigationPlan
   );
 
+  if (criticalRisksWithoutMitigation.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -1938,3 +1941,4 @@ export const strategyValidationTask = defineTask('strategy-validation', (args, t
   },
   labels: ['migration-strategy', 'validation', 'quality-assurance', 'approval']
 }));
+

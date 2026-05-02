@@ -39,6 +39,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Sensor coverage must be adequate
+  if (!sensorDefinition.coverageAnalysis || sensorDefinition.coverageAnalysis.blindSpots?.length > 0) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -136,6 +137,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Model performance
+  if (modelTraining.metrics?.mAP < 0.8) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -748,3 +750,4 @@ export const perceptionReleaseTask = defineTask('perception-release', (args, tas
   },
   labels: ['automotive', 'perception', 'release', 'documentation']
 }));
+

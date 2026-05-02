@@ -126,6 +126,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...discrepancyAggregation.artifacts);
 
   // Quality Gate: Review major discrepancies
+  if (discrepancyAggregation.majorDiscrepancies.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -185,6 +186,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...paymentApproval.artifacts);
 
   // Quality Gate: Manual approval for high-value bills
+  if (paymentApproval.pendingManualApproval.length > 0) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -700,3 +702,4 @@ export const auditReportingTask = defineTask('audit-reporting', (args, taskCtx) 
   },
   labels: ['agent', 'logistics', 'freight-audit', 'reporting']
 }));
+

@@ -96,6 +96,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check if validation criteria are met
+  if (!accuracyAssessment.validationPassed) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -593,3 +594,4 @@ export const limitationsDocumentationTask = defineTask('limitations-documentatio
   },
   labels: ['mathematics', 'model-validation', 'limitations']
 }));
+

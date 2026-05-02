@@ -1,4 +1,4 @@
-# GPU Programming and Parallel Computing - Skills and Agents Backlog
+﻿# GPU Programming and Parallel Computing - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the GPU Programming processes beyond general-purpose capabilities. These tools would provide domain-specific expertise in CUDA, OpenCL, Vulkan compute, GPU profiling, memory optimization, kernel development, tensor cores, and parallel algorithms.
 
@@ -49,10 +49,10 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Validate kernel launch bounds and resource usage
 
 **Process Integration**:
-- cuda-kernel-development.js
-- cuda-stream-concurrency.js
-- custom-cuda-operator-development.js
-- dynamic-parallelism-implementation.js
+- workflows\cuda-kernel-development.js
+- workflows\cuda-stream-concurrency.js
+- workflows\custom-cuda-operator-development.js
+- workflows\dynamic-parallelism-implementation.js
 
 **Dependencies**: CUDA Toolkit, nvcc compiler
 
@@ -75,10 +75,10 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Compare kernel performance across different configurations
 
 **Process Integration**:
-- performance-profiling-analysis.js
-- occupancy-optimization.js
-- warp-efficiency-optimization.js
-- gpu-memory-optimization.js
+- workflows\performance-profiling-analysis.js
+- workflows\occupancy-optimization.js
+- workflows\warp-efficiency-optimization.js
+- workflows\gpu-memory-optimization.js
 
 **Dependencies**: Nsight Systems, Nsight Compute
 
@@ -101,8 +101,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Support OpenCL 1.2, 2.0, and 3.0 specifications
 
 **Process Integration**:
-- opencl-application-development.js
-- hip-porting-cross-platform.js
+- workflows\opencl-application-development.js
+- workflows\hip-porting-cross-platform.js
 
 **Dependencies**: OpenCL SDK (NVIDIA, AMD, Intel)
 
@@ -125,7 +125,7 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Support Vulkan validation layers for debugging
 
 **Process Integration**:
-- compute-shader-development.js
+- workflows\compute-shader-development.js
 
 **Dependencies**: Vulkan SDK, glslangValidator/SPIRV-Tools
 
@@ -148,10 +148,10 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Generate optimized memory access code patterns
 
 **Process Integration**:
-- gpu-memory-optimization.js
-- shared-memory-usage-patterns.js
-- gpu-cpu-data-transfer-optimization.js
-- gpu-memory-pool-allocator.js
+- workflows\gpu-memory-optimization.js
+- workflows\shared-memory-usage-patterns.js
+- workflows\gpu-cpu-data-transfer-optimization.js
+- workflows\gpu-memory-pool-allocator.js
 
 **Dependencies**: Nsight Compute, compute-sanitizer
 
@@ -174,9 +174,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Integrate with cuSPARSE for sparse operations
 
 **Process Integration**:
-- tensor-core-programming.js
-- ml-inference-optimization.js
-- custom-cuda-operator-development.js
+- workflows\tensor-core-programming.js
+- workflows\ml-inference-optimization.js
+- workflows\custom-cuda-operator-development.js
 
 **Dependencies**: cuBLAS, cuDNN, cuSPARSE
 
@@ -199,8 +199,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Support RCCL for AMD GPU compatibility
 
 **Process Integration**:
-- multi-gpu-programming.js
-- gpu-cluster-computing.js
+- workflows\multi-gpu-programming.js
+- workflows\gpu-cluster-computing.js
 
 **Dependencies**: NCCL, RCCL, MPI
 
@@ -223,8 +223,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Compare TensorRT vs framework inference
 
 **Process Integration**:
-- ml-inference-optimization.js
-- tensor-core-programming.js
+- workflows\ml-inference-optimization.js
+- workflows\tensor-core-programming.js
 
 **Dependencies**: TensorRT, ONNX
 
@@ -247,8 +247,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Benchmark cross-platform performance
 
 **Process Integration**:
-- hip-porting-cross-platform.js
-- multi-gpu-programming.js
+- workflows\hip-porting-cross-platform.js
+- workflows\multi-gpu-programming.js
 
 **Dependencies**: ROCm, HIP, hipify tools
 
@@ -271,9 +271,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Generate debugging reports with recommendations
 
 **Process Integration**:
-- gpu-debugging-techniques.js
-- gpu-performance-regression-testing.js
-- atomic-operations-synchronization.js
+- workflows\gpu-debugging-techniques.js
+- workflows\gpu-performance-regression-testing.js
+- workflows\atomic-operations-synchronization.js
 
 **Dependencies**: compute-sanitizer, cuda-gdb
 
@@ -296,9 +296,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Optimize for specific GPU architectures
 
 **Process Integration**:
-- parallel-algorithm-design.js
-- reduction-scan-implementation.js
-- atomic-operations-synchronization.js
+- workflows\parallel-algorithm-design.js
+- workflows\reduction-scan-implementation.js
+- workflows\atomic-operations-synchronization.js
 
 **Dependencies**: CUB, Thrust libraries
 
@@ -321,9 +321,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Support CUDA 11+ warp intrinsics
 
 **Process Integration**:
-- warp-efficiency-optimization.js
-- reduction-scan-implementation.js
-- parallel-algorithm-design.js
+- workflows\warp-efficiency-optimization.js
+- workflows\reduction-scan-implementation.js
+- workflows\parallel-algorithm-design.js
 
 **Dependencies**: CUDA 11+, cooperative_groups header
 
@@ -346,8 +346,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Support multi-resolution stencils
 
 **Process Integration**:
-- stencil-computation-optimization.js
-- gpu-image-video-processing.js
+- workflows\stencil-computation-optimization.js
+- workflows\gpu-image-video-processing.js
 
 **Dependencies**: None (pattern knowledge)
 
@@ -370,7 +370,7 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Support B-frame and lookahead configuration
 
 **Process Integration**:
-- gpu-image-video-processing.js
+- workflows\gpu-image-video-processing.js
 
 **Dependencies**: Video Codec SDK
 
@@ -393,8 +393,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Create reproducible benchmark configurations
 
 **Process Integration**:
-- gpu-performance-regression-testing.js
-- performance-profiling-analysis.js
+- workflows\gpu-performance-regression-testing.js
+- workflows\performance-profiling-analysis.js
 
 **Dependencies**: CUDA Events, Nsight tools
 
@@ -417,9 +417,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Generate custom attention kernels
 
 **Process Integration**:
-- tensor-core-programming.js
-- custom-cuda-operator-development.js
-- ml-inference-optimization.js
+- workflows\tensor-core-programming.js
+- workflows\custom-cuda-operator-development.js
+- workflows\ml-inference-optimization.js
 
 **Dependencies**: CUTLASS, Triton
 
@@ -442,9 +442,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Optimize launch latency for inference
 
 **Process Integration**:
-- cuda-stream-concurrency.js
-- ml-inference-optimization.js
-- dynamic-parallelism-implementation.js
+- workflows\cuda-stream-concurrency.js
+- workflows\ml-inference-optimization.js
+- workflows\dynamic-parallelism-implementation.js
 
 **Dependencies**: CUDA 10+
 
@@ -467,9 +467,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Compare managed vs explicit memory
 
 **Process Integration**:
-- gpu-cpu-data-transfer-optimization.js
-- gpu-memory-optimization.js
-- multi-gpu-programming.js
+- workflows\gpu-cpu-data-transfer-optimization.js
+- workflows\gpu-memory-optimization.js
+- workflows\multi-gpu-programming.js
 
 **Dependencies**: CUDA 8+
 
@@ -501,10 +501,10 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: NVIDIA DLI certified, HPC applications
 
 **Process Integration**:
-- cuda-kernel-development.js (all phases)
-- cuda-stream-concurrency.js
-- custom-cuda-operator-development.js
-- dynamic-parallelism-implementation.js
+- workflows\cuda-kernel-development.js (all phases)
+- workflows\cuda-stream-concurrency.js
+- workflows\custom-cuda-operator-development.js
+- workflows\dynamic-parallelism-implementation.js
 
 ---
 
@@ -530,10 +530,10 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: HPC center optimization lead
 
 **Process Integration**:
-- performance-profiling-analysis.js (all phases)
-- occupancy-optimization.js (all phases)
-- warp-efficiency-optimization.js
-- gpu-performance-regression-testing.js
+- workflows\performance-profiling-analysis.js (all phases)
+- workflows\occupancy-optimization.js (all phases)
+- workflows\warp-efficiency-optimization.js
+- workflows\gpu-performance-regression-testing.js
 
 ---
 
@@ -559,10 +559,10 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: PhD in parallel algorithms, PPOPP/SC publications
 
 **Process Integration**:
-- parallel-algorithm-design.js (all phases)
-- reduction-scan-implementation.js
-- atomic-operations-synchronization.js
-- stencil-computation-optimization.js
+- workflows\parallel-algorithm-design.js (all phases)
+- workflows\reduction-scan-implementation.js
+- workflows\atomic-operations-synchronization.js
+- workflows\stencil-computation-optimization.js
 
 ---
 
@@ -588,10 +588,10 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: Computer architecture background
 
 **Process Integration**:
-- gpu-memory-optimization.js (all phases)
-- shared-memory-usage-patterns.js
-- gpu-cpu-data-transfer-optimization.js
-- gpu-memory-pool-allocator.js
+- workflows\gpu-memory-optimization.js (all phases)
+- workflows\shared-memory-usage-patterns.js
+- workflows\gpu-cpu-data-transfer-optimization.js
+- workflows\gpu-memory-pool-allocator.js
 
 ---
 
@@ -617,8 +617,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: Large-scale GPU cluster experience
 
 **Process Integration**:
-- multi-gpu-programming.js (all phases)
-- gpu-cluster-computing.js (all phases)
+- workflows\multi-gpu-programming.js (all phases)
+- workflows\gpu-cluster-computing.js (all phases)
 
 ---
 
@@ -644,9 +644,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: Deep learning framework development
 
 **Process Integration**:
-- tensor-core-programming.js (all phases)
-- ml-inference-optimization.js (quantization, TensorRT)
-- custom-cuda-operator-development.js
+- workflows\tensor-core-programming.js (all phases)
+- workflows\ml-inference-optimization.js (quantization, TensorRT)
+- workflows\custom-cuda-operator-development.js
 
 ---
 
@@ -672,8 +672,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: Experience with all major GPU vendors
 
 **Process Integration**:
-- hip-porting-cross-platform.js (all phases)
-- opencl-application-development.js (all phases)
+- workflows\hip-porting-cross-platform.js (all phases)
+- workflows\opencl-application-development.js (all phases)
 
 ---
 
@@ -699,7 +699,7 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: Game engine and real-time rendering
 
 **Process Integration**:
-- compute-shader-development.js (all phases)
+- workflows\compute-shader-development.js (all phases)
 
 ---
 
@@ -725,8 +725,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: MLOps and inference serving
 
 **Process Integration**:
-- ml-inference-optimization.js (all phases)
-- custom-cuda-operator-development.js (PyTorch integration)
+- workflows\ml-inference-optimization.js (all phases)
+- workflows\custom-cuda-operator-development.js (PyTorch integration)
 
 ---
 
@@ -752,8 +752,8 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: Testing and validation background
 
 **Process Integration**:
-- gpu-debugging-techniques.js (all phases)
-- gpu-performance-regression-testing.js
+- workflows\gpu-debugging-techniques.js (all phases)
+- workflows\gpu-performance-regression-testing.js
 
 ---
 
@@ -779,7 +779,7 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: Computer vision and streaming
 
 **Process Integration**:
-- gpu-image-video-processing.js (all phases)
+- workflows\gpu-image-video-processing.js (all phases)
 
 ---
 
@@ -805,9 +805,9 @@ All 25 implemented processes in this specialization currently use generic agent 
 - Background: PhD in computational science
 
 **Process Integration**:
-- stencil-computation-optimization.js
-- parallel-algorithm-design.js
-- gpu-cluster-computing.js
+- workflows\stencil-computation-optimization.js
+- workflows\parallel-algorithm-design.js
+- workflows\gpu-cluster-computing.js
 
 ---
 
@@ -817,31 +817,31 @@ All 25 implemented processes in this specialization currently use generic agent 
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| cuda-kernel-development.js | SK-001, SK-012 | AG-001 |
-| opencl-application-development.js | SK-003 | AG-007 |
-| gpu-memory-optimization.js | SK-005, SK-002 | AG-004 |
-| parallel-algorithm-design.js | SK-011, SK-012 | AG-003 |
-| performance-profiling-analysis.js | SK-002, SK-015 | AG-002 |
-| multi-gpu-programming.js | SK-007, SK-018 | AG-005 |
-| gpu-cpu-data-transfer-optimization.js | SK-005, SK-018 | AG-004 |
-| compute-shader-development.js | SK-004 | AG-008 |
-| gpu-debugging-techniques.js | SK-010 | AG-010 |
-| occupancy-optimization.js | SK-002, SK-001 | AG-002 |
-| warp-efficiency-optimization.js | SK-012, SK-002 | AG-002, AG-003 |
-| shared-memory-usage-patterns.js | SK-005, SK-012 | AG-004 |
-| tensor-core-programming.js | SK-006, SK-016 | AG-006 |
-| gpu-cluster-computing.js | SK-007 | AG-005, AG-012 |
-| ml-inference-optimization.js | SK-008, SK-006 | AG-009, AG-006 |
-| cuda-stream-concurrency.js | SK-001, SK-017 | AG-001 |
-| reduction-scan-implementation.js | SK-011, SK-012 | AG-003 |
-| stencil-computation-optimization.js | SK-013 | AG-003, AG-012 |
-| hip-porting-cross-platform.js | SK-009, SK-003 | AG-007 |
-| custom-cuda-operator-development.js | SK-001, SK-006, SK-016 | AG-001, AG-006 |
-| gpu-memory-pool-allocator.js | SK-005, SK-018 | AG-004 |
-| atomic-operations-synchronization.js | SK-011, SK-012 | AG-003 |
-| gpu-image-video-processing.js | SK-013, SK-014 | AG-011 |
-| dynamic-parallelism-implementation.js | SK-001, SK-017 | AG-001 |
-| gpu-performance-regression-testing.js | SK-015, SK-010 | AG-010, AG-002 |
+| workflows\cuda-kernel-development.js | SK-001, SK-012 | AG-001 |
+| workflows\opencl-application-development.js | SK-003 | AG-007 |
+| workflows\gpu-memory-optimization.js | SK-005, SK-002 | AG-004 |
+| workflows\parallel-algorithm-design.js | SK-011, SK-012 | AG-003 |
+| workflows\performance-profiling-analysis.js | SK-002, SK-015 | AG-002 |
+| workflows\multi-gpu-programming.js | SK-007, SK-018 | AG-005 |
+| workflows\gpu-cpu-data-transfer-optimization.js | SK-005, SK-018 | AG-004 |
+| workflows\compute-shader-development.js | SK-004 | AG-008 |
+| workflows\gpu-debugging-techniques.js | SK-010 | AG-010 |
+| workflows\occupancy-optimization.js | SK-002, SK-001 | AG-002 |
+| workflows\warp-efficiency-optimization.js | SK-012, SK-002 | AG-002, AG-003 |
+| workflows\shared-memory-usage-patterns.js | SK-005, SK-012 | AG-004 |
+| workflows\tensor-core-programming.js | SK-006, SK-016 | AG-006 |
+| workflows\gpu-cluster-computing.js | SK-007 | AG-005, AG-012 |
+| workflows\ml-inference-optimization.js | SK-008, SK-006 | AG-009, AG-006 |
+| workflows\cuda-stream-concurrency.js | SK-001, SK-017 | AG-001 |
+| workflows\reduction-scan-implementation.js | SK-011, SK-012 | AG-003 |
+| workflows\stencil-computation-optimization.js | SK-013 | AG-003, AG-012 |
+| workflows\hip-porting-cross-platform.js | SK-009, SK-003 | AG-007 |
+| workflows\custom-cuda-operator-development.js | SK-001, SK-006, SK-016 | AG-001, AG-006 |
+| workflows\gpu-memory-pool-allocator.js | SK-005, SK-018 | AG-004 |
+| workflows\atomic-operations-synchronization.js | SK-011, SK-012 | AG-003 |
+| workflows\gpu-image-video-processing.js | SK-013, SK-014 | AG-011 |
+| workflows\dynamic-parallelism-implementation.js | SK-001, SK-017 | AG-001 |
+| workflows\gpu-performance-regression-testing.js | SK-015, SK-010 | AG-010, AG-002 |
 
 ---
 
@@ -936,3 +936,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

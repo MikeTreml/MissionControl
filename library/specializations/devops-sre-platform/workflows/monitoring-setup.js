@@ -519,6 +519,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Monitoring coverage validation complete - Coverage: ${validationResult.actualCoverage}%`);
 
   // Quality Gate: Coverage validation
+  if (validationResult.actualCoverage < targetCoverage) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -574,6 +575,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `End-to-end testing complete - ${testingResult.testsPassed}/${testingResult.testsTotal} tests passed`);
 
   // Quality Gate: Testing validation
+  if (testingResult.testsFailed > 0) {
       let lastFeedback_phase10Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase10Review) {
@@ -1914,3 +1916,4 @@ export const calculateObservabilityScoreTask = defineTask('calculate-observabili
   },
   labels: ['agent', 'monitoring-setup', 'scoring']
 }));
+

@@ -713,6 +713,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Security testing complete - ${securityTestResult.testsRun} tests, ${securityTestResult.testsPassed} passed, ${securityTestResult.testsFailed} failed`);
 
   // Quality Gate: Security test results
+  if (securityTestResult.testsFailed > 0) {
       let lastFeedback_qualityGateApproval5 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval5) {
@@ -2289,3 +2290,4 @@ ${frameworks.map(framework => `
 `).join('\n')}
 `;
 }
+

@@ -207,6 +207,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...integrationTesting.artifacts);
 
   // Quality Gate: Integration test results
+  if (!integrationTesting.allPassed) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -696,3 +697,4 @@ export const monolithCleanupTask = defineTask('monolith-cleanup', (args, taskCtx
   },
   labels: ['microservices', 'cleanup', 'monolith']
 }));
+

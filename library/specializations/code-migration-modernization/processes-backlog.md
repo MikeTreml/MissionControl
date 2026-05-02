@@ -1,4 +1,4 @@
-# Code Migration and Modernization Processes Backlog
+﻿# Code Migration and Modernization Processes Backlog
 
 This document contains researched code migration and modernization processes that can be adapted to the Babysitter SDK orchestration framework. Each process should be implemented in its own directory under `processes/[name]/`.
 
@@ -7,12 +7,12 @@ This document contains researched code migration and modernization processes tha
 ### Directory Structure
 ```
 processes/
-├── [process-name]/
-│   ├── README.md              # Overview and usage
-│   ├── [process-name].js      # Main process workflow with embedded agentic or skill based tasks, breakpoints, etc.
-│   └── examples/              # Example inputs/outputs
-│       ├── examples.json
-│       └── ...
+â”œâ”€â”€ [process-name]/
+â”‚   â”œâ”€â”€ README.md              # Overview and usage
+â”‚   â”œâ”€â”€ [process-name].js      # Main process workflow with embedded agentic or skill based tasks, breakpoints, etc.
+â”‚   â””â”€â”€ examples/              # Example inputs/outputs
+â”‚       â”œâ”€â”€ examples.json
+â”‚       â””â”€â”€ ...
 ```
 
 ### File Patterns
@@ -87,7 +87,7 @@ A comprehensive process for analyzing legacy codebases to understand structure, 
 **Directory**: `processes/legacy-codebase-assessment/`
 
 **Files to Create**:
-1. **`legacy-codebase-assessment.js`** - Main assessment orchestration
+1. **`workflows\legacy-codebase-assessment.js`** - Main assessment orchestration
 
 ### Process Steps
 
@@ -1514,3 +1514,4 @@ Each process integrates with the Babysitter SDK using `defineTask`, `ctx.breakpo
 4. **Develop templates** for migration documentation
 5. **Gather feedback** from migration practitioners
 6. **Iterate and improve** based on real-world usage
+

@@ -1,4 +1,4 @@
-# Technical Documentation - Skills and Agents Backlog
+﻿# Technical Documentation - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Technical Documentation processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized documentation tooling.
 
@@ -47,9 +47,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Convert between OpenAPI formats (YAML/JSON, version migration)
 
 **Process Integration**:
-- api-doc-generation.js
-- api-reference-docs.js
-- sdk-doc-generation.js
+- workflows\api-doc-generation.js
+- workflows\api-reference-docs.js
+- workflows\sdk-doc-generation.js
 
 **Dependencies**: Spectral CLI, swagger-cli, openapi-generator
 
@@ -72,10 +72,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Theme customization
 
 **Process Integration**:
-- docs-as-code-pipeline.js
-- docs-versioning.js
-- interactive-tutorials.js
-- knowledge-base-setup.js
+- workflows\docs-as-code-pipeline.js
+- workflows\docs-versioning.js
+- workflows\interactive-tutorials.js
+- workflows\knowledge-base-setup.js
 
 **Dependencies**: Node.js, Docusaurus CLI
 
@@ -98,10 +98,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Enable blog and versioning features
 
 **Process Integration**:
-- docs-as-code-pipeline.js
-- docs-versioning.js
-- knowledge-base-setup.js
-- how-to-guides.js
+- workflows\docs-as-code-pipeline.js
+- workflows\docs-versioning.js
+- workflows\knowledge-base-setup.js
+- workflows\how-to-guides.js
 
 **Dependencies**: Python, MkDocs CLI, mkdocs-material
 
@@ -124,9 +124,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - LaTeX and PDF customization
 
 **Process Integration**:
-- api-doc-generation.js
-- sdk-doc-generation.js
-- docs-versioning.js
+- workflows\api-doc-generation.js
+- workflows\sdk-doc-generation.js
+- workflows\docs-versioning.js
 
 **Dependencies**: Python, Sphinx, sphinx-autobuild
 
@@ -149,10 +149,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Convert between documentation formats
 
 **Process Integration**:
-- style-guide-enforcement.js
-- docs-testing.js
-- docs-audit.js
-- content-strategy.js
+- workflows\style-guide-enforcement.js
+- workflows\docs-testing.js
+- workflows\docs-audit.js
+- workflows\content-strategy.js
 
 **Dependencies**: markdownlint-cli, remark, MDX
 
@@ -175,10 +175,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - SVG/PNG export with optimization
 
 **Process Integration**:
-- arch-docs-c4.js
-- data-model-docs.js
-- api-reference-docs.js
-- adr-docs.js
+- workflows\arch-docs-c4.js
+- workflows\data-model-docs.js
+- workflows\api-reference-docs.js
+- workflows\adr-docs.js
 
 **Dependencies**: Mermaid CLI, PlantUML, D2, Graphviz
 
@@ -201,10 +201,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Custom vocabulary/jargon management
 
 **Process Integration**:
-- style-guide-enforcement.js
-- docs-testing.js
-- docs-audit.js
-- terminology-management.js
+- workflows\style-guide-enforcement.js
+- workflows\docs-testing.js
+- workflows\docs-audit.js
+- workflows\terminology-management.js
 
 **Dependencies**: Vale CLI, write-good, alex
 
@@ -227,10 +227,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Generate runnable code from documentation
 
 **Process Integration**:
-- docs-testing.js
-- api-reference-docs.js
-- sdk-doc-generation.js
-- interactive-tutorials.js
+- workflows\docs-testing.js
+- workflows\api-reference-docs.js
+- workflows\sdk-doc-generation.js
+- workflows\interactive-tutorials.js
 
 **Dependencies**: Language-specific runtimes, prettier, eslint
 
@@ -253,9 +253,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Link accessibility checking
 
 **Process Integration**:
-- docs-testing.js
-- docs-audit.js
-- docs-pr-workflow.js
+- workflows\docs-testing.js
+- workflows\docs-audit.js
+- workflows\docs-pr-workflow.js
 
 **Dependencies**: linkinator, markdown-link-check
 
@@ -278,9 +278,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Locale file management (JSON, XLIFF, PO)
 
 **Process Integration**:
-- docs-localization.js
-- terminology-management.js
-- content-strategy.js
+- workflows\docs-localization.js
+- workflows\terminology-management.js
+- workflows\content-strategy.js
 
 **Dependencies**: Crowdin CLI, Transifex CLI
 
@@ -303,9 +303,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Webhook configuration
 
 **Process Integration**:
-- knowledge-base-setup.js
-- docs-versioning.js
-- content-strategy.js
+- workflows\knowledge-base-setup.js
+- workflows\docs-versioning.js
+- workflows\content-strategy.js
 
 **Dependencies**: GitBook API, Notion API
 
@@ -328,9 +328,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Webhook and automation setup
 
 **Process Integration**:
-- api-doc-generation.js
-- api-reference-docs.js
-- docs-versioning.js
+- workflows\api-doc-generation.js
+- workflows\api-reference-docs.js
+- workflows\docs-versioning.js
 
 **Dependencies**: ReadMe API, rdme CLI
 
@@ -353,9 +353,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Confluence-to-Markdown export
 
 **Process Integration**:
-- knowledge-base-setup.js
-- docs-pr-workflow.js
-- content-strategy.js
+- workflows\knowledge-base-setup.js
+- workflows\docs-pr-workflow.js
+- workflows\content-strategy.js
 
 **Dependencies**: Confluence REST API, atlassian-python-api
 
@@ -378,9 +378,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - ESLint plugin for doc validation
 
 **Process Integration**:
-- api-doc-generation.js
-- sdk-doc-generation.js
-- docs-audit.js
+- workflows\api-doc-generation.js
+- workflows\sdk-doc-generation.js
+- workflows\docs-audit.js
 
 **Dependencies**: JSDoc, TypeDoc, eslint-plugin-jsdoc
 
@@ -403,9 +403,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - HTML/LaTeX/XML output
 
 **Process Integration**:
-- api-doc-generation.js
-- sdk-doc-generation.js
-- arch-docs-c4.js
+- workflows\api-doc-generation.js
+- workflows\sdk-doc-generation.js
+- workflows\arch-docs-c4.js
 
 **Dependencies**: Doxygen, Javadoc
 
@@ -428,9 +428,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Spectral linting for AsyncAPI
 
 **Process Integration**:
-- api-doc-generation.js
-- api-reference-docs.js
-- data-model-docs.js
+- workflows\api-doc-generation.js
+- workflows\api-reference-docs.js
+- workflows\data-model-docs.js
 
 **Dependencies**: AsyncAPI CLI, asyncapi-generator
 
@@ -453,9 +453,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Chromatic integration for visual testing
 
 **Process Integration**:
-- sdk-doc-generation.js
-- interactive-tutorials.js
-- how-to-guides.js
+- workflows\sdk-doc-generation.js
+- workflows\interactive-tutorials.js
+- workflows\how-to-guides.js
 
 **Dependencies**: Storybook, @storybook/addon-docs
 
@@ -478,9 +478,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Custom event tracking
 
 **Process Integration**:
-- docs-audit.js
-- content-strategy.js
-- knowledge-base-setup.js
+- workflows\docs-audit.js
+- workflows\content-strategy.js
+- workflows\knowledge-base-setup.js
 
 **Dependencies**: Analytics APIs, GA4
 
@@ -503,9 +503,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Accessibility report generation
 
 **Process Integration**:
-- docs-testing.js
-- docs-audit.js
-- style-guide-enforcement.js
+- workflows\docs-testing.js
+- workflows\docs-audit.js
+- workflows\style-guide-enforcement.js
 
 **Dependencies**: axe-core, pa11y, lighthouse
 
@@ -528,10 +528,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Cover page and headers/footers
 
 **Process Integration**:
-- docs-versioning.js
-- user-guide-docs.js
-- runbook-docs.js
-- adr-docs.js
+- workflows\docs-versioning.js
+- workflows\user-guide-docs.js
+- workflows\runbook-docs.js
+- workflows\adr-docs.js
 
 **Dependencies**: Pandoc, WeasyPrint, Prince
 
@@ -562,11 +562,11 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: Developer documentation for SaaS/APIs
 
 **Process Integration**:
-- api-reference-docs.js (structure, content review)
-- user-guide-docs.js (content creation, structure)
-- how-to-guides.js (template development)
-- content-strategy.js (strategy planning)
-- style-guide-enforcement.js (rule development)
+- workflows\api-reference-docs.js (structure, content review)
+- workflows\user-guide-docs.js (content creation, structure)
+- workflows\how-to-guides.js (template development)
+- workflows\content-strategy.js (strategy planning)
+- workflows\style-guide-enforcement.js (rule development)
 
 ---
 
@@ -592,9 +592,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: Developer relations, API design
 
 **Process Integration**:
-- api-doc-generation.js (all phases)
-- api-reference-docs.js (all phases)
-- sdk-doc-generation.js (all phases)
+- workflows\api-doc-generation.js (all phases)
+- workflows\api-reference-docs.js (all phases)
+- workflows\sdk-doc-generation.js (all phases)
 
 ---
 
@@ -619,10 +619,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: UX, library science, content strategy
 
 **Process Integration**:
-- content-strategy.js (architecture design)
-- knowledge-base-setup.js (structure planning)
-- docs-audit.js (content analysis)
-- arch-docs-c4.js (documentation structure)
+- workflows\content-strategy.js (architecture design)
+- workflows\knowledge-base-setup.js (structure planning)
+- workflows\docs-audit.js (content analysis)
+- workflows\arch-docs-c4.js (documentation structure)
 
 ---
 
@@ -648,10 +648,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: QA engineering, technical writing
 
 **Process Integration**:
-- docs-testing.js (all phases)
-- docs-audit.js (all phases)
-- docs-pr-workflow.js (review gates)
-- style-guide-enforcement.js (validation)
+- workflows\docs-testing.js (all phases)
+- workflows\docs-audit.js (all phases)
+- workflows\docs-pr-workflow.js (review gates)
+- workflows\style-guide-enforcement.js (validation)
 
 ---
 
@@ -677,9 +677,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: Site reliability engineering
 
 **Process Integration**:
-- runbook-docs.js (all phases)
-- incident-docs.js (all phases)
-- how-to-guides.js (operational guides)
+- workflows\runbook-docs.js (all phases)
+- workflows\incident-docs.js (all phases)
+- workflows\how-to-guides.js (operational guides)
 
 ---
 
@@ -705,9 +705,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: Software architecture, technical writing
 
 **Process Integration**:
-- arch-docs-c4.js (all phases)
-- adr-docs.js (all phases)
-- data-model-docs.js (all phases)
+- workflows\arch-docs-c4.js (all phases)
+- workflows\adr-docs.js (all phases)
+- workflows\data-model-docs.js (all phases)
 
 ---
 
@@ -733,9 +733,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: Translation, project management
 
 **Process Integration**:
-- docs-localization.js (all phases)
-- terminology-management.js (glossary management)
-- content-strategy.js (i18n strategy)
+- workflows\docs-localization.js (all phases)
+- workflows\terminology-management.js (glossary management)
+- workflows\content-strategy.js (i18n strategy)
 
 ---
 
@@ -761,10 +761,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: Software development, DevRel
 
 **Process Integration**:
-- interactive-tutorials.js (all phases)
-- how-to-guides.js (usability review)
-- knowledge-base-setup.js (DX optimization)
-- sdk-doc-generation.js (quickstart optimization)
+- workflows\interactive-tutorials.js (all phases)
+- workflows\how-to-guides.js (usability review)
+- workflows\knowledge-base-setup.js (DX optimization)
+- workflows\sdk-doc-generation.js (quickstart optimization)
 
 ---
 
@@ -790,10 +790,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: DevOps, frontend engineering
 
 **Process Integration**:
-- docs-as-code-pipeline.js (all phases)
-- docs-versioning.js (all phases)
-- knowledge-base-setup.js (infrastructure)
-- docs-pr-workflow.js (CI/CD setup)
+- workflows\docs-as-code-pipeline.js (all phases)
+- workflows\docs-versioning.js (all phases)
+- workflows\knowledge-base-setup.js (infrastructure)
+- workflows\docs-pr-workflow.js (CI/CD setup)
 
 ---
 
@@ -819,10 +819,10 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: Content strategy, program management
 
 **Process Integration**:
-- content-strategy.js (all phases)
-- docs-audit.js (strategy alignment)
-- terminology-management.js (governance)
-- style-guide-enforcement.js (governance)
+- workflows\content-strategy.js (all phases)
+- workflows\docs-audit.js (strategy alignment)
+- workflows\terminology-management.js (governance)
+- workflows\style-guide-enforcement.js (governance)
 
 ---
 
@@ -848,9 +848,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: Software development, education
 
 **Process Integration**:
-- interactive-tutorials.js (all phases)
-- how-to-guides.js (tutorial creation)
-- sdk-doc-generation.js (quickstarts)
+- workflows\interactive-tutorials.js (all phases)
+- workflows\how-to-guides.js (tutorial creation)
+- workflows\sdk-doc-generation.js (quickstarts)
 
 ---
 
@@ -876,9 +876,9 @@ All 22 implemented processes in this specialization currently use the `general-p
 - Background: GRC, technical writing
 
 **Process Integration**:
-- runbook-docs.js (compliance procedures)
-- incident-docs.js (compliance reporting)
-- docs-audit.js (compliance review)
+- workflows\runbook-docs.js (compliance procedures)
+- workflows\incident-docs.js (compliance reporting)
+- workflows\docs-audit.js (compliance review)
 
 ---
 
@@ -888,27 +888,27 @@ All 22 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| api-doc-generation.js | SK-001, SK-014, SK-015, SK-016 | AG-002 |
-| api-reference-docs.js | SK-001, SK-006, SK-012 | AG-002, AG-001 |
-| sdk-doc-generation.js | SK-001, SK-014, SK-017 | AG-002, AG-011 |
-| docs-as-code-pipeline.js | SK-002, SK-003, SK-004 | AG-009 |
-| docs-versioning.js | SK-002, SK-003, SK-020 | AG-009 |
-| arch-docs-c4.js | SK-006, SK-015 | AG-006 |
-| adr-docs.js | SK-005, SK-006 | AG-006 |
-| data-model-docs.js | SK-006, SK-016 | AG-006 |
-| style-guide-enforcement.js | SK-005, SK-007 | AG-004, AG-010 |
-| docs-testing.js | SK-007, SK-008, SK-009, SK-019 | AG-004 |
-| docs-audit.js | SK-007, SK-009, SK-018 | AG-004, AG-003 |
-| docs-pr-workflow.js | SK-005, SK-009 | AG-009, AG-004 |
-| docs-localization.js | SK-010 | AG-007 |
-| terminology-management.js | SK-007, SK-010 | AG-007, AG-010 |
-| content-strategy.js | SK-005, SK-018 | AG-010, AG-003 |
-| knowledge-base-setup.js | SK-011, SK-013 | AG-003, AG-009 |
-| how-to-guides.js | SK-003, SK-005 | AG-001, AG-011 |
-| interactive-tutorials.js | SK-002, SK-008, SK-017 | AG-011, AG-008 |
-| user-guide-docs.js | SK-005, SK-020 | AG-001 |
-| runbook-docs.js | SK-005, SK-006 | AG-005 |
-| incident-docs.js | SK-005 | AG-005, AG-012 |
+| workflows\api-doc-generation.js | SK-001, SK-014, SK-015, SK-016 | AG-002 |
+| workflows\api-reference-docs.js | SK-001, SK-006, SK-012 | AG-002, AG-001 |
+| workflows\sdk-doc-generation.js | SK-001, SK-014, SK-017 | AG-002, AG-011 |
+| workflows\docs-as-code-pipeline.js | SK-002, SK-003, SK-004 | AG-009 |
+| workflows\docs-versioning.js | SK-002, SK-003, SK-020 | AG-009 |
+| workflows\arch-docs-c4.js | SK-006, SK-015 | AG-006 |
+| workflows\adr-docs.js | SK-005, SK-006 | AG-006 |
+| workflows\data-model-docs.js | SK-006, SK-016 | AG-006 |
+| workflows\style-guide-enforcement.js | SK-005, SK-007 | AG-004, AG-010 |
+| workflows\docs-testing.js | SK-007, SK-008, SK-009, SK-019 | AG-004 |
+| workflows\docs-audit.js | SK-007, SK-009, SK-018 | AG-004, AG-003 |
+| workflows\docs-pr-workflow.js | SK-005, SK-009 | AG-009, AG-004 |
+| workflows\docs-localization.js | SK-010 | AG-007 |
+| workflows\terminology-management.js | SK-007, SK-010 | AG-007, AG-010 |
+| workflows\content-strategy.js | SK-005, SK-018 | AG-010, AG-003 |
+| workflows\knowledge-base-setup.js | SK-011, SK-013 | AG-003, AG-009 |
+| workflows\how-to-guides.js | SK-003, SK-005 | AG-001, AG-011 |
+| workflows\interactive-tutorials.js | SK-002, SK-008, SK-017 | AG-011, AG-008 |
+| workflows\user-guide-docs.js | SK-005, SK-020 | AG-001 |
+| workflows\runbook-docs.js | SK-005, SK-006 | AG-005 |
+| workflows\incident-docs.js | SK-005 | AG-005, AG-012 |
 
 ---
 
@@ -1006,3 +1006,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

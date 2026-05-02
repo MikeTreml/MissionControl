@@ -141,6 +141,7 @@ export async function process(inputs, ctx) {
   const totalNewTests = (routeTests.testsAdded || 0) + (featureTests.testsAdded || 0);
   const gatePassed = finalResult.allPassing && totalNewTests > 0;
 
+  if (!gatePassed) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -454,3 +455,4 @@ export const fixFailingE2eTestsTask = defineTask('fix-failing-e2e-tests', (args,
   },
   labels: ['agent', 'e2e-gate', 'fix-tests']
 }));
+

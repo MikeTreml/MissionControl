@@ -1,4 +1,4 @@
-# RUP (Rational Unified Process)
+﻿# RUP (Rational Unified Process)
 
 **Iterative software development framework with four phases and use-case driven, architecture-centric approach**
 
@@ -159,7 +159,7 @@ RUP emphasizes establishing a **solid architecture baseline** early:
 **RUP is risk-driven**, not requirements-driven or schedule-driven:
 
 1. **Assess Risks**: Identify technical, schedule, business, and organizational risks
-2. **Prioritize by Exposure**: Risk Exposure = Probability × Impact
+2. **Prioritize by Exposure**: Risk Exposure = Probability Ã— Impact
 3. **Address High Risks First**: Elaboration focuses on mitigating highest risks
 4. **Iterate Until Risks Manageable**: Continue iterations until risks are under control
 5. **Plan Iterations Around Risks**: Assign high-risk use cases to early iterations
@@ -205,7 +205,7 @@ RUP can be composed with other methodologies:
 ## Usage
 
 ```javascript
-import { process } from './methodologies/rup/rup.js';
+import { process } from 'workflows\rup.js';
 
 const inputs = {
   projectName: 'Enterprise CRM System',
@@ -373,3 +373,4 @@ For each iteration:
 ## License
 
 Part of the Babysitter SDK orchestration framework.
+

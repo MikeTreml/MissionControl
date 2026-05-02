@@ -98,6 +98,7 @@ export async function process(inputs, ctx) {
     // Assess current robustness
     robustnessScore = refinedModel.robustnessScore || 0;
 
+    if (round < rounds) {
         let lastFeedback = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback) {
@@ -524,3 +525,4 @@ export const synthesizeAdversarialFindingsTask = defineTask('synthesize-adversar
   },
   labels: ['agent', 'adversarial-codesign', 'synthesis']
 }));
+

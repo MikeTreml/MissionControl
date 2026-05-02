@@ -36,6 +36,7 @@ export async function process(inputs, ctx) {
 
   let testSequence = await ctx.task(testSequenceTask, { projectName, vibrationTest, thermalTest, emiEmcTest, combinedEnvTest, testTailoring });
 
+  if (testSequence.preconditioningRequired) {
       let lastFeedback_testApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_testApproval) {
@@ -165,3 +166,4 @@ export const environmentalReportTask = defineTask('environmental-report', (args,
   }, outputSchema: { type: 'object', required: ['report', 'markdown'], properties: { report: { type: 'object' }, markdown: { type: 'string' } } } },
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['environmental', 'aerospace']
 }));
+

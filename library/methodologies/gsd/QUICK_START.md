@@ -1,4 +1,4 @@
-# GSD Workflows - Quick Start Guide
+﻿# GSD Workflows - Quick Start Guide
 
 ## What is GSD?
 
@@ -54,7 +54,7 @@ babysitter --version
 # 1. Initialize project
 babysitter run:create \
   --process-id gsd/new-project \
-  --entry gsd/new-project.js#process \
+  --entry workflows\new-project.js#process \
   --inputs new-project-inputs.json
 
 # 2. For each phase in roadmap:
@@ -62,31 +62,31 @@ babysitter run:create \
 # 2a. Discuss implementation preferences
 babysitter run:create \
   --process-id gsd/discuss-phase \
-  --entry gsd/discuss-phase.js#process \
+  --entry workflows\discuss-phase.js#process \
   --inputs phase-1-inputs.json
 
 # 2b. Plan with verification
 babysitter run:create \
   --process-id gsd/plan-phase \
-  --entry gsd/plan-phase.js#process \
+  --entry workflows\plan-phase.js#process \
   --inputs phase-1-planning-inputs.json
 
 # 2c. Execute with atomic commits
 babysitter run:create \
   --process-id gsd/execute-phase \
-  --entry gsd/execute-phase.js#process \
+  --entry workflows\execute-phase.js#process \
   --inputs phase-1-execution-inputs.json
 
 # 2d. Verify work
 babysitter run:create \
   --process-id gsd/verify-work \
-  --entry gsd/verify-work.js#process \
+  --entry workflows\verify-work.js#process \
   --inputs phase-1-verify-inputs.json
 
 # 3. Audit milestone when phases complete
 babysitter run:create \
   --process-id gsd/audit-milestone \
-  --entry gsd/audit-milestone.js#process \
+  --entry workflows\audit-milestone.js#process \
   --inputs milestone-1-inputs.json
 ```
 
@@ -96,11 +96,11 @@ babysitter run:create \
 # 1. Map existing codebase
 babysitter run:create \
   --process-id gsd/map-codebase \
-  --entry gsd/map-codebase.js#process \
+  --entry workflows\map-codebase.js#process \
   --inputs '{"codebasePath": ".", "analysisDepth": "comprehensive"}'
 
 # 2. Use standard workflow with codebase context
-# (Discuss → Plan → Execute → Verify)
+# (Discuss â†’ Plan â†’ Execute â†’ Verify)
 ```
 
 ### Pattern 3: Single High-Quality Feature
@@ -109,7 +109,7 @@ babysitter run:create \
 # Use iterative convergence for quality-critical work
 babysitter run:create \
   --process-id gsd/iterative-convergence \
-  --entry gsd/iterative-convergence.js#process \
+  --entry workflows\iterative-convergence.js#process \
   --inputs feature-inputs.json
 ```
 
@@ -187,7 +187,7 @@ Tasks run in parallel when possible:
 ### Extend a Workflow
 
 ```javascript
-import { process as planPhase } from './plan-phase.js';
+import { process as planPhase } from 'workflows\plan-phase.js';
 
 export async function process(inputs, ctx) {
   // Add custom pre-processing
@@ -281,10 +281,10 @@ export const myCustomTask = defineTask('my-task', (args, taskCtx) => ({
 ## Examples
 
 See `examples/` directory for complete working examples:
-- `new-project-example.json` - Full project initialization
-- `phase-example.json` - Authentication phase
-- `milestone-example.json` - MVP milestone
-- `convergence-example.json` - High-quality feature
+- `examples\new-project-example.json` - Full project initialization
+- `examples\phase-example.json` - Authentication phase
+- `examples\milestone-example.json` - MVP milestone
+- `examples\convergence-example.json` - High-quality feature
 
 ## Getting Help
 
@@ -296,7 +296,7 @@ See `examples/` directory for complete working examples:
 
 ## Next Steps
 
-1. Try `new-project.js` with example input
+1. Try `workflows\new-project.js` with example input
 2. Customize workflows for your needs
 3. Create reusable task definitions
 4. Build project-specific compositions
@@ -305,3 +305,5 @@ See `examples/` directory for complete working examples:
 ---
 
 **Remember:** The complexity is in the system, not your workflow. These processes handle the orchestration so you can focus on building.
+
+

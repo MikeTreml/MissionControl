@@ -1,4 +1,4 @@
----
+﻿---
 name: defi-protocols
 description: Integration expertise for major DeFi protocols including Uniswap, Aave, Compound, Chainlink, Curve, and Balancer. Supports swaps, liquidity provision, lending, borrowing, oracles, and flash loans.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -406,6 +406,7 @@ async function sendPrivateTransaction() {
 
 ## See Also
 
-- `skills/solidity-dev/SKILL.md` - Solidity development
+- `SKILL.md` - Solidity development
 - `agents/defi-architect/AGENT.md` - DeFi expert
 - [DeFiLlama](https://defillama.com/) - Protocol TVL
+

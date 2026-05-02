@@ -339,6 +339,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...backfillStrategy.artifacts);
 
+  if (backfillRequired) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -476,6 +477,7 @@ export async function process(inputs, ctx) {
   const validationScore = validation.overallScore;
   const validationPassed = validationScore >= 85;
 
+  if (!validationPassed) {
       let lastFeedback_phase11Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase11Review) {
@@ -1744,3 +1746,4 @@ export const documentationGenerationTask = defineTask('documentation-generation'
   },
   labels: ['dbt', 'incremental', 'documentation', 'knowledge-sharing']
 }));
+

@@ -1,4 +1,4 @@
----
+﻿---
 name: chain-forensics
 description: On-chain analysis and transaction forensics for blockchain security investigations. Provides capabilities for tracing fund flows, identifying suspicious patterns, MEV analysis, and generating forensic reports for incident response.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch, WebSearch
@@ -325,5 +325,6 @@ This skill integrates with:
 ## See Also
 
 - `agents/incident-response/AGENT.md` - Incident commander agent
-- `skills/bug-bounty/SKILL.md` - Disclosure coordination
+- `SKILL.md` - Disclosure coordination
 - `incident-response-exploits.js` - Full incident process
+

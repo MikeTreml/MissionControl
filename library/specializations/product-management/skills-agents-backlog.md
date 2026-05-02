@@ -1,4 +1,4 @@
-# Product Management and Product Strategy - Skills and Agents Backlog
+﻿# Product Management and Product Strategy - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Product Management processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized tooling.
 
@@ -21,23 +21,23 @@ This document identifies specialized skills and agents (subagents) that could en
 All 17 implemented processes in this specialization currently use the `general-purpose` agent for task execution. While functional, this approach lacks domain-specific optimizations that specialized skills and agents could provide.
 
 ### Implemented Processes
-1. `quarterly-roadmap.js` - Strategic roadmap planning
-2. `rice-prioritization.js` - RICE scoring framework
-3. `moscow-prioritization.js` - MoSCoW categorization
-4. `feature-definition-prd.js` - PRD creation and user story writing
-5. `user-story-mapping.js` - User story mapping with personas
-6. `jtbd-analysis.js` - Jobs-to-be-Done analysis
-7. `competitive-analysis.js` - Market and competitive analysis
-8. `product-market-fit.js` - PMF assessment and validation
-9. `product-vision-strategy.js` - Vision and strategy definition
-10. `product-launch-gtm.js` - Launch planning and GTM strategy
-11. `beta-program.js` - Beta program management
-12. `metrics-dashboard.js` - KPI and metrics definition
-13. `conversion-funnel-analysis.js` - Funnel optimization
-14. `retention-cohort-analysis.js` - Cohort retention analysis
-15. `stakeholder-alignment.js` - Stakeholder communication
-16. `customer-advisory-board.js` - CAB management
-17. `product-council-review.js` - Product review processes
+1. `workflows\quarterly-roadmap.js` - Strategic roadmap planning
+2. `workflows\rice-prioritization.js` - RICE scoring framework
+3. `workflows\moscow-prioritization.js` - MoSCoW categorization
+4. `workflows\feature-definition-prd.js` - PRD creation and user story writing
+5. `workflows\user-story-mapping.js` - User story mapping with personas
+6. `workflows\jtbd-analysis.js` - Jobs-to-be-Done analysis
+7. `workflows\competitive-analysis.js` - Market and competitive analysis
+8. `workflows\product-market-fit.js` - PMF assessment and validation
+9. `workflows\product-vision-strategy.js` - Vision and strategy definition
+10. `workflows\product-launch-gtm.js` - Launch planning and GTM strategy
+11. `workflows\beta-program.js` - Beta program management
+12. `workflows\metrics-dashboard.js` - KPI and metrics definition
+13. `workflows\conversion-funnel-analysis.js` - Funnel optimization
+14. `workflows\retention-cohort-analysis.js` - Cohort retention analysis
+15. `workflows\stakeholder-alignment.js` - Stakeholder communication
+16. `workflows\customer-advisory-board.js` - CAB management
+17. `workflows\product-council-review.js` - Product review processes
 
 ### Goals
 - Provide deep expertise in product management frameworks and methodologies
@@ -66,10 +66,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Calculate insight confidence levels based on evidence
 
 **Process Integration**:
-- jtbd-analysis.js
-- user-story-mapping.js
-- product-market-fit.js
-- feature-definition-prd.js
+- workflows\jtbd-analysis.js
+- workflows\user-story-mapping.js
+- workflows\product-market-fit.js
+- workflows\feature-definition-prd.js
 
 **Dependencies**: NLP capabilities, research data formats
 
@@ -91,10 +91,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Track industry analyst reports and mentions
 
 **Process Integration**:
-- competitive-analysis.js
-- product-vision-strategy.js
-- product-launch-gtm.js
-- quarterly-roadmap.js
+- workflows\competitive-analysis.js
+- workflows\product-vision-strategy.js
+- workflows\product-launch-gtm.js
+- workflows\quarterly-roadmap.js
 
 **Dependencies**: Web scraping, news monitoring APIs
 
@@ -116,10 +116,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Support custom prioritization frameworks
 
 **Process Integration**:
-- rice-prioritization.js
-- moscow-prioritization.js
-- feature-definition-prd.js
-- quarterly-roadmap.js
+- workflows\rice-prioritization.js
+- workflows\moscow-prioritization.js
+- workflows\feature-definition-prd.js
+- workflows\quarterly-roadmap.js
 
 **Dependencies**: Numerical computation
 
@@ -141,10 +141,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Build dashboard configurations
 
 **Process Integration**:
-- metrics-dashboard.js
-- conversion-funnel-analysis.js
-- retention-cohort-analysis.js
-- product-market-fit.js
+- workflows\metrics-dashboard.js
+- workflows\conversion-funnel-analysis.js
+- workflows\retention-cohort-analysis.js
+- workflows\product-market-fit.js
 
 **Dependencies**: Analytics platform APIs (Amplitude, Mixpanel, GA4)
 
@@ -166,9 +166,9 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Recommend ship/iterate/kill decisions
 
 **Process Integration**:
-- product-market-fit.js (validation experiments)
-- conversion-funnel-analysis.js (funnel experiments)
-- beta-program.js (A/B testing in beta)
+- workflows\product-market-fit.js (validation experiments)
+- workflows\conversion-funnel-analysis.js (funnel experiments)
+- workflows\beta-program.js (A/B testing in beta)
 
 **Dependencies**: Statistical libraries, experimentation platforms
 
@@ -190,9 +190,9 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Convert job stories to user stories and vice versa
 
 **Process Integration**:
-- feature-definition-prd.js
-- user-story-mapping.js
-- jtbd-analysis.js
+- workflows\feature-definition-prd.js
+- workflows\user-story-mapping.js
+- workflows\jtbd-analysis.js
 - sprint planning
 
 **Dependencies**: NLP, story templates
@@ -215,9 +215,9 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Version and track PRD changes
 
 **Process Integration**:
-- feature-definition-prd.js
-- product-launch-gtm.js
-- beta-program.js
+- workflows\feature-definition-prd.js
+- workflows\product-launch-gtm.js
+- workflows\beta-program.js
 
 **Dependencies**: Document templates, formatting
 
@@ -239,10 +239,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Export to various formats (Markdown, Mermaid, CSV)
 
 **Process Integration**:
-- quarterly-roadmap.js
-- product-vision-strategy.js
-- stakeholder-alignment.js
-- product-council-review.js
+- workflows\quarterly-roadmap.js
+- workflows\product-vision-strategy.js
+- workflows\stakeholder-alignment.js
+- workflows\product-council-review.js
 
 **Dependencies**: Visualization libraries, export formats
 
@@ -264,10 +264,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Build launch checklist templates
 
 **Process Integration**:
-- product-launch-gtm.js
-- competitive-analysis.js
-- beta-program.js
-- stakeholder-alignment.js
+- workflows\product-launch-gtm.js
+- workflows\competitive-analysis.js
+- workflows\beta-program.js
+- workflows\stakeholder-alignment.js
 
 **Dependencies**: Marketing frameworks, channel templates
 
@@ -289,10 +289,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Segment analysis by user attributes
 
 **Process Integration**:
-- product-market-fit.js
-- beta-program.js
-- customer-advisory-board.js
-- jtbd-analysis.js
+- workflows\product-market-fit.js
+- workflows\beta-program.js
+- workflows\customer-advisory-board.js
+- workflows\jtbd-analysis.js
 
 **Dependencies**: Survey platforms, statistical analysis
 
@@ -314,10 +314,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Create OKR cascade visualizations
 
 **Process Integration**:
-- quarterly-roadmap.js
-- product-vision-strategy.js
-- metrics-dashboard.js
-- stakeholder-alignment.js
+- workflows\quarterly-roadmap.js
+- workflows\product-vision-strategy.js
+- workflows\metrics-dashboard.js
+- workflows\stakeholder-alignment.js
 
 **Dependencies**: OKR frameworks, scoring algorithms
 
@@ -339,10 +339,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Generate persona comparison matrices
 
 **Process Integration**:
-- user-story-mapping.js
-- jtbd-analysis.js
-- feature-definition-prd.js
-- product-launch-gtm.js
+- workflows\user-story-mapping.js
+- workflows\jtbd-analysis.js
+- workflows\feature-definition-prd.js
+- workflows\product-launch-gtm.js
 
 **Dependencies**: Research data, segmentation algorithms
 
@@ -364,9 +364,9 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Track flag lifecycle and cleanup
 
 **Process Integration**:
-- product-launch-gtm.js
-- beta-program.js
-- conversion-funnel-analysis.js
+- workflows\product-launch-gtm.js
+- workflows\beta-program.js
+- workflows\conversion-funnel-analysis.js
 
 **Dependencies**: Feature flag platforms (LaunchDarkly, Split)
 
@@ -388,10 +388,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Create status update templates
 
 **Process Integration**:
-- stakeholder-alignment.js
-- product-council-review.js
-- product-launch-gtm.js
-- quarterly-roadmap.js
+- workflows\stakeholder-alignment.js
+- workflows\product-council-review.js
+- workflows\product-launch-gtm.js
+- workflows\quarterly-roadmap.js
 
 **Dependencies**: Communication templates, presentation formats
 
@@ -413,10 +413,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Track sentiment trends over time
 
 **Process Integration**:
-- jtbd-analysis.js
-- feature-definition-prd.js
-- rice-prioritization.js
-- customer-advisory-board.js
+- workflows\jtbd-analysis.js
+- workflows\feature-definition-prd.js
+- workflows\rice-prioritization.js
+- workflows\customer-advisory-board.js
 
 **Dependencies**: Support platform APIs, NLP
 
@@ -446,10 +446,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Multiple 0-to-1 and scaling products
 
 **Process Integration**:
-- product-vision-strategy.js (all phases)
-- competitive-analysis.js (strategic positioning)
-- quarterly-roadmap.js (strategic themes)
-- product-council-review.js (strategic review)
+- workflows\product-vision-strategy.js (all phases)
+- workflows\competitive-analysis.js (strategic positioning)
+- workflows\quarterly-roadmap.js (strategic themes)
+- workflows\product-council-review.js (strategic review)
 
 ---
 
@@ -473,10 +473,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Psychology/HCI trained
 
 **Process Integration**:
-- jtbd-analysis.js (all phases)
-- user-story-mapping.js (persona mapping)
-- product-market-fit.js (research phases)
-- beta-program.js (feedback collection)
+- workflows\jtbd-analysis.js (all phases)
+- workflows\user-story-mapping.js (persona mapping)
+- workflows\product-market-fit.js (research phases)
+- workflows\beta-program.js (feedback collection)
 
 ---
 
@@ -500,10 +500,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Analytics/data science hybrid
 
 **Process Integration**:
-- metrics-dashboard.js (all phases)
-- conversion-funnel-analysis.js (all phases)
-- retention-cohort-analysis.js (all phases)
-- product-market-fit.js (quantitative analysis)
+- workflows\metrics-dashboard.js (all phases)
+- workflows\conversion-funnel-analysis.js (all phases)
+- workflows\retention-cohort-analysis.js (all phases)
+- workflows\product-market-fit.js (quantitative analysis)
 
 ---
 
@@ -527,10 +527,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Software engineering + PM
 
 **Process Integration**:
-- feature-definition-prd.js (technical specs)
-- quarterly-roadmap.js (technical initiatives)
-- rice-prioritization.js (effort estimation)
-- product-council-review.js (technical review)
+- workflows\feature-definition-prd.js (technical specs)
+- workflows\quarterly-roadmap.js (technical initiatives)
+- workflows\rice-prioritization.js (effort estimation)
+- workflows\product-council-review.js (technical review)
 
 ---
 
@@ -554,10 +554,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: B2B SaaS launches
 
 **Process Integration**:
-- product-launch-gtm.js (all phases)
-- competitive-analysis.js (battle cards)
-- beta-program.js (launch readiness)
-- stakeholder-alignment.js (launch comms)
+- workflows\product-launch-gtm.js (all phases)
+- workflows\competitive-analysis.js (battle cards)
+- workflows\beta-program.js (launch readiness)
+- workflows\stakeholder-alignment.js (launch comms)
 
 ---
 
@@ -581,10 +581,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Economics/business strategy
 
 **Process Integration**:
-- rice-prioritization.js (all phases)
-- moscow-prioritization.js (all phases)
-- quarterly-roadmap.js (initiative prioritization)
-- feature-definition-prd.js (scope decisions)
+- workflows\rice-prioritization.js (all phases)
+- workflows\moscow-prioritization.js (all phases)
+- workflows\quarterly-roadmap.js (initiative prioritization)
+- workflows\feature-definition-prd.js (scope decisions)
 
 ---
 
@@ -608,10 +608,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Customer success + PM hybrid
 
 **Process Integration**:
-- customer-advisory-board.js (all phases)
-- retention-cohort-analysis.js (retention strategies)
-- product-market-fit.js (PMF signals)
-- beta-program.js (participant management)
+- workflows\customer-advisory-board.js (all phases)
+- workflows\retention-cohort-analysis.js (retention strategies)
+- workflows\product-market-fit.js (PMF signals)
+- workflows\beta-program.js (participant management)
 
 ---
 
@@ -635,10 +635,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: BA certification, Agile trained
 
 **Process Integration**:
-- feature-definition-prd.js (all phases)
-- user-story-mapping.js (all phases)
-- moscow-prioritization.js (requirements scope)
-- beta-program.js (test requirements)
+- workflows\feature-definition-prd.js (all phases)
+- workflows\user-story-mapping.js (all phases)
+- workflows\moscow-prioritization.js (requirements scope)
+- workflows\beta-program.js (test requirements)
 
 ---
 
@@ -662,10 +662,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Strategy consulting
 
 **Process Integration**:
-- competitive-analysis.js (all phases)
-- product-vision-strategy.js (market analysis)
-- product-launch-gtm.js (market positioning)
-- quarterly-roadmap.js (market opportunities)
+- workflows\competitive-analysis.js (all phases)
+- workflows\product-vision-strategy.js (market analysis)
+- workflows\product-launch-gtm.js (market positioning)
+- workflows\quarterly-roadmap.js (market opportunities)
 
 ---
 
@@ -689,10 +689,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Large organization experience
 
 **Process Integration**:
-- stakeholder-alignment.js (all phases)
-- product-council-review.js (all phases)
-- quarterly-roadmap.js (stakeholder views)
-- product-launch-gtm.js (launch coordination)
+- workflows\stakeholder-alignment.js (all phases)
+- workflows\product-council-review.js (all phases)
+- workflows\quarterly-roadmap.js (stakeholder views)
+- workflows\product-launch-gtm.js (launch coordination)
 
 ---
 
@@ -716,10 +716,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Bob Moesta/Tony Ulwick trained
 
 **Process Integration**:
-- jtbd-analysis.js (all phases)
-- user-story-mapping.js (job stories)
-- product-vision-strategy.js (job focus)
-- feature-definition-prd.js (job-based requirements)
+- workflows\jtbd-analysis.js (all phases)
+- workflows\user-story-mapping.js (job stories)
+- workflows\product-vision-strategy.js (job focus)
+- workflows\feature-definition-prd.js (job-based requirements)
 
 ---
 
@@ -743,10 +743,10 @@ All 17 implemented processes in this specialization currently use the `general-p
 - Background: Startup growth experience
 
 **Process Integration**:
-- conversion-funnel-analysis.js (all phases)
-- retention-cohort-analysis.js (growth metrics)
-- product-market-fit.js (growth signals)
-- metrics-dashboard.js (growth metrics)
+- workflows\conversion-funnel-analysis.js (all phases)
+- workflows\retention-cohort-analysis.js (growth metrics)
+- workflows\product-market-fit.js (growth signals)
+- workflows\metrics-dashboard.js (growth metrics)
 
 ---
 
@@ -756,23 +756,23 @@ All 17 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| quarterly-roadmap.js | SK-003, SK-008, SK-011 | AG-001, AG-006 |
-| rice-prioritization.js | SK-003, SK-015 | AG-006 |
-| moscow-prioritization.js | SK-003, SK-006 | AG-006, AG-008 |
-| feature-definition-prd.js | SK-006, SK-007, SK-012 | AG-004, AG-008 |
-| user-story-mapping.js | SK-006, SK-012 | AG-002, AG-008, AG-011 |
-| jtbd-analysis.js | SK-001, SK-010, SK-015 | AG-002, AG-011 |
-| competitive-analysis.js | SK-002, SK-008 | AG-009, AG-005 |
-| product-market-fit.js | SK-004, SK-005, SK-010 | AG-003, AG-002 |
-| product-vision-strategy.js | SK-002, SK-011 | AG-001, AG-009 |
-| product-launch-gtm.js | SK-009, SK-013, SK-014 | AG-005, AG-010 |
-| beta-program.js | SK-010, SK-013, SK-015 | AG-007, AG-002 |
-| metrics-dashboard.js | SK-004, SK-011 | AG-003, AG-012 |
-| conversion-funnel-analysis.js | SK-004, SK-005 | AG-003, AG-012 |
-| retention-cohort-analysis.js | SK-004 | AG-003, AG-007 |
-| stakeholder-alignment.js | SK-008, SK-014 | AG-010, AG-001 |
-| customer-advisory-board.js | SK-010, SK-015 | AG-007, AG-010 |
-| product-council-review.js | SK-008, SK-014 | AG-010, AG-001 |
+| workflows\quarterly-roadmap.js | SK-003, SK-008, SK-011 | AG-001, AG-006 |
+| workflows\rice-prioritization.js | SK-003, SK-015 | AG-006 |
+| workflows\moscow-prioritization.js | SK-003, SK-006 | AG-006, AG-008 |
+| workflows\feature-definition-prd.js | SK-006, SK-007, SK-012 | AG-004, AG-008 |
+| workflows\user-story-mapping.js | SK-006, SK-012 | AG-002, AG-008, AG-011 |
+| workflows\jtbd-analysis.js | SK-001, SK-010, SK-015 | AG-002, AG-011 |
+| workflows\competitive-analysis.js | SK-002, SK-008 | AG-009, AG-005 |
+| workflows\product-market-fit.js | SK-004, SK-005, SK-010 | AG-003, AG-002 |
+| workflows\product-vision-strategy.js | SK-002, SK-011 | AG-001, AG-009 |
+| workflows\product-launch-gtm.js | SK-009, SK-013, SK-014 | AG-005, AG-010 |
+| workflows\beta-program.js | SK-010, SK-013, SK-015 | AG-007, AG-002 |
+| workflows\metrics-dashboard.js | SK-004, SK-011 | AG-003, AG-012 |
+| workflows\conversion-funnel-analysis.js | SK-004, SK-005 | AG-003, AG-012 |
+| workflows\retention-cohort-analysis.js | SK-004 | AG-003, AG-007 |
+| workflows\stakeholder-alignment.js | SK-008, SK-014 | AG-010, AG-001 |
+| workflows\customer-advisory-board.js | SK-010, SK-015 | AG-007, AG-010 |
+| workflows\product-council-review.js | SK-008, SK-014 | AG-010, AG-001 |
 
 ---
 
@@ -855,3 +855,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

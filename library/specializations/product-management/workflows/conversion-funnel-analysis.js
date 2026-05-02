@@ -90,6 +90,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...dataCollection.artifacts);
 
   // Quality Gate: Ensure sufficient sample size
+  if (dataCollection.totalUsers < minimumSampleSize) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -2118,3 +2119,4 @@ export const qualityValidationTask = defineTask('quality-validation', (args, tas
   },
   labels: ['agent', 'conversion-funnel-analysis', 'quality-validation']
 }));
+

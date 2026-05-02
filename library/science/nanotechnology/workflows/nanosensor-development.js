@@ -143,6 +143,7 @@ export async function process(inputs, ctx) {
       linearityMet: linearityAchieved
     });
 
+    if ((!linearityAchieved || detectionLimit > performanceRequirements.detectionLimit) && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -179,6 +180,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Selectivity must meet requirements
+  if (selectivityTesting.selectivityFactor < performanceRequirements.selectivity) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -894,3 +896,4 @@ export const validationReportTask = defineTask('validation-report', (args, taskC
   },
   labels: ['nanotechnology', 'sensors', 'reporting']
 }));
+

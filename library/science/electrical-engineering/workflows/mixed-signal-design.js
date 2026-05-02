@@ -141,6 +141,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Noise coupling must be acceptable
+  if (noiseAnalysis.criticalNoiseIssues && noiseAnalysis.criticalNoiseIssues.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -186,6 +187,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Interface timing must be verified
+  if (!interfaceTimingVerification.timingVerified) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -873,3 +875,4 @@ export const integrationDocumentationTask = defineTask('integration-documentatio
   },
   labels: ['ee', 'mixed-signal', 'documentation']
 }));
+

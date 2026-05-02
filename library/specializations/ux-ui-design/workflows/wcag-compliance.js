@@ -173,6 +173,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Automated scanning complete: ${violations.length} violations found across ${scope.length} pages`);
 
   // Quality Gate: Critical violations check
+  if (criticalViolationsFound && breakOnCritical) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -464,6 +465,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Compliance analysis: Score ${complianceScore}/100, Level ${achievedComplianceLevel} achieved`);
 
   // Quality Gate: Compliance threshold check
+  if (complianceScore < complianceThreshold || !meetsCompliance) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -2232,3 +2234,5 @@ export const finalComplianceAssessmentTask = defineTask('final-compliance-assess
   },
   labels: ['agent', 'wcag', 'final-assessment', 'compliance']
 }));
+
+

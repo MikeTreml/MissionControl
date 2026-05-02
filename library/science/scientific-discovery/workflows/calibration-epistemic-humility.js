@@ -71,6 +71,7 @@ export async function process(inputs, ctx) {
     adjustmentMagnitudes: calibrationAdjustment.adjustmentMagnitudes
   });
 
+  if (reasonablenessCheck.hasUnreasonableAdjustments) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -573,3 +574,4 @@ export const recommendImprovementsTask = defineTask('calibration-improvements', 
   },
   labels: ['calibration', 'improvements']
 }));
+

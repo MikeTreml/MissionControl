@@ -1,4 +1,4 @@
-# ATDD/TDD Examples
+﻿# ATDD/TDD Examples
 
 This directory contains example input files demonstrating various use cases for the ATDD/TDD methodology.
 
@@ -13,7 +13,7 @@ A straightforward example with clear acceptance criteria for basic calculator op
 
 ```bash
 # Run this example
-babysit run methodologies/atdd-tdd examples/simple-calculator.json
+babysit run methodologies/atdd-tdd simple-calculator.json
 ```
 
 ### 2. User Authentication (`user-authentication.json`)
@@ -25,7 +25,7 @@ Demonstrates ATDD/TDD for authentication flows including registration, login, an
 
 ```bash
 # Run this example
-babysit run methodologies/atdd-tdd examples/user-authentication.json
+babysit run methodologies/atdd-tdd user-authentication.json
 ```
 
 ### 3. File Upload (`file-upload.json`)
@@ -37,7 +37,7 @@ Shows how to test file validation, size limits, virus scanning, and storage oper
 
 ```bash
 # Run this example
-babysit run methodologies/atdd-tdd examples/file-upload.json
+babysit run methodologies/atdd-tdd file-upload.json
 ```
 
 ### 4. Shopping Cart (`shopping-cart.json`)
@@ -49,7 +49,7 @@ Complex example with payment processing, inventory management, discount codes, a
 
 ```bash
 # Run this example
-babysit run methodologies/atdd-tdd examples/shopping-cart.json
+babysit run methodologies/atdd-tdd shopping-cart.json
 ```
 
 ### 5. RESTful API Endpoint (`api-endpoint.json`)
@@ -61,7 +61,7 @@ Shows how to test API contracts, HTTP status codes, validation, authentication, 
 
 ```bash
 # Run this example
-babysit run methodologies/atdd-tdd examples/api-endpoint.json
+babysit run methodologies/atdd-tdd api-endpoint.json
 ```
 
 ## Example Structure
@@ -114,14 +114,14 @@ After running an example, you'll find artifacts in:
 
 ```
 artifacts/atdd-tdd/
-├── acceptance-criteria.md        # Criteria document
-├── acceptance-criteria.json      # Criteria data
-├── acceptance-tests/             # Acceptance test files
-├── unit-tests/                   # Unit test files
-├── integration-tests/            # Integration test files
-├── implementation/               # Production code
-├── coverage-report.json          # Coverage metrics
-└── SUMMARY.md                    # Process summary
+â”œâ”€â”€ acceptance-criteria.md        # Criteria document
+â”œâ”€â”€ acceptance-criteria.json      # Criteria data
+â”œâ”€â”€ acceptance-tests/             # Acceptance test files
+â”œâ”€â”€ unit-tests/                   # Unit test files
+â”œâ”€â”€ integration-tests/            # Integration test files
+â”œâ”€â”€ implementation/               # Production code
+â”œâ”€â”€ coverage-report.json          # Coverage metrics
+â””â”€â”€ SUMMARY.md                    # Process summary
 ```
 
 ## Tips
@@ -153,3 +153,4 @@ artifacts/atdd-tdd/
 ---
 
 **Note**: These examples are templates. Actual implementation and test generation happens during process execution.
+

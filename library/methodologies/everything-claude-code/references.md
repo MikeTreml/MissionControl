@@ -1,4 +1,4 @@
-# Everything Claude Code References and Attribution
+﻿# Everything Claude Code References and Attribution
 
 ## Primary Source
 
@@ -31,11 +31,11 @@ The following Everything Claude Code concepts have been adapted into babysitter 
 - **Eval harness**: Quality benchmarking -> `skills/eval-harness/`
 
 ### Processes (mapped to process files)
-- **Full lifecycle orchestration**: Planning through deployment -> `ecc-orchestrator.js`
-- **TDD workflow**: Red-Green-Refactor with coverage convergence -> `ecc-tdd-workflow.js`
-- **Security pipeline**: AgentShield 5-category scan -> `ecc-security-pipeline.js`
-- **Continuous learning**: Pattern extraction and skill creation -> `ecc-continuous-learning.js`
-- **Multi-service orchestration**: PM2, cascade, parallel execution -> `ecc-multi-service.js`
+- **Full lifecycle orchestration**: Planning through deployment -> `workflows\ecc-orchestrator.js`
+- **TDD workflow**: Red-Green-Refactor with coverage convergence -> `workflows\ecc-tdd-workflow.js`
+- **Security pipeline**: AgentShield 5-category scan -> `workflows\ecc-security-pipeline.js`
+- **Continuous learning**: Pattern extraction and skill creation -> `workflows\ecc-continuous-learning.js`
+- **Multi-service orchestration**: PM2, cascade, parallel execution -> `workflows\ecc-multi-service.js`
 
 ### Core Mechanisms Adapted
 - **13 Specialized Subagents**: Mapped to 8 babysitter agent definitions (consolidated related agents)
@@ -68,3 +68,4 @@ The following Everything Claude Code concepts have been adapted into babysitter 
 ## Acknowledgment
 
 This adaptation brings the Everything Claude Code performance optimization system into the babysitter process framework. All credit for the original concepts, terminology, design philosophy, AgentShield security auditor, and continuous learning pipeline belongs to Affaan M and the Everything Claude Code project contributors.
+

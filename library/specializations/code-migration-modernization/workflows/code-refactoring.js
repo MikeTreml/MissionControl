@@ -148,6 +148,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...validation.artifacts);
 
   // Quality Gate: Validation results
+  if (!validation.allTestsPassed) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -562,3 +563,4 @@ export const metricsComparisonTask = defineTask('metrics-comparison', (args, tas
   },
   labels: ['refactoring', 'metrics', 'comparison']
 }));
+

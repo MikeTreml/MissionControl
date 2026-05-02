@@ -303,6 +303,7 @@ export async function process(inputs, ctx) {
                         overallQualityScore >= thresholds.minimum ? 'acceptable' : 'poor';
 
   // Quality Gate: Check if minimum threshold is met
+  if (overallQualityScore < thresholds.minimum) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -1432,3 +1433,4 @@ export const remediationPlanningTask = defineTask('remediation-planning', (args,
   },
   labels: ['remediation', 'planning', 'quality-improvement']
 }));
+

@@ -541,6 +541,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `BCP Testing Complete - Tests Executed: ${testResults.testsExecuted}, Success Rate: ${testResults.successRate}%`);
 
     // Quality Gate: Test results review
+    if (testResults.successRate < 80) {
         let lastFeedback_qualityGateApproval4 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval4) {
@@ -624,6 +625,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Compliance Validation Complete - Requirements Met: ${complianceValidation.requirementsMet}/${complianceValidation.totalRequirements}, Gaps: ${complianceGaps}`);
 
   // Quality Gate: Compliance gaps
+  if (complianceGaps > 0) {
       let lastFeedback_qualityGateApproval5 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval5) {
@@ -2193,3 +2195,4 @@ export const implementationPlanTask = defineTask('implementation-plan', (args, t
   },
   labels: ['agent', 'business-continuity', 'implementation']
 }));
+

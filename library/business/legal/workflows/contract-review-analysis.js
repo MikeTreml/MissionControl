@@ -133,6 +133,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Risk assessment complete. Overall risk: ${riskAssessment.overallRisk}, Score: ${riskAssessment.riskScore}/100`);
 
   // Quality Gate: High risk contract
+  if (riskAssessment.riskScore > 70) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -867,3 +868,4 @@ export const reviewReportTask = defineTask('review-report', (args, taskCtx) => (
   },
   labels: ['agent', 'contract-review', 'report']
 }));
+

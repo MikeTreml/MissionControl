@@ -57,6 +57,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Timeline Consistency
+  if (timeline.consistencyScore < 0.6) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -543,3 +544,4 @@ export const synthesizeConclusionsTask = defineTask('historical-conclusions', (a
   },
   labels: ['historical-reasoning', 'conclusions']
 }));
+

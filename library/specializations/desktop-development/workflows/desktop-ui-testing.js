@@ -47,6 +47,7 @@ export async function process(inputs, ctx) {
   if (visualRegressionEnabled) {
     visualRegression = await ctx.task(setupVisualRegressionTask, { projectName, uiTestFramework, outputDir });
     artifacts.push(...visualRegression.artifacts);
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -179,3 +180,4 @@ export const validateUiTestSetupTask = defineTask('validate-ui-test-setup', (arg
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['desktop-development', 'ui-testing', 'validation']
 }));
+

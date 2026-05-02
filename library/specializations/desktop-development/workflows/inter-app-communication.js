@@ -65,6 +65,7 @@ export async function process(inputs, ctx) {
   if (ipcMethods.includes('shared-memory')) {
     sharedMemory = await ctx.task(implementSharedMemoryTask, { projectName, framework, targetPlatforms, outputDir });
     artifacts.push(...sharedMemory.artifacts);
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -207,3 +208,4 @@ export const validateIpcTask = defineTask('validate-ipc', (args, taskCtx) => ({
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['desktop-development', 'ipc', 'validation']
 }));
+

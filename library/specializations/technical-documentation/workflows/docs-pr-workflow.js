@@ -124,6 +124,7 @@ export async function process(inputs, ctx) {
 
   // Phase 3: Code Example Validation (if applicable)
   let codeExampleValidation = null;
+  if (prAnalysis.hasCodeExamples) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -289,6 +290,7 @@ export async function process(inputs, ctx) {
 
   // Phase 7: Build Preview and Screenshots
   let buildPreview = null;
+  if (prAnalysis.requiresBuild) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -384,6 +386,26 @@ export async function process(inputs, ctx) {
         lastFeedback_phase8Review = phase8Review.response || phase8Review.feedback || 'Changes requested';
       }      approved = true;
       approvalReason = `Auto-approved: Quality score ${overallQuality}/${targetQuality}, no blocking issues`;
+    if (autoApprove) {
+      await ctx.breakpoint({
+        question: `Quality gate passed (${overallQuality}/${targetQuality}). Auto-approve enabled. Approve PR?`,
+        title: 'Phase 8: Auto-Approval Decision',
+        context: {
+          runId: ctx.runId,
+          phase: 'approval-decision',
+          overallQuality,
+          targetQuality,
+          autoApprove: true,
+          files: [
+            { path: `artifacts/pr-${prNumber}-review-report.md`, format: 'markdown' },
+            { path: `artifacts/pr-${prNumber}-quality-score.json`, format: 'json' }
+          ]
+        }
+      });
+
+      approved = true;
+      approvalReason = `Auto-approved: Quality score ${overallQuality}/${targetQuality}, no blocking issues`;
+    } else {
         let lastFeedback_phase8Review2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase8Review2) {
@@ -431,6 +453,48 @@ export async function process(inputs, ctx) {
       approved = false;
       approvalReason = 'Awaiting manual approval';
     }
+    if (autoApprove) {
+      await ctx.breakpoint({
+        question: `Quality gate passed (${overallQuality}/${targetQuality}). Auto-approve enabled. Approve PR?`,
+        title: 'Phase 8: Auto-Approval Decision',
+        context: {
+          runId: ctx.runId,
+          phase: 'approval-decision',
+          overallQuality,
+          targetQuality,
+          autoApprove: true,
+          files: [
+            { path: `artifacts/pr-${prNumber}-review-report.md`, format: 'markdown' },
+            { path: `artifacts/pr-${prNumber}-quality-score.json`, format: 'json' }
+          ]
+        }
+      });
+
+      approved = true;
+      approvalReason = `Auto-approved: Quality score ${overallQuality}/${targetQuality}, no blocking issues`;
+    } else {
+      await ctx.breakpoint({
+        question: `Quality gate passed (${overallQuality}/${targetQuality}). Manual approval required. Review and approve?`,
+        title: 'Phase 8: Manual Approval Required',
+        context: {
+          runId: ctx.runId,
+          phase: 'manual-approval',
+          overallQuality,
+          targetQuality,
+          autoApprove: false,
+          files: [
+            { path: `artifacts/pr-${prNumber}-review-report.md`, format: 'markdown' },
+            { path: `artifacts/pr-${prNumber}-quality-score.json`, format: 'json' },
+            { path: buildPreview?.previewUrl ? `artifacts/build-preview.html` : null, format: 'html' }
+          ].filter(f => f.path)
+        }
+      });
+
+      // This will be resolved by human via breakpoint
+      approved = false;
+      approvalReason = 'Awaiting manual approval';
+    }
+  } else {
   let lastFeedback_reviewApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_reviewApproval) {
@@ -1315,3 +1379,5 @@ export const postReviewCommentTask = defineTask('post-review-comment', (args, ta
   },
   labels: ['agent', 'pr-review', 'comment-posting']
 }));
+
+

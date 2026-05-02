@@ -1,15 +1,15 @@
-# Research Specialization
+﻿# Research Specialization
 
 Processes for systematic research analysis, standards comparison auditing, and extraction verification.
 
 ## Processes
 
-- **standards-gap-audit.js** — Generic gap audit process for standards research documents. Audits research/comparison documentation against source extraction text using configurable failure pattern categories.
+- **workflows\standards-gap-audit.js** â€” Generic gap audit process for standards research documents. Audits research/comparison documentation against source extraction text using configurable failure pattern categories.
 
 ## Usage
 
 ```js
-import { process } from './standards-gap-audit.js';
+import { process } from './workflows\standards-gap-audit.js';
 
 const result = await process({
   documents: [
@@ -24,3 +24,4 @@ const result = await process({
   domainContext: 'Steel design standard comparison'
 }, ctx);
 ```
+

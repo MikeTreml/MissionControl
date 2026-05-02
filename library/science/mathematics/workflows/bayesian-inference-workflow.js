@@ -98,6 +98,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check for convergence issues
+  if (!convergenceDiagnostics.converged) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -592,3 +593,4 @@ export const posteriorSummariesTask = defineTask('posterior-summaries', (args, t
   },
   labels: ['mathematics', 'bayesian-inference', 'posterior']
 }));
+

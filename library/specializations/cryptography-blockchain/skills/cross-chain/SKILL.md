@@ -1,4 +1,4 @@
----
+﻿---
 name: cross-chain
 description: Cross-chain bridge and multi-chain development expertise. Supports LayerZero, Chainlink CCIP, Wormhole, and Axelar for omnichain messaging, token bridging, and cross-chain state verification.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -372,7 +372,8 @@ async function waitForFinality(chainId: number, txHash: string) {
 
 ## See Also
 
-- `skills/solidity-dev/SKILL.md` - Contract development
+- `SKILL.md` - Contract development
 - `agents/bridge-architect/AGENT.md` - Bridge expert
 - [LayerZero Docs](https://docs.layerzero.network/)
 - [CCIP Docs](https://docs.chain.link/ccip)
+

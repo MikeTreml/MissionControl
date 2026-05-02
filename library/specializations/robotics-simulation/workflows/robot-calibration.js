@@ -165,6 +165,7 @@ export async function process(inputs, ctx) {
   if (validation.issues) issues.push(...validation.issues);
 
   // Quality Gate: Calibration accuracy
+  if (!validation.allCalibrationsPassed) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -674,3 +675,4 @@ export const calibrationDocumentationTask = defineTask('calibration-documentatio
   },
   labels: ['robotics-simulation', 'calibration', 'documentation']
 }));
+

@@ -1,4 +1,4 @@
-# Cloud HA Architecture Plan — Babysitter Process Template
+﻿# Cloud HA Architecture Plan â€” Babysitter Process Template
 
 A generic, cloud-agnostic babysitter process that drives an AI agent through a
 structured 8-phase high-availability architecture planning pipeline: from
@@ -89,7 +89,7 @@ See `cloud-ha-architecture-plan-inputs.schema.json` for the full JSON Schema (dr
 | `architectureDoc` | object or null | Phase 7 architecture document result. |
 | `qualityReview` | object or null | Phase 8 quality review result. |
 | `qualityScore` | number | Quality score (0-100). `0` if quality review was not executed. |
-| `metadata` | object | `{ processId, timestamp }` — process identification and completion time. |
+| `metadata` | object | `{ processId, timestamp }` â€” process identification and completion time. |
 
 ---
 
@@ -141,11 +141,11 @@ before design begins.
 
 Three sequential sub-tasks, each performed by a specialist agent:
 
-- **2a — Compute HA**: Scaling policies, min instances, health checks,
+- **2a â€” Compute HA**: Scaling policies, min instances, health checks,
   deployment strategy, region migration plan, CLI commands.
-- **2b — Data HA**: Backup strategy, PITR assessment, regional vs multi-region
+- **2b â€” Data HA**: Backup strategy, PITR assessment, regional vs multi-region
   decision, retention policies, CLI commands.
-- **2c — Network & Observability HA**: Uptime checks, alert policies,
+- **2c â€” Network & Observability HA**: Uptime checks, alert policies,
   dashboards, SLOs/SLIs, WAF assessment, CLI commands.
 
 A breakpoint pauses for human review of all three design tracks.
@@ -219,7 +219,7 @@ in the `skills/` directory** of this contribution:
 |---|---|---|---|---|
 | GCP | `generating-gcp-diagrams` | `mxgraph.gcp2.*` | 46 services | Yes |
 | AWS | `generating-aws-diagrams` | `mxgraph.aws4.*` | 264 services | Yes |
-| Azure | *(not yet available)* | — | — | No |
+| Azure | *(not yet available)* | â€” | â€” | No |
 
 When the appropriate skill is installed, Phase 6 produces professional DrawIO
 XML files with proper provider icons, containers (VPC, subnets, regions), and
@@ -231,12 +231,12 @@ Both skills are bundled in this specialization under `skills/`:
 ```
 skills/
   generating-gcp-diagrams/    # GCP DrawIO diagram generation
-    SKILL.md                  # Skill definition and workflows
+    skills\aws-cloud\SKILL.md                  # Skill definition and workflows
     assets/                   # Icon definitions, container styles, XML templates
     references/               # Best practices, style guide, XML examples
     scripts/                  # Validation, export, and fix scripts
   generating-aws-diagrams/    # AWS DrawIO diagram generation
-    SKILL.md                  # Skill definition and workflows
+    skills\aws-cloud\SKILL.md                  # Skill definition and workflows
     assets/                   # Icon definitions, container styles, XML templates
     references/               # Best practices, style guide, XML examples
     scripts/                  # Validation, export, and fix scripts
@@ -253,14 +253,14 @@ cp -R skills/generating-aws-diagrams /path/to/project/.agent/skills/
 ```
 
 Each skill includes:
-- **SKILL.md** — Skill definition with three workflows: analyze existing
+- **skills\aws-cloud\SKILL.md** â€” Skill definition with three workflows: analyze existing
   diagrams, convert images to DrawIO, create DrawIO from description
-- **assets/** — Provider icon JSON (46 GCP / 264 AWS services), container
+- **assets/** â€” Provider icon JSON (46 GCP / 264 AWS services), container
   styles, and DrawIO XML templates
-- **references/** — Best practices, coordinate system guide, style guide,
+- **references/** â€” Best practices, coordinate system guide, style guide,
   and copy-paste XML examples
-- **scripts/** — Validation (`validate-drawio.py`), icon fixing
-  (`fix-gcp-icons.py` / `fix-aws-icons.py`), export to PNG/PDF
+- **scripts/** â€” Validation (`skills\generating-aws-diagrams\scripts\validate-drawio.py`), icon fixing
+  (`skills\generating-gcp-diagrams\scripts\fix-gcp-icons.py` / `skills\generating-aws-diagrams\scripts\fix-aws-icons.py`), export to PNG/PDF
   (`export-diagram.sh`), and open in DrawIO Desktop (`open-diagram.sh`)
 
 ---
@@ -284,40 +284,40 @@ Each skill includes:
 
 ## Usage Examples
 
-### Full pipeline — complete HA plan for a GCP project
+### Full pipeline â€” complete HA plan for a GCP project
 
 ```bash
 babysitter run:create \
   --process-id cloud-ha-architecture-plan \
-  --entry cloud-ha-architecture-plan.js \
-  --inputs examples/cloud-ha-architecture-plan/gcp-full-pipeline.json
+  --entry workflows\cloud-ha-architecture-plan.js \
+  --inputs examples\cloud-ha-architecture-plan\gcp-full-pipeline.json
 ```
 
-### Full pipeline — complete HA plan for an AWS account
+### Full pipeline â€” complete HA plan for an AWS account
 
 ```bash
 babysitter run:create \
   --process-id cloud-ha-architecture-plan \
-  --entry cloud-ha-architecture-plan.js \
-  --inputs examples/cloud-ha-architecture-plan/aws-full-pipeline.json
+  --entry workflows\cloud-ha-architecture-plan.js \
+  --inputs examples\cloud-ha-architecture-plan\aws-full-pipeline.json
 ```
 
-### Audit only — understand HA gaps before investing
+### Audit only â€” understand HA gaps before investing
 
 ```bash
 babysitter run:create \
   --process-id cloud-ha-architecture-plan \
-  --entry cloud-ha-architecture-plan.js \
-  --inputs examples/cloud-ha-architecture-plan/audit-only.json
+  --entry workflows\cloud-ha-architecture-plan.js \
+  --inputs examples\cloud-ha-architecture-plan\audit-only.json
 ```
 
-### Diagrams only — generate DrawIO diagrams for an existing architecture
+### Diagrams only â€” generate DrawIO diagrams for an existing architecture
 
 ```bash
 babysitter run:create \
   --process-id cloud-ha-architecture-plan \
-  --entry cloud-ha-architecture-plan.js \
-  --inputs examples/cloud-ha-architecture-plan/diagrams-only.json
+  --entry workflows\cloud-ha-architecture-plan.js \
+  --inputs examples\cloud-ha-architecture-plan\diagrams-only.json
 ```
 
 ---
@@ -330,18 +330,18 @@ and all composition patterns:
 
 | File | Provider | Pattern | Scenario |
 |---|---|---|---|
-| `gcp-full-pipeline.json` | GCP | `full-pipeline` | Finance SaaS with Firebase Hosting, Cloud Run, Firestore — cross-region latency, no backups, no monitoring |
-| `aws-full-pipeline.json` | AWS | `full-pipeline` | E-commerce platform with API Gateway, Lambda, RDS, DynamoDB, ElastiCache — single-AZ, no Multi-AZ RDS, no alarms |
-| `design-and-plan.json` | GCP | `design-and-plan` | B2B API platform with Cloud Run, Cloud SQL, Memorystore Redis — need HA design and IaC scripts, will create own docs |
-| `audit-only.json` | GCP | `audit-only` | Startup SaaS on Cloud Run + Firestore — minimal infra, gap assessment only |
-| `diagrams-only.json` | AWS | `diagrams-only` | Data analytics platform with Step Functions, S3, Redshift — need DrawIO diagrams for stakeholder presentation |
+| `examples\cloud-ha-architecture-plan\gcp-full-pipeline.json` | GCP | `full-pipeline` | Finance SaaS with Firebase Hosting, Cloud Run, Firestore â€” cross-region latency, no backups, no monitoring |
+| `examples\cloud-ha-architecture-plan\aws-full-pipeline.json` | AWS | `full-pipeline` | E-commerce platform with API Gateway, Lambda, RDS, DynamoDB, ElastiCache â€” single-AZ, no Multi-AZ RDS, no alarms |
+| `examples\cloud-ha-architecture-plan\design-and-plan.json` | GCP | `design-and-plan` | B2B API platform with Cloud Run, Cloud SQL, Memorystore Redis â€” need HA design and IaC scripts, will create own docs |
+| `examples\cloud-ha-architecture-plan\audit-only.json` | GCP | `audit-only` | Startup SaaS on Cloud Run + Firestore â€” minimal infra, gap assessment only |
+| `examples\cloud-ha-architecture-plan\diagrams-only.json` | AWS | `diagrams-only` | Data analytics platform with Step Functions, S3, Redshift â€” need DrawIO diagrams for stakeholder presentation |
 
 ---
 
 ## Sample Output
 
 The `examples/cloud-ha-architecture-plan/sample-output/` directory contains a real-world output produced by
-this process — a polished, interactive HTML architecture plan for a GCP
+this process â€” a polished, interactive HTML architecture plan for a GCP
 Finance SaaS application:
 
 | File | Description |
@@ -361,13 +361,15 @@ To add a new example input file:
 1. Create a JSON file in the `examples/cloud-ha-architecture-plan/` directory.
 2. Validate it against `cloud-ha-architecture-plan-inputs.schema.json`.
 3. Include realistic service configurations with types and regions.
-4. Provide a detailed `description` in `currentArchitecture` — the more
+4. Provide a detailed `description` in `currentArchitecture` â€” the more
    context, the better the agent's analysis.
 
 To modify the process itself:
 
-1. Edit `cloud-ha-architecture-plan.js`.
+1. Edit `workflows\cloud-ha-architecture-plan.js`.
 2. Update the input schema if you add or change input fields.
 3. Update this README to reflect any phase or parameter changes.
 4. Test with at least one example input file to verify the pipeline runs
    end-to-end.
+
+

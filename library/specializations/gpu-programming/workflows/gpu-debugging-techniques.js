@@ -76,6 +76,7 @@ export async function process(inputs, ctx) {
     ...memoryErrors.issues,
     ...raceConditions.issues,
     ...correctnessValidation.issues
+  ];
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -375,3 +376,4 @@ export const issueResolutionTask = defineTask('issue-resolution', (args, taskCtx
   },
   labels: ['gpu-programming', 'debugging', 'resolution']
 }));
+

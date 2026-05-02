@@ -1,4 +1,4 @@
-# Knowledge Management - Skills and Agents Backlog
+﻿# Knowledge Management - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Knowledge Management processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized knowledge management tooling.
 
@@ -21,11 +21,11 @@ This document identifies specialized skills and agents (subagents) that could en
 All 5 implemented processes in this specialization currently use the `general-purpose` agent for task execution. While functional, this approach lacks domain-specific optimizations that specialized skills and agents could provide for knowledge management workflows.
 
 ### Implemented Processes
-1. `tacit-to-explicit-conversion.js` - SECI model knowledge conversion
-2. `mentoring-program.js` - Mentoring program design and implementation
-3. `knowledge-base-content.js` - Knowledge base content development
-4. `search-optimization.js` - Search and findability optimization
-5. `taxonomy-metadata-governance.js` - Taxonomy and metadata governance
+1. `workflows\tacit-to-explicit-conversion.js` - SECI model knowledge conversion
+2. `workflows\mentoring-program.js` - Mentoring program design and implementation
+3. `workflows\knowledge-base-content.js` - Knowledge base content development
+4. `workflows\search-optimization.js` - Search and findability optimization
+5. `workflows\taxonomy-metadata-governance.js` - Taxonomy and metadata governance
 
 ### Goals
 - Provide deep expertise in knowledge management methodologies and frameworks
@@ -57,9 +57,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Manage content archives and retention policies
 
 **Process Integration**:
-- knowledge-base-content.js
-- search-optimization.js
-- taxonomy-metadata-governance.js
+- workflows\knowledge-base-content.js
+- workflows\search-optimization.js
+- workflows\taxonomy-metadata-governance.js
 
 **Dependencies**: Confluence REST API, Atlassian SDK
 
@@ -83,9 +83,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Analytics and usage reporting
 
 **Process Integration**:
-- knowledge-base-content.js
-- search-optimization.js
-- taxonomy-metadata-governance.js
+- workflows\knowledge-base-content.js
+- workflows\search-optimization.js
+- workflows\taxonomy-metadata-governance.js
 
 **Dependencies**: Microsoft Graph API, SharePoint REST API, PnP PowerShell
 
@@ -110,9 +110,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - User permission management
 
 **Process Integration**:
-- knowledge-base-content.js
-- search-optimization.js
-- taxonomy-metadata-governance.js
+- workflows\knowledge-base-content.js
+- workflows\search-optimization.js
+- workflows\taxonomy-metadata-governance.js
 
 **Dependencies**: MediaWiki API, Wiki.js GraphQL API
 
@@ -136,8 +136,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Export and backup automation
 
 **Process Integration**:
-- knowledge-base-content.js
-- mentoring-program.js
+- workflows\knowledge-base-content.js
+- workflows\mentoring-program.js
 
 **Dependencies**: Notion API
 
@@ -162,8 +162,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - A/B testing for search relevance
 
 **Process Integration**:
-- search-optimization.js
-- knowledge-base-content.js
+- workflows\search-optimization.js
+- workflows\knowledge-base-content.js
 
 **Dependencies**: Elasticsearch/OpenSearch REST API, Kibana
 
@@ -187,8 +187,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Personalization configuration
 
 **Process Integration**:
-- search-optimization.js
-- knowledge-base-content.js
+- workflows\search-optimization.js
+- workflows\knowledge-base-content.js
 
 **Dependencies**: Algolia API, InstantSearch.js
 
@@ -213,9 +213,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Taxonomy governance workflow management
 
 **Process Integration**:
-- taxonomy-metadata-governance.js
-- search-optimization.js
-- knowledge-base-content.js
+- workflows\taxonomy-metadata-governance.js
+- workflows\search-optimization.js
+- workflows\knowledge-base-content.js
 
 **Dependencies**: PoolParty API, TopBraid API, Semaphore
 
@@ -240,9 +240,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Graph-based recommendation
 
 **Process Integration**:
-- tacit-to-explicit-conversion.js
-- search-optimization.js
-- taxonomy-metadata-governance.js
+- workflows\tacit-to-explicit-conversion.js
+- workflows\search-optimization.js
+- workflows\taxonomy-metadata-governance.js
 
 **Dependencies**: Neo4j, RDF4J, GraphDB, Apache Jena
 
@@ -266,8 +266,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Proficiency verification workflows
 
 **Process Integration**:
-- mentoring-program.js
-- tacit-to-explicit-conversion.js
+- workflows\mentoring-program.js
+- workflows\tacit-to-explicit-conversion.js
 
 **Dependencies**: Skills APIs, Graph databases
 
@@ -292,8 +292,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Featured content selection
 
 **Process Integration**:
-- knowledge-base-content.js
-- search-optimization.js
+- workflows\knowledge-base-content.js
+- workflows\search-optimization.js
 
 **Dependencies**: NLP libraries, ML models
 
@@ -317,8 +317,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Notification and digest configuration
 
 **Process Integration**:
-- mentoring-program.js
-- tacit-to-explicit-conversion.js
+- workflows\mentoring-program.js
+- workflows\tacit-to-explicit-conversion.js
 
 **Dependencies**: Discourse API, Stack Overflow for Teams API
 
@@ -342,8 +342,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Knowledge nugget extraction
 
 **Process Integration**:
-- tacit-to-explicit-conversion.js
-- mentoring-program.js
+- workflows\tacit-to-explicit-conversion.js
+- workflows\mentoring-program.js
 
 **Dependencies**: Whisper API, OpenAI, cloud transcription services
 
@@ -367,8 +367,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Analytics and completion reporting
 
 **Process Integration**:
-- mentoring-program.js
-- tacit-to-explicit-conversion.js
+- workflows\mentoring-program.js
+- workflows\tacit-to-explicit-conversion.js
 
 **Dependencies**: LMS APIs (Moodle, Canvas, Cornerstone)
 
@@ -392,7 +392,7 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - BPMN model export
 
 **Process Integration**:
-- tacit-to-explicit-conversion.js
+- workflows\tacit-to-explicit-conversion.js
 
 **Dependencies**: PM4Py, Celonis API, process mining tools
 
@@ -416,8 +416,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Validation rule development
 
 **Process Integration**:
-- taxonomy-metadata-governance.js
-- knowledge-base-content.js
+- workflows\taxonomy-metadata-governance.js
+- workflows\knowledge-base-content.js
 
 **Dependencies**: JSON Schema validators, RDF libraries
 
@@ -441,7 +441,7 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Real-time suggestion updates
 
 **Process Integration**:
-- search-optimization.js
+- workflows\search-optimization.js
 
 **Dependencies**: Elasticsearch suggesters, Algolia query suggestions
 
@@ -466,8 +466,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Improvement recommendations
 
 **Process Integration**:
-- knowledge-base-content.js
-- tacit-to-explicit-conversion.js
+- workflows\knowledge-base-content.js
+- workflows\tacit-to-explicit-conversion.js
 
 **Dependencies**: textstat, readability-lxml, Vale
 
@@ -491,8 +491,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Change notification configuration
 
 **Process Integration**:
-- knowledge-base-content.js
-- taxonomy-metadata-governance.js
+- workflows\knowledge-base-content.js
+- workflows\taxonomy-metadata-governance.js
 
 **Dependencies**: Git, documentation platforms with versioning
 
@@ -517,8 +517,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Trend analysis and forecasting
 
 **Process Integration**:
-- knowledge-base-content.js
-- search-optimization.js
+- workflows\knowledge-base-content.js
+- workflows\search-optimization.js
 
 **Dependencies**: Analytics APIs, BI tools
 
@@ -542,9 +542,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Concept extraction
 
 **Process Integration**:
-- search-optimization.js
-- knowledge-base-content.js
-- tacit-to-explicit-conversion.js
+- workflows\search-optimization.js
+- workflows\knowledge-base-content.js
+- workflows\tacit-to-explicit-conversion.js
 
 **Dependencies**: Sentence-transformers, OpenAI embeddings, Pinecone
 
@@ -576,9 +576,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Library science, information management, consulting
 
 **Process Integration**:
-- taxonomy-metadata-governance.js (strategy, framework design)
-- knowledge-base-content.js (architecture, strategy)
-- search-optimization.js (information architecture)
+- workflows\taxonomy-metadata-governance.js (strategy, framework design)
+- workflows\knowledge-base-content.js (architecture, strategy)
+- workflows\search-optimization.js (information architecture)
 
 ---
 
@@ -604,9 +604,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Library and information science, linguistics
 
 **Process Integration**:
-- taxonomy-metadata-governance.js (all phases)
-- search-optimization.js (metadata, synonyms)
-- knowledge-base-content.js (tagging guidelines)
+- workflows\taxonomy-metadata-governance.js (all phases)
+- workflows\search-optimization.js (metadata, synonyms)
+- workflows\knowledge-base-content.js (tagging guidelines)
 
 ---
 
@@ -632,8 +632,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: AI/knowledge engineering, cognitive science
 
 **Process Integration**:
-- tacit-to-explicit-conversion.js (all phases)
-- mentoring-program.js (knowledge transfer design)
+- workflows\tacit-to-explicit-conversion.js (all phases)
+- workflows\mentoring-program.js (knowledge transfer design)
 
 ---
 
@@ -660,8 +660,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Information retrieval, search engineering
 
 **Process Integration**:
-- search-optimization.js (all phases)
-- knowledge-base-content.js (findability)
+- workflows\search-optimization.js (all phases)
+- workflows\knowledge-base-content.js (findability)
 
 ---
 
@@ -688,8 +688,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Technical writing, content strategy
 
 **Process Integration**:
-- knowledge-base-content.js (all phases)
-- taxonomy-metadata-governance.js (governance)
+- workflows\knowledge-base-content.js (all phases)
+- workflows\taxonomy-metadata-governance.js (governance)
 
 ---
 
@@ -716,8 +716,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Organizational development, facilitation
 
 **Process Integration**:
-- mentoring-program.js (community elements)
-- tacit-to-explicit-conversion.js (socialization)
+- workflows\mentoring-program.js (community elements)
+- workflows\tacit-to-explicit-conversion.js (socialization)
 
 ---
 
@@ -744,8 +744,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Instructional design, adult learning
 
 **Process Integration**:
-- mentoring-program.js (all phases)
-- tacit-to-explicit-conversion.js (internalization)
+- workflows\mentoring-program.js (all phases)
+- workflows\tacit-to-explicit-conversion.js (internalization)
 
 ---
 
@@ -772,9 +772,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: AI, semantic web, data engineering
 
 **Process Integration**:
-- taxonomy-metadata-governance.js (ontology design)
-- search-optimization.js (entity-based search)
-- tacit-to-explicit-conversion.js (knowledge representation)
+- workflows\taxonomy-metadata-governance.js (ontology design)
+- workflows\search-optimization.js (entity-based search)
+- workflows\tacit-to-explicit-conversion.js (knowledge representation)
 
 ---
 
@@ -801,8 +801,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: IT, information management
 
 **Process Integration**:
-- knowledge-base-content.js (platform setup)
-- search-optimization.js (platform search config)
+- workflows\knowledge-base-content.js (platform setup)
+- workflows\search-optimization.js (platform search config)
 
 ---
 
@@ -829,9 +829,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Business analytics, organizational research
 
 **Process Integration**:
-- knowledge-base-content.js (metrics design)
-- search-optimization.js (analytics setup)
-- taxonomy-metadata-governance.js (quality metrics)
+- workflows\knowledge-base-content.js (metrics design)
+- workflows\search-optimization.js (analytics setup)
+- workflows\taxonomy-metadata-governance.js (quality metrics)
 
 ---
 
@@ -858,9 +858,9 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Project management, facilitation, change management
 
 **Process Integration**:
-- tacit-to-explicit-conversion.js (expert engagement)
-- mentoring-program.js (mentor coordination)
-- knowledge-base-content.js (SME reviews)
+- workflows\tacit-to-explicit-conversion.js (expert engagement)
+- workflows\mentoring-program.js (mentor coordination)
+- workflows\knowledge-base-content.js (SME reviews)
 
 ---
 
@@ -887,8 +887,8 @@ All 5 implemented processes in this specialization currently use the `general-pu
 - Background: Records management, compliance, legal
 
 **Process Integration**:
-- taxonomy-metadata-governance.js (governance framework)
-- knowledge-base-content.js (retention, compliance)
+- workflows\taxonomy-metadata-governance.js (governance framework)
+- workflows\knowledge-base-content.js (retention, compliance)
 
 ---
 
@@ -898,11 +898,11 @@ All 5 implemented processes in this specialization currently use the `general-pu
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| tacit-to-explicit-conversion.js | SK-008, SK-012, SK-014, SK-020 | AG-003, AG-006, AG-011 |
-| mentoring-program.js | SK-009, SK-011, SK-013 | AG-007, AG-006, AG-011 |
-| knowledge-base-content.js | SK-001, SK-002, SK-003, SK-004, SK-010, SK-017, SK-018, SK-019 | AG-005, AG-009, AG-010 |
-| search-optimization.js | SK-005, SK-006, SK-007, SK-016, SK-019, SK-020 | AG-004, AG-002 |
-| taxonomy-metadata-governance.js | SK-007, SK-008, SK-015 | AG-002, AG-001, AG-008, AG-012 |
+| workflows\tacit-to-explicit-conversion.js | SK-008, SK-012, SK-014, SK-020 | AG-003, AG-006, AG-011 |
+| workflows\mentoring-program.js | SK-009, SK-011, SK-013 | AG-007, AG-006, AG-011 |
+| workflows\knowledge-base-content.js | SK-001, SK-002, SK-003, SK-004, SK-010, SK-017, SK-018, SK-019 | AG-005, AG-009, AG-010 |
+| workflows\search-optimization.js | SK-005, SK-006, SK-007, SK-016, SK-019, SK-020 | AG-004, AG-002 |
+| workflows\taxonomy-metadata-governance.js | SK-007, SK-008, SK-015 | AG-002, AG-001, AG-008, AG-012 |
 
 ---
 
@@ -1000,3 +1000,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

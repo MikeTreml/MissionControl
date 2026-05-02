@@ -134,6 +134,7 @@ export async function process(inputs, ctx) {
     });
 
     // Quality Gate: Cross-validation must pass
+    if (!crossValidation.validated) {
         let lastFeedback_phase4Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase4Review) {
@@ -695,3 +696,4 @@ export const resultsIntegrationTask = defineTask('results-integration', (args, t
   },
   labels: ['nanotechnology', 'characterization', 'reporting']
 }));
+

@@ -89,6 +89,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check for steady-state violations
+  if (steadyStateAnalysis.violations && steadyStateAnalysis.violations.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -174,6 +175,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check stability margins
+  if (!stabilityAssessment.stable) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -791,3 +793,4 @@ export const complianceDocumentationTask = defineTask('compliance-documentation'
   },
   labels: ['ee', 'renewable', 'compliance', 'documentation']
 }));
+

@@ -114,6 +114,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Safety metrics check
+  if (safetyComfortMetrics.safetyViolations && safetyComfortMetrics.safetyViolations.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -720,3 +721,4 @@ export const planningReleaseTask = defineTask('planning-release', (args, taskCtx
   },
   labels: ['automotive', 'autonomous-driving', 'release', 'documentation']
 }));
+

@@ -1,4 +1,4 @@
-# CLI and MCP Development - References
+﻿# CLI and MCP Development - References
 
 Comprehensive reference materials for Command Line Interface development, Model Context Protocol implementation, terminal applications, and developer tools.
 
@@ -414,7 +414,7 @@ Comprehensive reference materials for Command Line Interface development, Model 
 ### Documentation Generation
 
 - **oclif README generation**: https://oclif.io/docs/commands#readme-generation
-- **Cobra doc generation**: https://github.com/spf13/cobra/blob/main/doc/README.md
+- **Cobra doc generation**: https://README.md
 - **Click documentation**: https://click.palletsprojects.com/en/8.1.x/documentation/
 - **Man page generation**: Various tools per language
 
@@ -487,3 +487,4 @@ Comprehensive reference materials for Command Line Interface development, Model 
 
 **Last Updated**: 2026-01-24
 **Version**: 1.0.0
+

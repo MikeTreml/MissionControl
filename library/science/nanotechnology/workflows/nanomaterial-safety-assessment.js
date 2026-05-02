@@ -81,6 +81,7 @@ export async function process(inputs, ctx) {
       missingParameters: characterizationResult.missingParameters,
       recommendations: characterizationResult.recommendations
     };
+  }
     let lastFeedback_phase1Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase1Review) {
@@ -120,6 +121,7 @@ export async function process(inputs, ctx) {
   // Evaluate if additional testing is needed based on results
   const hazardFlags = evaluateHazardFlags(inVitroResult);
 
+  if (hazardFlags.requiresAdditionalTesting) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -170,6 +172,7 @@ export async function process(inputs, ctx) {
       testBattery: determineGenotoxicityBattery(regulatoryFrameworks)
     });
 
+    if (genotoxicityResult.positiveFindings.length > 0) {
         let lastFeedback_phase3Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase3Review) {
@@ -210,6 +213,7 @@ export async function process(inputs, ctx) {
       characterization: characterizationResult,
       endpoints: ecotoxEndpoints,
       environmentalCompartments: determineEnvironmentalCompartments(exposureScenarios)
+  });
       let lastFeedback_assessmentApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_assessmentApproval) {
@@ -260,6 +264,7 @@ export async function process(inputs, ctx) {
     applicationContext,
     environmentalFate: environmentalFateResult,
     occupationalControls: inputs.occupationalControls || {}
+  });
     let lastFeedback_phase6Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase6Review) {
@@ -369,6 +374,7 @@ export async function process(inputs, ctx) {
     applicationContext,
     exposureScenarios,
     regulatoryFrameworks
+  });
     let lastFeedback_phase8Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase8Review) {
@@ -420,6 +426,7 @@ export async function process(inputs, ctx) {
     applicationContext
   });
 
+  if (!dossierValidation.complete) {
       let lastFeedback_validationApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_validationApproval) {
@@ -1284,3 +1291,6 @@ export const safeHandlingGuidelinesTask = defineTask('safe-handling-guidelines',
   },
   labels: ['nanotechnology', 'safety', 'handling-guidelines']
 }));
+
+
+

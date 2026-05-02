@@ -487,6 +487,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Pipeline testing complete. Processed ${logsAggregated} test logs. Success rate: ${testingResult.successRate}%`);
 
   // Quality Gate: Testing validation
+  if (testingResult.successRate < 95) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -1754,3 +1755,4 @@ export const deployLogPipelineTask = defineTask('deploy-log-pipeline', (args, ta
   },
   labels: ['agent', 'log-aggregation', 'deployment']
 }));
+

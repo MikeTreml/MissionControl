@@ -68,6 +68,7 @@ export async function process(inputs, ctx) {
       insight,
       timestamp: ctx.now()
     });
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -398,3 +399,4 @@ export const synthesizeUnderstandingTask = defineTask('synthesize-understanding'
   },
   labels: ['agent', 'representation-shifts', 'synthesis']
 }));
+

@@ -1,4 +1,4 @@
-# Superpowers Extended Methodology
+﻿# Superpowers Extended Methodology
 
 **Source**: [pcvelz/superpowers](https://github.com/pcvelz/superpowers) (Community fork of [obra/superpowers](https://github.com/obra/superpowers))
 **Category**: Full Development Lifecycle / Agentic Software Development
@@ -12,15 +12,15 @@ The Superpowers Extended methodology provides a complete agentic software develo
 
 | Process | File | Description | Task Count |
 |---------|------|-------------|------------|
-| Full Workflow | `superpowers-workflow.js` | Complete lifecycle orchestrator | 12 |
-| Brainstorming | `brainstorming.js` | Socratic design refinement | 5 |
-| Writing Plans | `writing-plans.js` | Bite-sized TDD task planning | 4 |
-| Executing Plans | `executing-plans.js` | Batch execution with checkpoints | 6 |
-| Subagent-Driven Dev | `subagent-driven-development.js` | Fresh agent per task + two-stage review | 6 |
-| Test-Driven Dev | `test-driven-development.js` | RED-GREEN-REFACTOR cycles | 7 |
-| Systematic Debugging | `systematic-debugging.js` | 4-phase root cause process | 9 |
-| Parallel Agents | `dispatching-parallel-agents.js` | Concurrent domain solving | 4 |
-| Verification | `verification-before-completion.js` | Evidence-based completion | 3 |
+| Full Workflow | `workflows\superpowers-workflow.js` | Complete lifecycle orchestrator | 12 |
+| Brainstorming | `workflows\brainstorming.js` | Socratic design refinement | 5 |
+| Writing Plans | `workflows\writing-plans.js` | Bite-sized TDD task planning | 4 |
+| Executing Plans | `workflows\executing-plans.js` | Batch execution with checkpoints | 6 |
+| Subagent-Driven Dev | `workflows\subagent-driven-development.js` | Fresh agent per task + two-stage review | 6 |
+| Test-Driven Dev | `workflows\test-driven-development.js` | RED-GREEN-REFACTOR cycles | 7 |
+| Systematic Debugging | `workflows\systematic-debugging.js` | 4-phase root cause process | 9 |
+| Parallel Agents | `workflows\dispatching-parallel-agents.js` | Concurrent domain solving | 4 |
+| Verification | `workflows\verification-before-completion.js` | Evidence-based completion | 3 |
 
 ## Skills Catalog
 
@@ -69,3 +69,4 @@ Cross-cutting concerns applied throughout:
 - **Complexity reduction** - Simplicity as primary goal
 - **Evidence over claims** - Verify before declaring success
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
+

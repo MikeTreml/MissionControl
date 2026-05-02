@@ -87,6 +87,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Identified ${serviceMappingAnalysis.contractPairs.length} contract pairs`);
 
   // Quality Gate: Minimum contract coverage
+  if (serviceMappingAnalysis.coveragePercentage < 80) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -134,6 +135,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...toolSetup.artifacts);
 
   // Quality Gate: Tool setup verification
+  if (!toolSetup.toolConfigured || toolSetup.configurationIssues.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -186,6 +188,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Created ${contractsCreated} consumer contracts`);
 
   // Quality Gate: Consumer contract completeness
+  if (contractsCreated < serviceMappingAnalysis.contractPairs.length) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -236,6 +239,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Consumer tests passing
   const consumerPassRate = consumerTestExecution.passRate;
+  if (consumerPassRate < 100) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -288,6 +292,7 @@ export async function process(inputs, ctx) {
   brokerSetup = brokerSetupResult.brokerReady;
 
   // Quality Gate: Broker setup verification
+  if (!brokerSetup) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -340,6 +345,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...contractPublishing.artifacts);
 
   // Quality Gate: Publishing success
+  if (!contractPublishing.allPublished || contractPublishing.failedPublications.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -394,6 +400,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Provider verification tests created for ${providerVerification.providersConfigured} providers`);
 
   // Quality Gate: Provider verification setup
+  if (providerVerification.providersConfigured < serviceMappingAnalysis.providerCount) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -447,6 +454,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Provider verification passing
   const providerPassRate = providerTestExecution.passRate;
+  if (providerPassRate < acceptanceCriteria.providerVerificationRate) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -518,6 +526,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...breakingChangeDetection.artifacts);
 
   // Quality Gate: Breaking change detection functional
+  if (!breakingChangeDetection.detectionConfigured) {
       let lastFeedback_phase10Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase10Review) {
@@ -610,6 +619,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `CI/CD integration: Consumer=${consumerPipelineIntegration.integrated}, Provider=${providerPipelineIntegration.integrated}`);
 
   // Quality Gate: CI/CD integration verification
+  if (!cicdIntegrated) {
       let lastFeedback_qualityGateApproval5 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval5) {
@@ -687,6 +697,7 @@ export async function process(inputs, ctx) {
   const independentDeploymentVerified = independentDeploymentVerification.verified;
 
   // Quality Gate: Independent deployment verified
+  if (!independentDeploymentVerified) {
       let lastFeedback_qualityGateApproval6 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval6) {
@@ -2227,3 +2238,4 @@ export const finalAssessmentTask = defineTask('final-assessment', (args, taskCtx
   },
   labels: ['agent', 'contract-testing', 'assessment', 'metrics']
 }));
+

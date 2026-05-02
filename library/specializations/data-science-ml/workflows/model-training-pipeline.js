@@ -110,6 +110,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...dataLoad.artifacts);
 
   // Quality Gate: Check data quality scores
+  if (dataLoad.dataQuality.trainingScore < 70 || dataLoad.dataQuality.validationScore < 70) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -321,6 +322,7 @@ export async function process(inputs, ctx) {
       break;
     }
   // Periodic review breakpoint
+    if (currentIteration % 5 === 0 && currentIteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -388,6 +390,7 @@ export async function process(inputs, ctx) {
   const cvStd = crossValidation.metrics[targetMetric].std;
   const cvStable = cvStd < 0.05; // Standard deviation threshold
 
+  if (!cvStable) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -444,6 +447,7 @@ export async function process(inputs, ctx) {
     const performanceDrop = validationPerformance - testPerformance;
     const dropPercent = (performanceDrop / validationPerformance) * 100;
 
+    if (dropPercent > 10) {
         let lastFeedback_qualityGateApproval3 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval3) {
@@ -1610,3 +1614,4 @@ export const finalModelReviewTask = defineTask('final-model-review', (args, task
   },
   labels: ['agent', 'training-pipeline', 'review', 'final-approval']
 }));
+

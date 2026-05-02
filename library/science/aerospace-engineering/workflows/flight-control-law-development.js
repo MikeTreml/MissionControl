@@ -110,6 +110,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Stability margins
+  if (stabilityAnalysis.worstGainMargin < 6 || stabilityAnalysis.worstPhaseMargin < 45) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -741,3 +742,4 @@ export const fcsDocumentationTask = defineTask('fcs-documentation', (args, taskC
   },
   labels: ['fcs', 'documentation', 'aerospace']
 }));
+

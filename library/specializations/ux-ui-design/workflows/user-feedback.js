@@ -211,6 +211,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Minimum response threshold
   const totalResponses = feedbackCollection.totalResponses || 0;
+  if (totalResponses < minimumResponses) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -2458,3 +2459,4 @@ export const feedbackQualityScoringTask = defineTask('feedback-quality-scoring',
   },
   labels: ['agent', 'user-feedback', 'quality-scoring', 'validation']
 }));
+

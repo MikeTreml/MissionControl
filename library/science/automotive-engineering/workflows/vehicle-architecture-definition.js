@@ -123,6 +123,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Interface specifications must be complete
+  if (!interfaceSpecifications.interfaces || interfaceSpecifications.interfaces.length === 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -785,3 +786,4 @@ export const architectureDocumentTask = defineTask('architecture-document', (arg
   },
   labels: ['automotive', 'documentation', 'architecture', 'deliverable']
 }));
+

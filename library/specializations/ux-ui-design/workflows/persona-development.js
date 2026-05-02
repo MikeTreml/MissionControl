@@ -73,6 +73,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Research must provide sufficient insights
   const researchDepth = researchSynthesis.researchDepthScore || 0;
+  if (researchDepth < 60) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -1492,3 +1493,4 @@ export const personaDocumentationTask = defineTask('persona-documentation', (arg
   },
   labels: ['agent', 'persona-development', 'documentation']
 }));
+

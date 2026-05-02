@@ -5,7 +5,7 @@
  * @outputs { success: boolean, discovery: object, definition: object, development: object, delivery: object }
  */
 
-import { defineTask } from '@a5c-ai/babysitter-sdk';
+import { defineTask as createTask } from '@a5c-ai/babysitter-sdk';
 
 /**
  * Double Diamond Design Thinking Process
@@ -295,7 +295,7 @@ export async function process(inputs, ctx) {
  * Task: Discover (Diverge on Problem)
  * Explore the problem space broadly through research and insight gathering
  */
-export const discoverTask = defineTask('discover', (args, taskCtx) => ({
+export const discoverTask = createTask('discover', (args, taskCtx) => ({
   kind: 'agent',
   title: `Discover problem space: ${args.projectName}`,
   description: 'Divergent exploration of problem space through user research and analysis',
@@ -433,7 +433,7 @@ export const discoverTask = defineTask('discover', (args, taskCtx) => ({
  * Task: Define (Converge on Problem)
  * Synthesize research to create focused problem statement
  */
-export const defineTask = defineTask('define', (args, taskCtx) => ({
+export const defineTask = createTask('define', (args, taskCtx) => ({
   kind: 'agent',
   title: `Define problem statement: ${args.projectName}`,
   description: 'Convergent synthesis of research into focused problem statement',
@@ -557,7 +557,7 @@ export const defineTask = defineTask('define', (args, taskCtx) => ({
  * Task: Develop (Diverge on Solutions)
  * Generate multiple solution concepts through ideation and prototyping
  */
-export const developTask = defineTask('develop', (args, taskCtx) => ({
+export const developTask = createTask('develop', (args, taskCtx) => ({
   kind: 'agent',
   title: `Develop solution concepts: ${args.projectName}`,
   description: 'Divergent ideation and prototyping of multiple solution concepts',
@@ -679,7 +679,7 @@ export const developTask = defineTask('develop', (args, taskCtx) => ({
  * Task: Deliver (Converge on Solution)
  * Select final solution and create implementation plan
  */
-export const deliverTask = defineTask('deliver', (args, taskCtx) => ({
+export const deliverTask = createTask('deliver', (args, taskCtx) => ({
   kind: 'agent',
   title: `Deliver final solution: ${args.projectName}`,
   description: 'Convergent selection of final solution and detailed implementation planning',
@@ -838,7 +838,7 @@ export const deliverTask = defineTask('deliver', (args, taskCtx) => ({
  * Task: Iteration Decision
  * Determine if another Double Diamond iteration is needed
  */
-export const iterationDecisionTask = defineTask('iteration-decision', (args, taskCtx) => ({
+export const iterationDecisionTask = createTask('iteration-decision', (args, taskCtx) => ({
   kind: 'agent',
   title: `Iteration decision: ${args.projectName}`,
   description: 'Analyze if another Double Diamond iteration is needed',
@@ -906,7 +906,7 @@ export const iterationDecisionTask = defineTask('iteration-decision', (args, tas
  * Task: Validate Double Diamond
  * Validate complete Double Diamond process for consistency and completeness
  */
-export const validateDoubleDiamondTask = defineTask('validate-double-diamond', (args, taskCtx) => ({
+export const validateDoubleDiamondTask = createTask('validate-double-diamond', (args, taskCtx) => ({
   kind: 'agent',
   title: `Validate Double Diamond: ${args.projectName}`,
   description: 'Validate Double Diamond process for consistency and completeness',
@@ -1017,7 +1017,7 @@ export const validateDoubleDiamondTask = defineTask('validate-double-diamond', (
  * Task: Load Artifacts
  * Load existing Double Diamond artifacts for continuation
  */
-export const loadArtifactsTask = defineTask('load-artifacts', (args, taskCtx) => ({
+export const loadArtifactsTask = createTask('load-artifacts', (args, taskCtx) => ({
   kind: 'agent',
   title: 'Load existing Double Diamond artifacts',
   description: 'Load and parse existing Double Diamond artifacts',

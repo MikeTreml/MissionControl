@@ -33,6 +33,7 @@ export async function process(inputs, ctx) {
   const batteryDesign = await ctx.task(batteryDesignTask, { projectName, requirements, orbitPower });
   let powerBudget = await ctx.task(powerBudgetTask, { projectName, requirements, solarArrayDesign, batteryDesign, loadList });
 
+  if (powerBudget.margin < 0.15) {
       let lastFeedback_reviewApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_reviewApproval) {
@@ -134,3 +135,4 @@ export const powerReportTask = defineTask('power-report', (args, taskCtx) => ({
   }, outputSchema: { type: 'object', required: ['report', 'markdown'], properties: { report: { type: 'object' }, markdown: { type: 'string' } } } },
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['power', 'aerospace']
 }));
+

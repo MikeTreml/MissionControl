@@ -80,6 +80,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...metricsRequirements.artifacts);
 
   // Quality Gate: Comprehensive metrics coverage
+  if (metricsRequirements.kpiCount < 15) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -126,6 +127,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...dataSourceIntegration.artifacts);
 
   // Quality Gate: All test sources integrated
+  if (dataSourceIntegration.integratedSources < testSources.length) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -174,6 +176,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...dataPipeline.artifacts);
 
   // Quality Gate: Data pipeline operational
+  if (!dataPipeline.pipelineOperational) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -384,6 +387,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...alertingSystem.artifacts);
 
   // Quality Gate: Alerting configured
+  if (!alertingSystem.alertsConfigured) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -459,6 +463,7 @@ export async function process(inputs, ctx) {
   const dashboardUrl = dashboardDeployment.dashboardUrl;
 
   // Quality Gate: Dashboard accessible
+  if (!dashboardDeployment.dashboardAccessible) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -516,6 +521,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...dataValidation.artifacts);
 
   // Quality Gate: Data accuracy validation
+  if (dataValidation.accuracy < 95) {
       let lastFeedback_phase11Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase11Review) {
@@ -2079,3 +2085,5 @@ export const userAcceptanceTask = defineTask('user-acceptance', (args, taskCtx) 
   },
   labels: ['agent', 'qa-metrics', 'dashboard', 'user-acceptance', 'training']
 }));
+
+

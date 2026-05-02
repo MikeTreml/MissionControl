@@ -1,4 +1,4 @@
-# Cryptography and Blockchain Development - Skills and Agents Backlog
+﻿# Cryptography and Blockchain Development - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Cryptography/Blockchain processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized blockchain tooling.
 
@@ -47,13 +47,13 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Implement upgradeable contracts (UUPS, Transparent Proxy)
 
 **Process Integration**:
-- smart-contract-development-lifecycle.js
-- erc20-token-implementation.js
-- erc721-nft-collection.js
-- erc1155-multi-token.js
-- erc4626-tokenized-vault.js
-- gas-optimization.js
-- smart-contract-upgrade.js
+- workflows\smart-contract-development-lifecycle.js
+- workflows\erc20-token-implementation.js
+- workflows\erc721-nft-collection.js
+- workflows\erc1155-multi-token.js
+- workflows\erc4626-tokenized-vault.js
+- workflows\gas-optimization.js
+- workflows\smart-contract-upgrade.js
 
 **Dependencies**: Foundry/Hardhat, Solidity compiler
 
@@ -75,9 +75,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Produce human-readable security reports
 
 **Process Integration**:
-- smart-contract-security-audit.js
-- smart-contract-development-lifecycle.js
-- formal-verification.js
+- workflows\smart-contract-security-audit.js
+- workflows\smart-contract-development-lifecycle.js
+- workflows\formal-verification.js
 
 **Dependencies**: Slither CLI, Python environment
 
@@ -99,9 +99,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Generate proof-of-concept exploit inputs
 
 **Process Integration**:
-- smart-contract-security-audit.js
-- smart-contract-fuzzing.js
-- invariant-testing.js
+- workflows\smart-contract-security-audit.js
+- workflows\smart-contract-fuzzing.js
+- workflows\invariant-testing.js
 
 **Dependencies**: Mythril CLI, Docker (optional)
 
@@ -123,10 +123,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Use Chisel for Solidity REPL debugging
 
 **Process Integration**:
-- smart-contract-development-lifecycle.js
-- smart-contract-fuzzing.js
-- invariant-testing.js
-- gas-optimization.js
+- workflows\smart-contract-development-lifecycle.js
+- workflows\smart-contract-fuzzing.js
+- workflows\invariant-testing.js
+- workflows\gas-optimization.js
 - All DeFi protocol processes
 
 **Dependencies**: Foundry toolkit
@@ -149,11 +149,11 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Integrate with CI/CD pipelines
 
 **Process Integration**:
-- smart-contract-fuzzing.js
-- invariant-testing.js
-- smart-contract-security-audit.js
-- amm-pool-development.js
-- lending-protocol.js
+- workflows\smart-contract-fuzzing.js
+- workflows\invariant-testing.js
+- workflows\smart-contract-security-audit.js
+- workflows\amm-pool-development.js
+- workflows\lending-protocol.js
 
 **Dependencies**: Echidna CLI, Crytic compile
 
@@ -175,11 +175,11 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Interpret verification results and timeouts
 
 **Process Integration**:
-- formal-verification.js
-- smart-contract-security-audit.js
-- lending-protocol.js
-- amm-pool-development.js
-- governance-system.js
+- workflows\formal-verification.js
+- workflows\smart-contract-security-audit.js
+- workflows\lending-protocol.js
+- workflows\amm-pool-development.js
+- workflows\governance-system.js
 
 **Dependencies**: Certora Prover CLI, API key
 
@@ -202,10 +202,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Generate witness calculators
 
 **Process Integration**:
-- zk-circuit-development.js
-- zk-snark-application.js
-- zk-rollup-development.js
-- privacy-token-implementation.js
+- workflows\zk-circuit-development.js
+- workflows\zk-snark-application.js
+- workflows\zk-rollup-development.js
+- workflows\privacy-token-implementation.js
 
 **Dependencies**: Circom compiler, snarkjs, Noir compiler
 
@@ -227,10 +227,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Verify contract bytecode against source
 
 **Process Integration**:
-- gas-optimization.js
-- smart-contract-security-audit.js
-- smart-contract-upgrade.js
-- formal-verification.js
+- workflows\gas-optimization.js
+- workflows\smart-contract-security-audit.js
+- workflows\smart-contract-upgrade.js
+- workflows\formal-verification.js
 
 **Dependencies**: evm.codes reference, decompilers
 
@@ -252,8 +252,8 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Generate TypeChain typings
 
 **Process Integration**:
-- smart-contract-development-lifecycle.js
-- dapp-frontend-development.js
+- workflows\smart-contract-development-lifecycle.js
+- workflows\dapp-frontend-development.js
 - All token and DeFi processes
 
 **Dependencies**: Hardhat CLI, Node.js
@@ -277,9 +277,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Handle chain reorganizations
 
 **Process Integration**:
-- subgraph-development.js
-- blockchain-indexer-development.js
-- dapp-frontend-development.js
+- workflows\subgraph-development.js
+- workflows\blockchain-indexer-development.js
+- workflows\dapp-frontend-development.js
 
 **Dependencies**: Graph CLI, IPFS, Graph Node
 
@@ -302,9 +302,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Support hardware wallets and WalletConnect
 
 **Process Integration**:
-- dapp-frontend-development.js
-- hd-wallet-implementation.js
-- multi-signature-wallet.js
+- workflows\dapp-frontend-development.js
+- workflows\hd-wallet-implementation.js
+- workflows\multi-signature-wallet.js
 
 **Dependencies**: wagmi, viem, RainbowKit/Web3Modal
 
@@ -326,10 +326,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Implement MEV protection (Flashbots)
 
 **Process Integration**:
-- amm-pool-development.js
-- lending-protocol.js
-- yield-aggregator.js
-- economic-simulation.js
+- workflows\amm-pool-development.js
+- workflows\lending-protocol.js
+- workflows\yield-aggregator.js
+- workflows\economic-simulation.js
 
 **Dependencies**: Protocol ABIs, RPC access
 
@@ -352,11 +352,11 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Implement constant-time operations
 
 **Process Integration**:
-- cryptographic-protocol-implementation.js
-- hd-wallet-implementation.js
-- multi-signature-wallet.js
-- threshold-signature-scheme.js
-- zk-circuit-development.js
+- workflows\cryptographic-protocol-implementation.js
+- workflows\hd-wallet-implementation.js
+- workflows\multi-signature-wallet.js
+- workflows\threshold-signature-scheme.js
+- workflows\zk-circuit-development.js
 
 **Dependencies**: Cryptographic libraries (noble-curves, libsodium)
 
@@ -378,9 +378,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Handle cross-chain state verification
 
 **Process Integration**:
-- cross-chain-bridge.js
-- blockchain-node-setup.js
-- multi-signature-wallet.js
+- workflows\cross-chain-bridge.js
+- workflows\blockchain-node-setup.js
+- workflows\multi-signature-wallet.js
 
 **Dependencies**: Bridge SDKs, multi-chain RPC
 
@@ -403,10 +403,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Use cadCAD for complex simulations
 
 **Process Integration**:
-- economic-simulation.js
-- staking-contract.js
-- governance-system.js
-- yield-aggregator.js
+- workflows\economic-simulation.js
+- workflows\staking-contract.js
+- workflows\governance-system.js
+- workflows\yield-aggregator.js
 
 **Dependencies**: cadCAD, Python analytics
 
@@ -428,9 +428,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Handle node upgrades and migrations
 
 **Process Integration**:
-- blockchain-node-setup.js
-- validator-node-operation.js
-- blockchain-indexer-development.js
+- workflows\blockchain-node-setup.js
+- workflows\validator-node-operation.js
+- workflows\blockchain-indexer-development.js
 
 **Dependencies**: Node software, systemd, Docker
 
@@ -453,9 +453,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 
 **Process Integration**:
 - All token processes (erc20, erc721, erc1155, erc4626)
-- governance-system.js
-- smart-contract-upgrade.js
-- staking-contract.js
+- workflows\governance-system.js
+- workflows\smart-contract-upgrade.js
+- workflows\staking-contract.js
 
 **Dependencies**: OpenZeppelin Contracts NPM package
 
@@ -478,9 +478,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Compare implementation alternatives
 
 **Process Integration**:
-- gas-optimization.js
-- smart-contract-development-lifecycle.js
-- amm-pool-development.js
+- workflows\gas-optimization.js
+- workflows\smart-contract-development-lifecycle.js
+- workflows\amm-pool-development.js
 - All DeFi protocol processes
 
 **Dependencies**: Foundry gas reports, Hardhat gas reporter
@@ -504,9 +504,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Conduct post-disclosure analysis
 
 **Process Integration**:
-- bug-bounty-program.js
-- incident-response-exploits.js
-- smart-contract-security-audit.js
+- workflows\bug-bounty-program.js
+- workflows\incident-response-exploits.js
+- workflows\smart-contract-security-audit.js
 
 **Dependencies**: Immunefi platform, GitHub Security Advisories
 
@@ -529,9 +529,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Generate forensic reports
 
 **Process Integration**:
-- incident-response-exploits.js
-- economic-simulation.js
-- smart-contract-security-audit.js
+- workflows\incident-response-exploits.js
+- workflows\economic-simulation.js
+- workflows\smart-contract-security-audit.js
 
 **Dependencies**: Etherscan API, Dune Analytics, Nansen
 
@@ -561,10 +561,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Trail of Bits, OpenZeppelin, Consensys Diligence methodology
 
 **Process Integration**:
-- smart-contract-security-audit.js (all phases)
-- formal-verification.js (property identification)
-- smart-contract-fuzzing.js (property definition)
-- incident-response-exploits.js (attack analysis)
+- workflows\smart-contract-security-audit.js (all phases)
+- workflows\formal-verification.js (property identification)
+- workflows\smart-contract-fuzzing.js (property definition)
+- workflows\incident-response-exploits.js (attack analysis)
 
 ---
 
@@ -588,10 +588,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Academic research, ZK protocol development (Zcash, Aztec, zkSync)
 
 **Process Integration**:
-- zk-circuit-development.js (all phases)
-- zk-snark-application.js (all phases)
-- zk-rollup-development.js (circuit design)
-- privacy-token-implementation.js (protocol design)
+- workflows\zk-circuit-development.js (all phases)
+- workflows\zk-snark-application.js (all phases)
+- workflows\zk-rollup-development.js (circuit design)
+- workflows\privacy-token-implementation.js (protocol design)
 
 ---
 
@@ -616,11 +616,11 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Uniswap, Aave, MakerDAO protocol design
 
 **Process Integration**:
-- amm-pool-development.js (all phases)
-- lending-protocol.js (all phases)
-- yield-aggregator.js (strategy design)
-- staking-contract.js (reward mechanics)
-- economic-simulation.js (model design)
+- workflows\amm-pool-development.js (all phases)
+- workflows\lending-protocol.js (all phases)
+- workflows\yield-aggregator.js (strategy design)
+- workflows\staking-contract.js (reward mechanics)
+- workflows\economic-simulation.js (model design)
 
 ---
 
@@ -645,10 +645,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Ethereum Foundation, node operators, staking services
 
 **Process Integration**:
-- blockchain-node-setup.js (all phases)
-- validator-node-operation.js (all phases)
-- blockchain-indexer-development.js (node integration)
-- cross-chain-bridge.js (relayer infrastructure)
+- workflows\blockchain-node-setup.js (all phases)
+- workflows\validator-node-operation.js (all phases)
+- workflows\blockchain-indexer-development.js (node integration)
+- workflows\cross-chain-bridge.js (relayer infrastructure)
 
 ---
 
@@ -673,9 +673,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Academic formal methods, Certora/Runtime Verification
 
 **Process Integration**:
-- formal-verification.js (all phases)
-- smart-contract-security-audit.js (verification phase)
-- smart-contract-development-lifecycle.js (property testing)
+- workflows\formal-verification.js (all phases)
+- workflows\smart-contract-security-audit.js (verification phase)
+- workflows\smart-contract-development-lifecycle.js (property testing)
 
 ---
 
@@ -700,8 +700,8 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Major dApp development (Uniswap, OpenSea, Blur)
 
 **Process Integration**:
-- dapp-frontend-development.js (all phases)
-- subgraph-development.js (data integration)
+- workflows\dapp-frontend-development.js (all phases)
+- workflows\subgraph-development.js (data integration)
 
 ---
 
@@ -726,10 +726,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Wallet security, key management systems
 
 **Process Integration**:
-- cryptographic-protocol-implementation.js (all phases)
-- hd-wallet-implementation.js (all phases)
-- multi-signature-wallet.js (signature schemes)
-- threshold-signature-scheme.js (all phases)
+- workflows\cryptographic-protocol-implementation.js (all phases)
+- workflows\hd-wallet-implementation.js (all phases)
+- workflows\multi-signature-wallet.js (signature schemes)
+- workflows\threshold-signature-scheme.js (all phases)
 
 ---
 
@@ -754,9 +754,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: High-frequency DeFi, gas-sensitive applications
 
 **Process Integration**:
-- gas-optimization.js (all phases)
-- smart-contract-development-lifecycle.js (optimization phase)
-- amm-pool-development.js (swap optimization)
+- workflows\gas-optimization.js (all phases)
+- workflows\smart-contract-development-lifecycle.js (optimization phase)
+- workflows\amm-pool-development.js (swap optimization)
 
 ---
 
@@ -781,10 +781,10 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Major token launches, NFT platforms
 
 **Process Integration**:
-- erc20-token-implementation.js (all phases)
-- erc721-nft-collection.js (all phases)
-- erc1155-multi-token.js (all phases)
-- erc4626-tokenized-vault.js (all phases)
+- workflows\erc20-token-implementation.js (all phases)
+- workflows\erc721-nft-collection.js (all phases)
+- workflows\erc1155-multi-token.js (all phases)
+- workflows\erc4626-tokenized-vault.js (all phases)
 
 ---
 
@@ -809,9 +809,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: Protocol security teams, hack response
 
 **Process Integration**:
-- incident-response-exploits.js (all phases)
-- bug-bounty-program.js (triage, response)
-- smart-contract-security-audit.js (risk assessment)
+- workflows\incident-response-exploits.js (all phases)
+- workflows\bug-bounty-program.js (triage, response)
+- workflows\smart-contract-security-audit.js (risk assessment)
 
 ---
 
@@ -836,9 +836,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: LayerZero, Wormhole, Axelar experience
 
 **Process Integration**:
-- cross-chain-bridge.js (all phases)
-- blockchain-node-setup.js (multi-chain)
-- incident-response-exploits.js (bridge incidents)
+- workflows\cross-chain-bridge.js (all phases)
+- workflows\blockchain-node-setup.js (multi-chain)
+- workflows\incident-response-exploits.js (bridge incidents)
 
 ---
 
@@ -863,9 +863,9 @@ All 33 implemented processes in this specialization currently use the `general-p
 - Background: MakerDAO, Compound, ENS governance
 
 **Process Integration**:
-- governance-system.js (all phases)
-- staking-contract.js (voting power)
-- economic-simulation.js (governance modeling)
+- workflows\governance-system.js (all phases)
+- workflows\staking-contract.js (voting power)
+- workflows\economic-simulation.js (governance modeling)
 
 ---
 
@@ -875,39 +875,39 @@ All 33 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| smart-contract-development-lifecycle.js | SK-001, SK-004, SK-009, SK-017 | AG-001, AG-008 |
-| smart-contract-security-audit.js | SK-002, SK-003, SK-005, SK-008 | AG-001, AG-005 |
-| gas-optimization.js | SK-008, SK-018, SK-004 | AG-008 |
-| smart-contract-upgrade.js | SK-001, SK-017, SK-008 | AG-001 |
-| formal-verification.js | SK-006, SK-008 | AG-005, AG-001 |
-| erc20-token-implementation.js | SK-001, SK-017 | AG-009 |
-| erc721-nft-collection.js | SK-001, SK-017 | AG-009 |
-| erc1155-multi-token.js | SK-001, SK-017 | AG-009 |
-| erc4626-tokenized-vault.js | SK-001, SK-012, SK-017 | AG-009, AG-003 |
-| amm-pool-development.js | SK-001, SK-012, SK-018 | AG-003, AG-008 |
-| lending-protocol.js | SK-001, SK-012, SK-006 | AG-003, AG-005 |
-| staking-contract.js | SK-001, SK-015, SK-017 | AG-003, AG-012 |
-| yield-aggregator.js | SK-001, SK-012, SK-015 | AG-003 |
-| governance-system.js | SK-001, SK-017 | AG-012 |
-| cryptographic-protocol-implementation.js | SK-013 | AG-007 |
-| hd-wallet-implementation.js | SK-013, SK-011 | AG-007 |
-| multi-signature-wallet.js | SK-001, SK-013 | AG-007, AG-001 |
-| threshold-signature-scheme.js | SK-013 | AG-007 |
-| zk-circuit-development.js | SK-007, SK-013 | AG-002 |
-| zk-snark-application.js | SK-007 | AG-002 |
-| zk-rollup-development.js | SK-007, SK-001 | AG-002, AG-004 |
-| privacy-token-implementation.js | SK-007, SK-001 | AG-002 |
-| blockchain-node-setup.js | SK-016 | AG-004 |
-| validator-node-operation.js | SK-016 | AG-004 |
-| blockchain-indexer-development.js | SK-010, SK-016 | AG-004 |
-| cross-chain-bridge.js | SK-014, SK-001 | AG-011, AG-001 |
-| smart-contract-fuzzing.js | SK-005, SK-004 | AG-001 |
-| invariant-testing.js | SK-005, SK-004 | AG-001, AG-005 |
-| economic-simulation.js | SK-015, SK-012 | AG-003, AG-012 |
-| dapp-frontend-development.js | SK-011, SK-010 | AG-006 |
-| subgraph-development.js | SK-010 | AG-006 |
-| bug-bounty-program.js | SK-019 | AG-010, AG-001 |
-| incident-response-exploits.js | SK-019, SK-020 | AG-010, AG-001 |
+| workflows\smart-contract-development-lifecycle.js | SK-001, SK-004, SK-009, SK-017 | AG-001, AG-008 |
+| workflows\smart-contract-security-audit.js | SK-002, SK-003, SK-005, SK-008 | AG-001, AG-005 |
+| workflows\gas-optimization.js | SK-008, SK-018, SK-004 | AG-008 |
+| workflows\smart-contract-upgrade.js | SK-001, SK-017, SK-008 | AG-001 |
+| workflows\formal-verification.js | SK-006, SK-008 | AG-005, AG-001 |
+| workflows\erc20-token-implementation.js | SK-001, SK-017 | AG-009 |
+| workflows\erc721-nft-collection.js | SK-001, SK-017 | AG-009 |
+| workflows\erc1155-multi-token.js | SK-001, SK-017 | AG-009 |
+| workflows\erc4626-tokenized-vault.js | SK-001, SK-012, SK-017 | AG-009, AG-003 |
+| workflows\amm-pool-development.js | SK-001, SK-012, SK-018 | AG-003, AG-008 |
+| workflows\lending-protocol.js | SK-001, SK-012, SK-006 | AG-003, AG-005 |
+| workflows\staking-contract.js | SK-001, SK-015, SK-017 | AG-003, AG-012 |
+| workflows\yield-aggregator.js | SK-001, SK-012, SK-015 | AG-003 |
+| workflows\governance-system.js | SK-001, SK-017 | AG-012 |
+| workflows\cryptographic-protocol-implementation.js | SK-013 | AG-007 |
+| workflows\hd-wallet-implementation.js | SK-013, SK-011 | AG-007 |
+| workflows\multi-signature-wallet.js | SK-001, SK-013 | AG-007, AG-001 |
+| workflows\threshold-signature-scheme.js | SK-013 | AG-007 |
+| workflows\zk-circuit-development.js | SK-007, SK-013 | AG-002 |
+| workflows\zk-snark-application.js | SK-007 | AG-002 |
+| workflows\zk-rollup-development.js | SK-007, SK-001 | AG-002, AG-004 |
+| workflows\privacy-token-implementation.js | SK-007, SK-001 | AG-002 |
+| workflows\blockchain-node-setup.js | SK-016 | AG-004 |
+| workflows\validator-node-operation.js | SK-016 | AG-004 |
+| workflows\blockchain-indexer-development.js | SK-010, SK-016 | AG-004 |
+| workflows\cross-chain-bridge.js | SK-014, SK-001 | AG-011, AG-001 |
+| workflows\smart-contract-fuzzing.js | SK-005, SK-004 | AG-001 |
+| workflows\invariant-testing.js | SK-005, SK-004 | AG-001, AG-005 |
+| workflows\economic-simulation.js | SK-015, SK-012 | AG-003, AG-012 |
+| workflows\dapp-frontend-development.js | SK-011, SK-010 | AG-006 |
+| workflows\subgraph-development.js | SK-010 | AG-006 |
+| workflows\bug-bounty-program.js | SK-019 | AG-010, AG-001 |
+| workflows\incident-response-exploits.js | SK-019, SK-020 | AG-010, AG-001 |
 
 ---
 
@@ -1001,3 +1001,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

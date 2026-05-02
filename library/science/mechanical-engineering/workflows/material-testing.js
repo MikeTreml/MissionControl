@@ -136,6 +136,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Tensile testing complete - Yield: ${tensileResult.averageYield} MPa, UTS: ${tensileResult.averageUTS} MPa`);
 
     // Quality Gate: Specification compliance
+    if (specifications.minYield && tensileResult.averageYield < specifications.minYield) {
         let lastFeedback_qualityGateApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval) {
@@ -826,3 +827,4 @@ export const generateTestReportTask = defineTask('generate-test-report', (args, 
   },
   labels: ['mechanical-engineering', 'testing', 'reporting']
 }));
+

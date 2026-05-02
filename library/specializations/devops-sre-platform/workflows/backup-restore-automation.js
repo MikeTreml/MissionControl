@@ -506,6 +506,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Validation complete - Coverage: ${validationResult.backupCoverage}%, RPO compliance: ${validationResult.rpoCompliance}%`);
 
   // Quality Gate: Validation review
+  if (validationResult.backupCoverage < 95 || validationResult.rpoCompliance < 90) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -595,6 +596,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Restore testing complete - ${testingResult.testsPassed}/${testingResult.testsTotal} tests passed`);
 
     // Quality Gate: Testing validation
+    if (testingResult.testsFailed > 0) {
         let lastFeedback_qualityGateApproval5 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval5) {
@@ -2527,3 +2529,4 @@ export const calculateBackupScoreTask = defineTask('calculate-backup-score', (ar
   },
   labels: ['agent', 'backup-restore', 'scoring']
 }));
+

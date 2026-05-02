@@ -1,4 +1,4 @@
-# Mobile Development - Skills and Agents Backlog
+﻿# Mobile Development - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Mobile Development processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized mobile development tooling.
 
@@ -49,10 +49,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Configure and execute Jest tests with React Native Testing Library
 
 **Process Integration**:
-- react-native-app-setup.js
-- cross-platform-ui-library.js
-- mobile-testing-strategy.js
-- mobile-performance-optimization.js
+- workflows\react-native-app-setup.js
+- workflows\cross-platform-ui-library.js
+- workflows\mobile-testing-strategy.js
+- workflows\mobile-performance-optimization.js
 
 **Dependencies**: React Native CLI, Expo CLI, Node.js, npm/yarn
 
@@ -76,10 +76,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Execute widget tests and integration tests
 
 **Process Integration**:
-- flutter-app-scaffolding.js
-- cross-platform-ui-library.js
-- mobile-testing-strategy.js
-- mobile-performance-optimization.js
+- workflows\flutter-app-scaffolding.js
+- workflows\cross-platform-ui-library.js
+- workflows\mobile-testing-strategy.js
+- workflows\mobile-performance-optimization.js
 
 **Dependencies**: Flutter SDK, Dart SDK, Android SDK, Xcode
 
@@ -103,11 +103,11 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Analyze Instruments profiling data
 
 **Process Integration**:
-- swiftui-app-development.js
-- ios-core-data-implementation.js
-- ios-push-notifications.js
-- ios-appstore-submission.js
-- mobile-accessibility-implementation.js
+- workflows\swiftui-app-development.js
+- workflows\ios-core-data-implementation.js
+- workflows\ios-push-notifications.js
+- workflows\ios-appstore-submission.js
+- workflows\mobile-accessibility-implementation.js
 
 **Dependencies**: Xcode, Swift, macOS
 
@@ -132,10 +132,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Debug recomposition issues with Layout Inspector
 
 **Process Integration**:
-- jetpack-compose-ui.js
-- android-room-database.js
-- firebase-cloud-messaging.js
-- android-playstore-publishing.js
+- workflows\jetpack-compose-ui.js
+- workflows\android-room-database.js
+- workflows\firebase-cloud-messaging.js
+- workflows\android-playstore-publishing.js
 
 **Dependencies**: Android Studio, Android SDK, Gradle, Kotlin
 
@@ -158,9 +158,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Debug Core Data performance issues
 
 **Process Integration**:
-- ios-core-data-implementation.js
-- offline-first-architecture.js
-- mobile-security-implementation.js
+- workflows\ios-core-data-implementation.js
+- workflows\offline-first-architecture.js
+- workflows\mobile-security-implementation.js
 
 **Dependencies**: Xcode, Core Data Framework, Realm SDK
 
@@ -183,9 +183,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Analyze Room query performance
 
 **Process Integration**:
-- android-room-database.js
-- offline-first-architecture.js
-- mobile-security-implementation.js
+- workflows\android-room-database.js
+- workflows\offline-first-architecture.js
+- workflows\mobile-security-implementation.js
 
 **Dependencies**: Android Studio, Room library, Kotlin
 
@@ -209,9 +209,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Debug notification delivery issues
 
 **Process Integration**:
-- ios-push-notifications.js
-- firebase-cloud-messaging.js
-- firebase-backend-integration.js
+- workflows\ios-push-notifications.js
+- workflows\firebase-cloud-messaging.js
+- workflows\firebase-backend-integration.js
 
 **Dependencies**: APNs, FCM, Xcode, Android Studio
 
@@ -235,11 +235,11 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Configure beta distribution (TestFlight, Firebase App Distribution)
 
 **Process Integration**:
-- mobile-cicd-fastlane.js
-- automated-release-management.js
-- ios-appstore-submission.js
-- android-playstore-publishing.js
-- beta-testing-setup.js
+- workflows\mobile-cicd-fastlane.js
+- workflows\automated-release-management.js
+- workflows\ios-appstore-submission.js
+- workflows\android-playstore-publishing.js
+- workflows\beta-testing-setup.js
 
 **Dependencies**: Fastlane, Ruby, Bundler
 
@@ -263,10 +263,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Generate App Privacy questionnaire responses
 
 **Process Integration**:
-- ios-appstore-submission.js
-- beta-testing-setup.js
-- app-store-optimization.js
-- automated-release-management.js
+- workflows\ios-appstore-submission.js
+- workflows\beta-testing-setup.js
+- workflows\app-store-optimization.js
+- workflows\automated-release-management.js
 
 **Dependencies**: App Store Connect API, Xcode, Transporter
 
@@ -290,10 +290,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Track pre-launch report results
 
 **Process Integration**:
-- android-playstore-publishing.js
-- beta-testing-setup.js
-- app-store-optimization.js
-- automated-release-management.js
+- workflows\android-playstore-publishing.js
+- workflows\beta-testing-setup.js
+- workflows\app-store-optimization.js
+- workflows\automated-release-management.js
 
 **Dependencies**: Google Play Developer API, Google Cloud credentials
 
@@ -317,9 +317,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Mock native modules and APIs
 
 **Process Integration**:
-- mobile-testing-strategy.js
-- mobile-accessibility-implementation.js
-- mobile-security-implementation.js
+- workflows\mobile-testing-strategy.js
+- workflows\mobile-accessibility-implementation.js
+- workflows\mobile-security-implementation.js
 
 **Dependencies**: Detox, Maestro, XCTest, Espresso, Appium
 
@@ -343,9 +343,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Implement A/B testing with Firebase Remote Config
 
 **Process Integration**:
-- mobile-analytics-setup.js
-- firebase-backend-integration.js
-- mobile-performance-optimization.js
+- workflows\mobile-analytics-setup.js
+- workflows\firebase-backend-integration.js
+- workflows\mobile-performance-optimization.js
 
 **Dependencies**: Firebase, Mixpanel, Amplitude, Segment SDKs
 
@@ -368,10 +368,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Test deep link attribution
 
 **Process Integration**:
-- firebase-cloud-messaging.js
-- ios-push-notifications.js
-- mobile-cicd-fastlane.js
-- rest-api-integration.js
+- workflows\firebase-cloud-messaging.js
+- workflows\ios-push-notifications.js
+- workflows\mobile-cicd-fastlane.js
+- workflows\rest-api-integration.js
 
 **Dependencies**: Branch.io, Adjust, Firebase Dynamic Links
 
@@ -395,10 +395,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Test offline scenarios systematically
 
 **Process Integration**:
-- offline-first-architecture.js
-- rest-api-integration.js
-- graphql-apollo-integration.js
-- firebase-backend-integration.js
+- workflows\offline-first-architecture.js
+- workflows\rest-api-integration.js
+- workflows\graphql-apollo-integration.js
+- workflows\firebase-backend-integration.js
 
 **Dependencies**: WatermelonDB, Realm, MMKV, SQLite
 
@@ -422,9 +422,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Configure app transport security (ATS) policies
 
 **Process Integration**:
-- mobile-security-implementation.js
+- workflows\mobile-security-implementation.js
 - secrets-management (cross-specialization)
-- ios-appstore-submission.js
+- workflows\ios-appstore-submission.js
 
 **Dependencies**: Keychain, Keystore, TrustKit, OWASP tools
 
@@ -447,9 +447,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Cache and preload animations
 
 **Process Integration**:
-- mobile-animation-design.js
-- cross-platform-ui-library.js
-- responsive-mobile-layout.js
+- workflows\mobile-animation-design.js
+- workflows\cross-platform-ui-library.js
+- workflows\responsive-mobile-layout.js
 
 **Dependencies**: Lottie libraries, After Effects (optional)
 
@@ -473,9 +473,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Debug with Apollo DevTools
 
 **Process Integration**:
-- graphql-apollo-integration.js
-- offline-first-architecture.js
-- mobile-performance-optimization.js
+- workflows\graphql-apollo-integration.js
+- workflows\offline-first-architecture.js
+- workflows\mobile-performance-optimization.js
 
 **Dependencies**: Apollo Client, graphql-codegen, GraphQL
 
@@ -499,9 +499,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Debug with Firebase Emulator Suite
 
 **Process Integration**:
-- firebase-backend-integration.js
-- firebase-cloud-messaging.js
-- mobile-analytics-setup.js
+- workflows\firebase-backend-integration.js
+- workflows\firebase-cloud-messaging.js
+- workflows\mobile-analytics-setup.js
 
 **Dependencies**: Firebase SDK, Firebase CLI
 
@@ -525,9 +525,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Configure reduced motion preferences
 
 **Process Integration**:
-- mobile-accessibility-implementation.js
-- mobile-testing-strategy.js
-- cross-platform-ui-library.js
+- workflows\mobile-accessibility-implementation.js
+- workflows\mobile-testing-strategy.js
+- workflows\cross-platform-ui-library.js
 
 **Dependencies**: Accessibility Inspector, Accessibility Scanner
 
@@ -551,10 +551,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Generate performance benchmark reports
 
 **Process Integration**:
-- mobile-performance-optimization.js
-- mobile-testing-strategy.js
-- jetpack-compose-ui.js
-- swiftui-app-development.js
+- workflows\mobile-performance-optimization.js
+- workflows\mobile-testing-strategy.js
+- workflows\jetpack-compose-ui.js
+- workflows\swiftui-app-development.js
 
 **Dependencies**: Xcode Instruments, Android Profiler, Flipper, DevTools
 
@@ -585,10 +585,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: JavaScript ecosystem expert, some native experience
 
 **Process Integration**:
-- react-native-app-setup.js (all phases)
-- cross-platform-ui-library.js (React Native components)
-- mobile-performance-optimization.js (RN optimization)
-- mobile-testing-strategy.js (Jest, Detox)
+- workflows\react-native-app-setup.js (all phases)
+- workflows\cross-platform-ui-library.js (React Native components)
+- workflows\mobile-performance-optimization.js (RN optimization)
+- workflows\mobile-testing-strategy.js (Jest, Detox)
 
 ---
 
@@ -613,10 +613,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: Strong OOP principles, mobile UI expertise
 
 **Process Integration**:
-- flutter-app-scaffolding.js (all phases)
-- cross-platform-ui-library.js (Flutter widgets)
-- mobile-performance-optimization.js (Flutter optimization)
-- mobile-testing-strategy.js (widget tests)
+- workflows\flutter-app-scaffolding.js (all phases)
+- workflows\cross-platform-ui-library.js (Flutter widgets)
+- workflows\mobile-performance-optimization.js (Flutter optimization)
+- workflows\mobile-testing-strategy.js (widget tests)
 
 ---
 
@@ -642,10 +642,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: Objective-C to Swift transition, Apple platform expert
 
 **Process Integration**:
-- swiftui-app-development.js (all phases)
-- ios-core-data-implementation.js (all phases)
-- ios-push-notifications.js (APNs expertise)
-- ios-appstore-submission.js (all phases)
+- workflows\swiftui-app-development.js (all phases)
+- workflows\ios-core-data-implementation.js (all phases)
+- workflows\ios-push-notifications.js (APNs expertise)
+- workflows\ios-appstore-submission.js (all phases)
 
 ---
 
@@ -671,10 +671,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: Java to Kotlin migration, Google ecosystem expert
 
 **Process Integration**:
-- jetpack-compose-ui.js (all phases)
-- android-room-database.js (all phases)
-- firebase-cloud-messaging.js (Android focus)
-- android-playstore-publishing.js (all phases)
+- workflows\jetpack-compose-ui.js (all phases)
+- workflows\android-room-database.js (all phases)
+- workflows\firebase-cloud-messaging.js (Android focus)
+- workflows\android-playstore-publishing.js (all phases)
 
 ---
 
@@ -700,11 +700,11 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: Both iOS and Android build systems
 
 **Process Integration**:
-- mobile-cicd-fastlane.js (all phases)
-- automated-release-management.js (all phases)
-- beta-testing-setup.js (distribution setup)
-- ios-appstore-submission.js (build automation)
-- android-playstore-publishing.js (build automation)
+- workflows\mobile-cicd-fastlane.js (all phases)
+- workflows\automated-release-management.js (all phases)
+- workflows\beta-testing-setup.js (distribution setup)
+- workflows\ios-appstore-submission.js (build automation)
+- workflows\android-playstore-publishing.js (build automation)
 
 ---
 
@@ -730,10 +730,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: Both automated and manual testing expertise
 
 **Process Integration**:
-- mobile-testing-strategy.js (all phases)
-- mobile-accessibility-implementation.js (testing phases)
-- mobile-security-implementation.js (security testing)
-- mobile-performance-optimization.js (perf testing)
+- workflows\mobile-testing-strategy.js (all phases)
+- workflows\mobile-accessibility-implementation.js (testing phases)
+- workflows\mobile-security-implementation.js (security testing)
+- workflows\mobile-performance-optimization.js (perf testing)
 
 ---
 
@@ -759,9 +759,9 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: Penetration testing, secure development
 
 **Process Integration**:
-- mobile-security-implementation.js (all phases)
-- ios-appstore-submission.js (security review)
-- android-playstore-publishing.js (data safety)
+- workflows\mobile-security-implementation.js (all phases)
+- workflows\ios-appstore-submission.js (security review)
+- workflows\android-playstore-publishing.js (data safety)
 
 ---
 
@@ -787,10 +787,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: Design systems, animation, accessibility
 
 **Process Integration**:
-- mobile-animation-design.js (all phases)
-- responsive-mobile-layout.js (all phases)
-- mobile-accessibility-implementation.js (implementation)
-- cross-platform-ui-library.js (component design)
+- workflows\mobile-animation-design.js (all phases)
+- workflows\responsive-mobile-layout.js (all phases)
+- workflows\mobile-accessibility-implementation.js (implementation)
+- workflows\cross-platform-ui-library.js (component design)
 
 ---
 
@@ -816,10 +816,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: Data-driven marketing, mobile analytics
 
 **Process Integration**:
-- app-store-optimization.js (all phases)
-- ios-appstore-submission.js (metadata optimization)
-- android-playstore-publishing.js (listing optimization)
-- beta-testing-setup.js (beta feedback analysis)
+- workflows\app-store-optimization.js (all phases)
+- workflows\ios-appstore-submission.js (metadata optimization)
+- workflows\android-playstore-publishing.js (listing optimization)
+- workflows\beta-testing-setup.js (beta feedback analysis)
 
 ---
 
@@ -845,10 +845,10 @@ All 26 implemented processes in this specialization currently use general-purpos
 - Background: API design, distributed systems
 
 **Process Integration**:
-- rest-api-integration.js (all phases)
-- graphql-apollo-integration.js (all phases)
-- firebase-backend-integration.js (all phases)
-- offline-first-architecture.js (sync strategies)
+- workflows\rest-api-integration.js (all phases)
+- workflows\graphql-apollo-integration.js (all phases)
+- workflows\firebase-backend-integration.js (all phases)
+- workflows\offline-first-architecture.js (sync strategies)
 
 ---
 
@@ -858,32 +858,32 @@ All 26 implemented processes in this specialization currently use general-purpos
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| react-native-app-setup.js | SK-001, SK-014 | AG-001 |
-| flutter-app-scaffolding.js | SK-002 | AG-002 |
-| cross-platform-ui-library.js | SK-001, SK-002, SK-016 | AG-001, AG-002, AG-008 |
-| swiftui-app-development.js | SK-003, SK-020 | AG-003 |
-| ios-core-data-implementation.js | SK-003, SK-005 | AG-003 |
-| ios-push-notifications.js | SK-003, SK-007, SK-013 | AG-003 |
-| jetpack-compose-ui.js | SK-004, SK-020 | AG-004 |
-| android-room-database.js | SK-004, SK-006 | AG-004 |
-| firebase-cloud-messaging.js | SK-004, SK-007, SK-018 | AG-004 |
-| mobile-cicd-fastlane.js | SK-008, SK-009, SK-010 | AG-005 |
-| ios-appstore-submission.js | SK-008, SK-009 | AG-003, AG-005, AG-009 |
-| android-playstore-publishing.js | SK-008, SK-010 | AG-004, AG-005, AG-009 |
-| app-store-optimization.js | SK-009, SK-010 | AG-009 |
-| beta-testing-setup.js | SK-008, SK-009, SK-010 | AG-005, AG-006 |
-| mobile-testing-strategy.js | SK-011, SK-019 | AG-006 |
-| mobile-security-implementation.js | SK-015 | AG-007 |
-| mobile-performance-optimization.js | SK-020 | AG-001, AG-002, AG-006 |
-| mobile-animation-design.js | SK-016 | AG-008 |
-| responsive-mobile-layout.js | SK-016 | AG-008 |
-| mobile-accessibility-implementation.js | SK-019 | AG-006, AG-008 |
-| rest-api-integration.js | SK-014, SK-017 | AG-010 |
-| graphql-apollo-integration.js | SK-017 | AG-010 |
-| firebase-backend-integration.js | SK-018 | AG-010 |
-| offline-first-architecture.js | SK-005, SK-006, SK-014 | AG-010 |
-| mobile-analytics-setup.js | SK-012, SK-018 | AG-005, AG-006 |
-| automated-release-management.js | SK-008, SK-009, SK-010 | AG-005 |
+| workflows\react-native-app-setup.js | SK-001, SK-014 | AG-001 |
+| workflows\flutter-app-scaffolding.js | SK-002 | AG-002 |
+| workflows\cross-platform-ui-library.js | SK-001, SK-002, SK-016 | AG-001, AG-002, AG-008 |
+| workflows\swiftui-app-development.js | SK-003, SK-020 | AG-003 |
+| workflows\ios-core-data-implementation.js | SK-003, SK-005 | AG-003 |
+| workflows\ios-push-notifications.js | SK-003, SK-007, SK-013 | AG-003 |
+| workflows\jetpack-compose-ui.js | SK-004, SK-020 | AG-004 |
+| workflows\android-room-database.js | SK-004, SK-006 | AG-004 |
+| workflows\firebase-cloud-messaging.js | SK-004, SK-007, SK-018 | AG-004 |
+| workflows\mobile-cicd-fastlane.js | SK-008, SK-009, SK-010 | AG-005 |
+| workflows\ios-appstore-submission.js | SK-008, SK-009 | AG-003, AG-005, AG-009 |
+| workflows\android-playstore-publishing.js | SK-008, SK-010 | AG-004, AG-005, AG-009 |
+| workflows\app-store-optimization.js | SK-009, SK-010 | AG-009 |
+| workflows\beta-testing-setup.js | SK-008, SK-009, SK-010 | AG-005, AG-006 |
+| workflows\mobile-testing-strategy.js | SK-011, SK-019 | AG-006 |
+| workflows\mobile-security-implementation.js | SK-015 | AG-007 |
+| workflows\mobile-performance-optimization.js | SK-020 | AG-001, AG-002, AG-006 |
+| workflows\mobile-animation-design.js | SK-016 | AG-008 |
+| workflows\responsive-mobile-layout.js | SK-016 | AG-008 |
+| workflows\mobile-accessibility-implementation.js | SK-019 | AG-006, AG-008 |
+| workflows\rest-api-integration.js | SK-014, SK-017 | AG-010 |
+| workflows\graphql-apollo-integration.js | SK-017 | AG-010 |
+| workflows\firebase-backend-integration.js | SK-018 | AG-010 |
+| workflows\offline-first-architecture.js | SK-005, SK-006, SK-014 | AG-010 |
+| workflows\mobile-analytics-setup.js | SK-012, SK-018 | AG-005, AG-006 |
+| workflows\automated-release-management.js | SK-008, SK-009, SK-010 | AG-005 |
 
 ---
 
@@ -978,3 +978,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

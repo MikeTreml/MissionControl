@@ -111,6 +111,7 @@ export async function process(inputs, ctx) {
 
   ctx.log('info', `Log Source Integration Complete - Integrated: ${integratedSources}/${logSources.length}`);
 
+  if (failedSources.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -474,6 +475,7 @@ export async function process(inputs, ctx) {
 
   ctx.log('info', `Testing Complete - Total Tests: ${testResults.totalTests}, Passed: ${testResults.passed}, Failed: ${testResults.failed}`);
 
+  if (testResults.failed > 0) {
       let lastFeedback_phase16Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase16Review) {
@@ -967,7 +969,7 @@ export const correlationRulesTask = defineTask('correlation-rules', (args, taskC
         mitreAttackCoverage: {
           type: 'object',
           properties: {
-            tacticsC covered: { type: 'number' },
+            tacticsCovered: { type: 'number' },
             techniquesCovered: { type: 'number' },
             coveragePercentage: { type: 'number' }
           }

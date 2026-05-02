@@ -98,6 +98,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Emissions must pass pre-compliance
+  if (!emissionsTesting.preCompliancePass) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -673,3 +674,4 @@ export const complianceDocumentationTask = defineTask('compliance-documentation'
   },
   labels: ['ee', 'emc', 'compliance', 'documentation']
 }));
+

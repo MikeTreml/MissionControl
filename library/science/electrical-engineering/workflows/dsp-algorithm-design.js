@@ -85,6 +85,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Algorithm must meet specifications
+  if (!algorithmValidation.allTestsPassed) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -714,3 +715,4 @@ export const implementationVerificationTask = defineTask('implementation-verific
   },
   labels: ['ee', 'dsp', 'verification']
 }));
+

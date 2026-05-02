@@ -39,6 +39,7 @@ export async function process(inputs, ctx) {
   const sas = await ctx.task(sasTask, { projectName, psac, softwarePlans, supplements });
   let complianceMatrix = await ctx.task(do178ComplianceMatrixTask, { projectName, objectivesAnalysis, softwarePlans, sas });
 
+  if (complianceMatrix.independenceGaps.length > 0) {
       let lastFeedback_analysisApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_analysisApproval2) {
@@ -177,3 +178,4 @@ export const do178ReportTask = defineTask('do178-report', (args, taskCtx) => ({
   }, outputSchema: { type: 'object', required: ['report', 'markdown'], properties: { report: { type: 'object' }, markdown: { type: 'string' } } } },
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['do-178c', 'aerospace', 'software']
 }));
+

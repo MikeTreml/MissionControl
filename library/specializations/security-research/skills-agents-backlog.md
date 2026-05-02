@@ -1,4 +1,4 @@
-# Security Research and Vulnerability Analysis - Skills and Agents Backlog
+﻿# Security Research and Vulnerability Analysis - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Security Research processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized security tooling.
 
@@ -48,10 +48,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Support IDA Pro scripting (IDAPython)
 
 **Process Integration**:
-- binary-reverse-engineering.js
-- firmware-analysis.js
-- malware-analysis.js
-- vulnerability-root-cause-analysis.js
+- workflows\binary-reverse-engineering.js
+- workflows\firmware-analysis.js
+- workflows\malware-analysis.js
+- workflows\vulnerability-root-cause-analysis.js
 
 **Dependencies**: Ghidra CLI, IDA Pro (optional), Python
 
@@ -74,9 +74,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Support libFuzzer and honggfuzz
 
 **Process Integration**:
-- fuzzing-campaign.js
-- security-tool-development.js
-- vulnerability-research-workflow.js
+- workflows\fuzzing-campaign.js
+- workflows\security-tool-development.js
+- workflows\vulnerability-research-workflow.js
 
 **Dependencies**: AFL++, LLVM, sanitizers (ASAN/MSAN/UBSAN)
 
@@ -99,10 +99,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Debug exploits with GDB integration
 
 **Process Integration**:
-- exploit-development.js
-- shellcode-development.js
-- capture-the-flag-challenges.js
-- network-penetration-testing.js
+- workflows\exploit-development.js
+- workflows\shellcode-development.js
+- workflows\capture-the-flag-challenges.js
+- workflows\network-penetration-testing.js
 
 **Dependencies**: pwntools, ROPgadget, GDB
 
@@ -125,10 +125,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Support SAST pipeline integration
 
 **Process Integration**:
-- static-code-analysis.js
-- variant-analysis.js
-- web-app-vuln-research.js
-- api-security-research.js
+- workflows\static-code-analysis.js
+- workflows\variant-analysis.js
+- workflows\web-app-vuln-research.js
+- workflows\api-security-research.js
 
 **Dependencies**: Semgrep, CodeQL, language-specific analyzers
 
@@ -151,9 +151,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Generate Sigma rules for correlation
 
 **Process Integration**:
-- malware-analysis.js
-- threat-intelligence-research.js
-- security-tool-development.js
+- workflows\malware-analysis.js
+- workflows\threat-intelligence-research.js
+- workflows\security-tool-development.js
 
 **Dependencies**: YARA, yara-python
 
@@ -176,10 +176,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Generate web vulnerability reports
 
 **Process Integration**:
-- web-app-vuln-research.js
-- api-security-research.js
-- bug-bounty-workflow.js
-- red-team-operations.js
+- workflows\web-app-vuln-research.js
+- workflows\api-security-research.js
+- workflows\bug-bounty-workflow.js
+- workflows\red-team-operations.js
 
 **Dependencies**: Burp Suite (Pro), ZAP
 
@@ -202,10 +202,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Create network-based exploits
 
 **Process Integration**:
-- protocol-reverse-engineering.js
-- network-penetration-testing.js
-- malware-analysis.js
-- firmware-analysis.js
+- workflows\protocol-reverse-engineering.js
+- workflows\network-penetration-testing.js
+- workflows\malware-analysis.js
+- workflows\firmware-analysis.js
 
 **Dependencies**: Wireshark/tshark, Scapy, boofuzz
 
@@ -228,10 +228,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Create environment snapshots
 
 **Process Integration**:
-- malware-analysis.js
-- exploit-development.js
-- security-research-lab-setup.js
-- dynamic-analysis-runtime-testing.js
+- workflows\malware-analysis.js
+- workflows\exploit-development.js
+- workflows\security-research-lab-setup.js
+- workflows\dynamic-analysis-runtime-testing.js
 
 **Dependencies**: VirtualBox/VMware, Docker, Cuckoo
 
@@ -254,10 +254,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Create adversary emulation plans
 
 **Process Integration**:
-- red-team-operations.js
-- purple-team-exercise.js
-- threat-intelligence-research.js
-- malware-analysis.js
+- workflows\red-team-operations.js
+- workflows\purple-team-exercise.js
+- workflows\threat-intelligence-research.js
+- workflows\malware-analysis.js
 
 **Dependencies**: ATT&CK STIX data, Navigator
 
@@ -280,10 +280,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Support CPE matching
 
 **Process Integration**:
-- vulnerability-root-cause-analysis.js
-- responsible-disclosure.js
-- security-advisory-writing.js
-- variant-analysis.js
+- workflows\vulnerability-root-cause-analysis.js
+- workflows\responsible-disclosure.js
+- workflows\security-advisory-writing.js
+- workflows\variant-analysis.js
 
 **Dependencies**: NVD API, CWE database
 
@@ -306,9 +306,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Generate mobile security reports
 
 **Process Integration**:
-- mobile-app-security-research.js
-- bug-bounty-workflow.js
-- red-team-operations.js
+- workflows\mobile-app-security-research.js
+- workflows\bug-bounty-workflow.js
+- workflows\red-team-operations.js
 
 **Dependencies**: Frida, Objection, MobSF, adb/idevice tools
 
@@ -331,10 +331,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Support AWS/GCP/Azure
 
 **Process Integration**:
-- cloud-security-research.js
-- container-security-research.js
-- bug-bounty-workflow.js
-- red-team-operations.js
+- workflows\cloud-security-research.js
+- workflows\container-security-research.js
+- workflows\bug-bounty-workflow.js
+- workflows\red-team-operations.js
 
 **Dependencies**: Prowler, ScoutSuite, Pacu, cloud CLIs
 
@@ -357,8 +357,8 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Create formal verification specs
 
 **Process Integration**:
-- smart-contract-auditing.js
-- security-tool-development.js
+- workflows\smart-contract-auditing.js
+- workflows\security-tool-development.js
 
 **Dependencies**: Slither, Mythril, Echidna, Solidity compiler
 
@@ -381,10 +381,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Handle JIT compilation exploits
 
 **Process Integration**:
-- exploit-development.js
-- shellcode-development.js
-- binary-reverse-engineering.js
-- capture-the-flag-challenges.js
+- workflows\exploit-development.js
+- workflows\shellcode-development.js
+- workflows\binary-reverse-engineering.js
+- workflows\capture-the-flag-challenges.js
 
 **Dependencies**: GDB, pwndbg, ROPgadget, one_gadget
 
@@ -407,9 +407,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Generate forensic reports
 
 **Process Integration**:
-- malware-analysis.js
-- threat-intelligence-research.js
-- red-team-operations.js (post-operation)
+- workflows\malware-analysis.js
+- workflows\threat-intelligence-research.js
+- workflows\red-team-operations.js (post-operation)
 
 **Dependencies**: Volatility, Autopsy, Sleuth Kit
 
@@ -432,10 +432,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Create debugging scripts
 
 **Process Integration**:
-- dynamic-analysis-runtime-testing.js
-- exploit-development.js
-- binary-reverse-engineering.js
-- vulnerability-root-cause-analysis.js
+- workflows\dynamic-analysis-runtime-testing.js
+- workflows\exploit-development.js
+- workflows\binary-reverse-engineering.js
+- workflows\vulnerability-root-cause-analysis.js
 
 **Dependencies**: GDB, LLDB, WinDbg, pwndbg/gef
 
@@ -458,9 +458,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Generate custom implants
 
 **Process Integration**:
-- red-team-operations.js
-- network-penetration-testing.js
-- purple-team-exercise.js
+- workflows\red-team-operations.js
+- workflows\network-penetration-testing.js
+- workflows\purple-team-exercise.js
 
 **Dependencies**: Metasploit, Cobalt Strike (licensed), Sliver
 
@@ -483,9 +483,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Share intelligence feeds
 
 **Process Integration**:
-- threat-intelligence-research.js
-- malware-analysis.js
-- security-advisory-writing.js
+- workflows\threat-intelligence-research.js
+- workflows\malware-analysis.js
+- workflows\security-advisory-writing.js
 
 **Dependencies**: stix2 library, taxii2-client
 
@@ -508,9 +508,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Create hardware exploitation tools
 
 **Process Integration**:
-- hardware-security-research.js
-- firmware-analysis.js
-- supply-chain-security.js
+- workflows\hardware-security-research.js
+- workflows\firmware-analysis.js
+- workflows\supply-chain-security.js
 
 **Dependencies**: OpenOCD, Flashrom, ChipWhisperer
 
@@ -533,8 +533,8 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Test inference APIs
 
 **Process Integration**:
-- ai-ml-security-research.js
-- supply-chain-security.js
+- workflows\ai-ml-security-research.js
+- workflows\supply-chain-security.js
 
 **Dependencies**: Adversarial Robustness Toolbox (ART), Foolbox
 
@@ -564,10 +564,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Bug bounty, CVE authorship, security conferences
 
 **Process Integration**:
-- vulnerability-research-workflow.js (all phases)
-- static-code-analysis.js (vulnerability identification)
-- dynamic-analysis-runtime-testing.js (runtime testing)
-- variant-analysis.js (pattern detection)
+- workflows\vulnerability-research-workflow.js (all phases)
+- workflows\static-code-analysis.js (vulnerability identification)
+- workflows\dynamic-analysis-runtime-testing.js (runtime testing)
+- workflows\variant-analysis.js (pattern detection)
 
 ---
 
@@ -591,10 +591,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: CTF competitions, Pwn2Own, exploit research
 
 **Process Integration**:
-- exploit-development.js (all phases)
-- shellcode-development.js (all phases)
-- vulnerability-root-cause-analysis.js (exploitability)
-- capture-the-flag-challenges.js (pwn challenges)
+- workflows\exploit-development.js (all phases)
+- workflows\shellcode-development.js (all phases)
+- workflows\vulnerability-root-cause-analysis.js (exploitability)
+- workflows\capture-the-flag-challenges.js (pwn challenges)
 
 ---
 
@@ -618,10 +618,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Malware analysis, IDA expert, Ghidra contributor
 
 **Process Integration**:
-- binary-reverse-engineering.js (all phases)
-- firmware-analysis.js (all phases)
-- protocol-reverse-engineering.js (all phases)
-- malware-analysis.js (static analysis, behavioral)
+- workflows\binary-reverse-engineering.js (all phases)
+- workflows\firmware-analysis.js (all phases)
+- workflows\protocol-reverse-engineering.js (all phases)
+- workflows\malware-analysis.js (static analysis, behavioral)
 
 ---
 
@@ -645,9 +645,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Threat intelligence, APT tracking, IR
 
 **Process Integration**:
-- malware-analysis.js (all phases)
-- threat-intelligence-research.js (malware intel)
-- security-tool-development.js (detection rules)
+- workflows\malware-analysis.js (all phases)
+- workflows\threat-intelligence-research.js (malware intel)
+- workflows\security-tool-development.js (detection rules)
 
 ---
 
@@ -671,9 +671,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: OSCP, OSCE, red team engagements
 
 **Process Integration**:
-- red-team-operations.js (all phases)
-- purple-team-exercise.js (adversary emulation)
-- network-penetration-testing.js (all phases)
+- workflows\red-team-operations.js (all phases)
+- workflows\purple-team-exercise.js (adversary emulation)
+- workflows\network-penetration-testing.js (all phases)
 
 ---
 
@@ -697,9 +697,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Bug bounty, web CTF, OWASP contributor
 
 **Process Integration**:
-- web-app-vuln-research.js (all phases)
-- api-security-research.js (all phases)
-- bug-bounty-workflow.js (web targets)
+- workflows\web-app-vuln-research.js (all phases)
+- workflows\api-security-research.js (all phases)
+- workflows\bug-bounty-workflow.js (web targets)
 
 ---
 
@@ -723,9 +723,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: OSS-Fuzz contributor, fuzzing tool development
 
 **Process Integration**:
-- fuzzing-campaign.js (all phases)
-- security-tool-development.js (harness development)
-- vulnerability-research-workflow.js (automated discovery)
+- workflows\fuzzing-campaign.js (all phases)
+- workflows\security-tool-development.js (harness development)
+- workflows\vulnerability-research-workflow.js (automated discovery)
 
 ---
 
@@ -749,9 +749,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Government/private sector CTI, MITRE ATT&CK
 
 **Process Integration**:
-- threat-intelligence-research.js (all phases)
-- malware-analysis.js (attribution)
-- security-advisory-writing.js (threat context)
+- workflows\threat-intelligence-research.js (all phases)
+- workflows\malware-analysis.js (attribution)
+- workflows\security-advisory-writing.js (threat context)
 
 ---
 
@@ -775,7 +775,7 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: DeFi audits, bug bounty, Immunefi
 
 **Process Integration**:
-- smart-contract-auditing.js (all phases)
+- workflows\smart-contract-auditing.js (all phases)
 
 ---
 
@@ -799,10 +799,10 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Consulting, advisory publication
 
 **Process Integration**:
-- security-advisory-writing.js (all phases)
-- responsible-disclosure.js (report creation)
-- bug-bounty-workflow.js (report writing)
-- security-research-publication.js (all phases)
+- workflows\security-advisory-writing.js (all phases)
+- workflows\responsible-disclosure.js (report creation)
+- workflows\bug-bounty-workflow.js (report writing)
+- workflows\security-research-publication.js (all phases)
 
 ---
 
@@ -826,7 +826,7 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: CTF team member, challenge author
 
 **Process Integration**:
-- capture-the-flag-challenges.js (all phases)
+- workflows\capture-the-flag-challenges.js (all phases)
 
 ---
 
@@ -850,7 +850,7 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Mobile bug bounty, app store security
 
 **Process Integration**:
-- mobile-app-security-research.js (all phases)
+- workflows\mobile-app-security-research.js (all phases)
 
 ---
 
@@ -874,8 +874,8 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Cloud pen testing, cloud bug bounty
 
 **Process Integration**:
-- cloud-security-research.js (all phases)
-- container-security-research.js (all phases)
+- workflows\cloud-security-research.js (all phases)
+- workflows\container-security-research.js (all phases)
 
 ---
 
@@ -899,8 +899,8 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Both red and blue team experience
 
 **Process Integration**:
-- purple-team-exercise.js (all phases)
-- red-team-operations.js (detection testing)
+- workflows\purple-team-exercise.js (all phases)
+- workflows\red-team-operations.js (detection testing)
 
 ---
 
@@ -924,9 +924,9 @@ All 32 implemented processes in this specialization currently use generic agent 
 - Background: Embedded systems, hardware CTF
 
 **Process Integration**:
-- hardware-security-research.js (all phases)
-- firmware-analysis.js (hardware aspects)
-- supply-chain-security.js (hardware supply chain)
+- workflows\hardware-security-research.js (all phases)
+- workflows\firmware-analysis.js (hardware aspects)
+- workflows\supply-chain-security.js (hardware supply chain)
 
 ---
 
@@ -936,38 +936,38 @@ All 32 implemented processes in this specialization currently use generic agent 
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| vulnerability-research-workflow.js | SK-004, SK-010 | AG-001 |
-| static-code-analysis.js | SK-004, SK-010 | AG-001 |
-| dynamic-analysis-runtime-testing.js | SK-008, SK-016 | AG-001 |
-| fuzzing-campaign.js | SK-002, SK-016 | AG-007 |
-| vulnerability-root-cause-analysis.js | SK-001, SK-016, SK-010 | AG-001, AG-002 |
-| variant-analysis.js | SK-004, SK-010 | AG-001 |
-| binary-reverse-engineering.js | SK-001, SK-016 | AG-003 |
-| firmware-analysis.js | SK-001, SK-019 | AG-003, AG-015 |
-| protocol-reverse-engineering.js | SK-007, SK-001 | AG-003 |
-| malware-analysis.js | SK-001, SK-005, SK-008, SK-009 | AG-004 |
-| exploit-development.js | SK-003, SK-014, SK-016 | AG-002 |
-| shellcode-development.js | SK-003, SK-014 | AG-002 |
-| web-app-vuln-research.js | SK-006, SK-004 | AG-006 |
-| api-security-research.js | SK-006, SK-004 | AG-006 |
-| mobile-app-security-research.js | SK-011 | AG-012 |
-| cloud-security-research.js | SK-012 | AG-013 |
-| container-security-research.js | SK-012, SK-008 | AG-013 |
-| smart-contract-auditing.js | SK-013 | AG-009 |
-| hardware-security-research.js | SK-019 | AG-015 |
-| supply-chain-security.js | SK-019, SK-020 | AG-015 |
-| ai-ml-security-research.js | SK-020 | AG-001 |
-| red-team-operations.js | SK-017, SK-009 | AG-005 |
-| purple-team-exercise.js | SK-017, SK-009 | AG-014, AG-005 |
-| threat-intelligence-research.js | SK-018, SK-005, SK-009 | AG-008 |
-| security-research-lab-setup.js | SK-008, SK-016 | AG-003 |
-| security-tool-development.js | SK-002, SK-004, SK-005 | AG-007 |
-| capture-the-flag-challenges.js | SK-003, SK-014, SK-006 | AG-011 |
-| network-penetration-testing.js | SK-007, SK-017 | AG-005 |
-| bug-bounty-workflow.js | SK-006, SK-011, SK-012 | AG-006, AG-010 |
-| responsible-disclosure.js | SK-010 | AG-010 |
-| security-advisory-writing.js | SK-010, SK-018 | AG-010 |
-| security-research-publication.js | SK-010 | AG-010 |
+| workflows\vulnerability-research-workflow.js | SK-004, SK-010 | AG-001 |
+| workflows\static-code-analysis.js | SK-004, SK-010 | AG-001 |
+| workflows\dynamic-analysis-runtime-testing.js | SK-008, SK-016 | AG-001 |
+| workflows\fuzzing-campaign.js | SK-002, SK-016 | AG-007 |
+| workflows\vulnerability-root-cause-analysis.js | SK-001, SK-016, SK-010 | AG-001, AG-002 |
+| workflows\variant-analysis.js | SK-004, SK-010 | AG-001 |
+| workflows\binary-reverse-engineering.js | SK-001, SK-016 | AG-003 |
+| workflows\firmware-analysis.js | SK-001, SK-019 | AG-003, AG-015 |
+| workflows\protocol-reverse-engineering.js | SK-007, SK-001 | AG-003 |
+| workflows\malware-analysis.js | SK-001, SK-005, SK-008, SK-009 | AG-004 |
+| workflows\exploit-development.js | SK-003, SK-014, SK-016 | AG-002 |
+| workflows\shellcode-development.js | SK-003, SK-014 | AG-002 |
+| workflows\web-app-vuln-research.js | SK-006, SK-004 | AG-006 |
+| workflows\api-security-research.js | SK-006, SK-004 | AG-006 |
+| workflows\mobile-app-security-research.js | SK-011 | AG-012 |
+| workflows\cloud-security-research.js | SK-012 | AG-013 |
+| workflows\container-security-research.js | SK-012, SK-008 | AG-013 |
+| workflows\smart-contract-auditing.js | SK-013 | AG-009 |
+| workflows\hardware-security-research.js | SK-019 | AG-015 |
+| workflows\supply-chain-security.js | SK-019, SK-020 | AG-015 |
+| workflows\ai-ml-security-research.js | SK-020 | AG-001 |
+| workflows\red-team-operations.js | SK-017, SK-009 | AG-005 |
+| workflows\purple-team-exercise.js | SK-017, SK-009 | AG-014, AG-005 |
+| workflows\threat-intelligence-research.js | SK-018, SK-005, SK-009 | AG-008 |
+| workflows\security-research-lab-setup.js | SK-008, SK-016 | AG-003 |
+| workflows\security-tool-development.js | SK-002, SK-004, SK-005 | AG-007 |
+| workflows\capture-the-flag-challenges.js | SK-003, SK-014, SK-006 | AG-011 |
+| workflows\network-penetration-testing.js | SK-007, SK-017 | AG-005 |
+| workflows\bug-bounty-workflow.js | SK-006, SK-011, SK-012 | AG-006, AG-010 |
+| workflows\responsible-disclosure.js | SK-010 | AG-010 |
+| workflows\security-advisory-writing.js | SK-010, SK-018 | AG-010 |
+| workflows\security-research-publication.js | SK-010 | AG-010 |
 
 ---
 
@@ -1061,4 +1061,6 @@ These skills and agents are strong candidates for extraction to a shared library
 **Updated**: 2026-01-24
 **Version**: 1.1.0
 **Status**: Phase 6 - All Skills and Agents Implemented
-**Completed**: All 20 skills and 15 agents have been created with SKILL.md/AGENT.md and README.md files
+**Completed**: All 20 skills and 15 agents have been created with agents\cloud-security-researcher\AGENT.md and README.md files
+
+

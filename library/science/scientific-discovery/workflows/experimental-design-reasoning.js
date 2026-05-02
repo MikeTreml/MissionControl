@@ -85,6 +85,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Design Validity
+  if (validityAnalysis.overallValidity < 0.6) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -567,3 +568,4 @@ export const conductPowerAnalysisTask = defineTask('experimental-power-analysis'
   },
   labels: ['experimental-design', 'power-analysis']
 }));
+

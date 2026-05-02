@@ -92,6 +92,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Convergence must be achieved
+  if (!convergenceTests.converged) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -198,6 +199,7 @@ export async function process(inputs, ctx) {
       material
     });
 
+    if (!validation.agreementAcceptable) {
         let lastFeedback_phase9Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase9Review) {
@@ -728,3 +730,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['nanotechnology', 'dft', 'reporting']
 }));
+

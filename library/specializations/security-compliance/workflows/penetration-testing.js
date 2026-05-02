@@ -283,6 +283,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Exploitation phase complete - ${exploitationResult.successfulExploits} successful exploits, ${exploitationResult.accessLevel} access achieved`);
 
     // Quality Gate: Critical exploits
+    if (exploitationResult.criticalExploits > 0) {
         let lastFeedback_qualityGateApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval) {
@@ -1729,3 +1730,4 @@ export const remediationValidationTask = defineTask('remediation-validation', (a
   },
   labels: ['agent', 'penetration-testing', 'remediation-validation']
 }));
+

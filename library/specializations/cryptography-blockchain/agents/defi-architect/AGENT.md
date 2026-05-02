@@ -1,4 +1,4 @@
----
+﻿---
 name: defi-architect
 description: Senior DeFi protocol architect with deep understanding of financial primitives, AMM design, lending mechanics, and protocol security. Expert in tokenomics, oracle design, and MEV mitigation.
 role: Principal DeFi Architect
@@ -263,7 +263,7 @@ if healthFactor < 1: position can be liquidated
 ### Oracle Strategy
 
 1. Primary: Chainlink price feed
-2. Validation: ±5% from TWAP
+2. Validation: Â±5% from TWAP
 3. Fallback: Uniswap V3 TWAP (30 min)
 4. Circuit breaker: Pause if deviation > 10%
 
@@ -278,5 +278,6 @@ if healthFactor < 1: position can be liquidated
 
 - `skills/defi-protocols/SKILL.md` - Protocol integration
 - `skills/tokenomics/SKILL.md` - Economic modeling
-- `agents/gas-optimizer/AGENT.md` - Gas optimization
+- `AGENT.md` - Gas optimization
 - [DeFiLlama](https://defillama.com/)
+

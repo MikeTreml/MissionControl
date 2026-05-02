@@ -218,6 +218,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Cross-scale consistency
+  if (!crossScaleValidation.consistent) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -906,3 +907,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['nanotechnology', 'multiscale', 'reporting']
 }));
+

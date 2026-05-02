@@ -113,6 +113,7 @@ export async function process(inputs, ctx) {
       timestamp: ctx.now()
     });
 
+    if (feasibilityScore < targetFeasibility) {
         let lastFeedback = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback) {
@@ -511,3 +512,4 @@ export const generateConstraintInsightsTask = defineTask('generate-constraint-in
   },
   labels: ['agent', 'constraint-sculpting', 'insights']
 }));
+

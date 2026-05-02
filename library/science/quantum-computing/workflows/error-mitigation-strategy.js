@@ -212,6 +212,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...(validationResult.artifacts || []));
 
+  if (validationResult.achievedFidelity < targetFidelity) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -690,3 +691,4 @@ export const mitigationReportTask = defineTask('qc-mitigation-report', (args, ta
   },
   labels: ['quantum-computing', 'error-mitigation', 'reporting']
 }));
+

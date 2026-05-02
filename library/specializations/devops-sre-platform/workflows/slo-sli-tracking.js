@@ -264,6 +264,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `SLI Measurement Implemented - Queries: ${sliImplementationResult.queries.length}, Data Sources: ${sliImplementationResult.dataSources.length}`);
 
   // Quality Gate: SLI measurement verification
+  if (!sliImplementationResult.allSLIsImplemented) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -504,6 +505,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Validation Complete - Coverage: ${validationResult.coverage}%, Issues: ${validationResult.issues.length}`);
 
   // Quality Gate: Validation review
+  if (validationResult.issues.length > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -1842,3 +1844,4 @@ export const calculateSLOMaturityScoreTask = defineTask('calculate-slo-maturity-
   },
   labels: ['agent', 'slo-sli-tracking', 'scoring']
 }));
+

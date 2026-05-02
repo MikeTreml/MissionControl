@@ -152,6 +152,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Harmonic analysis complete - Peak response at ${harmonicResult.peakFrequency} Hz`);
 
     // Quality Gate: Resonance near operating frequency
+    if (excitation.frequency && Math.abs(harmonicResult.peakFrequency - excitation.frequency) < excitation.frequency * 0.1) {
         let lastFeedback_phase4Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase4Review) {
@@ -832,3 +833,4 @@ export const generateVibrationReportTask = defineTask('generate-vibration-report
   },
   labels: ['mechanical-engineering', 'vibration', 'reporting']
 }));
+

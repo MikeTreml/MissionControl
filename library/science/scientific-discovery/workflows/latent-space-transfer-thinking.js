@@ -49,6 +49,7 @@ export async function process(inputs, ctx) {
     sourceAnalysis,
     targetAnalysis,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -484,3 +485,4 @@ export const synthesizeTransferInsightsTask = defineTask('synthesize-transfer-in
   },
   labels: ['agent', 'latent-space', 'synthesis']
 }));
+

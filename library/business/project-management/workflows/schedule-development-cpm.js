@@ -113,6 +113,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Critical path identified
+  if (!criticalPathAnalysis.criticalPath || criticalPathAnalysis.criticalPath.length === 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -993,3 +994,4 @@ export const scheduleDocumentationTask = defineTask('schedule-documentation', (a
   },
   labels: ['schedule', 'documentation', 'deliverable']
 }));
+

@@ -58,6 +58,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...taskAssignment.artifacts);
 
   // Quality Gate: Review staffing gaps
+  if (staffingCalc.gaps.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -284,3 +285,4 @@ export const laborPerformanceTask = defineTask('labor-performance', (args, taskC
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'logistics', 'labor-management', 'reporting']
 }));
+

@@ -1,4 +1,4 @@
-# UX/UI Design Specialization - Skills & Agents Backlog
+﻿# UX/UI Design Specialization - Skills & Agents Backlog
 
 ## Overview
 
@@ -18,10 +18,10 @@ This document identifies specialized agents (subagents) and skills that would en
   - Validate design-to-code consistency
   - Extract style properties and measurements
 - **Used By Processes**:
-  - component-library.js (designToolLibraryTask)
-  - design-system.js
-  - hifi-prototyping.js
-  - wireframing.js
+  - workflows\component-library.js (designToolLibraryTask)
+  - workflows\design-system.js
+  - workflows\hifi-prototyping.js
+  - workflows\wireframing.js
 
 ### 2. WCAG Accessibility Auditor Agent
 - **ID**: `wcag-accessibility-auditor`
@@ -33,9 +33,9 @@ This document identifies specialized agents (subagents) and skills that would en
   - Detailed remediation recommendations
   - Conformance report generation
 - **Used By Processes**:
-  - accessibility-audit.js (wcagComplianceReviewTask, vpatGenerationTask)
-  - component-library.js (accessibilityAuditTask)
-  - responsive-design.js (responsiveAccessibilityTask)
+  - workflows\accessibility-audit.js (wcagComplianceReviewTask, vpatGenerationTask)
+  - workflows\component-library.js (accessibilityAuditTask)
+  - workflows\responsive-design.js (responsiveAccessibilityTask)
 
 ### 3. Screen Reader Compatibility Agent
 - **ID**: `screen-reader-compatibility-agent`
@@ -47,7 +47,7 @@ This document identifies specialized agents (subagents) and skills that would en
   - Generate screen reader test scripts
   - Document assistive technology compatibility
 - **Used By Processes**:
-  - accessibility-audit.js (screenReaderCompatibilityTask, assistiveTechnologyUsabilityTask)
+  - workflows\accessibility-audit.js (screenReaderCompatibilityTask, assistiveTechnologyUsabilityTask)
 
 ### 4. Color Contrast Analyzer Agent
 - **ID**: `color-contrast-analyzer`
@@ -59,9 +59,9 @@ This document identifies specialized agents (subagents) and skills that would en
   - Validate dark/light mode contrast
   - Generate color accessibility reports
 - **Used By Processes**:
-  - accessibility-audit.js (colorContrastVisualAnalysisTask)
-  - component-library.js (colorSystemDesignTask)
-  - design-system.js
+  - workflows\accessibility-audit.js (colorContrastVisualAnalysisTask)
+  - workflows\component-library.js (colorSystemDesignTask)
+  - workflows\design-system.js
 
 ### 5. Design Token Manager Agent
 - **ID**: `design-token-manager`
@@ -73,8 +73,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Version control token changes
   - Generate token documentation
 - **Used By Processes**:
-  - component-library.js (designTokensDefinitionTask, colorSystemDesignTask, typographySystemDesignTask, spacingLayoutSystemTask)
-  - design-system.js
+  - workflows\component-library.js (designTokensDefinitionTask, colorSystemDesignTask, typographySystemDesignTask, spacingLayoutSystemTask)
+  - workflows\design-system.js
 
 ### 6. User Research Synthesizer Agent
 - **ID**: `user-research-synthesizer`
@@ -86,9 +86,9 @@ This document identifies specialized agents (subagents) and skills that would en
   - Insight extraction and pattern recognition
   - Research finding prioritization
 - **Used By Processes**:
-  - user-research.js (dataSynthesisTask, insightGenerationTask)
-  - persona-development.js (researchSynthesisTask)
-  - user-journey-mapping.js (researchSynthesisTask)
+  - workflows\user-research.js (dataSynthesisTask, insightGenerationTask)
+  - workflows\persona-development.js (researchSynthesisTask)
+  - workflows\user-journey-mapping.js (researchSynthesisTask)
 
 ### 7. Persona Builder Agent
 - **ID**: `persona-builder-agent`
@@ -100,8 +100,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Behavioral pattern identification
   - Empathy map generation
 - **Used By Processes**:
-  - persona-development.js (personaDevelopmentTask, empathyMapGenerationTask)
-  - user-research.js (personaCreationTask)
+  - workflows\persona-development.js (personaDevelopmentTask, empathyMapGenerationTask)
+  - workflows\user-research.js (personaCreationTask)
 
 ### 8. Journey Map Visualizer Agent
 - **ID**: `journey-map-visualizer`
@@ -113,9 +113,9 @@ This document identifies specialized agents (subagents) and skills that would en
   - Service blueprint generation
   - Current vs. future state comparison
 - **Used By Processes**:
-  - user-journey-mapping.js (currentStateMapCreationTask, futureStateMapCreationTask, serviceBlueprintCreationTask)
-  - persona-development.js (journeyMappingTask)
-  - user-research.js (journeyMappingTask)
+  - workflows\user-journey-mapping.js (currentStateMapCreationTask, futureStateMapCreationTask, serviceBlueprintCreationTask)
+  - workflows\persona-development.js (journeyMappingTask)
+  - workflows\user-research.js (journeyMappingTask)
 
 ### 9. Wireframe Generator Agent
 - **ID**: `wireframe-generator`
@@ -127,7 +127,7 @@ This document identifies specialized agents (subagents) and skills that would en
   - Responsive wireframe variants
   - Wireframe-to-prototype conversion
 - **Used By Processes**:
-  - wireframing.js (lowFidelityWireframeTask, mediumFidelityWireframeTask, annotationGenerationTask)
+  - workflows\wireframing.js (lowFidelityWireframeTask, mediumFidelityWireframeTask, annotationGenerationTask)
 
 ### 10. Responsive Design Validator Agent
 - **ID**: `responsive-design-validator`
@@ -139,8 +139,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Responsive image optimization
   - Touch target measurement
 - **Used By Processes**:
-  - responsive-design.js (crossDeviceTestingTask, breakpointStrategyTask, responsiveLayoutDesignTask)
-  - component-library.js (responsiveBehaviorTask)
+  - workflows\responsive-design.js (crossDeviceTestingTask, breakpointStrategyTask, responsiveLayoutDesignTask)
+  - workflows\component-library.js (responsiveBehaviorTask)
 
 ### 11. Performance Auditor Agent
 - **ID**: `performance-auditor-agent`
@@ -152,8 +152,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Asset optimization recommendations
   - Performance budget validation
 - **Used By Processes**:
-  - responsive-design.js (responsivePerformanceTestingTask)
-  - component-library.js
+  - workflows\responsive-design.js (responsivePerformanceTestingTask)
+  - workflows\component-library.js
 
 ### 12. Touch Target Optimizer Agent
 - **ID**: `touch-target-optimizer`
@@ -165,8 +165,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Thumb zone mapping
   - Mobile-first interaction optimization
 - **Used By Processes**:
-  - responsive-design.js (touchTargetOptimizationTask)
-  - accessibility-audit.js
+  - workflows\responsive-design.js (touchTargetOptimizationTask)
+  - workflows\accessibility-audit.js
 
 ### 13. Typography System Agent
 - **ID**: `typography-system-agent`
@@ -178,9 +178,9 @@ This document identifies specialized agents (subagents) and skills that would en
   - Line height and spacing optimization
   - Responsive typography calculations
 - **Used By Processes**:
-  - component-library.js (typographySystemDesignTask)
-  - responsive-design.js (responsiveTypographySpacingTask)
-  - design-system.js
+  - workflows\component-library.js (typographySystemDesignTask)
+  - workflows\responsive-design.js (responsiveTypographySpacingTask)
+  - workflows\design-system.js
 
 ### 14. Iconography System Agent
 - **ID**: `iconography-system-agent`
@@ -192,8 +192,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Icon accessibility (labels, contrast)
   - Icon library documentation
 - **Used By Processes**:
-  - component-library.js (iconSystemDesignTask)
-  - design-system.js
+  - workflows\component-library.js (iconSystemDesignTask)
+  - workflows\design-system.js
 
 ### 15. Interaction Design Agent
 - **ID**: `interaction-design-agent`
@@ -205,8 +205,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Feedback pattern design
   - Motion design guidelines
 - **Used By Processes**:
-  - component-library.js (interactionAnimationTask)
-  - hifi-prototyping.js
+  - workflows\component-library.js (interactionAnimationTask)
+  - workflows\hifi-prototyping.js
 
 ### 16. Usability Heuristics Evaluator Agent
 - **ID**: `usability-heuristics-evaluator`
@@ -219,7 +219,7 @@ This document identifies specialized agents (subagents) and skills that would en
   - Competitive heuristic analysis
 - **Used By Processes**:
   - heuristic-evaluation.js
-  - accessibility-audit.js
+  - workflows\accessibility-audit.js
 
 ### 17. Information Architecture Agent
 - **ID**: `information-architecture-agent`
@@ -231,8 +231,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Labeling system validation
   - Findability scoring
 - **Used By Processes**:
-  - wireframing.js (informationArchitectureTask)
-  - user-journey-mapping.js
+  - workflows\wireframing.js (informationArchitectureTask)
+  - workflows\user-journey-mapping.js
 
 ### 18. Prototype Testing Agent
 - **ID**: `prototype-testing-agent`
@@ -244,9 +244,9 @@ This document identifies specialized agents (subagents) and skills that would en
   - Error rate calculation
   - Usability metrics aggregation
 - **Used By Processes**:
-  - hifi-prototyping.js
-  - wireframing.js (interactivePrototypeTask)
-  - usability-testing.js
+  - workflows\hifi-prototyping.js
+  - workflows\wireframing.js (interactivePrototypeTask)
+  - workflows\usability-testing.js
 
 ### 19. Survey Design Agent
 - **ID**: `survey-design-agent`
@@ -258,7 +258,7 @@ This document identifies specialized agents (subagents) and skills that would en
   - Statistical analysis (SUS, NPS, CSAT)
   - Survey results visualization
 - **Used By Processes**:
-  - user-research.js (quantitativeDataCollectionTask)
+  - workflows\user-research.js (quantitativeDataCollectionTask)
   - survey-design.js
 
 ### 20. Card Sorting Analyst Agent
@@ -271,8 +271,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Category labeling suggestions
   - IA recommendations from results
 - **Used By Processes**:
-  - card-sorting.js
-  - information-architecture.js
+  - workflows\card-sorting.js
+  - workflows\information-architecture.js
 
 ### 21. A/B Testing Agent
 - **ID**: `ab-testing-agent`
@@ -284,7 +284,7 @@ This document identifies specialized agents (subagents) and skills that would en
   - Conversion rate analysis
   - Test result interpretation
 - **Used By Processes**:
-  - ab-testing.js
+  - workflows\ab-testing.js
 
 ### 22. Design Documentation Agent
 - **ID**: `design-documentation-agent`
@@ -296,9 +296,9 @@ This document identifies specialized agents (subagents) and skills that would en
   - Accessibility notes documentation
   - Version history tracking
 - **Used By Processes**:
-  - component-library.js (componentDocumentationTask)
-  - design-system.js
-  - persona-development.js (personaDocumentationTask)
+  - workflows\component-library.js (componentDocumentationTask)
+  - workflows\design-system.js
+  - workflows\persona-development.js (personaDocumentationTask)
 
 ### 23. Storybook Integration Agent
 - **ID**: `storybook-integration-agent`
@@ -310,7 +310,7 @@ This document identifies specialized agents (subagents) and skills that would en
   - Addon configuration
   - Component playground creation
 - **Used By Processes**:
-  - component-library.js (storybookSetupTask)
+  - workflows\component-library.js (storybookSetupTask)
 
 ### 24. Developer Handoff Agent
 - **ID**: `developer-handoff-agent`
@@ -322,9 +322,9 @@ This document identifies specialized agents (subagents) and skills that would en
   - Implementation guidelines
   - Code reference generation
 - **Used By Processes**:
-  - component-library.js (developerHandoffTask, codeImplementationPlanTask)
-  - wireframing.js (wireframePackageGenerationTask)
-  - responsive-design.js (implementationGuidelinesTask)
+  - workflows\component-library.js (developerHandoffTask, codeImplementationPlanTask)
+  - workflows\wireframing.js (wireframePackageGenerationTask)
+  - workflows\responsive-design.js (implementationGuidelinesTask)
 
 ### 25. Emotional Design Analyst Agent
 - **ID**: `emotional-design-analyst`
@@ -336,8 +336,8 @@ This document identifies specialized agents (subagents) and skills that would en
   - Emotional touchpoint optimization
   - Experience emotion scoring
 - **Used By Processes**:
-  - user-journey-mapping.js (emotionalMappingTask)
-  - persona-development.js (goalsAnalysisTask)
+  - workflows\user-journey-mapping.js (emotionalMappingTask)
+  - workflows\persona-development.js (goalsAnalysisTask)
 
 ---
 
@@ -647,3 +647,5 @@ These agents/skills are candidates for promotion to shared infrastructure as the
 3. Identify existing implementations that can be adapted
 4. Create integration plans with external tools (Figma, axe-core, Lighthouse)
 5. Design shared infrastructure for cross-specialization candidates
+
+

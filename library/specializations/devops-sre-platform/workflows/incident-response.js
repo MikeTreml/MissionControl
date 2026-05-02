@@ -99,6 +99,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...incidentDeclaration.artifacts);
 
   // Quality Gate: Team mobilization
+  if (!incidentDeclaration.teamMobilized) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -157,6 +158,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Impact Assessment - Customers Affected: ${impactAssessment.customersAffected}, Business Impact: ${impactAssessment.businessImpact}`);
 
   // Quality Gate: High severity impact verification
+  if ((actualSeverity === 'SEV-1' || actualSeverity === 'SEV-2') && impactAssessment.customersAffected > 1000) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -254,6 +256,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Root Cause Investigation - Identified: ${rootCauseIdentified}, Confidence: ${rootCauseInvestigation.rootCauseConfidence}`);
 
   // Quality Gate: Root cause confidence
+  if (!rootCauseIdentified && (actualSeverity === 'SEV-1' || actualSeverity === 'SEV-2')) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -309,6 +312,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...mitigationStrategy.artifacts);
 
   // Quality Gate: Mitigation strategy approval (for high severity or risky mitigations)
+  if (mitigationStrategy.requiresApproval) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -367,6 +371,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Mitigation Execution - Success: ${incidentResolved}, Time: ${mitigationExecution.executionTime}s`);
 
   // Quality Gate: Mitigation verification
+  if (!incidentResolved) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -423,6 +428,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Verification Complete - System Stable: ${systemStable}, Health Score: ${verificationMonitoring.healthScore}`);
 
   // Quality Gate: System stability verification
+  if (!systemStable) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -1728,3 +1734,4 @@ export const metricsReportingTask = defineTask('metrics-reporting', (args, taskC
   },
   labels: ['agent', 'incident-response', 'metrics', 'reporting']
 }));
+

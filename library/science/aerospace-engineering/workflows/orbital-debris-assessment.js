@@ -14,6 +14,7 @@ export async function process(inputs, ctx) {
   const riskAssessment = await ctx.task(debrisRiskAssessmentTask, { projectName, orbitDefinition, missionDuration });
   let collisionAnalysis = await ctx.task(collisionAnalysisTask, { projectName, orbitDefinition, spacecraftConfig });
 
+  if (collisionAnalysis.probability > 1e-4) {
       let lastFeedback_assessmentApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_assessmentApproval) {
@@ -118,3 +119,4 @@ export const debrisReportTask = defineTask('debris-report', (args, taskCtx) => (
   }, outputSchema: { type: 'object', required: ['report', 'markdown'], properties: { report: { type: 'object' }, markdown: { type: 'string' } } } },
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['debris', 'aerospace']
 }));
+

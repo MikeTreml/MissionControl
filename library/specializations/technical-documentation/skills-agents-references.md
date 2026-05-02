@@ -1,4 +1,4 @@
-# Technical Documentation - Skills and Agents References
+﻿# Technical Documentation - Skills and Agents References
 
 This document provides links to community-created Claude skills, agents, plugins, and MCP servers that match the identified skills and agents from the backlog. These resources can be used as references, starting points, or direct integrations for implementing the Technical Documentation specialization.
 
@@ -65,7 +65,7 @@ This reference document maps community resources to the skills and agents identi
 
 | Resource | Type | Description | Link |
 |----------|------|-------------|------|
-| GraphQL Schema Skill | Claude Skill | GraphQL queries, mutations, and code generation patterns | [GitHub](https://github.com/ChrisWiles/claude-code-showcase/blob/main/.claude/skills/graphql-schema/SKILL.md) |
+| GraphQL Schema Skill | Claude Skill | GraphQL queries, mutations, and code generation patterns | [GitHub](https://skills\asyncapi-docs\SKILL.md) |
 | GraphQL API Development Skill | Claude Skill | Comprehensive guide for building production-ready GraphQL APIs | [claude-plugins.dev](https://claude-plugins.dev/skills/@manutej/luxor-claude-marketplace/graphql-api-development) |
 | GraphQL Architect Subagent | Subagent | Schema architect for federation, subscriptions, and optimization | [GitHub](https://github.com/VoltAgent/awesome-claude-code-subagents/blob/main/categories/01-core-development/graphql-architect.md) |
 
@@ -206,7 +206,7 @@ This reference document maps community resources to the skills and agents identi
 
 | Resource | Type | Description | Link |
 |----------|------|-------------|------|
-| README Generator Skill | Claude Skill | Generate README documentation | [GitHub](https://github.com/GLINCKER/claude-code-marketplace/blob/main/skills/documentation/readme-generator/SKILL.md) |
+| README Generator Skill | Claude Skill | Generate README documentation | [GitHub](https://skills\asyncapi-docs\SKILL.md) |
 
 ### SK-013: Confluence Resources
 
@@ -408,3 +408,4 @@ This reference document maps community resources to the skills and agents identi
 **Version**: 1.0.0
 **Status**: Phase 5 - Skills and Agents References Compiled
 **Source**: Community research from GitHub, MCP Market, claude-plugins.dev, and web search
+

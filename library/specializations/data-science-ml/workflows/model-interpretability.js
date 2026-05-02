@@ -325,6 +325,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...biasAnalysisResult.artifacts);
 
     // Quality Gate: Check for bias concerns
+    if (biasAnalysisResult.hasCriticalBias) {
         let lastFeedback_phase5Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase5Review) {
@@ -2044,3 +2045,4 @@ export const finalInterpretabilityReviewTask = defineTask('final-interpretabilit
   },
   labels: ['agent', 'interpretability', 'final-review']
 }));
+

@@ -1,4 +1,4 @@
-# Gas Town Methodology
+﻿# Gas Town Methodology
 
 **Source**: [steveyegge/gastown](https://github.com/steveyegge/gastown) by Steve Yegge
 **Category**: Multi-Agent Orchestration / AI-Driven Software Development
@@ -18,11 +18,11 @@ Gas Town is a multi-agent orchestration framework for AI-driven software develop
 
 | Process | File | Description | Task Count |
 |---------|------|-------------|------------|
-| Mayor Orchestrator | `gastown-orchestrator.js` | Global coordinator: convoys, agents, monitoring | 8 |
-| Patrol Monitoring | `gastown-patrol.js` | Deacon/Witness health checks and recovery | 4 |
-| Convoy Lifecycle | `gastown-convoy.js` | Create, assign, track, and land convoys | 6 |
-| Molecule Workflow | `gastown-molecule.js` | Formula -> Protomolecule -> Molecule execution | 6 |
-| Merge Queue | `gastown-merge-queue.js` | Refinery conflict resolution and integration | 5 |
+| Mayor Orchestrator | `workflows\gastown-orchestrator.js` | Global coordinator: convoys, agents, monitoring | 8 |
+| Patrol Monitoring | `workflows\gastown-patrol.js` | Deacon/Witness health checks and recovery | 4 |
+| Convoy Lifecycle | `workflows\gastown-convoy.js` | Create, assign, track, and land convoys | 6 |
+| Molecule Workflow | `workflows\gastown-molecule.js` | Formula -> Protomolecule -> Molecule execution | 6 |
+| Merge Queue | `workflows\gastown-merge-queue.js` | Refinery conflict resolution and integration | 5 |
 
 ## Skills Catalog
 
@@ -75,3 +75,4 @@ Goal -> MEOWs -> Convoy (work order) -> Beads (git-backed tasks) + Wisps (epheme
 - **Durable workflows** - Molecules survive restarts via checkpointing
 - **NDI resilience** - Useful outcomes despite unreliable individual processes
 - **Three-tier hooks** - Base -> Role -> Rig+Role hierarchy for configuration
+

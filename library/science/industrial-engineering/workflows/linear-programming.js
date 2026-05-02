@@ -104,6 +104,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...solutionResult.artifacts);
 
+  if (!solutionResult.feasible) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -528,3 +529,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['agent', 'industrial-engineering', 'linear-programming', 'reporting']
 }));
+

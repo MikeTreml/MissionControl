@@ -234,6 +234,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Energy analysis complete - Annual consumption: ${energyResult.annualConsumption} kWh`);
 
   // Quality Gate: Energy code compliance
+  if (!energyResult.codeCompliant) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -882,3 +883,4 @@ export const generateHVACReportTask = defineTask('generate-hvac-report', (args, 
   },
   labels: ['mechanical-engineering', 'hvac', 'reporting']
 }));
+

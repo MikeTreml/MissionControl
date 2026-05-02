@@ -1,4 +1,4 @@
-# Gemini CLI Harness -- References
+﻿# Gemini CLI Harness -- References
 
 All reference URLs organized by category. Last verified: 2026-04-03.
 
@@ -52,8 +52,8 @@ All reference URLs organized by category. Last verified: 2026-04-03.
 
 | File | Path | Description |
 |------|------|-------------|
-| Extension Manifest | `plugins/babysitter-gemini/gemini-extension.json` | Extension identity and configuration |
-| Hooks Config | `plugins/babysitter-gemini/hooks/hooks.json` | SessionStart and AfterAgent hook registration |
+| Extension Manifest | `examples\gemini-extension.json` | Extension identity and configuration |
+| Hooks Config | `examples\hooks.json` | SessionStart and AfterAgent hook registration |
 | AfterAgent Hook | `plugins/babysitter-gemini/hooks/after-agent.sh` | Core orchestration loop driver |
 | SessionStart Hook | `plugins/babysitter-gemini/hooks/session-start.sh` | Session state initialization |
 | GEMINI.md | `plugins/babysitter-gemini/GEMINI.md` | Full orchestration protocol instructions |
@@ -78,3 +78,4 @@ All reference URLs organized by category. Last verified: 2026-04-03.
 | Claude Code | `CLAUDE.md` | Project-level agent instructions |
 | GitHub Copilot | `AGENTS.md` | Project-level agent instructions |
 | Cursor | `.cursorrules` | Project-level agent instructions |
+

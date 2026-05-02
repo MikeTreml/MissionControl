@@ -1,4 +1,4 @@
-# Cleanroom Software Engineering
+﻿# Cleanroom Software Engineering
 
 > Formal methods with statistical usage testing for certifiable reliability - Defect prevention over defect removal
 
@@ -33,7 +33,7 @@ This implementation provides a complete Cleanroom process for the Babysitter SDK
 The cornerstone of Cleanroom specifications:
 
 **Black Box**: External behavior specification
-- Defines stimulus → response mapping
+- Defines stimulus â†’ response mapping
 - Specifies what the system does (not how)
 - Mathematical notation: preconditions, postconditions, invariants
 
@@ -65,7 +65,7 @@ The cornerstone of Cleanroom specifications:
 # Using Babysitter SDK CLI
 babysitter run:create \
   --process-id methodologies/cleanroom \
-  --entry library/methodologies/cleanroom/cleanroom.js#process \
+  --entry workflows\cleanroom.js#process \
   --inputs inputs.json \
   --run-id my-cleanroom-project
 
@@ -186,7 +186,7 @@ The process returns:
 **Process**:
 - Divide system into small verifiable pieces
 - Each increment < 500 LOC
-- Order by dependencies (foundational → higher-level)
+- Order by dependencies (foundational â†’ higher-level)
 - Prioritize critical components early
 
 ### Phase 3: Incremental Development (Repeated for Each Increment)
@@ -385,9 +385,9 @@ Waterfall phases + Cleanroom within implementation phase
 ### Mean Time To Failure (MTTF)
 
 ```
-MTTF = 1 / λ
+MTTF = 1 / Î»
 
-where λ = weighted failure rate = Σ(pi × fi)
+where Î» = weighted failure rate = Î£(pi Ã— fi)
   pi = probability of usage scenario i
   fi = failure rate in scenario i
 ```
@@ -398,13 +398,13 @@ where λ = weighted failure rate = Σ(pi × fi)
 CI = [MTTF_lower, MTTF_upper] at confidence level C
 
 Based on chi-squared distribution:
-  MTTF_lower = 2T / χ²(1-C/2, 2r+2)
-  MTTF_upper = 2T / χ²(C/2, 2r)
+  MTTF_lower = 2T / Ï‡Â²(1-C/2, 2r+2)
+  MTTF_upper = 2T / Ï‡Â²(C/2, 2r)
 
 where:
   T = total test time
   r = number of failures
-  χ² = chi-squared distribution
+  Ï‡Â² = chi-squared distribution
 ```
 
 ### Defect Density
@@ -446,51 +446,51 @@ All artifacts are organized under `artifacts/cleanroom/`:
 
 ```
 artifacts/cleanroom/
-├── specifications/
-│   ├── black-box-specs.md           # External behavior specs
-│   ├── state-box-specs.md           # State machine specs
-│   ├── clear-box-specs.md           # Procedural specs
-│   └── formal-notation.json         # Mathematical notation details
-├── planning/
-│   ├── increment-plan.md            # Incremental development plan
-│   └── increments.json              # Increment details
-├── increment-1/
-│   ├── design.md                    # Design document
-│   ├── verification-report.md       # Correctness verification
-│   ├── correctness-proofs.md        # Formal proofs
-│   ├── implementation.md            # Code implementation
-│   ├── inspection-report.md         # Code inspection results
-│   ├── defect-log.json             # Defects found
-│   └── summary.md                   # Increment summary
-├── increment-2/ ... increment-N/
-├── testing/
-│   ├── usage-model.md               # Operational profile
-│   ├── usage-scenarios.json         # Usage scenarios with probabilities
-│   ├── probability-distribution.md  # Distribution visualization
-│   ├── test-plan.md                # Statistical test plan
-│   ├── test-cases.json             # Generated test cases
-│   ├── test-distribution.md        # Test distribution analysis
-│   ├── execution-report.md         # Test execution results
-│   ├── defect-analysis.json        # Defect analysis
-│   └── reliability-metrics.md      # Reliability calculations
-├── certification/
-│   ├── certification-report.md     # Full certification report
-│   ├── reliability-certificate.md  # Formal certificate
-│   └── quality-metrics.json        # Quality metrics
-├── progress/
-│   └── cumulative-progress.json    # Progress tracking
-└── SUMMARY.md                       # Overall process summary
+â”œâ”€â”€ specifications/
+â”‚   â”œâ”€â”€ black-box-specs.md           # External behavior specs
+â”‚   â”œâ”€â”€ state-box-specs.md           # State machine specs
+â”‚   â”œâ”€â”€ clear-box-specs.md           # Procedural specs
+â”‚   â””â”€â”€ formal-notation.json         # Mathematical notation details
+â”œâ”€â”€ planning/
+â”‚   â”œâ”€â”€ increment-plan.md            # Incremental development plan
+â”‚   â””â”€â”€ increments.json              # Increment details
+â”œâ”€â”€ increment-1/
+â”‚   â”œâ”€â”€ design.md                    # Design document
+â”‚   â”œâ”€â”€ verification-report.md       # Correctness verification
+â”‚   â”œâ”€â”€ correctness-proofs.md        # Formal proofs
+â”‚   â”œâ”€â”€ implementation.md            # Code implementation
+â”‚   â”œâ”€â”€ inspection-report.md         # Code inspection results
+â”‚   â”œâ”€â”€ defect-log.json             # Defects found
+â”‚   â””â”€â”€ summary.md                   # Increment summary
+â”œâ”€â”€ increment-2/ ... increment-N/
+â”œâ”€â”€ testing/
+â”‚   â”œâ”€â”€ usage-model.md               # Operational profile
+â”‚   â”œâ”€â”€ usage-scenarios.json         # Usage scenarios with probabilities
+â”‚   â”œâ”€â”€ probability-distribution.md  # Distribution visualization
+â”‚   â”œâ”€â”€ test-plan.md                # Statistical test plan
+â”‚   â”œâ”€â”€ test-cases.json             # Generated test cases
+â”‚   â”œâ”€â”€ test-distribution.md        # Test distribution analysis
+â”‚   â”œâ”€â”€ execution-report.md         # Test execution results
+â”‚   â”œâ”€â”€ defect-analysis.json        # Defect analysis
+â”‚   â””â”€â”€ reliability-metrics.md      # Reliability calculations
+â”œâ”€â”€ certification/
+â”‚   â”œâ”€â”€ certification-report.md     # Full certification report
+â”‚   â”œâ”€â”€ reliability-certificate.md  # Formal certificate
+â”‚   â””â”€â”€ quality-metrics.json        # Quality metrics
+â”œâ”€â”€ progress/
+â”‚   â””â”€â”€ cumulative-progress.json    # Progress tracking
+â””â”€â”€ SUMMARY.md                       # Overall process summary
 ```
 
 ## Examples
 
 See the `examples/` directory for complete input samples:
-- `flight-control.json` - Ultra-reliable flight control system
-- `medical-device.json` - FDA-regulated medical device software
-- `nuclear-safety.json` - Nuclear reactor safety system
-- `banking-core.json` - High-reliability banking transaction system
-- `spacecraft-control.json` - Space mission-critical control software
-- `simple-calculator.json` - Simple example for learning Cleanroom
+- `examples\flight-control.json` - Ultra-reliable flight control system
+- `examples\medical-device.json` - FDA-regulated medical device software
+- `examples\nuclear-safety.json` - Nuclear reactor safety system
+- `examples\banking-core.json` - High-reliability banking transaction system
+- `examples\spacecraft-control.json` - Space mission-critical control software
+- `examples\simple-calculator.json` - Simple example for learning Cleanroom
 
 ## Historical Context
 
@@ -561,3 +561,4 @@ For issues or questions:
 - GitHub Issues: [babysitter repository]
 - Documentation: See SDK documentation
 - Examples: Check the `examples/` directory
+

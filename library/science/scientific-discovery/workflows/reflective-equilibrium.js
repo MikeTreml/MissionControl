@@ -87,6 +87,7 @@ export async function process(inputs, ctx) {
     };
 
     // Quality Gate: Progress Check
+    if (adjustmentApplication.newCoherence <= currentState.coherence - 0.1) {
         let lastFeedback = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback) {
@@ -572,3 +573,4 @@ export const documentEquilibriumTask = defineTask('equilibrium-documentation', (
   },
   labels: ['reflective-equilibrium', 'documentation']
 }));
+

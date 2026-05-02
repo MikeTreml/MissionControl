@@ -49,6 +49,7 @@ export async function process(inputs, ctx) {
     explanationPoints,
     targetAudience,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -441,3 +442,4 @@ export const synthesizeSelfDescribingInsightsTask = defineTask('synthesize-self-
   },
   labels: ['agent', 'self-describing', 'synthesis']
 }));
+

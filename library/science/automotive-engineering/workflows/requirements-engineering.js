@@ -104,6 +104,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Requirements validation
+  if (requirementsValidation.issues && requirementsValidation.issues.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -638,3 +639,4 @@ export const requirementsDatabaseTask = defineTask('requirements-database', (arg
   },
   labels: ['automotive', 'requirements', 'database', 'baseline']
 }));
+

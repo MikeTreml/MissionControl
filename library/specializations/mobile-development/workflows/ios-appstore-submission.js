@@ -56,6 +56,7 @@ export async function process(inputs, ctx) {
       appName, appVersion, bundleId, teamId, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -129,3 +130,4 @@ export const guidelinesTask = createSubmissionTask('review-guidelines', 'Review 
 export const submissionTask = createSubmissionTask('submission', 'App Submission');
 export const postSubmissionTask = createSubmissionTask('post-submission', 'Post-Submission Monitoring');
 export const releaseManagementTask = createSubmissionTask('release-management', 'Release Management');
+

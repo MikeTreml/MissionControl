@@ -146,6 +146,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check if corner simulations pass
+  if (cornerSimulation.failedCorners && cornerSimulation.failedCorners.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -192,6 +193,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Design must meet all critical specifications
+  if (!designValidation.allSpecsMet) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -874,3 +876,4 @@ export const designDocumentationTask = defineTask('design-documentation', (args,
   },
   labels: ['ee', 'analog', 'circuit-design', 'documentation']
 }));
+

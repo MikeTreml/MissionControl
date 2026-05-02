@@ -41,6 +41,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Sufficient ready items
   const readyItems = backlogHealth.readyItems || [];
+  if (readyItems.length < 5) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -142,6 +143,7 @@ export async function process(inputs, ctx) {
   // Quality Gate: Sprint commitment within capacity
   const commitmentPoints = sprintBacklogSelection.totalPoints || 0;
   const targetVelocity = velocityAnalysis.targetVelocity || 0;
+  if (commitmentPoints > targetVelocity * 1.1) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -968,3 +970,4 @@ export const sprintPlanFinalizationTask = defineTask('sprint-plan-finalization',
   },
   labels: ['agile', 'sprint-plan', 'finalization']
 }));
+

@@ -317,6 +317,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...sampleTestExecutionResult.artifacts);
 
   // Quality Gate: Sample tests must pass
+  if (!sampleTestExecutionResult.allPassed) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -455,6 +456,7 @@ export async function process(inputs, ctx) {
   const qualityGatesMet = validationResult.qualityGatesMet;
 
   // Quality Gate: Framework must meet quality criteria
+  if (!qualityGatesMet) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -1644,3 +1646,4 @@ export const finalReviewTask = defineTask('final-review', (args, taskCtx) => ({
   },
   labels: ['agent', 'qa-automation', 'final-review', 'handoff', 'framework-setup']
 }));
+

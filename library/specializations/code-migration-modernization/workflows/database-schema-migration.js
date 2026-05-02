@@ -125,6 +125,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...testMigration.artifacts);
 
   // Quality Gate: Test migration success
+  if (!testMigration.success) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -182,6 +183,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...performanceTesting.artifacts);
 
   // Quality Gate: Performance regression
+  if (performanceTesting.hasRegression) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -763,3 +765,4 @@ export const productionMigrationExecutionTask = defineTask('production-migration
   },
   labels: ['schema-migration', 'production', 'execution']
 }));
+

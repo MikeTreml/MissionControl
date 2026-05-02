@@ -1,4 +1,4 @@
-# Programming Languages and Compilers Development - Processes Backlog
+﻿# Programming Languages and Compilers Development - Processes Backlog
 
 This document contains researched programming languages and compilers development processes that can be adapted to the Babysitter SDK orchestration framework. Each process should be implemented in its own directory under `processes/[name]/`.
 
@@ -7,12 +7,12 @@ This document contains researched programming languages and compilers developmen
 ### Directory Structure
 ```
 processes/
-├── [process-name]/
-│   ├── README.md              # Overview and usage
-│   ├── [process-name].js      # Main process workflow with embedded agentic or skill based tasks, breakpoints, etc.
-│   └── examples/              # Example inputs/outputs
-│       ├── examples.json
-│       └── ...
+â”œâ”€â”€ [process-name]/
+â”‚   â”œâ”€â”€ README.md              # Overview and usage
+â”‚   â”œâ”€â”€ [process-name].js      # Main process workflow with embedded agentic or skill based tasks, breakpoints, etc.
+â”‚   â””â”€â”€ examples/              # Example inputs/outputs
+â”‚       â”œâ”€â”€ examples.json
+â”‚       â””â”€â”€ ...
 ```
 
 ### File Patterns
@@ -87,7 +87,7 @@ A systematic process for designing and documenting formal grammars for programmi
 **Directory**: `processes/language-grammar-design/`
 
 **Files to Create**:
-1. **`language-grammar-design.js`** - Main grammar design process
+1. **`workflows\language-grammar-design.js`** - Main grammar design process
    - Syntax brainstorming
    - Grammar formalization
    - Ambiguity analysis
@@ -185,7 +185,7 @@ A comprehensive process for implementing a lexer (tokenizer) that converts sourc
 **Directory**: `processes/lexer-implementation/`
 
 **Files to Create**:
-1. **`lexer-implementation.js`** - Main lexer implementation process
+1. **`workflows\lexer-implementation.js`** - Main lexer implementation process
    - Token design
    - Lexer architecture
    - Unicode handling
@@ -294,7 +294,7 @@ A systematic process for implementing a parser that converts token streams into 
 **Directory**: `processes/parser-development/`
 
 **Files to Create**:
-1. **`parser-development.js`** - Main parser development process
+1. **`workflows\parser-development.js`** - Main parser development process
    - Parsing strategy selection
    - Parser implementation
    - Error recovery
@@ -407,7 +407,7 @@ A process for designing abstract syntax tree structures and implementing travers
 **Directory**: `processes/ast-design/`
 
 **Files to Create**:
-1. **`ast-design.js`** - Main AST design process
+1. **`workflows\ast-design.js`** - Main AST design process
    - Node hierarchy design
    - Visitor implementation
    - Tree transformation utilities
@@ -507,7 +507,7 @@ A comprehensive process for implementing type checking and type inference. Cover
 **Directory**: `processes/type-system-implementation/`
 
 **Files to Create**:
-1. **`type-system-implementation.js`** - Main type system process
+1. **`workflows\type-system-implementation.js`** - Main type system process
    - Type representation
    - Type checking
    - Type inference
@@ -1442,3 +1442,4 @@ Each process is designed to integrate with the Babysitter SDK orchestration fram
 4. **Integrate with existing tools** (ANTLR, LLVM, tree-sitter)
 5. **Gather feedback** from language implementers
 6. **Iterate and improve** based on real-world usage
+

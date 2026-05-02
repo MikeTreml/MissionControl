@@ -244,6 +244,7 @@ export async function process(inputs, ctx) {
   // Quality Gate: Review all identified threats
   const totalThreats = spoofingResult.threats.length + tamperingResult.threats.length +
                        repudiationResult.threats.length + infoDisclosureResult.threats.length +
+                       dosResult.threats.length + elevationResult.threats.length;
     let lastFeedback_qualityGateApproval2 = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_qualityGateApproval2) {
@@ -1931,3 +1932,4 @@ export const calculateSecurityPostureTask = defineTask('calculate-security-postu
   },
   labels: ['agent', 'stride-threat-modeling', 'posture']
 }));
+

@@ -142,6 +142,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Performance must meet specifications
+  if (!performanceSimulation.meetsSpecs) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -698,3 +699,4 @@ export const testValidationTask = defineTask('test-validation', (args, taskCtx) 
   },
   labels: ['ee', 'power-supply', 'testing', 'validation']
 }));
+

@@ -87,6 +87,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Alert on significant variances
+  if (varianceAnalysis.alertLevel === 'critical') {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -1135,3 +1136,4 @@ export const evmReportGenerationTask = defineTask('evm-report-generation', (args
   },
   labels: ['evm', 'reporting', 'status-report', 'documentation']
 }));
+

@@ -108,6 +108,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...modelValidation.artifacts);
 
+  if (!modelValidation.validated) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -579,3 +580,4 @@ export const recommendationsReportTask = defineTask('recommendations-report', (a
   },
   labels: ['agent', 'industrial-engineering', 'simulation', 'recommendations']
 }));
+

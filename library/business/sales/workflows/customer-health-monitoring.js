@@ -155,6 +155,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...(interventions.artifacts || []));
 
   // Breakpoint if high risk
+  if (churnPrediction.riskLevel === 'high' || churnPrediction.riskLevel === 'critical') {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -664,3 +665,4 @@ export const interventionRecommendationsTask = defineTask('intervention-recommen
   },
   labels: ['agent', 'sales', 'health-monitoring', 'intervention']
 }));
+

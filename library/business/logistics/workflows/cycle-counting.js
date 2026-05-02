@@ -179,6 +179,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...rootCauseAnalysis.artifacts);
 
   // Quality Gate: Review significant variances
+  if (varianceCalculation.significantVariances.length > 0) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -806,3 +807,4 @@ export const cycleCountReportTask = defineTask('cycle-count-report', (args, task
   },
   labels: ['agent', 'logistics', 'cycle-counting', 'reporting']
 }));
+

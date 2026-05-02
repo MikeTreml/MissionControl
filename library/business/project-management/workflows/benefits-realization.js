@@ -151,6 +151,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check for critical benefit risks
+  if (riskAnalysis.criticalRisks && riskAnalysis.criticalRisks.length > 0) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -1264,3 +1265,4 @@ export const implementationReadinessTask = defineTask('implementation-readiness'
   },
   labels: ['benefits', 'readiness', 'implementation', 'brm']
 }));
+

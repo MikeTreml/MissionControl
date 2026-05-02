@@ -137,6 +137,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...buildValidation.artifacts);
 
   // Quality Gate: Build success
+  if (!buildValidation.buildSuccess) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -552,3 +553,4 @@ export const buildPerformanceOptimizationTask = defineTask('build-performance-op
   },
   labels: ['build-modernization', 'performance', 'optimization']
 }));
+

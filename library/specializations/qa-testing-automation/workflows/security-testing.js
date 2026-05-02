@@ -92,6 +92,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...securityRequirements.artifacts);
 
   // Quality Gate: Requirements completeness
+  if (!securityRequirements.requirementsComplete) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -146,6 +147,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...environmentSetup.artifacts);
 
   // Quality Gate: Environment readiness
+  if (!environmentSetup.environmentReady) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -240,6 +242,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: Critical authentication vulnerabilities
     const criticalAuthVulns = authenticationTesting.vulnerabilities.filter(v => v.severity === 'critical').length;
+    if (criticalAuthVulns > 0) {
         let lastFeedback_qualityGateApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval) {
@@ -315,6 +318,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: SQL Injection vulnerabilities
     const sqlInjectionVulns = injectionTesting.vulnerabilities.filter(v => v.type === 'SQL Injection').length;
+    if (sqlInjectionVulns > 0) {
         let lastFeedback_phase7Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase7Review) {
@@ -437,6 +441,7 @@ export async function process(inputs, ctx) {
       v.type.includes('Weak') || v.type.includes('Insecure')
     ).length;
 
+    if (weakCryptoVulns > 0) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -559,6 +564,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: Exploitable vulnerabilities
     const exploitableVulns = penTestResults.vulnerabilities.filter(v => v.exploitable).length;
+    if (exploitableVulns > 0) {
         let lastFeedback_qualityGateApproval3 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval3) {
@@ -619,6 +625,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Security score: ${securityScore}/100`);
 
   // Quality Gate: Critical vulnerability count
+  if (criticalCount > acceptanceCriteria.maxCriticalVulnerabilities) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -653,6 +660,7 @@ export async function process(inputs, ctx) {
     } }
 
   // Quality Gate: High vulnerability count
+  if (highCount > acceptanceCriteria.maxHighVulnerabilities) {
       let lastFeedback_qualityGateApproval5 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval5) {
@@ -706,6 +714,7 @@ export async function process(inputs, ctx) {
   complianceStatus = complianceVerification.complianceStatus;
 
   // Quality Gate: Compliance requirement
+  if (acceptanceCriteria.complianceRequired && !complianceVerification.allCompliant) {
       let lastFeedback_phase17Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase17Review) {
@@ -2447,3 +2456,4 @@ export const securityGateAssessmentTask = defineTask('security-gate-assessment',
   },
   labels: ['agent', 'security-testing', 'security-gate', 'assessment']
 }));
+

@@ -1,4 +1,4 @@
-# Scrum
+﻿# Scrum
 
 **Creators**: Ken Schwaber and Jeff Sutherland
 **Year**: 1995 (dominant since 2001)
@@ -408,11 +408,11 @@ Each sprint follows the same rhythm:
 ## Examples
 
 See the `examples/` directory for:
-- `simple.json` - Basic 2-week sprint setup
-- `e-commerce.json` - E-commerce platform development
-- `mobile-app.json` - Mobile application with 3-week sprints
-- `enterprise.json` - Large enterprise project with 1-week sprints
-- `startup.json` - Startup MVP with flexible scope
+- `examples\simple.json` - Basic 2-week sprint setup
+- `examples\e-commerce.json` - E-commerce platform development
+- `examples\mobile-app.json` - Mobile application with 3-week sprints
+- `examples\enterprise.json` - Large enterprise project with 1-week sprints
+- `examples\startup.json` - Startup MVP with flexible scope
 
 ## Best Practices
 
@@ -521,19 +521,19 @@ The Sprint Burndown shows remaining work throughout sprint:
 
 ```
 Story Points
-40 |●
-   |  ●
-30 |    ●
-   |      ●         ●
-20 |        ●     ●
-   |          ● ●
-10 |            ●
-   |              ●
- 0 |________________●
+40 |â—
+   |  â—
+30 |    â—
+   |      â—         â—
+20 |        â—     â—
+   |          â— â—
+10 |            â—
+   |              â—
+ 0 |________________â—
     1  2  3  4  5  6  7  8  9  10
               Days
 
-    ● Actual    --- Ideal
+    â— Actual    --- Ideal
 ```
 
 **Ideal line**: Linear burn from start to zero
@@ -549,19 +549,19 @@ Track velocity across sprints to improve forecasting:
 
 ```
 Story Points
-40 |        ██
-35 |    ██  ██
-30 |    ██  ██  ██
-25 |    ██  ██  ██  ██
-20 |██  ██  ██  ██  ██  ██
-15 |██  ██  ██  ██  ██  ██
-10 |██  ██  ██  ██  ██  ██
- 5 |██  ██  ██  ██  ██  ██
+40 |        â–ˆâ–ˆ
+35 |    â–ˆâ–ˆ  â–ˆâ–ˆ
+30 |    â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ
+25 |    â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ
+20 |â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ
+15 |â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ
+10 |â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ
+ 5 |â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ  â–ˆâ–ˆ
  0 |________________________
     S1  S2  S3  S4  S5  S6
 
 Average Velocity: 28 story points
-Trend: Improving (↑)
+Trend: Improving (â†‘)
 ```
 
 ## Release Burndown
@@ -570,15 +570,15 @@ Track progress toward release across multiple sprints:
 
 ```
 Story Points
-200 |●
-    |  ●
-150 |    ●
-    |      ●
-100 |        ●
-    |          ●
- 50 |            ●
-    |              ●
-  0 |________________●
+200 |â—
+    |  â—
+150 |    â—
+    |      â—
+100 |        â—
+    |          â—
+ 50 |            â—
+    |              â—
+  0 |________________â—
      S0 S1 S2 S3 S4 S5 S6
            Sprints
 
@@ -906,7 +906,8 @@ To improve this Scrum implementation:
 
 ---
 
-**Implementation Status**: ✅ Implemented
+**Implementation Status**: âœ… Implemented
 **Last Updated**: 2026-01-23
 **Version**: 1.0.0
 **Based On**: Scrum Guide 2020
+

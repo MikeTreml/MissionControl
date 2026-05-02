@@ -1,4 +1,4 @@
-# V-Model Methodology
+﻿# V-Model Methodology
 
 **Creator**: Evolved from waterfall in the 1980s
 **Year**: Classic verification/validation
@@ -24,10 +24,10 @@ This methodology is particularly well-suited for:
 2. **Testing Parallel to Development**: Test design happens during corresponding development phase
 
 3. **V-Shape Mapping**: Each development phase maps to a testing phase
-   - Requirements Analysis ↔ Acceptance Testing
-   - System Design ↔ System Testing
-   - Architectural Design ↔ Integration Testing
-   - Module Design ↔ Unit Testing
+   - Requirements Analysis â†” Acceptance Testing
+   - System Design â†” System Testing
+   - Architectural Design â†” Integration Testing
+   - Module Design â†” Unit Testing
 
 4. **Early Test Planning**: Test cases designed before code is written
 
@@ -41,18 +41,18 @@ This methodology is particularly well-suited for:
 LEFT SIDE                          RIGHT SIDE
 (Decomposition)                    (Integration/Validation)
 
-Requirements ───────────────────→ Acceptance
+Requirements â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â†’ Acceptance
 Analysis                          Testing
-    ↓                                 ↑
-System      ───────────────────→ System
+    â†“                                 â†‘
+System      â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â†’ System
 Design                            Testing
-    ↓                                 ↑
-Architectural ─────────────────→ Integration
+    â†“                                 â†‘
+Architectural â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â†’ Integration
 Design                            Testing
-    ↓                                 ↑
-Module      ───────────────────→ Unit
+    â†“                                 â†‘
+Module      â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â†’ Unit
 Design                            Testing
-    ↓                                 ↑
+    â†“                                 â†‘
          Implementation
          (Coding Phase)
 ```
@@ -176,7 +176,7 @@ Design                            Testing
 ### Basic Example
 
 ```javascript
-import { process } from './v-model.js';
+import { process } from 'workflows\v-model.js';
 
 const result = await process({
   projectRequirements: `
@@ -241,7 +241,7 @@ const result = await process({
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `projectRequirements` | string | ✅ Yes | - | Project requirements document or description |
+| `projectRequirements` | string | âœ… Yes | - | Project requirements document or description |
 | `safetyLevel` | string | No | 'standard' | Safety criticality: 'standard', 'high', or 'critical' |
 | `traceabilityRequired` | boolean | No | true | Generate full traceability matrix |
 | `testingRigor` | string | No | 'thorough' | Testing thoroughness: 'basic', 'thorough', or 'exhaustive' |
@@ -402,59 +402,59 @@ The V-Model process includes breakpoints for human review at critical phases:
 
 ### Ideal For
 
-✅ Safety-critical systems requiring validation
-✅ Regulated industries (medical, aerospace, automotive)
-✅ Projects requiring complete traceability
-✅ Fixed requirements with low change likelihood
-✅ Projects with clear scope and specifications
-✅ Compliance-driven development
-✅ Systems where testing costs are lower than failure costs
+âœ… Safety-critical systems requiring validation
+âœ… Regulated industries (medical, aerospace, automotive)
+âœ… Projects requiring complete traceability
+âœ… Fixed requirements with low change likelihood
+âœ… Projects with clear scope and specifications
+âœ… Compliance-driven development
+âœ… Systems where testing costs are lower than failure costs
 
 ### Not Ideal For
 
-❌ Rapidly changing requirements
-❌ Early-stage startups with uncertain product direction
-❌ Highly innovative projects requiring experimentation
-❌ Projects with tight time-to-market constraints
-❌ Small projects where V-Model overhead isn't justified
+âŒ Rapidly changing requirements
+âŒ Early-stage startups with uncertain product direction
+âŒ Highly innovative projects requiring experimentation
+âŒ Projects with tight time-to-market constraints
+âŒ Small projects where V-Model overhead isn't justified
 
 ## Advantages
 
-- ✅ Early test planning reduces defects
-- ✅ Complete traceability ensures nothing is missed
-- ✅ Clear phase boundaries and deliverables
-- ✅ Excellent for compliance and auditing
-- ✅ Defects caught early through parallel test design
-- ✅ High quality through rigorous verification and validation
-- ✅ Well-documented process
+- âœ… Early test planning reduces defects
+- âœ… Complete traceability ensures nothing is missed
+- âœ… Clear phase boundaries and deliverables
+- âœ… Excellent for compliance and auditing
+- âœ… Defects caught early through parallel test design
+- âœ… High quality through rigorous verification and validation
+- âœ… Well-documented process
 
 ## Disadvantages
 
-- ❌ Rigid and inflexible to changes
-- ❌ High overhead and documentation burden
-- ❌ Long time before working software
-- ❌ Testing happens late (despite test design being early)
-- ❌ Difficult to handle unclear or evolving requirements
-- ❌ Not suitable for small or agile projects
+- âŒ Rigid and inflexible to changes
+- âŒ High overhead and documentation burden
+- âŒ Long time before working software
+- âŒ Testing happens late (despite test design being early)
+- âŒ Difficult to handle unclear or evolving requirements
+- âŒ Not suitable for small or agile projects
 
 ## Best Practices
 
 ### Do's
-- ✅ Design tests in parallel with development phases
-- ✅ Maintain bidirectional traceability throughout
-- ✅ Conduct thorough reviews at each phase gate
-- ✅ Use formal inspection techniques for critical systems
-- ✅ Document everything comprehensively
-- ✅ Involve test engineers from requirements phase
-- ✅ Use automated traceability tools
+- âœ… Design tests in parallel with development phases
+- âœ… Maintain bidirectional traceability throughout
+- âœ… Conduct thorough reviews at each phase gate
+- âœ… Use formal inspection techniques for critical systems
+- âœ… Document everything comprehensively
+- âœ… Involve test engineers from requirements phase
+- âœ… Use automated traceability tools
 
 ### Don'ts
-- ❌ Don't skip test design phases
-- ❌ Don't allow requirements changes without impact analysis
-- ❌ Don't proceed to next phase with unresolved issues
-- ❌ Don't skip traceability updates
-- ❌ Don't compromise on testing rigor for schedule pressure
-- ❌ Don't forget backward traceability (tests → requirements)
+- âŒ Don't skip test design phases
+- âŒ Don't allow requirements changes without impact analysis
+- âŒ Don't proceed to next phase with unresolved issues
+- âŒ Don't skip traceability updates
+- âŒ Don't compromise on testing rigor for schedule pressure
+- âŒ Don't forget backward traceability (tests â†’ requirements)
 
 ## Example Artifacts
 
@@ -483,8 +483,8 @@ The V-Model process includes breakpoints for human review at critical phases:
 
 | Req ID | System Design | Architecture | Implementation | Unit Tests | Integration Tests | System Tests | Acceptance Tests | Status |
 |--------|--------------|--------------|----------------|-----------|------------------|-------------|-----------------|--------|
-| FR-001 | Comp-Auth | Mod-Login | auth/login.js | UT-001, UT-002 | IT-005 | ST-010 | AT-001 | ✅ Complete |
-| FR-002 | Comp-Auth | Mod-Session | auth/session.js | UT-003, UT-004 | IT-006 | ST-011 | AT-002 | ✅ Complete |
+| FR-001 | Comp-Auth | Mod-Login | auth/login.js | UT-001, UT-002 | IT-005 | ST-010 | AT-001 | âœ… Complete |
+| FR-002 | Comp-Auth | Mod-Session | auth/session.js | UT-003, UT-004 | IT-006 | ST-011 | AT-002 | âœ… Complete |
 ```
 
 ## Compliance Standards Support
@@ -536,3 +536,4 @@ The V-Model implementation supports various compliance standards:
 This methodology implementation is part of the Babysitter SDK orchestration framework.
 
 The V-Model is a public domain software development process model.
+

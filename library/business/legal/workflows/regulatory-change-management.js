@@ -62,6 +62,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate for high impact changes
   const highImpactChanges = impactAssessment.assessments.filter(a => a.impactLevel === 'high');
+  if (highImpactChanges.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -313,3 +314,4 @@ export const complianceTrackingTask = defineTask('compliance-tracking', (args, t
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'regulatory-change']
 }));
+

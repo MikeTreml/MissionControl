@@ -142,6 +142,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Performance must meet requirements
+  if (!performanceAnalysis.meetsRequirements) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -709,3 +710,4 @@ export const otaValidationTask = defineTask('ota-validation', (args, taskCtx) =>
   },
   labels: ['ee', 'communications', 'validation', 'testing']
 }));
+

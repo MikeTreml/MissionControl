@@ -68,6 +68,7 @@ export async function process(inputs, ctx) {
   });
 
   // Breakpoint: Review velocity trends
+  if (velocityTrend.trendStatus === 'declining') {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -135,6 +136,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Commitment reliability below threshold
+  if (commitmentAnalysis.reliabilityRate < 70) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -1248,3 +1250,4 @@ export const metricsDashboardTask = defineTask('metrics-dashboard', (args, taskC
   },
   labels: ['agile-metrics', 'dashboard', 'reporting']
 }));
+

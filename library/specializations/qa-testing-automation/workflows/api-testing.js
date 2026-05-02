@@ -101,6 +101,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...apiDiscovery.artifacts);
 
   // Quality Gate: Minimum endpoint coverage
+  if (apiDiscovery.discoveredEndpoints.length < 5 && endpoints.length === 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -152,6 +153,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: Schema completeness
     const schemaCompleteness = (schemaExtraction.schemasExtracted / apiDiscovery.discoveredEndpoints.length) * 100;
+    if (schemaCompleteness < 80) {
         let lastFeedback_phase2Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase2Review) {
@@ -230,6 +232,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...testDataCreation.artifacts);
 
   // Quality Gate: Test data availability
+  if (!testDataCreation.dataReady || testDataCreation.dataGaps.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -336,6 +339,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Initial test pass rate
   const initialPassRate = initialExecution.passRate;
+  if (initialPassRate < 50) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -427,6 +431,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: Performance criteria
     const performancePassRate = performanceTestResults.passRate;
+    if (performancePassRate < acceptanceCriteria.performancePassRate) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -485,6 +490,7 @@ export async function process(inputs, ctx) {
     const criticalVulnerabilities = securityFindings.filter(f => f.severity === 'critical').length;
     const highVulnerabilities = securityFindings.filter(f => f.severity === 'high').length;
 
+    if (criticalVulnerabilities > 0 || highVulnerabilities > acceptanceCriteria.securityIssues) {
         let lastFeedback_qualityGateApproval3 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval3) {
@@ -553,6 +559,7 @@ export async function process(inputs, ctx) {
   const finalPassRate = finalExecution.passRate;
 
   // Quality Gate: Final test pass rate
+  if (finalPassRate < acceptanceCriteria.passRate) {
       let lastFeedback_phase13Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase13Review) {
@@ -611,6 +618,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Test coverage
   const endpointCoverage = coverageAnalysis.endpointCoverage;
+  if (endpointCoverage < acceptanceCriteria.testCoverage) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -1883,7 +1891,7 @@ export const apiTestDocumentationTask = defineTask('api-test-documentation', (ar
     prompt: {
       role: 'Technical Documentation Writer',
       task: 'Generate comprehensive API test suite documentation',
-      context: args
+      context: args,
       instructions: [
         '1. Create test suite overview document',
         '2. Document API inventory and coverage',

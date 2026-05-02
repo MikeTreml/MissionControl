@@ -1,4 +1,4 @@
-# Claude Code Harness Extensibility Documentation
+﻿# Claude Code Harness Extensibility Documentation
 
 Comprehensive reference for extending Claude Code through its plugin, skill, hook, MCP, subagent, and permission systems.
 
@@ -33,7 +33,7 @@ Claude Code runs in the terminal or as an embedded agent inside VS Code and JetB
 **Key extensibility surfaces**:
 
 - **Plugins**: Packaged bundles of skills, agents, hooks, MCP servers, and LSP servers distributed via git-based marketplaces
-- **Skills**: Markdown-based instruction sets (SKILL.md) that extend Claude's capabilities, following the AgentSkills.io open standard
+- **Skills**: Markdown-based instruction sets (examples\SKILL.md) that extend Claude's capabilities, following the AgentSkills.io open standard
 - **Hooks**: Event-driven handlers (28 event types) that execute shell commands, HTTP requests, LLM prompts, or agentic verifiers
 - **MCP**: Model Context Protocol servers providing external tools via stdio, SSE, streamable-http, or WebSocket transports
 - **Subagents**: Specialized AI assistants with isolated context windows, custom system prompts, and independent tool access
@@ -54,18 +54,18 @@ Plugins are self-contained directories that extend Claude Code with custom funct
 ```
 my-plugin/
   .claude-plugin/
-    plugin.json             # Plugin manifest (optional if using defaults)
+    examples\plugin.json             # Plugin manifest (optional if using defaults)
   commands/                 # Skill markdown files (legacy; use skills/ for new work)
   agents/                   # Subagent markdown files
-  skills/                   # Agent Skills with SKILL.md
+  skills/                   # Agent Skills with examples\SKILL.md
     my-skill/
-      SKILL.md
+      examples\SKILL.md
       reference.md          # Optional supporting files
       scripts/
   output-styles/            # Output style definitions
   hooks/
     hooks.json              # Hook configuration
-  settings.json             # Default settings (currently only "agent" key supported)
+  examples\settings.json             # Default settings (currently only "agent" key supported)
   .mcp.json                 # MCP server definitions
   .lsp.json                 # LSP server configurations
   scripts/                  # Hook and utility scripts
@@ -73,13 +73,13 @@ my-plugin/
   CHANGELOG.md
 ```
 
-**Critical**: The `.claude-plugin/` directory contains ONLY `plugin.json`. All component directories (commands/, agents/, skills/, hooks/, etc.) must be at the plugin root, not inside `.claude-plugin/`.
+**Critical**: The `.claude-plugin/` directory contains ONLY `examples\plugin.json`. All component directories (commands/, agents/, skills/, hooks/, etc.) must be at the plugin root, not inside `.claude-plugin/`.
 
 > **Reference**: [code.claude.com/docs/en/plugins-reference#plugin-directory-structure](https://code.claude.com/docs/en/plugins-reference#plugin-directory-structure) (accessed 2026-04-02)
 
-### Plugin Manifest (plugin.json)
+### Plugin Manifest (examples\plugin.json)
 
-The manifest at `.claude-plugin/plugin.json` defines plugin identity and configuration. It is optional -- if omitted, Claude Code auto-discovers components in default locations and derives the plugin name from the directory name.
+The manifest at `examples\plugin.json` defines plugin identity and configuration. It is optional -- if omitted, Claude Code auto-discovers components in default locations and derives the plugin name from the directory name.
 
 #### Required Fields
 
@@ -115,7 +115,7 @@ The manifest at `.claude-plugin/plugin.json` defines plugin identity and configu
 
 All custom paths must be relative to the plugin root and start with `./`. Setting a component path replaces the default directory for that component type.
 
-See `examples/plugin.json` for a complete example.
+See `examples\plugin.json` for a complete example.
 
 > **Reference**: [code.claude.com/docs/en/plugins-reference#plugin-manifest-schema](https://code.claude.com/docs/en/plugins-reference#plugin-manifest-schema) (accessed 2026-04-02)
 
@@ -157,7 +157,7 @@ Plugins can declare user-configurable values that are prompted at enable time:
 }
 ```
 
-- Non-sensitive values: stored in `settings.json` under `pluginConfigs[<plugin-id>].options`
+- Non-sensitive values: stored in `examples\settings.json` under `pluginConfigs[<plugin-id>].options`
 - Sensitive values: stored in system keychain (or `~/.claude/.credentials.json` fallback); ~2 KB total limit
 - Available as `${user_config.KEY}` substitutions and `CLAUDE_PLUGIN_OPTION_<KEY>` env vars
 
@@ -175,7 +175,7 @@ claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
 
 Use `/reload-plugins` to pick up changes without restarting. When a `--plugin-dir` plugin has the same name as an installed marketplace plugin, the local copy takes precedence (except managed force-enabled plugins).
 
-Use `claude plugin validate .` or `/plugin validate .` to check plugin.json, skill/agent/command frontmatter, and hooks/hooks.json for syntax and schema errors.
+Use `claude plugin validate .` or `/plugin validate .` to check examples\plugin.json, skill/agent/command frontmatter, and hooks/hooks.json for syntax and schema errors.
 
 > **Reference**: [code.claude.com/docs/en/plugins#test-your-plugins-locally](https://code.claude.com/docs/en/plugins#test-your-plugins-locally) (accessed 2026-04-02)
 
@@ -185,9 +185,9 @@ Use `claude plugin validate .` or `/plugin validate .` to check plugin.json, ski
 
 Skills extend Claude's capabilities through markdown-based instruction sets. Claude Code skills follow the [AgentSkills.io](https://agentskills.io) open standard and extend it with invocation control, subagent execution, and dynamic context injection.
 
-### SKILL.md Format
+### examples\SKILL.md Format
 
-Every skill is a directory containing a `SKILL.md` file with YAML frontmatter and markdown instructions:
+Every skill is a directory containing a `examples\SKILL.md` file with YAML frontmatter and markdown instructions:
 
 ```yaml
 ---
@@ -203,7 +203,7 @@ The skill directory can include supporting files:
 
 ```
 my-skill/
-  SKILL.md           # Main instructions (required)
+  examples\SKILL.md           # Main instructions (required)
   template.md        # Templates for Claude to fill in
   examples/
     sample.md        # Example outputs
@@ -239,7 +239,7 @@ All fields are optional. Only `description` is recommended.
 | `$ARGUMENTS[N]`        | Specific argument by 0-based index.                                        |
 | `$N`                   | Shorthand for `$ARGUMENTS[N]` (e.g., `$0`, `$1`).                         |
 | `${BABYSITTER_SESSION_ID}` | Current session ID.                                                        |
-| `${CLAUDE_SKILL_DIR}`  | Directory containing the skill's SKILL.md.                                 |
+| `${CLAUDE_SKILL_DIR}`  | Directory containing the skill's examples\SKILL.md.                                 |
 
 If `$ARGUMENTS` is not present in the content, arguments are appended as `ARGUMENTS: <value>`.
 
@@ -278,9 +278,9 @@ Commands execute immediately as preprocessing. Claude only sees the final render
 | Scope      | Path                                        | Applies to                     |
 |------------|---------------------------------------------|--------------------------------|
 | Enterprise | Managed settings                            | All users in organization      |
-| Personal   | `~/.claude/skills/<name>/SKILL.md`          | All your projects              |
-| Project    | `.claude/skills/<name>/SKILL.md`            | This project only              |
-| Plugin     | `<plugin>/skills/<name>/SKILL.md`           | Where plugin is enabled        |
+| Personal   | `~/.claude/skills/<name>/examples\SKILL.md`          | All your projects              |
+| Project    | `.claude/skills/<name>/examples\SKILL.md`            | This project only              |
+| Plugin     | `<plugin>/skills/<name>/examples\SKILL.md`           | Where plugin is enabled        |
 
 Priority: enterprise > personal > project. Plugin skills use `plugin-name:skill-name` namespace.
 
@@ -294,7 +294,7 @@ Priority: enterprise > personal > project. Plugin skills use `plugin-name:skill-
 | `/loop [interval] <prompt>` | Run prompt repeatedly on interval                                                    |
 | `/simplify [focus]`         | Review changed files for code reuse, quality, efficiency                             |
 
-See `examples/SKILL.md` for a complete skill definition example.
+See `examples\SKILL.md` for a complete skill definition example.
 
 > **References**:
 > - [code.claude.com/docs/en/skills](https://code.claude.com/docs/en/skills) (accessed 2026-04-02)
@@ -306,7 +306,7 @@ See `examples/SKILL.md` for a complete skill definition example.
 
 Commands are the legacy precursor to skills. Files at `.claude/commands/<name>.md` or `<plugin>/commands/<name>.md` create `/name` shortcuts.
 
-**Commands have been merged into skills.** A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create `/deploy` and work the same way. Existing `.claude/commands/` files continue working. If a skill and a command share the same name, the skill takes precedence.
+**Commands have been merged into skills.** A file at `.claude/commands/deploy.md` and a skill at `examples\SKILL.md` both create `/deploy` and work the same way. Existing `.claude/commands/` files continue working. If a skill and a command share the same name, the skill takes precedence.
 
 Commands support the same frontmatter fields as skills.
 
@@ -463,8 +463,8 @@ Precedence when multiple hooks conflict: `deny` > `defer` > `ask` > `allow`.
 
 | Location                                    | Scope            |
 |---------------------------------------------|------------------|
-| `~/.claude/settings.json`                   | All projects     |
-| `.claude/settings.json`                     | Single project (shared) |
+| `~/examples\settings.json`                   | All projects     |
+| `examples\settings.json`                     | Single project (shared) |
 | `.claude/settings.local.json`               | Single project (local) |
 | Managed settings                            | Organization     |
 | Plugin `hooks/hooks.json`                   | Plugin scope     |
@@ -480,7 +480,7 @@ Precedence when multiple hooks conflict: `deny` > `defer` > `ask` > `allow`.
 | `CLAUDE_CODE_REMOTE`  | `"true"` in remote web environments                        |
 | `CLAUDE_ENV_FILE`     | Path to file for persisting env vars (SessionStart/CwdChanged/FileChanged only) |
 
-See `examples/settings.json` for a complete hooks configuration example.
+See `examples\settings.json` for a complete hooks configuration example.
 
 > **Reference**: [code.claude.com/docs/en/hooks](https://code.claude.com/docs/en/hooks) (accessed 2026-04-02)
 
@@ -534,7 +534,7 @@ claude mcp remove my-server
 
 ### Plugin MCP Servers
 
-Plugins bundle MCP servers in `.mcp.json` at the plugin root or inline in `plugin.json`:
+Plugins bundle MCP servers in `.mcp.json` at the plugin root or inline in `examples\plugin.json`:
 
 ```json
 {
@@ -660,8 +660,8 @@ Supports `github`, `url`, `hostPattern`, and `pathPattern` source types.
 
 | Scope   | Settings file                      | Use case                         |
 |---------|------------------------------------|----------------------------------|
-| `user`  | `~/.claude/settings.json`          | Personal (default)               |
-| `project` | `.claude/settings.json`          | Team (committed to git)          |
+| `user`  | `~/examples\settings.json`          | Personal (default)               |
+| `project` | `examples\settings.json`          | Team (committed to git)          |
 | `local` | `.claude/settings.local.json`      | Project-specific (gitignored)    |
 | `managed` | Managed settings                 | Organization (read-only)         |
 
@@ -809,8 +809,8 @@ Skill(review-pr *)                # Skill prefix match
 1. **Managed settings** (cannot be overridden)
 2. **Command line arguments**
 3. **Local project** (`.claude/settings.local.json`)
-4. **Shared project** (`.claude/settings.json`)
-5. **User** (`~/.claude/settings.json`)
+4. **Shared project** (`examples\settings.json`)
+5. **User** (`~/examples\settings.json`)
 
 ### Auto Mode Classifier
 
@@ -844,15 +844,15 @@ Inside the classifier: `soft_deny` blocks first, `allow` overrides as exceptions
 
 | Scope       | Location                                                   | Who it affects             | Shared? |
 |-------------|------------------------------------------------------------|-----------------------------|---------|
-| **Managed** | Server-managed, plist/registry, or `managed-settings.json` | All users on machine        | Yes (IT) |
+| **Managed** | Server-managed, plist/registry, or `examples\settings.json` | All users on machine        | Yes (IT) |
 | **User**    | `~/.claude/` directory                                     | You, across all projects    | No      |
 | **Project** | `.claude/` in repository                                   | All collaborators           | Yes (git) |
 | **Local**   | `.claude/settings.local.json`                              | You, in this repo only      | No (gitignored) |
 
 ### Settings Files
 
-- `~/.claude/settings.json` -- User settings
-- `.claude/settings.json` -- Shared project settings (committed to git)
+- `~/examples\settings.json` -- User settings
+- `examples\settings.json` -- Shared project settings (committed to git)
 - `.claude/settings.local.json` -- Local project settings (gitignored)
 - Managed settings files (OS-dependent paths)
 
@@ -1001,3 +1001,6 @@ Plugins can provide Language Server Protocol (LSP) servers for real-time code in
 | `rust-lsp`       | rust-analyzer              | See rust-analyzer docs                             |
 
 > **Reference**: [code.claude.com/docs/en/plugins-reference#lsp-servers](https://code.claude.com/docs/en/plugins-reference#lsp-servers) (accessed 2026-04-02)
+
+
+

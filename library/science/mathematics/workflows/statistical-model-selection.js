@@ -100,6 +100,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Check for critical diagnostic issues
   const criticalIssues = modelDiagnostics.diagnosticResults.filter(d => d.severity === 'critical');
+  if (criticalIssues.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -592,3 +593,4 @@ export const selectionDocumentationTask = defineTask('selection-documentation', 
   },
   labels: ['mathematics', 'model-selection', 'documentation']
 }));
+

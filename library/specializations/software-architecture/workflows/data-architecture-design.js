@@ -177,6 +177,7 @@ export async function process(inputs, ctx) {
     attr => !storageArchitecture.qualityAttributes?.[attr]
   );
 
+  if (missingAttributes.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -296,6 +297,7 @@ export async function process(inputs, ctx) {
       c => !addressedCompliance.includes(c)
     );
 
+    if (missingCompliance.length > 0) {
         let lastFeedback_phase10Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase10Review) {
@@ -375,6 +377,7 @@ export async function process(inputs, ctx) {
     });
 
     // Quality Gate: Migration must have rollback strategy
+    if (!dataMigration.rollbackStrategy) {
         let lastFeedback_phase11Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase11Review) {
@@ -450,6 +453,7 @@ export async function process(inputs, ctx) {
     risk => risk.severity === 'critical' && !risk.mitigationPlan
   );
 
+  if (criticalRisksWithoutMitigation.length > 0) {
       let lastFeedback_phase15Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase15Review) {
@@ -2608,3 +2612,4 @@ export const dataArchitectureRiskAnalysisTask = defineTask('data-architecture-ri
   },
   labels: ['data-architecture', 'planning', 'risk-analysis', 'risk-management']
 }));
+

@@ -148,6 +148,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `${platform} deployed - Status: ${platformDeployment.deployed ? 'Active' : 'Failed'}, High Availability: ${platformDeployment.highAvailability}`);
 
   // Quality Gate: Platform deployment verification
+  if (!platformDeployment.deployed || !platformDeployment.initialized) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -274,6 +275,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Secrets migration - Migrated: ${secretsMigration.secretsMigrated}/${secretsManaged}, Failed: ${secretsMigration.migrationFailures.length}`);
 
   // Quality Gate: Migration verification
+  if (secretsMigration.migrationFailures.length > 0 || secretsMigration.secretsMigrated < secretsManaged) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -695,6 +697,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Security testing complete - Tests passed: ${securityTesting.testsPassed}/${securityTesting.testsTotal}, Vulnerabilities: ${securityTesting.vulnerabilities.length}`);
 
   // Quality Gate: Security testing review
+  if (securityTesting.criticalVulnerabilities > 0 || securityTesting.testsFailed > 0) {
       let lastFeedback_qualityGateApproval8 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval8) {
@@ -752,6 +755,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Compliance reporting complete - ${complianceReporting.reportsGenerated} reports, Compliant: ${complianceReporting.compliant}`);
 
   // Quality Gate: Compliance review
+  if (!complianceReporting.compliant) {
       let lastFeedback_phase12Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase12Review) {
@@ -2391,3 +2395,4 @@ export const calculateSecurityScoreTask = defineTask('calculate-security-score',
   },
   labels: ['agent', 'secrets-management', 'assessment']
 }));
+

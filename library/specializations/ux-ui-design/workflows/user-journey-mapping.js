@@ -95,6 +95,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Research completeness
   const insightQuality = researchSynthesis.insightQualityScore || 0;
+  if (insightQuality < 70) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -146,6 +147,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...stagesDefinition.artifacts);
 
   // Quality Gate: Minimum stages coverage
+  if (stagesDefinition.stages.length < qualityTargets.minStages) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -207,6 +209,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Minimum touchpoints
   const totalTouchpoints = touchpointMapping.touchpointsByStage.reduce((sum, stage) => sum + stage.touchpoints.length, 0);
+  if (totalTouchpoints < qualityTargets.minTouchpoints) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -285,6 +288,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Emotional variance (indicates rich journey with highs and lows)
   const emotionalVariance = emotionalMapping.emotionalVariance || 0;
+  if (emotionalVariance < qualityTargets.emotionalVarianceThreshold) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -341,6 +345,7 @@ export async function process(inputs, ctx) {
   painPointsIdentified = painPointsAnalysis.totalPainPoints;
 
   // Quality Gate: Minimum pain points
+  if (painPointsIdentified < qualityTargets.minPainPoints) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -398,6 +403,7 @@ export async function process(inputs, ctx) {
   opportunitiesCount = opportunitiesIdentification.totalOpportunities;
 
   // Quality Gate: Minimum opportunities
+  if (opportunitiesCount < qualityTargets.minOpportunities) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -1574,3 +1580,4 @@ export const estimatedDuration = {
   total: '2-4 weeks',
   teamSize: '2-4 people (UX Researcher, UX Designer, Product Manager, Facilitator)'
 };
+

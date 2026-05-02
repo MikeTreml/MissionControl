@@ -67,6 +67,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...vulnerabilityAssessment.artifacts);
 
   // Quality Gate: Critical vulnerabilities
+  if (vulnerabilityAssessment.criticalCount > securityPolicy.maxCriticalVulnerabilities) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -122,6 +123,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...licenseCompliance.artifacts);
 
   // Quality Gate: License compliance
+  if (licenseCompliance.hasBlockingIssues) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -222,6 +224,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...validationReport.artifacts);
 
   // Quality Gate: Validation results
+  if (!validationReport.allTestsPassed) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -657,3 +660,4 @@ export const documentChangesTask = defineTask('document-changes', (args, taskCtx
   },
   labels: ['dependency-analysis', 'documentation', 'changelog']
 }));
+

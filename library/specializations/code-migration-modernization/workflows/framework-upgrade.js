@@ -147,6 +147,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...testingValidation.artifacts);
 
   // Quality Gate: Test results
+  if (!testingValidation.allPassed) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -609,3 +610,4 @@ export const productionDeploymentTask = defineTask('production-deployment', (arg
   },
   labels: ['framework-upgrade', 'production', 'deployment']
 }));
+

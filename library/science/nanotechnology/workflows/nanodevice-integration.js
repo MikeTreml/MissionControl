@@ -87,6 +87,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: All processes must be compatible
+  if (!compatibilityAnalysis.allCompatible) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -153,6 +154,7 @@ export async function process(inputs, ctx) {
         optimized: interfaceOptimized
       });
 
+      if (!interfaceOptimized && interfaceIteration < maxIntegrationIterations) {
           let lastFeedback_iterationApproval = null;
         for (let attempt = 0; attempt < 3; attempt++) {
           if (lastFeedback_iterationApproval) {
@@ -191,6 +193,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Predicted yield must meet target
+  if (yieldModeling.predictedYield < yieldTarget) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -770,3 +773,4 @@ export const integrationDocumentationTask = defineTask('integration-documentatio
   },
   labels: ['nanotechnology', 'integration', 'documentation']
 }));
+

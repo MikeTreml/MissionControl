@@ -771,6 +771,7 @@ export async function process(inputs, ctx) {
                           (sbomRequired ? sbomGeneration.success : true);
 
   // Final Quality Gate: Deployment readiness
+  if (!deploymentReady) {
       let lastFeedback_qualityGateApproval7 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval7) {
@@ -1612,3 +1613,4 @@ export const deploymentReadinessTask = defineTask('deployment-readiness', (args,
   },
   labels: ['container', 'deployment', 'readiness', 'assessment']
 }));
+

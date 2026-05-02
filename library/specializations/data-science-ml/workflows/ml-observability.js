@@ -352,6 +352,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...remediationRisk.artifacts);
 
     // Quality Gate: High-risk remediations require manual approval
+    if (remediationRisk.riskLevel === 'high' || !enableAutoRemediation) {
         let lastFeedback_qualityGateApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval) {
@@ -2284,3 +2285,4 @@ export const generateHealthReportTask = defineTask('generate-health-report', (ar
   },
   labels: ['ml-observability', 'health', 'reporting']
 }));
+

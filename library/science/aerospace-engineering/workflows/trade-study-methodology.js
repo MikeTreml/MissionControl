@@ -33,6 +33,7 @@ export async function process(inputs, ctx) {
   const alternativesAnalysis = await ctx.task(alternativesAnalysisTask, { projectName, alternatives, criteria: criteriaDefinition });
   let scoringMatrix = await ctx.task(scoringMatrixTask, { projectName, alternatives: alternativesAnalysis, weights: criteriaWeighting });
 
+  if (scoringMatrix.topAlternatives.length > 1 && scoringMatrix.scoreDifferential < 0.1) {
       let lastFeedback_reviewApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_reviewApproval) {
@@ -144,3 +145,4 @@ export const tradeStudyReportTask = defineTask('trade-study-report', (args, task
   }, outputSchema: { type: 'object', required: ['report', 'markdown'], properties: { report: { type: 'object' }, markdown: { type: 'string' } } } },
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['trade-study', 'aerospace']
 }));
+

@@ -183,6 +183,7 @@ export async function process(inputs, ctx) {
   const authExamplesCount = authDocs.codeExamples.length;
   const authCoverage = authExamplesCount / targetLanguages.length;
 
+  if (authCoverage < 0.75 && qualityCriteria.requireAuthenticationExamples) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -289,6 +290,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Code example coverage
   const avgExamplesPerEndpoint = totalCodeExamples / discoveredEndpointCount;
+  if (avgExamplesPerEndpoint < qualityCriteria.minimumCodeExamplesPerEndpoint) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -1520,3 +1522,4 @@ export const documentationPackagingTask = defineTask('documentation-packaging', 
   },
   labels: ['agent', 'api-docs', 'packaging', 'deployment']
 }));
+

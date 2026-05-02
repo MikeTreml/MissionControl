@@ -199,6 +199,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...(validationResult.artifacts || []));
 
+  if (!validationResult.validated) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -643,3 +644,4 @@ export const circuitDocumentationTask = defineTask('qc-circuit-documentation', (
   },
   labels: ['quantum-computing', 'documentation', 'reporting']
 }));
+

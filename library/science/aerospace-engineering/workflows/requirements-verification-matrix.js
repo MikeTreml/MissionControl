@@ -33,6 +33,7 @@ export async function process(inputs, ctx) {
   const traceabilityMatrix = await ctx.task(traceabilityMatrixTask, { projectName, decomposition, verificationMethods });
   let verificationPlan = await ctx.task(verificationPlanTask, { projectName, traceabilityMatrix, verificationMethods });
 
+  if (traceabilityMatrix.unverifiedCount > 0) {
       let lastFeedback_reviewApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_reviewApproval) {
@@ -134,3 +135,4 @@ export const rvmReportTask = defineTask('rvm-report', (args, taskCtx) => ({
   }, outputSchema: { type: 'object', required: ['report', 'markdown'], properties: { report: { type: 'object' }, markdown: { type: 'string' } } } },
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['requirements', 'aerospace']
 }));
+

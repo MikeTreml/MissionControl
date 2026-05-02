@@ -47,6 +47,7 @@ export async function process(inputs, ctx) {
     symmetryCatalog,
     targetProperties,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -509,3 +510,4 @@ export const synthesizeSymmetryInsightsTask = defineTask('synthesize-symmetry-in
   },
   labels: ['agent', 'symmetry-breaking', 'synthesis']
 }));
+

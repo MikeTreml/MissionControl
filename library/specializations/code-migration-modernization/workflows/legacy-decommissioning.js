@@ -36,6 +36,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Starting Legacy Decommissioning for ${projectName}`);
 
   // Pre-flight check
+  if (!migrationComplete) {
     let lastFeedback_stepApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       // No preceding task identified for re-run with feedback
@@ -479,3 +480,4 @@ export const complianceDocumentationTask = defineTask('compliance-documentation'
   },
   labels: ['decommissioning', 'compliance', 'documentation']
 }));
+

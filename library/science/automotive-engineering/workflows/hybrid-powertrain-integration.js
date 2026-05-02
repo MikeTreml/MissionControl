@@ -127,6 +127,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Emissions targets
+  if (emissionsValidation.targetsMet === false) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -714,3 +715,4 @@ export const systemDocumentationTask = defineTask('system-documentation', (args,
   },
   labels: ['automotive', 'hybrid', 'documentation', 'deliverable']
 }));
+

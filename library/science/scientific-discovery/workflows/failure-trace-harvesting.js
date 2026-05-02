@@ -47,6 +47,7 @@ export async function process(inputs, ctx) {
     failurePotential,
     instrumentation,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -519,3 +520,4 @@ export const synthesizeHarvestingInsightsTask = defineTask('synthesize-harvestin
   },
   labels: ['agent', 'failure-harvesting', 'synthesis']
 }));
+

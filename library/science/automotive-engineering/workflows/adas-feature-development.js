@@ -120,6 +120,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Regulatory compliance
+  if (regulatoryTesting.complianceGaps && regulatoryTesting.complianceGaps.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -734,3 +735,4 @@ export const featureReleaseTask = defineTask('feature-release', (args, taskCtx) 
   },
   labels: ['automotive', 'ADAS', 'release', 'documentation']
 }));
+

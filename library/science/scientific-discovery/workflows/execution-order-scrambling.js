@@ -67,6 +67,7 @@ export async function process(inputs, ctx) {
       evaluation,
       timestamp: ctx.now()
     });
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -468,3 +469,4 @@ export const synthesizeOrderingInsightsTask = defineTask('synthesize-ordering-in
   },
   labels: ['agent', 'order-scrambling', 'synthesis']
 }));
+

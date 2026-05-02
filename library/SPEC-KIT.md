@@ -1,4 +1,4 @@
-# Spec-Kit Workflows for Babysitter SDK
+﻿# Spec-Kit Workflows for Babysitter SDK
 
 Workflows adapted from GitHub's [Spec-Kit](https://github.com/github/spec-kit) methodology for the Babysitter SDK orchestration framework.
 
@@ -6,8 +6,8 @@ Workflows adapted from GitHub's [Spec-Kit](https://github.com/github/spec-kit) m
 
 Spec-Kit introduces **Spec-Driven Development** - a paradigm where specifications become executable, directly generating working implementations rather than just guiding them. This flips the traditional development script:
 
-**Traditional**: Requirements → Design → Code → Test → Deploy
-**Spec-Driven**: Constitution → Specification → Plan → Tasks → Execute
+**Traditional**: Requirements â†’ Design â†’ Code â†’ Test â†’ Deploy
+**Spec-Driven**: Constitution â†’ Specification â†’ Plan â†’ Tasks â†’ Execute
 
 ## Core Philosophy
 
@@ -47,7 +47,7 @@ Complete five-step workflow for greenfield or brownfield development.
 ```bash
 babysitter run:create \
   --process-id methodologies/spec-driven-development \
-  --entry library/methodologies/spec-driven-development.js#process \
+  --entry methodologies\spec-driven-development.js#process \
   --inputs inputs.json
 ```
 
@@ -78,7 +78,7 @@ Standalone workflow for establishing or refining project governance.
 ```bash
 babysitter run:create \
   --process-id methodologies/spec-kit-constitution \
-  --entry library/methodologies/spec-kit-constitution.js#process \
+  --entry methodologies\spec-kit-constitution.js#process \
   --inputs constitution-inputs.json
 ```
 
@@ -107,7 +107,7 @@ Generate and validate custom quality checklists - "unit tests for English."
 ```bash
 babysitter run:create \
   --process-id methodologies/spec-kit-quality-checklist \
-  --entry library/methodologies/spec-kit-quality-checklist.js#process \
+  --entry methodologies\spec-kit-quality-checklist.js#process \
   --inputs checklist-inputs.json
 ```
 
@@ -136,7 +136,7 @@ Adding features to existing codebases with careful integration.
 ```bash
 babysitter run:create \
   --process-id methodologies/spec-kit-brownfield \
-  --entry library/methodologies/spec-kit-brownfield.js#process \
+  --entry methodologies\spec-kit-brownfield.js#process \
   --inputs brownfield-inputs.json
 ```
 
@@ -280,10 +280,10 @@ api/
 ```
 
 ## Constitution Compliance
-✅ Testing: Unit tests for business logic, integration tests for API, E2E tests for critical paths
-✅ Documentation: API endpoints documented with OpenAPI
-✅ Performance: Pagination for large datasets, caching with Redis
-✅ Security: RBAC for analytics data, no PII exposed
+âœ… Testing: Unit tests for business logic, integration tests for API, E2E tests for critical paths
+âœ… Documentation: API endpoints documented with OpenAPI
+âœ… Performance: Pagination for large datasets, caching with Redis
+âœ… Security: RBAC for analytics data, no PII exposed
 
 ...
 ```
@@ -477,20 +477,20 @@ Make specifications objectively verifiable:
 ```markdown
 ## Specification Checklist
 
-✅ **[CRITICAL]** All user stories have priority (P1/P2/P3)
+âœ… **[CRITICAL]** All user stories have priority (P1/P2/P3)
   - Verification: Regex match for [P\d]
   - Remediation: Add priority to stories US3 and US5
 
-✅ **[HIGH]** Each story has Given/When/Then acceptance criteria
+âœ… **[HIGH]** Each story has Given/When/Then acceptance criteria
   - Verification: Check for structured acceptance format
   - Remediation: Add acceptance criteria to US2
 
-⚠️ **[MEDIUM]** Success metrics are measurable
+âš ï¸ **[MEDIUM]** Success metrics are measurable
   - Verification: Check for quantitative targets
   - Remediation: Convert "users love it" to "NPS > 40 within 3 months"
 
-✅ **[LOW]** Edge cases documented
-  - Verification: Section exists with ≥ 3 scenarios
+âœ… **[LOW]** Edge cases documented
+  - Verification: Section exists with â‰¥ 3 scenarios
   - Passed: 5 edge cases documented
 ```
 
@@ -614,14 +614,14 @@ See `examples/spec-kit-examples.json` for complete working examples:
 
 ### 1. Constitution
 
-✅ **DO:**
+âœ… **DO:**
 - Make principles measurable (e.g., "80% test coverage" not "good tests")
 - Include rationale for each principle
 - Reference industry standards (WCAG, PCI DSS)
 - Update as project matures
 - Share with all team members
 
-❌ **DON'T:**
+âŒ **DON'T:**
 - Make it too prescriptive (allow flexibility within bounds)
 - Copy-paste without customization
 - Set unrealistic standards
@@ -629,14 +629,14 @@ See `examples/spec-kit-examples.json` for complete working examples:
 
 ### 2. Specifications
 
-✅ **DO:**
+âœ… **DO:**
 - Write user stories from user perspective
 - Make stories independently valuable
 - Use Given/When/Then for acceptance criteria
 - Prioritize ruthlessly (P1 = must-have for MVP)
 - Document edge cases explicitly
 
-❌ **DON'T:**
+âŒ **DON'T:**
 - Mix technical details in user stories
 - Write stories that depend on each other
 - Use vague success criteria ("user-friendly")
@@ -644,14 +644,14 @@ See `examples/spec-kit-examples.json` for complete working examples:
 
 ### 3. Plans
 
-✅ **DO:**
+âœ… **DO:**
 - Validate against constitution explicitly
 - Document architecture decisions with rationale
 - Consider integration with existing code
 - Define clear project structure
 - Include performance and security considerations
 
-❌ **DON'T:**
+âŒ **DON'T:**
 - Choose technologies not in constitution
 - Plan in isolation from existing patterns
 - Skip validation step
@@ -659,14 +659,14 @@ See `examples/spec-kit-examples.json` for complete working examples:
 
 ### 4. Tasks
 
-✅ **DO:**
+âœ… **DO:**
 - Make tasks atomic (2-4 hours each)
 - Specify exact file paths
 - Mark parallelizable work with [P]
 - Link tasks to user stories
 - Include verification steps
 
-❌ **DON'T:**
+âŒ **DON'T:**
 - Create mega-tasks (split them)
 - Forget dependencies
 - Mix setup with feature work
@@ -674,13 +674,13 @@ See `examples/spec-kit-examples.json` for complete working examples:
 
 ### 5. Implementation
 
-✅ **DO:**
+âœ… **DO:**
 - Follow constitution standards strictly
 - Generate custom checklist per task
 - Validate before considering complete
 - Document decisions made during implementation
 
-❌ **DON'T:**
+âŒ **DON'T:**
 - Skip checklist generation
 - Ignore constitution violations
 - Skip tests "temporarily"
@@ -753,7 +753,7 @@ npm i -g @a5c-ai/babysitter-sdk@latest
 ```bash
 babysitter run:create \
   --process-id methodologies/spec-kit-constitution \
-  --entry library/methodologies/spec-kit-constitution.js#process \
+  --entry methodologies\spec-kit-constitution.js#process \
   --inputs '{
     "projectName": "My Project",
     "scope": "project",
@@ -766,7 +766,7 @@ babysitter run:create \
 ```bash
 babysitter run:create \
   --process-id methodologies/spec-driven-development \
-  --entry library/methodologies/spec-driven-development.js#process \
+  --entry methodologies\spec-driven-development.js#process \
   --inputs examples/spec-kit-examples.json#fullSpecDrivenDevelopment.inputs
 ```
 
@@ -794,3 +794,4 @@ Use feedback from breakpoints to refine specifications until approved.
 ---
 
 **Remember**: Specifications become executable. Invest time in clear, comprehensive specs and watch implementations flow systematically from them.
+

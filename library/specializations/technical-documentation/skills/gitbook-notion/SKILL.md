@@ -1,4 +1,4 @@
----
+﻿---
 name: gitbook-notion
 description: Integration with hosted documentation platforms GitBook and Notion. Manage spaces, synchronize content with Git, export/import between formats, configure webhooks, and retrieve analytics.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
@@ -90,9 +90,9 @@ redirects:
 
 ## API Reference
 
-* [Overview](api/README.md)
+* [Overview](README.md)
 * [Authentication](api/authentication.md)
-* [Endpoints](api/endpoints/README.md)
+* [Endpoints](README.md)
   * [Users](api/endpoints/users.md)
   * [Projects](api/endpoints/projects.md)
 
@@ -541,3 +541,4 @@ node scripts/notion-import.js --input ./docs --database abc123
 - knowledge-base-setup.js
 - docs-versioning.js
 - content-strategy.js
+

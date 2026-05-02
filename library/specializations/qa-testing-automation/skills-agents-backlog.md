@@ -1,4 +1,4 @@
-# QA, Testing, and Test Automation - Skills and Agents Backlog
+﻿# QA, Testing, and Test Automation - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the QA/Testing processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized testing frameworks and platforms.
 
@@ -48,10 +48,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Configure parallel execution and sharding
 
 **Process Integration**:
-- e2e-test-suite.js
-- cross-browser-testing.js
-- visual-regression.js
-- accessibility-testing.js
+- workflows\e2e-test-suite.js
+- workflows\cross-browser-testing.js
+- workflows\visual-regression.js
+- workflows\accessibility-testing.js
 
 **Dependencies**: Playwright CLI, @playwright/test package
 
@@ -74,9 +74,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Configure parallel test execution
 
 **Process Integration**:
-- e2e-test-suite.js
-- cross-browser-testing.js
-- visual-regression.js
+- workflows\e2e-test-suite.js
+- workflows\cross-browser-testing.js
+- workflows\visual-regression.js
 - component testing
 
 **Dependencies**: Cypress CLI, cypress-io package
@@ -100,9 +100,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Screenshot capture and comparison
 
 **Process Integration**:
-- e2e-test-suite.js
-- cross-browser-testing.js
-- mobile-testing.js
+- workflows\e2e-test-suite.js
+- workflows\cross-browser-testing.js
+- workflows\mobile-testing.js
 
 **Dependencies**: Selenium WebDriver, browser drivers
 
@@ -125,10 +125,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Integration with React Testing Library
 
 **Process Integration**:
-- automation-framework.js
-- mutation-testing.js
-- continuous-testing.js
-- shift-left-testing.js
+- workflows\automation-framework.js
+- workflows\mutation-testing.js
+- workflows\continuous-testing.js
+- workflows\shift-left-testing.js
 
 **Dependencies**: Jest, @testing-library packages
 
@@ -151,10 +151,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Test report generation (HTML, JUnit XML)
 
 **Process Integration**:
-- automation-framework.js
-- api-testing.js
-- continuous-testing.js
-- shift-left-testing.js
+- workflows\automation-framework.js
+- workflows\api-testing.js
+- workflows\continuous-testing.js
+- workflows\shift-left-testing.js
 
 **Dependencies**: pytest, pytest plugins
 
@@ -177,10 +177,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Contract testing with Pact
 
 **Process Integration**:
-- api-testing.js
-- contract-testing.js
-- security-testing.js
-- performance-testing.js
+- workflows\api-testing.js
+- workflows\contract-testing.js
+- workflows\security-testing.js
+- workflows\performance-testing.js
 
 **Dependencies**: Supertest, REST Assured, Pact, GraphQL clients
 
@@ -203,9 +203,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Script parameterization and data feeding
 
 **Process Integration**:
-- performance-testing.js
-- api-testing.js
-- continuous-testing.js
+- workflows\performance-testing.js
+- workflows\api-testing.js
+- workflows\continuous-testing.js
 
 **Dependencies**: k6 CLI, k6/http module
 
@@ -228,8 +228,8 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Generate HTML dashboard reports
 
 **Process Integration**:
-- performance-testing.js
-- api-testing.js
+- workflows\performance-testing.js
+- workflows\api-testing.js
 
 **Dependencies**: JMeter CLI, JMeter plugins
 
@@ -252,9 +252,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Generate visual test coverage reports
 
 **Process Integration**:
-- visual-regression.js
-- e2e-test-suite.js
-- cross-browser-testing.js
+- workflows\visual-regression.js
+- workflows\e2e-test-suite.js
+- workflows\cross-browser-testing.js
 
 **Dependencies**: Percy CLI, Percy SDK
 
@@ -277,8 +277,8 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Parallel scenario execution
 
 **Process Integration**:
-- visual-regression.js
-- e2e-test-suite.js
+- workflows\visual-regression.js
+- workflows\e2e-test-suite.js
 
 **Dependencies**: BackstopJS, Puppeteer
 
@@ -301,9 +301,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Provide remediation guidance
 
 **Process Integration**:
-- accessibility-testing.js
-- e2e-test-suite.js
-- quality-gates.js
+- workflows\accessibility-testing.js
+- workflows\e2e-test-suite.js
+- workflows\quality-gates.js
 
 **Dependencies**: axe-core, axe-playwright/axe-cypress
 
@@ -326,9 +326,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Bidirectional contract testing
 
 **Process Integration**:
-- contract-testing.js
-- api-testing.js
-- continuous-testing.js
+- workflows\contract-testing.js
+- workflows\api-testing.js
+- workflows\continuous-testing.js
 
 **Dependencies**: Pact JS/JVM/Python, Pact Broker
 
@@ -351,10 +351,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Integration with SonarQube
 
 **Process Integration**:
-- automation-framework.js
-- mutation-testing.js
-- quality-gates.js
-- continuous-testing.js
+- workflows\automation-framework.js
+- workflows\mutation-testing.js
+- workflows\quality-gates.js
+- workflows\continuous-testing.js
 
 **Dependencies**: Istanbul, coverage.py, JaCoCo
 
@@ -377,9 +377,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Dashboard integration for tracking
 
 **Process Integration**:
-- mutation-testing.js
-- quality-gates.js
-- shift-left-testing.js
+- workflows\mutation-testing.js
+- workflows\quality-gates.js
+- workflows\shift-left-testing.js
 
 **Dependencies**: @stryker-mutator/core, Stryker plugins
 
@@ -402,10 +402,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Integration with ORM factories
 
 **Process Integration**:
-- test-data-management.js
-- e2e-test-suite.js
-- api-testing.js
-- environment-management.js
+- workflows\test-data-management.js
+- workflows\e2e-test-suite.js
+- workflows\api-testing.js
+- workflows\environment-management.js
 
 **Dependencies**: Faker.js, Factory Bot, Fishery
 
@@ -428,9 +428,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Mobile-specific assertions
 
 **Process Integration**:
-- mobile-testing.js
-- cross-browser-testing.js
-- e2e-test-suite.js
+- workflows\mobile-testing.js
+- workflows\cross-browser-testing.js
+- workflows\e2e-test-suite.js
 
 **Dependencies**: Appium, WebDriverIO, mobile SDKs
 
@@ -453,9 +453,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - CI/CD pipeline integration
 
 **Process Integration**:
-- security-testing.js
-- api-testing.js
-- quality-gates.js
+- workflows\security-testing.js
+- workflows\api-testing.js
+- workflows\quality-gates.js
 
 **Dependencies**: OWASP ZAP CLI/API
 
@@ -478,10 +478,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Custom widgets and dashboards
 
 **Process Integration**:
-- automation-framework.js
-- metrics-dashboard.js
-- continuous-testing.js
-- quality-gates.js
+- workflows\automation-framework.js
+- workflows\metrics-dashboard.js
+- workflows\continuous-testing.js
+- workflows\quality-gates.js
 
 **Dependencies**: Allure CLI, Allure adapters
 
@@ -504,9 +504,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Living documentation generation
 
 **Process Integration**:
-- e2e-test-suite.js
-- test-strategy.js
-- shift-left-testing.js
+- workflows\e2e-test-suite.js
+- workflows\test-strategy.js
+- workflows\shift-left-testing.js
 
 **Dependencies**: Cucumber.js, @cucumber/cucumber
 
@@ -529,9 +529,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - CI/CD Docker integration
 
 **Process Integration**:
-- environment-management.js
-- test-data-management.js
-- continuous-testing.js
+- workflows\environment-management.js
+- workflows\test-data-management.js
+- workflows\continuous-testing.js
 
 **Dependencies**: Docker, Docker Compose, Testcontainers
 
@@ -562,10 +562,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Enterprise QA leadership, ISTQB Advanced
 
 **Process Integration**:
-- test-strategy.js (all phases)
-- quality-gates.js (gate design)
-- shift-left-testing.js (strategy)
-- continuous-testing.js (pipeline strategy)
+- workflows\test-strategy.js (all phases)
+- workflows\quality-gates.js (gate design)
+- workflows\shift-left-testing.js (strategy)
+- workflows\continuous-testing.js (pipeline strategy)
 
 ---
 
@@ -590,10 +590,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Playwright, Cypress, Selenium expertise
 
 **Process Integration**:
-- e2e-test-suite.js (all phases)
-- flakiness-elimination.js (all phases)
-- cross-browser-testing.js (all phases)
-- visual-regression.js (test implementation)
+- workflows\e2e-test-suite.js (all phases)
+- workflows\flakiness-elimination.js (all phases)
+- workflows\cross-browser-testing.js (all phases)
+- workflows\visual-regression.js (test implementation)
 
 ---
 
@@ -618,10 +618,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Microservices, distributed systems
 
 **Process Integration**:
-- api-testing.js (all phases)
-- contract-testing.js (all phases)
-- security-testing.js (API security phases)
-- performance-testing.js (API performance)
+- workflows\api-testing.js (all phases)
+- workflows\contract-testing.js (all phases)
+- workflows\security-testing.js (API security phases)
+- workflows\performance-testing.js (API performance)
 
 ---
 
@@ -646,9 +646,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: k6, JMeter, Gatling expertise
 
 **Process Integration**:
-- performance-testing.js (all phases)
-- api-testing.js (performance phases)
-- quality-gates.js (performance gates)
+- workflows\performance-testing.js (all phases)
+- workflows\api-testing.js (performance phases)
+- workflows\quality-gates.js (performance gates)
 
 ---
 
@@ -673,10 +673,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Penetration testing, OSCP/CEH
 
 **Process Integration**:
-- security-testing.js (all phases)
-- api-testing.js (security phases)
-- quality-gates.js (security gates)
-- continuous-testing.js (security integration)
+- workflows\security-testing.js (all phases)
+- workflows\api-testing.js (security phases)
+- workflows\quality-gates.js (security gates)
+- workflows\continuous-testing.js (security integration)
 
 ---
 
@@ -701,10 +701,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Database engineering, ETL
 
 **Process Integration**:
-- test-data-management.js (all phases)
-- e2e-test-suite.js (data phases)
-- api-testing.js (data phases)
-- environment-management.js (data seeding)
+- workflows\test-data-management.js (all phases)
+- workflows\e2e-test-suite.js (data phases)
+- workflows\api-testing.js (data phases)
+- workflows\environment-management.js (data seeding)
 
 ---
 
@@ -729,10 +729,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Data analysis, BI tools
 
 **Process Integration**:
-- metrics-dashboard.js (all phases)
-- quality-gates.js (metrics)
-- continuous-testing.js (metrics)
-- test-strategy.js (KPIs)
+- workflows\metrics-dashboard.js (all phases)
+- workflows\quality-gates.js (metrics)
+- workflows\continuous-testing.js (metrics)
+- workflows\test-strategy.js (KPIs)
 
 ---
 
@@ -757,9 +757,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: IAAP certification, assistive technology
 
 **Process Integration**:
-- accessibility-testing.js (all phases)
-- e2e-test-suite.js (a11y integration)
-- quality-gates.js (a11y gates)
+- workflows\accessibility-testing.js (all phases)
+- workflows\e2e-test-suite.js (a11y integration)
+- workflows\quality-gates.js (a11y gates)
 
 ---
 
@@ -784,9 +784,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Domain expertise, rapid software testing
 
 **Process Integration**:
-- exploratory-testing.js (all phases)
-- test-strategy.js (exploratory planning)
-- quality-gates.js (exploratory findings)
+- workflows\exploratory-testing.js (all phases)
+- workflows\test-strategy.js (exploratory planning)
+- workflows\quality-gates.js (exploratory findings)
 
 ---
 
@@ -811,10 +811,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: GitHub Actions, GitLab CI, Jenkins
 
 **Process Integration**:
-- continuous-testing.js (all phases)
-- quality-gates.js (pipeline integration)
-- automation-framework.js (CI/CD setup)
-- flakiness-elimination.js (pipeline stability)
+- workflows\continuous-testing.js (all phases)
+- workflows\quality-gates.js (pipeline integration)
+- workflows\automation-framework.js (CI/CD setup)
+- workflows\flakiness-elimination.js (pipeline stability)
 
 ---
 
@@ -839,9 +839,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Appium, XCUITest, Espresso
 
 **Process Integration**:
-- mobile-testing.js (all phases)
-- cross-browser-testing.js (mobile devices)
-- accessibility-testing.js (mobile a11y)
+- workflows\mobile-testing.js (all phases)
+- workflows\cross-browser-testing.js (mobile devices)
+- workflows\accessibility-testing.js (mobile a11y)
 
 ---
 
@@ -866,10 +866,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Docker, Kubernetes, IaC
 
 **Process Integration**:
-- environment-management.js (all phases)
-- test-data-management.js (environment data)
-- automation-framework.js (environment setup)
-- continuous-testing.js (environment pipeline)
+- workflows\environment-management.js (all phases)
+- workflows\test-data-management.js (environment data)
+- workflows\automation-framework.js (environment setup)
+- workflows\continuous-testing.js (environment pipeline)
 
 ---
 
@@ -879,26 +879,26 @@ All 20 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| test-strategy.js | SK-013, SK-014 | AG-001, AG-007 |
-| automation-framework.js | SK-001, SK-002, SK-003, SK-004, SK-005, SK-18 | AG-002, AG-010 |
-| e2e-test-suite.js | SK-001, SK-002, SK-003, SK-015, SK-019 | AG-002 |
-| api-testing.js | SK-006, SK-012, SK-007 | AG-003, AG-004 |
-| performance-testing.js | SK-007, SK-008 | AG-004 |
-| visual-regression.js | SK-009, SK-010, SK-001, SK-002 | AG-002 |
-| test-data-management.js | SK-015, SK-020 | AG-006, AG-012 |
-| exploratory-testing.js | - | AG-009 |
-| mutation-testing.js | SK-014, SK-013 | AG-001, AG-007 |
-| quality-gates.js | SK-013, SK-018 | AG-001, AG-007, AG-010 |
-| accessibility-testing.js | SK-011, SK-001, SK-002 | AG-008 |
-| security-testing.js | SK-017, SK-006 | AG-005 |
-| cross-browser-testing.js | SK-001, SK-002, SK-003, SK-016 | AG-002, AG-011 |
-| flakiness-elimination.js | SK-001, SK-002, SK-003 | AG-002, AG-010 |
-| continuous-testing.js | SK-004, SK-005, SK-018, SK-020 | AG-010 |
-| mobile-testing.js | SK-016 | AG-011 |
-| contract-testing.js | SK-012, SK-006 | AG-003 |
-| metrics-dashboard.js | SK-018, SK-013 | AG-007 |
-| shift-left-testing.js | SK-004, SK-005, SK-019 | AG-001, AG-010 |
-| environment-management.js | SK-020, SK-015 | AG-012, AG-006 |
+| workflows\test-strategy.js | SK-013, SK-014 | AG-001, AG-007 |
+| workflows\automation-framework.js | SK-001, SK-002, SK-003, SK-004, SK-005, SK-18 | AG-002, AG-010 |
+| workflows\e2e-test-suite.js | SK-001, SK-002, SK-003, SK-015, SK-019 | AG-002 |
+| workflows\api-testing.js | SK-006, SK-012, SK-007 | AG-003, AG-004 |
+| workflows\performance-testing.js | SK-007, SK-008 | AG-004 |
+| workflows\visual-regression.js | SK-009, SK-010, SK-001, SK-002 | AG-002 |
+| workflows\test-data-management.js | SK-015, SK-020 | AG-006, AG-012 |
+| workflows\exploratory-testing.js | - | AG-009 |
+| workflows\mutation-testing.js | SK-014, SK-013 | AG-001, AG-007 |
+| workflows\quality-gates.js | SK-013, SK-018 | AG-001, AG-007, AG-010 |
+| workflows\accessibility-testing.js | SK-011, SK-001, SK-002 | AG-008 |
+| workflows\security-testing.js | SK-017, SK-006 | AG-005 |
+| workflows\cross-browser-testing.js | SK-001, SK-002, SK-003, SK-016 | AG-002, AG-011 |
+| workflows\flakiness-elimination.js | SK-001, SK-002, SK-003 | AG-002, AG-010 |
+| workflows\continuous-testing.js | SK-004, SK-005, SK-018, SK-020 | AG-010 |
+| workflows\mobile-testing.js | SK-016 | AG-011 |
+| workflows\contract-testing.js | SK-012, SK-006 | AG-003 |
+| workflows\metrics-dashboard.js | SK-018, SK-013 | AG-007 |
+| workflows\shift-left-testing.js | SK-004, SK-005, SK-019 | AG-001, AG-010 |
+| workflows\environment-management.js | SK-020, SK-015 | AG-012, AG-006 |
 
 ---
 
@@ -997,3 +997,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.1.0
 **Status**: Phase 6 - Complete (All Skills and Agents Implemented)
 **Next Step**: Phase 7 - Integration testing and process refinement
+
+

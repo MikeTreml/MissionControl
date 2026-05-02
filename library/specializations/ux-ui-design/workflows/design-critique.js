@@ -311,6 +311,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Critical issues: ${criticalIssueCount}, Blockers: ${blockerCount}`);
 
   // Quality Gate: Critical issues check
+  if (blockerCount > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -2563,3 +2564,4 @@ export const critiqueReportGenerationTask = defineTask('critique-report-generati
   },
   labels: ['agent', 'design-critique', 'reporting', 'documentation']
 }));
+

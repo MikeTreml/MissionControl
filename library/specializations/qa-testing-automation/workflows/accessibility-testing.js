@@ -175,6 +175,7 @@ export async function process(inputs, ctx) {
     }
   }
   // Quality Gate: Critical violations check
+  if (criticalViolationsFound && breakOnCritical) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -357,6 +358,7 @@ export async function process(inputs, ctx) {
     (wcagLevel === 'AA' && complianceLevel === 'AAA') ||
     (wcagLevel === 'A' && ['AA', 'AAA'].includes(complianceLevel));
 
+  if (!meetsCompliance) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -1674,3 +1676,4 @@ export const finalAccessibilityReviewTask = defineTask('final-accessibility-revi
   },
   labels: ['agent', 'accessibility', 'review', 'final-approval']
 }));
+

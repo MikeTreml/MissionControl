@@ -176,6 +176,7 @@ export async function process(inputs, ctx) {
   if (physicsValidation.issues) issues.push(...physicsValidation.issues);
 
   // Quality Gate: Physics validation
+  if (!physicsValidation.validationPassed) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -709,3 +710,4 @@ export const launchFileGenerationTask = defineTask('launch-file-generation', (ar
   },
   labels: ['robotics-simulation', 'gazebo', 'launch']
 }));
+

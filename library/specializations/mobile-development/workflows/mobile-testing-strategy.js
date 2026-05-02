@@ -60,6 +60,7 @@ export async function process(inputs, ctx) {
       appName, platforms, framework, testingFrameworks, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -135,3 +136,4 @@ export const performanceTestTask = createTestingTask('performance-testing', 'Per
 export const accessibilityTestTask = createTestingTask('accessibility-testing', 'Accessibility Test Suite');
 export const securityTestTask = createTestingTask('security-testing', 'Security Test Suite');
 export const testDocumentationTask = createTestingTask('test-documentation', 'Test Documentation');
+

@@ -19,7 +19,7 @@
  * - IDEO Design Thinking: https://designthinking.ideo.com/
  */
 
-import { defineTask } from '@a5c-ai/babysitter-sdk';
+import { defineTask as createTask } from '@a5c-ai/babysitter-sdk';
 
 export async function process(inputs, ctx) {
   const {
@@ -344,7 +344,7 @@ export async function process(inputs, ctx) {
 // TASK DEFINITIONS
 // ============================================================================
 
-export const empathizeTask = defineTask('empathize', (args, taskCtx) => ({
+export const empathizeTask = createTask('empathize', (args, taskCtx) => ({
   kind: 'agent',
   title: 'EMPATHIZE - Understand users',
   skill: { name: 'hypothesis-generator' },
@@ -400,7 +400,7 @@ export const empathizeTask = defineTask('empathize', (args, taskCtx) => ({
   labels: ['agent', 'design-thinking', 'empathize']
 }));
 
-export const journeyMappingTask = defineTask('journey-mapping', (args, taskCtx) => ({
+export const journeyMappingTask = createTask('journey-mapping', (args, taskCtx) => ({
   kind: 'agent',
   title: 'EMPATHIZE - Map user journeys',
   skill: { name: 'hypothesis-generator' },
@@ -456,7 +456,7 @@ export const journeyMappingTask = defineTask('journey-mapping', (args, taskCtx) 
   labels: ['agent', 'design-thinking', 'journey-mapping']
 }));
 
-export const defineTask = defineTask('define', (args, taskCtx) => ({
+export const defineTask = createTask('define', (args, taskCtx) => ({
   kind: 'agent',
   title: 'DEFINE - Frame the problem',
   skill: { name: 'hypothesis-generator' },
@@ -512,7 +512,7 @@ export const defineTask = defineTask('define', (args, taskCtx) => ({
   labels: ['agent', 'design-thinking', 'define']
 }));
 
-export const ideateTask = defineTask('ideate', (args, taskCtx) => ({
+export const ideateTask = createTask('ideate', (args, taskCtx) => ({
   kind: 'agent',
   title: 'IDEATE - Generate ideas',
   skill: { name: 'hypothesis-generator' },
@@ -570,7 +570,7 @@ export const ideateTask = defineTask('ideate', (args, taskCtx) => ({
   labels: ['agent', 'design-thinking', 'ideate']
 }));
 
-export const ideaSelectionTask = defineTask('idea-selection', (args, taskCtx) => ({
+export const ideaSelectionTask = createTask('idea-selection', (args, taskCtx) => ({
   kind: 'agent',
   title: 'IDEATE - Select best ideas',
   skill: { name: 'hypothesis-generator' },
@@ -629,7 +629,7 @@ export const ideaSelectionTask = defineTask('idea-selection', (args, taskCtx) =>
   labels: ['agent', 'design-thinking', 'idea-selection']
 }));
 
-export const prototypeTask = defineTask('prototype', (args, taskCtx) => ({
+export const prototypeTask = createTask('prototype', (args, taskCtx) => ({
   kind: 'agent',
   title: 'PROTOTYPE - Develop concept',
   skill: { name: 'hypothesis-generator' },
@@ -684,7 +684,7 @@ export const prototypeTask = defineTask('prototype', (args, taskCtx) => ({
   labels: ['agent', 'design-thinking', 'prototype']
 }));
 
-export const storyboardingTask = defineTask('storyboarding', (args, taskCtx) => ({
+export const storyboardingTask = createTask('storyboarding', (args, taskCtx) => ({
   kind: 'agent',
   title: 'PROTOTYPE - Create storyboard',
   skill: { name: 'hypothesis-generator' },
@@ -739,7 +739,7 @@ export const storyboardingTask = defineTask('storyboarding', (args, taskCtx) => 
   labels: ['agent', 'design-thinking', 'storyboarding']
 }));
 
-export const testPlanningTask = defineTask('test-planning', (args, taskCtx) => ({
+export const testPlanningTask = createTask('test-planning', (args, taskCtx) => ({
   kind: 'agent',
   title: 'TEST - Plan user tests',
   skill: { name: 'hypothesis-generator' },
@@ -787,7 +787,7 @@ export const testPlanningTask = defineTask('test-planning', (args, taskCtx) => (
   labels: ['agent', 'design-thinking', 'test-planning']
 }));
 
-export const userTestingTask = defineTask('user-testing', (args, taskCtx) => ({
+export const userTestingTask = createTask('user-testing', (args, taskCtx) => ({
   kind: 'agent',
   title: 'TEST - Conduct user tests',
   skill: { name: 'hypothesis-generator' },
@@ -845,7 +845,7 @@ export const userTestingTask = defineTask('user-testing', (args, taskCtx) => ({
   labels: ['agent', 'design-thinking', 'user-testing']
 }));
 
-export const testAnalysisTask = defineTask('test-analysis', (args, taskCtx) => ({
+export const testAnalysisTask = createTask('test-analysis', (args, taskCtx) => ({
   kind: 'agent',
   title: 'TEST - Analyze results',
   skill: { name: 'hypothesis-generator' },
@@ -893,7 +893,7 @@ export const testAnalysisTask = defineTask('test-analysis', (args, taskCtx) => (
   labels: ['agent', 'design-thinking', 'test-analysis']
 }));
 
-export const iterationPlanTask = defineTask('iteration-plan', (args, taskCtx) => ({
+export const iterationPlanTask = createTask('iteration-plan', (args, taskCtx) => ({
   kind: 'agent',
   title: 'ITERATE - Plan refinements',
   skill: { name: 'hypothesis-generator' },
@@ -940,7 +940,7 @@ export const iterationPlanTask = defineTask('iteration-plan', (args, taskCtx) =>
   labels: ['agent', 'design-thinking', 'iteration-plan']
 }));
 
-export const sprintQualityScoringTask = defineTask('sprint-quality-scoring', (args, taskCtx) => ({
+export const sprintQualityScoringTask = createTask('sprint-quality-scoring', (args, taskCtx) => ({
   kind: 'agent',
   title: 'Score sprint quality',
   skill: { name: 'hypothesis-generator' },

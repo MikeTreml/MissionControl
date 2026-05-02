@@ -128,6 +128,7 @@ export async function process(inputs, ctx) {
 
     optimizedParameters = parameterOptimization.optimizedParameters;
 
+    if (currentYield < targetYield || currentPurity < targetPurity) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -177,6 +178,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Size/shape must meet specifications
+  if (!sizeShapeValidation.meetsSpecifications) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -744,3 +746,4 @@ export const protocolDocumentationTask = defineTask('protocol-documentation', (a
   },
   labels: ['nanotechnology', 'documentation', 'protocol']
 }));
+

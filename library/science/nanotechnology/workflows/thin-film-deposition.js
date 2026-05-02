@@ -149,6 +149,7 @@ export async function process(inputs, ctx) {
 
     currentParams = parameterAdjustment.adjustedParameters;
 
+    if (Math.abs(thicknessError) > targetThickness.tolerance && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -190,6 +191,7 @@ export async function process(inputs, ctx) {
     });
 
     // Quality Gate: Conformality must meet requirements
+    if (requirements.conformality && conformalityValidation.conformality < requirements.conformality) {
         let lastFeedback_phase5Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase5Review) {
@@ -773,3 +775,4 @@ export const recipeDocumentationTask = defineTask('recipe-documentation', (args,
   },
   labels: ['nanotechnology', 'thin-film', 'documentation']
 }));
+

@@ -1,4 +1,4 @@
-# Marketing and Brand Management - Skills and Agents Backlog
+﻿# Marketing and Brand Management - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Marketing and Brand Management processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized marketing platforms, research tools, and analytics systems.
 
@@ -49,10 +49,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - MaxDiff analysis configuration
 
 **Process Integration**:
-- customer-segmentation-analysis.js
-- customer-persona-development.js
-- voice-of-customer-program.js
-- brand-health-assessment.js
+- workflows\customer-segmentation-analysis.js
+- workflows\customer-persona-development.js
+- workflows\voice-of-customer-program.js
+- workflows\brand-health-assessment.js
 
 **Dependencies**: Qualtrics API, SurveyMonkey API, panel provider APIs
 
@@ -76,9 +76,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Pricing intelligence gathering
 
 **Process Integration**:
-- competitive-analysis-research.js
-- brand-positioning-development.js
-- customer-segmentation-analysis.js
+- workflows\competitive-analysis-research.js
+- workflows\brand-positioning-development.js
+- workflows\customer-segmentation-analysis.js
 
 **Dependencies**: Semrush API, SimilarWeb API, Crayon API
 
@@ -102,9 +102,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Brand portal administration
 
 **Process Integration**:
-- brand-guidelines-creation.js
-- brand-architecture-design.js
-- campaign-creative-development.js
+- workflows\brand-guidelines-creation.js
+- workflows\brand-architecture-design.js
+- workflows\campaign-creative-development.js
 
 **Dependencies**: Brandfolder API, Bynder API
 
@@ -128,9 +128,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Brand equity valuation support
 
 **Process Integration**:
-- brand-health-assessment.js
-- brand-positioning-development.js
-- voice-of-customer-program.js
+- workflows\brand-health-assessment.js
+- workflows\brand-positioning-development.js
+- workflows\voice-of-customer-program.js
 
 **Dependencies**: Qualtrics Brand XM, Latana API, Brand24 API
 
@@ -154,10 +154,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Customer lifetime value calculation
 
 **Process Integration**:
-- attribution-modeling-setup.js
-- marketing-roi-analysis.js
-- marketing-dashboard-development.js
-- customer-journey-analytics.js
+- workflows\attribution-modeling-setup.js
+- workflows\marketing-roi-analysis.js
+- workflows\marketing-dashboard-development.js
+- workflows\customer-journey-analytics.js
 
 **Dependencies**: GA4 API, Adobe Analytics API, Mixpanel API
 
@@ -181,9 +181,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Email deliverability monitoring
 
 **Process Integration**:
-- email-marketing-automation.js
-- ab-testing-program.js
-- campaign-performance-analysis.js
+- workflows\email-marketing-automation.js
+- workflows\ab-testing-program.js
+- workflows\campaign-performance-analysis.js
 
 **Dependencies**: HubSpot API, Marketo API, Salesforce Marketing Cloud API
 
@@ -207,9 +207,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Technical SEO auditing
 
 **Process Integration**:
-- seo-strategy-implementation.js
-- content-strategy-development.js
-- content-performance-optimization.js
+- workflows\seo-strategy-implementation.js
+- workflows\content-strategy-development.js
+- workflows\content-performance-optimization.js
 
 **Dependencies**: Semrush API, Ahrefs API, GSC API, Moz API
 
@@ -233,10 +233,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Cross-channel budget allocation
 
 **Process Integration**:
-- sem-campaign-management.js
-- paid-social-advertising.js
-- integrated-campaign-planning.js
-- campaign-performance-analysis.js
+- workflows\sem-campaign-management.js
+- workflows\paid-social-advertising.js
+- workflows\integrated-campaign-planning.js
+- workflows\campaign-performance-analysis.js
 
 **Dependencies**: Google Ads API, Meta Marketing API, LinkedIn Marketing API
 
@@ -260,9 +260,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Best time to post analysis
 
 **Process Integration**:
-- social-media-strategy-execution.js
-- editorial-calendar-management.js
-- content-production-workflow.js
+- workflows\social-media-strategy-execution.js
+- workflows\editorial-calendar-management.js
+- workflows\content-production-workflow.js
 
 **Dependencies**: Sprout Social API, Hootsuite API, native platform APIs
 
@@ -286,9 +286,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Conversation clustering
 
 **Process Integration**:
-- voice-of-customer-program.js
-- competitive-analysis-research.js
-- brand-health-assessment.js
+- workflows\voice-of-customer-program.js
+- workflows\competitive-analysis-research.js
+- workflows\brand-health-assessment.js
 
 **Dependencies**: Brandwatch API, Sprinklr API, Mention API
 
@@ -312,9 +312,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Multi-channel publishing
 
 **Process Integration**:
-- content-production-workflow.js
-- editorial-calendar-management.js
-- content-performance-optimization.js
+- workflows\content-production-workflow.js
+- workflows\editorial-calendar-management.js
+- workflows\content-performance-optimization.js
 
 **Dependencies**: WordPress API, Contentful API, HubSpot CMS API
 
@@ -338,9 +338,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - SERP intent analysis
 
 **Process Integration**:
-- content-strategy-development.js
-- content-performance-optimization.js
-- seo-strategy-implementation.js
+- workflows\content-strategy-development.js
+- workflows\content-performance-optimization.js
+- workflows\seo-strategy-implementation.js
 
 **Dependencies**: Clearscope API, Surfer SEO API, MarketMuse API
 
@@ -364,9 +364,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Spam score analysis
 
 **Process Integration**:
-- email-marketing-automation.js
-- campaign-creative-development.js
-- ab-testing-program.js
+- workflows\email-marketing-automation.js
+- workflows\campaign-creative-development.js
+- workflows\ab-testing-program.js
 
 **Dependencies**: Mailchimp API, Klaviyo API, SendGrid API
 
@@ -390,9 +390,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Alert and notification setup
 
 **Process Integration**:
-- marketing-dashboard-development.js
-- marketing-roi-analysis.js
-- campaign-performance-analysis.js
+- workflows\marketing-dashboard-development.js
+- workflows\marketing-roi-analysis.js
+- workflows\campaign-performance-analysis.js
 
 **Dependencies**: Tableau API, Power BI API, Looker API
 
@@ -416,9 +416,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Privacy and consent management
 
 **Process Integration**:
-- customer-segmentation-analysis.js
-- customer-journey-analytics.js
-- attribution-modeling-setup.js
+- workflows\customer-segmentation-analysis.js
+- workflows\customer-journey-analytics.js
+- workflows\attribution-modeling-setup.js
 
 **Dependencies**: Segment API, mParticle API, Adobe CDP API
 
@@ -442,9 +442,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Thumbnail and image testing
 
 **Process Integration**:
-- campaign-creative-development.js
-- ab-testing-program.js
-- campaign-performance-analysis.js
+- workflows\campaign-creative-development.js
+- workflows\ab-testing-program.js
+- workflows\campaign-performance-analysis.js
 
 **Dependencies**: Creative testing platform APIs
 
@@ -468,9 +468,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Campaign calendar coordination
 
 **Process Integration**:
-- integrated-campaign-planning.js
-- editorial-calendar-management.js
-- content-production-workflow.js
+- workflows\integrated-campaign-planning.js
+- workflows\editorial-calendar-management.js
+- workflows\content-production-workflow.js
 
 **Dependencies**: Asana API, Monday.com API, Workfront API
 
@@ -494,9 +494,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Revenue attribution tracking
 
 **Process Integration**:
-- attribution-modeling-setup.js
-- marketing-roi-analysis.js
-- customer-journey-analytics.js
+- workflows\attribution-modeling-setup.js
+- workflows\marketing-roi-analysis.js
+- workflows\customer-journey-analytics.js
 
 **Dependencies**: Salesforce API, HubSpot CRM API, Dynamics 365 API
 
@@ -520,9 +520,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Seasonality adjustment
 
 **Process Integration**:
-- marketing-roi-analysis.js
-- attribution-modeling-setup.js
-- integrated-campaign-planning.js
+- workflows\marketing-roi-analysis.js
+- workflows\attribution-modeling-setup.js
+- workflows\integrated-campaign-planning.js
 
 **Dependencies**: Python/R modeling libraries, Google Lightweight MMM
 
@@ -546,9 +546,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Service blueprint creation
 
 **Process Integration**:
-- customer-journey-analytics.js
-- customer-persona-development.js
-- content-strategy-development.js
+- workflows\customer-journey-analytics.js
+- workflows\customer-persona-development.js
+- workflows\content-strategy-development.js
 
 **Dependencies**: Miro API, Lucidchart API, journey analytics tools
 
@@ -581,10 +581,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: ANA Brand Management
 
 **Process Integration**:
-- brand-positioning-development.js (all phases)
-- brand-architecture-design.js (all phases)
-- brand-guidelines-creation.js (strategy phases)
-- brand-health-assessment.js (insights interpretation)
+- workflows\brand-positioning-development.js (all phases)
+- workflows\brand-architecture-design.js (all phases)
+- workflows\brand-guidelines-creation.js (strategy phases)
+- workflows\brand-health-assessment.js (insights interpretation)
 
 ---
 
@@ -611,10 +611,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: MRA certified, Quirks Insights Association
 
 **Process Integration**:
-- customer-segmentation-analysis.js (all phases)
-- customer-persona-development.js (all phases)
-- voice-of-customer-program.js (all phases)
-- competitive-analysis-research.js (research phases)
+- workflows\customer-segmentation-analysis.js (all phases)
+- workflows\customer-persona-development.js (all phases)
+- workflows\voice-of-customer-program.js (all phases)
+- workflows\competitive-analysis-research.js (research phases)
 
 ---
 
@@ -641,10 +641,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Specialization: B2B and B2C campaigns
 
 **Process Integration**:
-- integrated-campaign-planning.js (all phases)
-- campaign-creative-development.js (strategy phases)
-- campaign-performance-analysis.js (planning phases)
-- ab-testing-program.js (test planning)
+- workflows\integrated-campaign-planning.js (all phases)
+- workflows\campaign-creative-development.js (strategy phases)
+- workflows\campaign-performance-analysis.js (planning phases)
+- workflows\ab-testing-program.js (test planning)
 
 ---
 
@@ -671,9 +671,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Awards: Cannes Lions, Effies experience
 
 **Process Integration**:
-- campaign-creative-development.js (all phases)
-- brand-guidelines-creation.js (creative elements)
-- content-strategy-development.js (creative direction)
+- workflows\campaign-creative-development.js (all phases)
+- workflows\brand-guidelines-creation.js (creative elements)
+- workflows\content-strategy-development.js (creative direction)
 
 ---
 
@@ -700,10 +700,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Author: Content marketing publications
 
 **Process Integration**:
-- content-strategy-development.js (all phases)
-- editorial-calendar-management.js (all phases)
-- content-production-workflow.js (strategy phases)
-- content-performance-optimization.js (analysis phases)
+- workflows\content-strategy-development.js (all phases)
+- workflows\editorial-calendar-management.js (all phases)
+- workflows\content-production-workflow.js (strategy phases)
+- workflows\content-performance-optimization.js (analysis phases)
 
 ---
 
@@ -730,9 +730,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: Google certified
 
 **Process Integration**:
-- seo-strategy-implementation.js (all phases)
-- content-strategy-development.js (SEO alignment)
-- content-performance-optimization.js (SEO optimization)
+- workflows\seo-strategy-implementation.js (all phases)
+- workflows\content-strategy-development.js (SEO alignment)
+- workflows\content-performance-optimization.js (SEO optimization)
 
 ---
 
@@ -759,10 +759,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: Google Ads, Meta Blueprint, HubSpot
 
 **Process Integration**:
-- sem-campaign-management.js (all phases)
-- paid-social-advertising.js (all phases)
-- email-marketing-automation.js (all phases)
-- social-media-strategy-execution.js (all phases)
+- workflows\sem-campaign-management.js (all phases)
+- workflows\paid-social-advertising.js (all phases)
+- workflows\email-marketing-automation.js (all phases)
+- workflows\social-media-strategy-execution.js (all phases)
 
 ---
 
@@ -789,10 +789,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Education: MBA, MS in Statistics
 
 **Process Integration**:
-- attribution-modeling-setup.js (all phases)
-- marketing-roi-analysis.js (all phases)
-- marketing-dashboard-development.js (all phases)
-- customer-journey-analytics.js (all phases)
+- workflows\attribution-modeling-setup.js (all phases)
+- workflows\marketing-roi-analysis.js (all phases)
+- workflows\marketing-dashboard-development.js (all phases)
+- workflows\customer-journey-analytics.js (all phases)
 
 ---
 
@@ -819,9 +819,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: SCIP certified
 
 **Process Integration**:
-- competitive-analysis-research.js (all phases)
-- brand-positioning-development.js (competitive phases)
-- customer-segmentation-analysis.js (market analysis)
+- workflows\competitive-analysis-research.js (all phases)
+- workflows\brand-positioning-development.js (competitive phases)
+- workflows\customer-segmentation-analysis.js (market analysis)
 
 ---
 
@@ -848,9 +848,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Specialization: Qualitative research
 
 **Process Integration**:
-- customer-persona-development.js (all phases)
-- customer-journey-analytics.js (insight phases)
-- voice-of-customer-program.js (analysis phases)
+- workflows\customer-persona-development.js (all phases)
+- workflows\customer-journey-analytics.js (insight phases)
+- workflows\voice-of-customer-program.js (analysis phases)
 
 ---
 
@@ -877,9 +877,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: Marketo, HubSpot, Salesforce
 
 **Process Integration**:
-- integrated-campaign-planning.js (operations phases)
-- marketing-dashboard-development.js (implementation)
-- email-marketing-automation.js (operations)
+- workflows\integrated-campaign-planning.js (operations phases)
+- workflows\marketing-dashboard-development.js (implementation)
+- workflows\email-marketing-automation.js (operations)
 
 ---
 
@@ -906,10 +906,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Specialization: Integrated media strategy
 
 **Process Integration**:
-- integrated-campaign-planning.js (media phases)
-- marketing-roi-analysis.js (channel analysis)
-- paid-social-advertising.js (strategy phases)
-- sem-campaign-management.js (strategy phases)
+- workflows\integrated-campaign-planning.js (media phases)
+- workflows\marketing-roi-analysis.js (channel analysis)
+- workflows\paid-social-advertising.js (strategy phases)
+- workflows\sem-campaign-management.js (strategy phases)
 
 ---
 
@@ -936,9 +936,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Tools: Optimizely, VWO, Google Optimize
 
 **Process Integration**:
-- ab-testing-program.js (all phases)
-- campaign-performance-analysis.js (testing phases)
-- content-performance-optimization.js (testing phases)
+- workflows\ab-testing-program.js (all phases)
+- workflows\campaign-performance-analysis.js (testing phases)
+- workflows\content-performance-optimization.js (testing phases)
 
 ---
 
@@ -965,9 +965,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Certifications: Mailchimp, Klaviyo, Salesforce Marketing Cloud
 
 **Process Integration**:
-- email-marketing-automation.js (all phases)
-- ab-testing-program.js (email testing)
-- content-performance-optimization.js (email content)
+- workflows\email-marketing-automation.js (all phases)
+- workflows\ab-testing-program.js (email testing)
+- workflows\content-performance-optimization.js (email content)
 
 ---
 
@@ -994,9 +994,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Platforms: LinkedIn, Instagram, TikTok, Twitter/X
 
 **Process Integration**:
-- social-media-strategy-execution.js (all phases)
-- editorial-calendar-management.js (social content)
-- content-production-workflow.js (social distribution)
+- workflows\social-media-strategy-execution.js (all phases)
+- workflows\editorial-calendar-management.js (social content)
+- workflows\content-production-workflow.js (social distribution)
 
 ---
 
@@ -1006,31 +1006,31 @@ All 25 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| brand-positioning-development.js | SK-001, SK-002, SK-004 | AG-001, AG-002 |
-| brand-architecture-design.js | SK-003, SK-004 | AG-001 |
-| brand-guidelines-creation.js | SK-003 | AG-001, AG-004 |
-| brand-health-assessment.js | SK-001, SK-004, SK-010 | AG-001, AG-002 |
-| integrated-campaign-planning.js | SK-008, SK-017, SK-019 | AG-003, AG-012 |
-| campaign-creative-development.js | SK-003, SK-016, SK-017 | AG-004, AG-003 |
-| ab-testing-program.js | SK-006, SK-013, SK-016 | AG-013, AG-007 |
-| campaign-performance-analysis.js | SK-005, SK-008, SK-014 | AG-008, AG-003 |
-| content-strategy-development.js | SK-007, SK-011, SK-012 | AG-005, AG-006 |
-| editorial-calendar-management.js | SK-009, SK-011, SK-017 | AG-005, AG-015 |
-| content-production-workflow.js | SK-011, SK-012, SK-017 | AG-005, AG-011 |
-| content-performance-optimization.js | SK-007, SK-012, SK-014 | AG-005, AG-006, AG-013 |
-| seo-strategy-implementation.js | SK-007, SK-012 | AG-006 |
-| sem-campaign-management.js | SK-008, SK-005 | AG-007, AG-012 |
-| social-media-strategy-execution.js | SK-009, SK-010 | AG-015, AG-007 |
-| email-marketing-automation.js | SK-006, SK-013 | AG-014, AG-011 |
-| paid-social-advertising.js | SK-008, SK-009 | AG-007, AG-012 |
-| customer-segmentation-analysis.js | SK-001, SK-002, SK-015 | AG-002, AG-009 |
-| competitive-analysis-research.js | SK-002, SK-010 | AG-009, AG-002 |
-| customer-persona-development.js | SK-001, SK-020 | AG-002, AG-010 |
-| voice-of-customer-program.js | SK-001, SK-004, SK-010 | AG-002, AG-010 |
-| attribution-modeling-setup.js | SK-005, SK-015, SK-018, SK-019 | AG-008 |
-| marketing-roi-analysis.js | SK-005, SK-014, SK-018, SK-019 | AG-008, AG-012 |
-| marketing-dashboard-development.js | SK-005, SK-014, SK-018 | AG-008, AG-011 |
-| customer-journey-analytics.js | SK-005, SK-015, SK-020 | AG-008, AG-010 |
+| workflows\brand-positioning-development.js | SK-001, SK-002, SK-004 | AG-001, AG-002 |
+| workflows\brand-architecture-design.js | SK-003, SK-004 | AG-001 |
+| workflows\brand-guidelines-creation.js | SK-003 | AG-001, AG-004 |
+| workflows\brand-health-assessment.js | SK-001, SK-004, SK-010 | AG-001, AG-002 |
+| workflows\integrated-campaign-planning.js | SK-008, SK-017, SK-019 | AG-003, AG-012 |
+| workflows\campaign-creative-development.js | SK-003, SK-016, SK-017 | AG-004, AG-003 |
+| workflows\ab-testing-program.js | SK-006, SK-013, SK-016 | AG-013, AG-007 |
+| workflows\campaign-performance-analysis.js | SK-005, SK-008, SK-014 | AG-008, AG-003 |
+| workflows\content-strategy-development.js | SK-007, SK-011, SK-012 | AG-005, AG-006 |
+| workflows\editorial-calendar-management.js | SK-009, SK-011, SK-017 | AG-005, AG-015 |
+| workflows\content-production-workflow.js | SK-011, SK-012, SK-017 | AG-005, AG-011 |
+| workflows\content-performance-optimization.js | SK-007, SK-012, SK-014 | AG-005, AG-006, AG-013 |
+| workflows\seo-strategy-implementation.js | SK-007, SK-012 | AG-006 |
+| workflows\sem-campaign-management.js | SK-008, SK-005 | AG-007, AG-012 |
+| workflows\social-media-strategy-execution.js | SK-009, SK-010 | AG-015, AG-007 |
+| workflows\email-marketing-automation.js | SK-006, SK-013 | AG-014, AG-011 |
+| workflows\paid-social-advertising.js | SK-008, SK-009 | AG-007, AG-012 |
+| workflows\customer-segmentation-analysis.js | SK-001, SK-002, SK-015 | AG-002, AG-009 |
+| workflows\competitive-analysis-research.js | SK-002, SK-010 | AG-009, AG-002 |
+| workflows\customer-persona-development.js | SK-001, SK-020 | AG-002, AG-010 |
+| workflows\voice-of-customer-program.js | SK-001, SK-004, SK-010 | AG-002, AG-010 |
+| workflows\attribution-modeling-setup.js | SK-005, SK-015, SK-018, SK-019 | AG-008 |
+| workflows\marketing-roi-analysis.js | SK-005, SK-014, SK-018, SK-019 | AG-008, AG-012 |
+| workflows\marketing-dashboard-development.js | SK-005, SK-014, SK-018 | AG-008, AG-011 |
+| workflows\customer-journey-analytics.js | SK-005, SK-015, SK-020 | AG-008, AG-010 |
 
 ---
 
@@ -1134,3 +1134,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

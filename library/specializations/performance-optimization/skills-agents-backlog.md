@@ -1,4 +1,4 @@
-# Performance Optimization and Profiling - Skills and Agents Backlog
+﻿# Performance Optimization and Profiling - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Performance Optimization processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized profiling, benchmarking, and observability tooling.
 
@@ -47,9 +47,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Interactive SVG generation with zoom/search
 
 **Process Integration**:
-- cpu-profiling-investigation.js
-- continuous-profiling-setup.js
-- performance-baseline-assessment.js
+- workflows\cpu-profiling-investigation.js
+- workflows\continuous-profiling-setup.js
+- workflows\performance-baseline-assessment.js
 
 **Dependencies**: FlameGraph scripts, perl/python runtime
 
@@ -71,10 +71,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Support for GraalVM native image profiling
 
 **Process Integration**:
-- cpu-profiling-investigation.js
-- memory-profiling-analysis.js
-- garbage-collection-tuning.js
-- continuous-profiling-setup.js
+- workflows\cpu-profiling-investigation.js
+- workflows\memory-profiling-analysis.js
+- workflows\garbage-collection-tuning.js
+- workflows\continuous-profiling-setup.js
 
 **Dependencies**: async-profiler, JDK (JFR tools)
 
@@ -96,9 +96,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Detect memory leak patterns from GC behavior
 
 **Process Integration**:
-- garbage-collection-tuning.js
-- memory-leak-detection.js
-- memory-profiling-analysis.js
+- workflows\garbage-collection-tuning.js
+- workflows\memory-leak-detection.js
+- workflows\memory-profiling-analysis.js
 
 **Dependencies**: GC log parser libraries
 
@@ -120,9 +120,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Compare heap snapshots for growth analysis
 
 **Process Integration**:
-- memory-leak-detection.js
-- memory-profiling-analysis.js
-- memory-allocation-optimization.js
+- workflows\memory-leak-detection.js
+- workflows\memory-profiling-analysis.js
+- workflows\memory-allocation-optimization.js
 
 **Dependencies**: Eclipse MAT CLI, jmap
 
@@ -144,10 +144,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Integrate with k6 Cloud and Grafana
 
 **Process Integration**:
-- load-testing-framework-setup.js
-- load-test-execution.js
-- stress-testing-analysis.js
-- endurance-testing.js
+- workflows\load-testing-framework-setup.js
+- workflows\load-test-execution.js
+- workflows\stress-testing-analysis.js
+- workflows\endurance-testing.js
 
 **Dependencies**: k6 CLI
 
@@ -169,9 +169,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Support for Gatling Enterprise integration
 
 **Process Integration**:
-- load-testing-framework-setup.js
-- load-test-execution.js
-- stress-testing-analysis.js
+- workflows\load-testing-framework-setup.js
+- workflows\load-test-execution.js
+- workflows\stress-testing-analysis.js
 
 **Dependencies**: Gatling CLI, Java/Scala runtime
 
@@ -193,9 +193,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Generate JMH benchmark reports
 
 **Process Integration**:
-- microbenchmark-suite-development.js
-- algorithm-optimization.js
-- performance-regression-detection.js
+- workflows\microbenchmark-suite-development.js
+- workflows\algorithm-optimization.js
+- workflows\performance-regression-detection.js
 
 **Dependencies**: JMH, Maven/Gradle
 
@@ -217,9 +217,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Interpret statistical results
 
 **Process Integration**:
-- microbenchmark-suite-development.js
-- algorithm-optimization.js
-- performance-regression-detection.js
+- workflows\microbenchmark-suite-development.js
+- workflows\algorithm-optimization.js
+- workflows\performance-regression-detection.js
 
 **Dependencies**: BenchmarkDotNet NuGet, .NET SDK
 
@@ -241,10 +241,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Calculate query cost estimations
 
 **Process Integration**:
-- query-performance-analysis.js
-- index-strategy-optimization.js
-- n-plus-one-query-detection.js
-- database-configuration-tuning.js
+- workflows\query-performance-analysis.js
+- workflows\index-strategy-optimization.js
+- workflows\n-plus-one-query-detection.js
+- workflows\database-configuration-tuning.js
 
 **Dependencies**: Database CLI tools (psql, mysql)
 
@@ -266,7 +266,7 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Optimize Redis memory usage
 
 **Process Integration**:
-- caching-strategy-design.js
+- workflows\caching-strategy-design.js
 - distributed-cache-implementation (backlog)
 - application-level-cache-optimization (backlog)
 
@@ -290,9 +290,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Create APM alerting rules
 
 **Process Integration**:
-- apm-instrumentation.js
-- distributed-tracing-implementation.js
-- real-user-monitoring-setup.js
+- workflows\apm-instrumentation.js
+- workflows\distributed-tracing-implementation.js
+- workflows\real-user-monitoring-setup.js
 
 **Dependencies**: Datadog Agent, dd-trace libraries
 
@@ -314,9 +314,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Analyze error analytics
 
 **Process Integration**:
-- apm-instrumentation.js
-- distributed-tracing-implementation.js
-- real-user-monitoring-setup.js
+- workflows\apm-instrumentation.js
+- workflows\distributed-tracing-implementation.js
+- workflows\real-user-monitoring-setup.js
 
 **Dependencies**: New Relic agents and CLI
 
@@ -338,9 +338,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Export to multiple backends (Jaeger, Zipkin, Tempo)
 
 **Process Integration**:
-- distributed-tracing-implementation.js
-- apm-instrumentation.js
-- real-user-monitoring-setup.js
+- workflows\distributed-tracing-implementation.js
+- workflows\apm-instrumentation.js
+- workflows\real-user-monitoring-setup.js
 
 **Dependencies**: OTel SDK, OTel Collector
 
@@ -362,9 +362,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Set profiling alerts
 
 **Process Integration**:
-- continuous-profiling-setup.js
-- cpu-profiling-investigation.js
-- memory-profiling-analysis.js
+- workflows\continuous-profiling-setup.js
+- workflows\cpu-profiling-investigation.js
+- workflows\memory-profiling-analysis.js
 
 **Dependencies**: Pyroscope server and agents
 
@@ -386,10 +386,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Implement histogram and summary metrics
 
 **Process Integration**:
-- performance-slo-definition.js
-- performance-baseline-assessment.js
-- performance-regression-detection.js
-- capacity-planning-analysis.js
+- workflows\performance-slo-definition.js
+- workflows\performance-baseline-assessment.js
+- workflows\performance-regression-detection.js
+- workflows\capacity-planning-analysis.js
 
 **Dependencies**: Prometheus, promtool
 
@@ -411,8 +411,8 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Implement network compression strategies
 
 **Process Integration**:
-- network-io-optimization.js
-- disk-io-profiling.js
+- workflows\network-io-optimization.js
+- workflows\disk-io-profiling.js
 
 **Dependencies**: tcpdump, netstat, ss
 
@@ -434,8 +434,8 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Integrate with CI pipelines
 
 **Process Integration**:
-- memory-leak-detection.js
-- memory-profiling-analysis.js
+- workflows\memory-leak-detection.js
+- workflows\memory-profiling-analysis.js
 
 **Dependencies**: MemLab CLI, Node.js
 
@@ -457,9 +457,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Optimize V8 JIT compilation
 
 **Process Integration**:
-- cpu-profiling-investigation.js
-- memory-profiling-analysis.js
-- memory-leak-detection.js
+- workflows\cpu-profiling-investigation.js
+- workflows\memory-profiling-analysis.js
+- workflows\memory-leak-detection.js
 
 **Dependencies**: Node.js, clinic.js
 
@@ -481,9 +481,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Integrate with continuous profiling
 
 **Process Integration**:
-- cpu-profiling-investigation.js
-- memory-profiling-analysis.js
-- concurrency-optimization.js
+- workflows\cpu-profiling-investigation.js
+- workflows\memory-profiling-analysis.js
+- workflows\concurrency-optimization.js
 
 **Dependencies**: Go runtime, pprof
 
@@ -505,9 +505,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Debug import time issues
 
 **Process Integration**:
-- cpu-profiling-investigation.js
-- memory-profiling-analysis.js
-- algorithm-optimization.js
+- workflows\cpu-profiling-investigation.js
+- workflows\memory-profiling-analysis.js
+- workflows\algorithm-optimization.js
 
 **Dependencies**: py-spy, memory_profiler, cProfile
 
@@ -538,10 +538,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: System internals, profiling tools, optimization
 
 **Process Integration**:
-- performance-baseline-assessment.js (all phases)
-- performance-slo-definition.js (all phases)
-- capacity-planning-analysis.js (all phases)
-- performance-tuning-recommendations.js (all phases)
+- workflows\performance-baseline-assessment.js (all phases)
+- workflows\performance-slo-definition.js (all phases)
+- workflows\capacity-planning-analysis.js (all phases)
+- workflows\performance-tuning-recommendations.js (all phases)
 
 ---
 
@@ -566,10 +566,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: Systems programming, compiler optimization
 
 **Process Integration**:
-- cpu-profiling-investigation.js (all phases)
-- cpu-optimization-implementation.js (all phases)
-- algorithm-optimization.js (optimization strategies)
-- continuous-profiling-setup.js (CPU profiling)
+- workflows\cpu-profiling-investigation.js (all phases)
+- workflows\cpu-optimization-implementation.js (all phases)
+- workflows\algorithm-optimization.js (optimization strategies)
+- workflows\continuous-profiling-setup.js (CPU profiling)
 
 ---
 
@@ -594,10 +594,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: JVM internals, native memory management
 
 **Process Integration**:
-- memory-profiling-analysis.js (all phases)
-- memory-leak-detection.js (all phases)
-- garbage-collection-tuning.js (all phases)
-- memory-allocation-optimization.js (all phases)
+- workflows\memory-profiling-analysis.js (all phases)
+- workflows\memory-leak-detection.js (all phases)
+- workflows\garbage-collection-tuning.js (all phases)
+- workflows\memory-allocation-optimization.js (all phases)
 
 ---
 
@@ -622,10 +622,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: DBA, query optimization, database internals
 
 **Process Integration**:
-- query-performance-analysis.js (all phases)
-- index-strategy-optimization.js (all phases)
-- database-configuration-tuning.js (all phases)
-- n-plus-one-query-detection.js (all phases)
+- workflows\query-performance-analysis.js (all phases)
+- workflows\index-strategy-optimization.js (all phases)
+- workflows\database-configuration-tuning.js (all phases)
+- workflows\n-plus-one-query-detection.js (all phases)
 
 ---
 
@@ -650,10 +650,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: QA engineering, performance testing
 
 **Process Integration**:
-- load-testing-framework-setup.js (all phases)
-- load-test-execution.js (all phases)
-- stress-testing-analysis.js (all phases)
-- endurance-testing.js (all phases)
+- workflows\load-testing-framework-setup.js (all phases)
+- workflows\load-test-execution.js (all phases)
+- workflows\stress-testing-analysis.js (all phases)
+- workflows\endurance-testing.js (all phases)
 
 ---
 
@@ -678,7 +678,7 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: High-scale web systems, caching patterns
 
 **Process Integration**:
-- caching-strategy-design.js (all phases)
+- workflows\caching-strategy-design.js (all phases)
 - distributed-cache-implementation (backlog)
 - cdn-edge-caching-setup (backlog)
 - application-level-cache-optimization (backlog)
@@ -706,10 +706,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: SRE, monitoring, distributed systems
 
 **Process Integration**:
-- apm-instrumentation.js (all phases)
-- distributed-tracing-implementation.js (all phases)
-- real-user-monitoring-setup.js (all phases)
-- continuous-profiling-setup.js (observability integration)
+- workflows\apm-instrumentation.js (all phases)
+- workflows\distributed-tracing-implementation.js (all phases)
+- workflows\real-user-monitoring-setup.js (all phases)
+- workflows\continuous-profiling-setup.js (observability integration)
 
 ---
 
@@ -736,7 +736,7 @@ All 30 implemented processes in this specialization currently use the `general-p
 **Process Integration**:
 - latency-analysis-reduction (backlog)
 - p99-latency-optimization (backlog)
-- network-io-optimization.js
+- workflows\network-io-optimization.js
 
 ---
 
@@ -762,8 +762,8 @@ All 30 implemented processes in this specialization currently use the `general-p
 
 **Process Integration**:
 - throughput-analysis-improvement (backlog)
-- concurrency-optimization.js
-- algorithm-optimization.js
+- workflows\concurrency-optimization.js
+- workflows\algorithm-optimization.js
 
 ---
 
@@ -788,9 +788,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: Scientific computing, statistics
 
 **Process Integration**:
-- microbenchmark-suite-development.js (all phases)
-- performance-regression-detection.js (all phases)
-- algorithm-optimization.js (benchmarking phases)
+- workflows\microbenchmark-suite-development.js (all phases)
+- workflows\performance-regression-detection.js (all phases)
+- workflows\algorithm-optimization.js (benchmarking phases)
 
 ---
 
@@ -815,9 +815,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: Operating systems, network programming
 
 **Process Integration**:
-- disk-io-profiling.js (all phases)
-- network-io-optimization.js (all phases)
-- file-system-optimization.js (all phases)
+- workflows\disk-io-profiling.js (all phases)
+- workflows\network-io-optimization.js (all phases)
+- workflows\file-system-optimization.js (all phases)
 
 ---
 
@@ -842,9 +842,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: SRE, performance management
 
 **Process Integration**:
-- performance-slo-definition.js (all phases)
-- performance-baseline-assessment.js (budgeting)
-- performance-regression-detection.js (SLO enforcement)
+- workflows\performance-slo-definition.js (all phases)
+- workflows\performance-baseline-assessment.js (budgeting)
+- workflows\performance-regression-detection.js (SLO enforcement)
 
 ---
 
@@ -854,36 +854,36 @@ All 30 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| performance-baseline-assessment.js | SK-015, SK-013 | AG-001, AG-012 |
-| performance-slo-definition.js | SK-015 | AG-001, AG-012 |
-| cpu-profiling-investigation.js | SK-001, SK-002, SK-019, SK-020 | AG-002 |
-| cpu-optimization-implementation.js | SK-001, SK-002 | AG-002, AG-009 |
-| algorithm-optimization.js | SK-007, SK-008 | AG-002, AG-010 |
-| memory-profiling-analysis.js | SK-003, SK-004, SK-017, SK-018 | AG-003 |
-| memory-leak-detection.js | SK-004, SK-017 | AG-003 |
-| garbage-collection-tuning.js | SK-003, SK-002 | AG-003 |
-| memory-allocation-optimization.js | SK-004, SK-002 | AG-003 |
-| disk-io-profiling.js | SK-016 | AG-011 |
-| network-io-optimization.js | SK-016 | AG-011, AG-008 |
-| file-system-optimization.js | SK-016 | AG-011 |
-| query-performance-analysis.js | SK-009 | AG-004 |
-| index-strategy-optimization.js | SK-009 | AG-004 |
-| database-configuration-tuning.js | SK-009 | AG-004 |
-| n-plus-one-query-detection.js | SK-009 | AG-004 |
-| caching-strategy-design.js | SK-010 | AG-006 |
-| load-testing-framework-setup.js | SK-005, SK-006 | AG-005 |
-| load-test-execution.js | SK-005, SK-006 | AG-005 |
-| stress-testing-analysis.js | SK-005, SK-006 | AG-005 |
-| microbenchmark-suite-development.js | SK-007, SK-008 | AG-010 |
-| performance-regression-detection.js | SK-007, SK-008, SK-015 | AG-010, AG-012 |
-| apm-instrumentation.js | SK-011, SK-012, SK-013 | AG-007 |
-| distributed-tracing-implementation.js | SK-013, SK-011, SK-012 | AG-007 |
-| real-user-monitoring-setup.js | SK-011, SK-012 | AG-007 |
-| continuous-profiling-setup.js | SK-014, SK-001 | AG-002, AG-007 |
-| capacity-planning-analysis.js | SK-015 | AG-001 |
-| performance-tuning-recommendations.js | SK-001, SK-003, SK-009 | AG-001 |
-| endurance-testing.js | SK-005, SK-006 | AG-005, AG-003 |
-| concurrency-optimization.js | SK-019, SK-002 | AG-009 |
+| workflows\performance-baseline-assessment.js | SK-015, SK-013 | AG-001, AG-012 |
+| workflows\performance-slo-definition.js | SK-015 | AG-001, AG-012 |
+| workflows\cpu-profiling-investigation.js | SK-001, SK-002, SK-019, SK-020 | AG-002 |
+| workflows\cpu-optimization-implementation.js | SK-001, SK-002 | AG-002, AG-009 |
+| workflows\algorithm-optimization.js | SK-007, SK-008 | AG-002, AG-010 |
+| workflows\memory-profiling-analysis.js | SK-003, SK-004, SK-017, SK-018 | AG-003 |
+| workflows\memory-leak-detection.js | SK-004, SK-017 | AG-003 |
+| workflows\garbage-collection-tuning.js | SK-003, SK-002 | AG-003 |
+| workflows\memory-allocation-optimization.js | SK-004, SK-002 | AG-003 |
+| workflows\disk-io-profiling.js | SK-016 | AG-011 |
+| workflows\network-io-optimization.js | SK-016 | AG-011, AG-008 |
+| workflows\file-system-optimization.js | SK-016 | AG-011 |
+| workflows\query-performance-analysis.js | SK-009 | AG-004 |
+| workflows\index-strategy-optimization.js | SK-009 | AG-004 |
+| workflows\database-configuration-tuning.js | SK-009 | AG-004 |
+| workflows\n-plus-one-query-detection.js | SK-009 | AG-004 |
+| workflows\caching-strategy-design.js | SK-010 | AG-006 |
+| workflows\load-testing-framework-setup.js | SK-005, SK-006 | AG-005 |
+| workflows\load-test-execution.js | SK-005, SK-006 | AG-005 |
+| workflows\stress-testing-analysis.js | SK-005, SK-006 | AG-005 |
+| workflows\microbenchmark-suite-development.js | SK-007, SK-008 | AG-010 |
+| workflows\performance-regression-detection.js | SK-007, SK-008, SK-015 | AG-010, AG-012 |
+| workflows\apm-instrumentation.js | SK-011, SK-012, SK-013 | AG-007 |
+| workflows\distributed-tracing-implementation.js | SK-013, SK-011, SK-012 | AG-007 |
+| workflows\real-user-monitoring-setup.js | SK-011, SK-012 | AG-007 |
+| workflows\continuous-profiling-setup.js | SK-014, SK-001 | AG-002, AG-007 |
+| workflows\capacity-planning-analysis.js | SK-015 | AG-001 |
+| workflows\performance-tuning-recommendations.js | SK-001, SK-003, SK-009 | AG-001 |
+| workflows\endurance-testing.js | SK-005, SK-006 | AG-005, AG-003 |
+| workflows\concurrency-optimization.js | SK-019, SK-002 | AG-009 |
 
 ---
 
@@ -979,3 +979,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

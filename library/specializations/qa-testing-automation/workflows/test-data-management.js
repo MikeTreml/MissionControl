@@ -134,6 +134,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Privacy compliance must be verified
   const privacyScore = privacyComplianceResult.complianceScore;
+  if (privacyScore < 90) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -438,6 +439,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Performance must meet requirements
   const performanceScore = performanceTestResult.performanceScore;
+  if (performanceScore < 80) {
       let lastFeedback_phase13Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase13Review) {
@@ -520,6 +522,7 @@ export async function process(inputs, ctx) {
   const qualityMet = overallScore >= 85;
 
   // Final Quality Gate
+  if (!qualityMet) {
       let lastFeedback_phase15Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase15Review) {
@@ -1804,3 +1807,4 @@ export const finalReviewHandoffTask = defineTask('final-review-handoff', (args, 
   },
   labels: ['agent', 'test-data-management', 'handoff']
 }));
+

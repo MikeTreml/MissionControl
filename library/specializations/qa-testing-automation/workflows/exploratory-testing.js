@@ -85,6 +85,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...charterCreation.artifacts);
 
   // Quality Gate: Minimum charters coverage
+  if (charterCreation.charters.length < applicationFeatures.length * qualityTargets.minSessionsPerFeature) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -160,6 +161,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Team training completion
   const trainingCompletionRate = (techniquesTraining.teamMembersTrained / teamMembers.length) * 100;
+  if (trainingCompletionRate < 80) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -177,7 +179,7 @@ export async function process(inputs, ctx) {
         trainingCompletionRate,
         teamMembersTrained: techniquesTraining.teamMembersTrained,
         totalMembers: teamMembers.length,
-        techniquesC overed: techniquesTraining.techniquesCovered,
+        techniquesCovered: techniquesTraining.techniquesCovered,
         recommendation: 'Ensure all team members understand SFDPOT, tours, and heuristics before sessions',
         files: techniquesTraining.artifacts.map(a => ({ path: a.path, format: a.format || 'markdown', label: a.label }))
       },
@@ -236,6 +238,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Session completion rate
   const sessionCompletionRate = (sessionExecution.sessionsCompleted / sessionPlanning.scheduledSessions.length) * 100;
+  if (sessionCompletionRate < 90) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -287,6 +290,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Critical findings threshold
   const criticalFindings = findingsDocumentation.findingsBySeverity.critical || 0;
+  if (criticalFindings > qualityTargets.criticalFindingsExpected * 2) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -365,6 +369,7 @@ export async function process(inputs, ctx) {
   coverageScore = coverageTracking.overallCoverageScore;
 
   // Quality Gate: Coverage threshold
+  if (coverageScore < qualityTargets.coverageThreshold) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {

@@ -116,6 +116,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Validation results
+  if (validationTesting.passRate < 0.9) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -621,3 +622,4 @@ export const simQualificationTask = defineTask('sim-qualification', (args, taskC
   },
   labels: ['simulation', 'qualification', 'aerospace']
 }));
+

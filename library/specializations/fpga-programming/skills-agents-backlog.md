@@ -1,4 +1,4 @@
-# FPGA Programming and Hardware Description - Skills and Agents Backlog
+﻿# FPGA Programming and Hardware Description - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the FPGA Programming processes beyond general-purpose capabilities. These tools would provide domain-specific expertise in hardware description languages, synthesis tools, timing analysis, and verification methodologies.
 
@@ -48,9 +48,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Generate VHDL testbenches with assert statements
 
 **Process Integration**:
-- vhdl-module-development.js
-- testbench-development.js
-- rtl-module-architecture.js
+- workflows\vhdl-module-development.js
+- workflows\testbench-development.js
+- workflows\rtl-module-architecture.js
 
 **Dependencies**: VHDL parser/analyzer
 
@@ -73,9 +73,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Support both Verilog-2005 and SystemVerilog-2017
 
 **Process Integration**:
-- verilog-systemverilog-design.js
-- testbench-development.js
-- rtl-module-architecture.js
+- workflows\verilog-systemverilog-design.js
+- workflows\testbench-development.js
+- workflows\rtl-module-architecture.js
 
 **Dependencies**: Verilog/SV parser
 
@@ -98,10 +98,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Integrate assertions with formal tools
 
 **Process Integration**:
-- sva-development.js
-- constrained-random-verification.js
-- uvm-testbench.js
-- verilog-systemverilog-design.js
+- workflows\sva-development.js
+- workflows\constrained-random-verification.js
+- workflows\uvm-testbench.js
+- workflows\verilog-systemverilog-design.js
 
 **Dependencies**: SVA parser, formal verification tool awareness
 
@@ -124,10 +124,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Validate constraint coverage and correctness
 
 **Process Integration**:
-- timing-constraints.js
-- timing-closure.js
-- synthesis-optimization.js
-- cdc-design.js
+- workflows\timing-constraints.js
+- workflows\timing-closure.js
+- workflows\synthesis-optimization.js
+- workflows\cdc-design.js
 
 **Dependencies**: SDC parser, timing analyzer integration
 
@@ -150,10 +150,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Support Xilinx CDC-aware design flows
 
 **Process Integration**:
-- cdc-design.js
-- reset-strategy.js
-- clock-network-design.js
-- timing-constraints.js
+- workflows\cdc-design.js
+- workflows\reset-strategy.js
+- workflows\clock-network-design.js
+- workflows\timing-constraints.js
 
 **Dependencies**: CDC analysis tool integration
 
@@ -176,9 +176,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Integrate HLS IP into Vivado block designs
 
 **Process Integration**:
-- hls-development.js
-- hardware-software-codesign.js
-- ip-core-integration.js
+- workflows\hls-development.js
+- workflows\hardware-software-codesign.js
+- workflows\ip-core-integration.js
 
 **Dependencies**: Vitis HLS CLI awareness
 
@@ -201,9 +201,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Debug UVM testbenches effectively
 
 **Process Integration**:
-- uvm-testbench.js
-- constrained-random-verification.js
-- testbench-development.js
+- workflows\uvm-testbench.js
+- workflows\constrained-random-verification.js
+- workflows\testbench-development.js
 
 **Dependencies**: UVM library knowledge
 
@@ -226,10 +226,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Generate AXI protocol checkers
 
 **Process Integration**:
-- axi-interface-design.js
-- ip-core-integration.js
-- memory-interface-design.js
-- hls-development.js
+- workflows\axi-interface-design.js
+- workflows\ip-core-integration.js
+- workflows\memory-interface-design.js
+- workflows\hls-development.js
 
 **Dependencies**: ARM AMBA specification knowledge
 
@@ -252,10 +252,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Support Vivado and Quartus synthesis flows
 
 **Process Integration**:
-- synthesis-optimization.js
-- timing-closure.js
-- place-and-route.js
-- pipeline-architecture.js
+- workflows\synthesis-optimization.js
+- workflows\timing-closure.js
+- workflows\place-and-route.js
+- workflows\pipeline-architecture.js
 
 **Dependencies**: Synthesis tool CLI integration
 
@@ -278,9 +278,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Generate utilization and timing reports
 
 **Process Integration**:
-- place-and-route.js
-- timing-closure.js
-- clock-network-design.js
+- workflows\place-and-route.js
+- workflows\timing-closure.js
+- workflows\clock-network-design.js
 
 **Dependencies**: P&R tool awareness (Vivado, Quartus)
 
@@ -303,9 +303,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Configure JTAG and debug hub
 
 **Process Integration**:
-- fpga-on-chip-debugging.js
-- functional-simulation.js
-- design-for-testability.js
+- workflows\fpga-on-chip-debugging.js
+- workflows\functional-simulation.js
+- workflows\design-for-testability.js
 
 **Dependencies**: Debug tool CLI (hw_server, etc.)
 
@@ -328,9 +328,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Handle memory initialization
 
 **Process Integration**:
-- memory-interface-design.js
-- ip-core-integration.js
-- hardware-software-codesign.js
+- workflows\memory-interface-design.js
+- workflows\ip-core-integration.js
+- workflows\hardware-software-codesign.js
 
 **Dependencies**: Memory controller IP knowledge
 
@@ -353,10 +353,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Handle FSM with multiple clock domains
 
 **Process Integration**:
-- fsm-design.js
-- rtl-module-architecture.js
-- vhdl-module-development.js
-- verilog-systemverilog-design.js
+- workflows\fsm-design.js
+- workflows\rtl-module-architecture.js
+- workflows\vhdl-module-development.js
+- workflows\verilog-systemverilog-design.js
 
 **Dependencies**: FSM analysis tools
 
@@ -379,9 +379,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Generate power reports
 
 **Process Integration**:
-- power-analysis-optimization.js
-- synthesis-optimization.js
-- clock-network-design.js
+- workflows\power-analysis-optimization.js
+- workflows\synthesis-optimization.js
+- workflows\clock-network-design.js
 
 **Dependencies**: Power analysis tool integration
 
@@ -404,10 +404,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Document IP configurations
 
 **Process Integration**:
-- ip-core-integration.js
-- clock-network-design.js
-- memory-interface-design.js
-- axi-interface-design.js
+- workflows\ip-core-integration.js
+- workflows\clock-network-design.js
+- workflows\memory-interface-design.js
+- workflows\axi-interface-design.js
 
 **Dependencies**: Vendor IP catalog access
 
@@ -430,10 +430,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Support mixed-language simulation
 
 **Process Integration**:
-- functional-simulation.js
-- testbench-development.js
-- uvm-testbench.js
-- constrained-random-verification.js
+- workflows\functional-simulation.js
+- workflows\testbench-development.js
+- workflows\uvm-testbench.js
+- workflows\constrained-random-verification.js
 
 **Dependencies**: Simulator CLI integration
 
@@ -456,9 +456,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Support JasperGold and VC Formal flows
 
 **Process Integration**:
-- sva-development.js
-- cdc-design.js
-- constrained-random-verification.js
+- workflows\sva-development.js
+- workflows\cdc-design.js
+- workflows\constrained-random-verification.js
 
 **Dependencies**: Formal tool awareness
 
@@ -481,10 +481,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Generate lint reports and waivers
 
 **Process Integration**:
-- vhdl-module-development.js
-- verilog-systemverilog-design.js
-- synthesis-optimization.js
-- cdc-design.js
+- workflows\vhdl-module-development.js
+- workflows\verilog-systemverilog-design.js
+- workflows\synthesis-optimization.js
+- workflows\cdc-design.js
 
 **Dependencies**: Lint tool integration
 
@@ -514,10 +514,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: ASIC and FPGA design expertise
 
 **Process Integration**:
-- rtl-module-architecture.js (all phases)
-- vhdl-module-development.js (all phases)
-- verilog-systemverilog-design.js (all phases)
-- pipeline-architecture.js (all phases)
+- workflows\rtl-module-architecture.js (all phases)
+- workflows\vhdl-module-development.js (all phases)
+- workflows\verilog-systemverilog-design.js (all phases)
+- workflows\pipeline-architecture.js (all phases)
 
 ---
 
@@ -541,10 +541,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: High-speed FPGA and ASIC timing
 
 **Process Integration**:
-- timing-constraints.js (all phases)
-- timing-closure.js (all phases)
-- place-and-route.js (timing optimization)
-- synthesis-optimization.js (timing review)
+- workflows\timing-constraints.js (all phases)
+- workflows\timing-closure.js (all phases)
+- workflows\place-and-route.js (timing optimization)
+- workflows\synthesis-optimization.js (timing review)
 
 ---
 
@@ -568,10 +568,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: UVM, formal, emulation experience
 
 **Process Integration**:
-- uvm-testbench.js (all phases)
-- constrained-random-verification.js (all phases)
-- sva-development.js (all phases)
-- testbench-development.js (all phases)
+- workflows\uvm-testbench.js (all phases)
+- workflows\constrained-random-verification.js (all phases)
+- workflows\sva-development.js (all phases)
+- workflows\testbench-development.js (all phases)
 
 ---
 
@@ -595,10 +595,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: High-reliability systems
 
 **Process Integration**:
-- cdc-design.js (all phases)
-- reset-strategy.js (all phases)
-- clock-network-design.js (CDC aspects)
-- timing-constraints.js (CDC constraints)
+- workflows\cdc-design.js (all phases)
+- workflows\reset-strategy.js (all phases)
+- workflows\clock-network-design.js (CDC aspects)
+- workflows\timing-constraints.js (CDC constraints)
 
 ---
 
@@ -622,9 +622,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: Algorithm optimization, accelerator design
 
 **Process Integration**:
-- hls-development.js (all phases)
-- hardware-software-codesign.js (HLS portions)
-- ip-core-integration.js (HLS IP)
+- workflows\hls-development.js (all phases)
+- workflows\hardware-software-codesign.js (HLS portions)
+- workflows\ip-core-integration.js (HLS IP)
 
 ---
 
@@ -648,10 +648,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: Complex SoC and system design
 
 **Process Integration**:
-- rtl-module-architecture.js (architecture phases)
-- hardware-software-codesign.js (partitioning)
-- ip-core-integration.js (system architecture)
-- clock-network-design.js (clock architecture)
+- workflows\rtl-module-architecture.js (architecture phases)
+- workflows\hardware-software-codesign.js (partitioning)
+- workflows\ip-core-integration.js (system architecture)
+- workflows\clock-network-design.js (clock architecture)
 
 ---
 
@@ -675,10 +675,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: Multi-vendor FPGA experience
 
 **Process Integration**:
-- synthesis-optimization.js (all phases)
-- place-and-route.js (synthesis aspects)
-- timing-closure.js (synthesis iteration)
-- power-analysis-optimization.js (synthesis optimization)
+- workflows\synthesis-optimization.js (all phases)
+- workflows\place-and-route.js (synthesis aspects)
+- workflows\timing-closure.js (synthesis iteration)
+- workflows\power-analysis-optimization.js (synthesis optimization)
 
 ---
 
@@ -702,10 +702,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: ARM ecosystem, IP development
 
 **Process Integration**:
-- axi-interface-design.js (all phases)
-- ip-core-integration.js (AXI interfaces)
-- memory-interface-design.js (AXI memory)
-- hls-development.js (interface synthesis)
+- workflows\axi-interface-design.js (all phases)
+- workflows\ip-core-integration.js (AXI interfaces)
+- workflows\memory-interface-design.js (AXI memory)
+- workflows\hls-development.js (interface synthesis)
 
 ---
 
@@ -729,9 +729,9 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: Lab bring-up and production test
 
 **Process Integration**:
-- fpga-on-chip-debugging.js (all phases)
-- design-for-testability.js (debug infrastructure)
-- functional-simulation.js (debug correlation)
+- workflows\fpga-on-chip-debugging.js (all phases)
+- workflows\design-for-testability.js (debug infrastructure)
+- workflows\functional-simulation.js (debug correlation)
 
 ---
 
@@ -755,10 +755,10 @@ All 25 implemented processes in this specialization currently use general-purpos
 - Background: Embedded systems, Linux kernel
 
 **Process Integration**:
-- hardware-software-codesign.js (all phases)
-- ip-core-integration.js (PS integration)
-- memory-interface-design.js (embedded memory)
-- fpga-on-chip-debugging.js (embedded debug)
+- workflows\hardware-software-codesign.js (all phases)
+- workflows\ip-core-integration.js (PS integration)
+- workflows\memory-interface-design.js (embedded memory)
+- workflows\fpga-on-chip-debugging.js (embedded debug)
 
 ---
 
@@ -783,7 +783,7 @@ All 25 implemented processes in this specialization currently use general-purpos
 
 **Process Integration**:
 - All processes when targeting Xilinx/AMD devices
-- Particularly: synthesis-optimization.js, timing-closure.js, ip-core-integration.js
+- Particularly: workflows\synthesis-optimization.js, workflows\timing-closure.js, workflows\ip-core-integration.js
 
 ---
 
@@ -808,7 +808,7 @@ All 25 implemented processes in this specialization currently use general-purpos
 
 **Process Integration**:
 - All processes when targeting Intel/Altera devices
-- Particularly: synthesis-optimization.js, timing-closure.js, ip-core-integration.js
+- Particularly: workflows\synthesis-optimization.js, workflows\timing-closure.js, workflows\ip-core-integration.js
 
 ---
 
@@ -818,31 +818,31 @@ All 25 implemented processes in this specialization currently use general-purpos
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| rtl-module-architecture.js | SK-001, SK-002, SK-013 | AG-001, AG-006 |
-| vhdl-module-development.js | SK-001, SK-018 | AG-001 |
-| verilog-systemverilog-design.js | SK-002, SK-018 | AG-001 |
-| fsm-design.js | SK-013, SK-001, SK-002 | AG-001 |
-| pipeline-architecture.js | SK-009, SK-001, SK-002 | AG-001, AG-002 |
-| testbench-development.js | SK-001, SK-002, SK-016 | AG-003 |
-| functional-simulation.js | SK-016, SK-018 | AG-003, AG-009 |
-| sva-development.js | SK-003, SK-017 | AG-003 |
-| constrained-random-verification.js | SK-007, SK-003 | AG-003 |
-| uvm-testbench.js | SK-007, SK-003, SK-016 | AG-003 |
-| synthesis-optimization.js | SK-009, SK-018 | AG-007, AG-011/AG-012 |
-| timing-constraints.js | SK-004, SK-005 | AG-002 |
-| timing-closure.js | SK-004, SK-009, SK-010 | AG-002, AG-007 |
-| place-and-route.js | SK-010, SK-004 | AG-002, AG-007 |
-| cdc-design.js | SK-005, SK-004 | AG-004 |
-| reset-strategy.js | SK-005, SK-001, SK-002 | AG-004, AG-001 |
-| clock-network-design.js | SK-004, SK-005, SK-015 | AG-002, AG-004 |
-| ip-core-integration.js | SK-015, SK-008 | AG-008, AG-006 |
-| axi-interface-design.js | SK-008, SK-002 | AG-008 |
-| memory-interface-design.js | SK-012, SK-008 | AG-008, AG-001 |
-| hls-development.js | SK-006, SK-008 | AG-005 |
-| hardware-software-codesign.js | SK-006, SK-015 | AG-005, AG-010 |
-| fpga-on-chip-debugging.js | SK-011, SK-016 | AG-009 |
-| power-analysis-optimization.js | SK-014, SK-009 | AG-007, AG-006 |
-| design-for-testability.js | SK-011, SK-018 | AG-009, AG-001 |
+| workflows\rtl-module-architecture.js | SK-001, SK-002, SK-013 | AG-001, AG-006 |
+| workflows\vhdl-module-development.js | SK-001, SK-018 | AG-001 |
+| workflows\verilog-systemverilog-design.js | SK-002, SK-018 | AG-001 |
+| workflows\fsm-design.js | SK-013, SK-001, SK-002 | AG-001 |
+| workflows\pipeline-architecture.js | SK-009, SK-001, SK-002 | AG-001, AG-002 |
+| workflows\testbench-development.js | SK-001, SK-002, SK-016 | AG-003 |
+| workflows\functional-simulation.js | SK-016, SK-018 | AG-003, AG-009 |
+| workflows\sva-development.js | SK-003, SK-017 | AG-003 |
+| workflows\constrained-random-verification.js | SK-007, SK-003 | AG-003 |
+| workflows\uvm-testbench.js | SK-007, SK-003, SK-016 | AG-003 |
+| workflows\synthesis-optimization.js | SK-009, SK-018 | AG-007, AG-011/AG-012 |
+| workflows\timing-constraints.js | SK-004, SK-005 | AG-002 |
+| workflows\timing-closure.js | SK-004, SK-009, SK-010 | AG-002, AG-007 |
+| workflows\place-and-route.js | SK-010, SK-004 | AG-002, AG-007 |
+| workflows\cdc-design.js | SK-005, SK-004 | AG-004 |
+| workflows\reset-strategy.js | SK-005, SK-001, SK-002 | AG-004, AG-001 |
+| workflows\clock-network-design.js | SK-004, SK-005, SK-015 | AG-002, AG-004 |
+| workflows\ip-core-integration.js | SK-015, SK-008 | AG-008, AG-006 |
+| workflows\axi-interface-design.js | SK-008, SK-002 | AG-008 |
+| workflows\memory-interface-design.js | SK-012, SK-008 | AG-008, AG-001 |
+| workflows\hls-development.js | SK-006, SK-008 | AG-005 |
+| workflows\hardware-software-codesign.js | SK-006, SK-015 | AG-005, AG-010 |
+| workflows\fpga-on-chip-debugging.js | SK-011, SK-016 | AG-009 |
+| workflows\power-analysis-optimization.js | SK-014, SK-009 | AG-007, AG-006 |
+| workflows\design-for-testability.js | SK-011, SK-018 | AG-009, AG-001 |
 
 ---
 
@@ -933,3 +933,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

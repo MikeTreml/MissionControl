@@ -94,6 +94,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check constraint feasibility
+  if (!constraintSatisfaction.feasible) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -1161,3 +1162,4 @@ export const planValidationTask = defineTask('plan-validation', (args, taskCtx) 
   },
   labels: ['means-end', 'validation', 'verification']
 }));
+

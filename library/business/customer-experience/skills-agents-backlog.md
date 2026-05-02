@@ -1,4 +1,4 @@
-# Customer Experience and Support - Skills and Agents Backlog
+﻿# Customer Experience and Support - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Customer Experience processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized CX tooling.
 
@@ -21,26 +21,26 @@ This document identifies specialized skills and agents (subagents) that could en
 All 20 implemented processes in this specialization currently use the `general-purpose` agent for task execution. While functional, this approach lacks domain-specific optimizations that specialized skills and agents could provide.
 
 ### Implemented Processes
-1. `customer-onboarding.js` - Customer onboarding orchestration
-2. `customer-health-scoring.js` - Health score implementation and monitoring
-3. `qbr-preparation.js` - Quarterly Business Review preparation
-4. `churn-prevention.js` - Proactive churn prevention workflow
-5. `ticket-triage-routing.js` - Intelligent ticket categorization and routing
-6. `escalation-management.js` - Multi-tier escalation workflow
-7. `sla-management.js` - SLA tracking and compliance monitoring
-8. `fcr-optimization.js` - First Contact Resolution optimization
-9. `nps-survey-program.js` - NPS survey deployment and analysis
-10. `csat-collection.js` - CSAT feedback collection at touchpoints
-11. `feedback-analysis-pipeline.js` - Multi-channel feedback aggregation
-12. `closed-loop-feedback.js` - Systematic feedback follow-up
-13. `knowledge-base-development.js` - Knowledge content creation workflow
-14. `kcs-implementation.js` - Knowledge-Centered Service adoption
-15. `self-service-optimization.js` - Self-service channel optimization
-16. `itil-incident-management.js` - ITIL incident management workflow
-17. `problem-management.js` - Root cause analysis and permanent fixes
-18. `service-request-fulfillment.js` - Standard service request handling
-19. `customer-journey-mapping.js` - Journey mapping workshop facilitation
-20. `touchpoint-optimization.js` - Touchpoint analysis and improvement
+1. `workflows\customer-onboarding.js` - Customer onboarding orchestration
+2. `workflows\customer-health-scoring.js` - Health score implementation and monitoring
+3. `workflows\qbr-preparation.js` - Quarterly Business Review preparation
+4. `workflows\churn-prevention.js` - Proactive churn prevention workflow
+5. `workflows\ticket-triage-routing.js` - Intelligent ticket categorization and routing
+6. `workflows\escalation-management.js` - Multi-tier escalation workflow
+7. `workflows\sla-management.js` - SLA tracking and compliance monitoring
+8. `workflows\fcr-optimization.js` - First Contact Resolution optimization
+9. `workflows\nps-survey-program.js` - NPS survey deployment and analysis
+10. `workflows\csat-collection.js` - CSAT feedback collection at touchpoints
+11. `workflows\feedback-analysis-pipeline.js` - Multi-channel feedback aggregation
+12. `workflows\closed-loop-feedback.js` - Systematic feedback follow-up
+13. `workflows\knowledge-base-development.js` - Knowledge content creation workflow
+14. `workflows\kcs-implementation.js` - Knowledge-Centered Service adoption
+15. `workflows\self-service-optimization.js` - Self-service channel optimization
+16. `workflows\itil-incident-management.js` - ITIL incident management workflow
+17. `workflows\problem-management.js` - Root cause analysis and permanent fixes
+18. `workflows\service-request-fulfillment.js` - Standard service request handling
+19. `workflows\customer-journey-mapping.js` - Journey mapping workshop facilitation
+20. `workflows\touchpoint-optimization.js` - Touchpoint analysis and improvement
 
 ### Goals
 - Provide deep expertise in customer experience methodologies and frameworks
@@ -69,10 +69,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Generate sentiment dashboards and reports
 
 **Process Integration**:
-- feedback-analysis-pipeline.js
-- nps-survey-program.js
-- csat-collection.js
-- closed-loop-feedback.js
+- workflows\feedback-analysis-pipeline.js
+- workflows\nps-survey-program.js
+- workflows\csat-collection.js
+- workflows\closed-loop-feedback.js
 
 **Dependencies**: NLP models, language detection
 
@@ -94,10 +94,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Create driver analysis for score movements
 
 **Process Integration**:
-- nps-survey-program.js
-- csat-collection.js
-- customer-health-scoring.js
-- touchpoint-optimization.js
+- workflows\nps-survey-program.js
+- workflows\csat-collection.js
+- workflows\customer-health-scoring.js
+- workflows\touchpoint-optimization.js
 
 **Dependencies**: Statistical libraries, benchmarking data
 
@@ -119,10 +119,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Generate health score confidence intervals
 
 **Process Integration**:
-- customer-health-scoring.js
-- churn-prevention.js
-- qbr-preparation.js
-- customer-onboarding.js
+- workflows\customer-health-scoring.js
+- workflows\churn-prevention.js
+- workflows\qbr-preparation.js
+- workflows\customer-onboarding.js
 
 **Dependencies**: Analytics data sources, ML models
 
@@ -144,9 +144,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Generate churn cohort analysis
 
 **Process Integration**:
-- churn-prevention.js
-- customer-health-scoring.js
-- qbr-preparation.js
+- workflows\churn-prevention.js
+- workflows\customer-health-scoring.js
+- workflows\qbr-preparation.js
 
 **Dependencies**: ML models, historical churn data
 
@@ -168,10 +168,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Predict resolution complexity and time
 
 **Process Integration**:
-- ticket-triage-routing.js
-- escalation-management.js
-- itil-incident-management.js
-- fcr-optimization.js
+- workflows\ticket-triage-routing.js
+- workflows\escalation-management.js
+- workflows\itil-incident-management.js
+- workflows\fcr-optimization.js
 
 **Dependencies**: NLP models, ticket taxonomy
 
@@ -193,10 +193,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Create SLA performance dashboards
 
 **Process Integration**:
-- sla-management.js
-- ticket-triage-routing.js
-- escalation-management.js
-- itil-incident-management.js
+- workflows\sla-management.js
+- workflows\ticket-triage-routing.js
+- workflows\escalation-management.js
+- workflows\itil-incident-management.js
 
 **Dependencies**: Ticketing system APIs, alerting infrastructure
 
@@ -218,10 +218,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Generate article quality scores
 
 **Process Integration**:
-- knowledge-base-development.js
-- kcs-implementation.js
-- self-service-optimization.js
-- fcr-optimization.js
+- workflows\knowledge-base-development.js
+- workflows\kcs-implementation.js
+- workflows\self-service-optimization.js
+- workflows\fcr-optimization.js
 
 **Dependencies**: NLG models, KB templates
 
@@ -243,9 +243,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Create search analytics dashboards
 
 **Process Integration**:
-- self-service-optimization.js
-- knowledge-base-development.js
-- kcs-implementation.js
+- workflows\self-service-optimization.js
+- workflows\knowledge-base-development.js
+- workflows\kcs-implementation.js
 
 **Dependencies**: Search platform APIs, analytics data
 
@@ -267,9 +267,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Export to multiple formats (Markdown, HTML, PDF)
 
 **Process Integration**:
-- customer-journey-mapping.js
-- touchpoint-optimization.js
-- customer-onboarding.js
+- workflows\customer-journey-mapping.js
+- workflows\touchpoint-optimization.js
+- workflows\customer-onboarding.js
 
 **Dependencies**: Visualization libraries, export formats
 
@@ -291,10 +291,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Support Salesforce, HubSpot, Dynamics
 
 **Process Integration**:
-- customer-onboarding.js
-- customer-health-scoring.js
-- qbr-preparation.js
-- churn-prevention.js
+- workflows\customer-onboarding.js
+- workflows\customer-health-scoring.js
+- workflows\qbr-preparation.js
+- workflows\churn-prevention.js
 
 **Dependencies**: CRM APIs (Salesforce, HubSpot, Dynamics)
 
@@ -316,10 +316,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Support Zendesk, Freshdesk, ServiceNow
 
 **Process Integration**:
-- ticket-triage-routing.js
-- escalation-management.js
-- sla-management.js
-- itil-incident-management.js
+- workflows\ticket-triage-routing.js
+- workflows\escalation-management.js
+- workflows\sla-management.js
+- workflows\itil-incident-management.js
 
 **Dependencies**: Support platform APIs
 
@@ -341,10 +341,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Support multi-channel delivery (email, in-app, SMS)
 
 **Process Integration**:
-- closed-loop-feedback.js
-- nps-survey-program.js
-- churn-prevention.js
-- qbr-preparation.js
+- workflows\closed-loop-feedback.js
+- workflows\nps-survey-program.js
+- workflows\churn-prevention.js
+- workflows\qbr-preparation.js
 
 **Dependencies**: Email templates, personalization engine
 
@@ -366,8 +366,8 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Create onboarding comparison benchmarks
 
 **Process Integration**:
-- customer-onboarding.js
-- customer-health-scoring.js
+- workflows\customer-onboarding.js
+- workflows\customer-health-scoring.js
 
 **Dependencies**: Product analytics, milestone definitions
 
@@ -389,10 +389,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Create de-escalation recommendations
 
 **Process Integration**:
-- escalation-management.js
-- itil-incident-management.js
-- ticket-triage-routing.js
-- sla-management.js
+- workflows\escalation-management.js
+- workflows\itil-incident-management.js
+- workflows\ticket-triage-routing.js
+- workflows\sla-management.js
 
 **Dependencies**: Escalation rules engine, notification systems
 
@@ -414,9 +414,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Track corrective action implementation
 
 **Process Integration**:
-- problem-management.js
-- itil-incident-management.js
-- closed-loop-feedback.js
+- workflows\problem-management.js
+- workflows\itil-incident-management.js
+- workflows\closed-loop-feedback.js
 
 **Dependencies**: RCA templates, analysis frameworks
 
@@ -438,10 +438,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Generate A/B test survey variants
 
 **Process Integration**:
-- nps-survey-program.js
-- csat-collection.js
-- closed-loop-feedback.js
-- customer-journey-mapping.js
+- workflows\nps-survey-program.js
+- workflows\csat-collection.js
+- workflows\closed-loop-feedback.js
+- workflows\customer-journey-mapping.js
 
 **Dependencies**: Survey templates, statistical models
 
@@ -463,9 +463,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Create deflection dashboards
 
 **Process Integration**:
-- self-service-optimization.js
-- knowledge-base-development.js
-- fcr-optimization.js
+- workflows\self-service-optimization.js
+- workflows\knowledge-base-development.js
+- workflows\fcr-optimization.js
 
 **Dependencies**: Analytics data, cost models
 
@@ -487,8 +487,8 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Generate executive summary content
 
 **Process Integration**:
-- qbr-preparation.js
-- customer-health-scoring.js
+- workflows\qbr-preparation.js
+- workflows\customer-health-scoring.js
 
 **Dependencies**: Presentation templates, metrics APIs
 
@@ -518,10 +518,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Enterprise account management
 
 **Process Integration**:
-- customer-onboarding.js (all phases)
-- qbr-preparation.js (all phases)
-- churn-prevention.js (intervention strategy)
-- customer-health-scoring.js (risk assessment)
+- workflows\customer-onboarding.js (all phases)
+- workflows\qbr-preparation.js (all phases)
+- workflows\churn-prevention.js (intervention strategy)
+- workflows\customer-health-scoring.js (risk assessment)
 
 ---
 
@@ -545,10 +545,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Market research and CX consulting
 
 **Process Integration**:
-- nps-survey-program.js (all phases)
-- csat-collection.js (all phases)
-- feedback-analysis-pipeline.js (all phases)
-- closed-loop-feedback.js (all phases)
+- workflows\nps-survey-program.js (all phases)
+- workflows\csat-collection.js (all phases)
+- workflows\feedback-analysis-pipeline.js (all phases)
+- workflows\closed-loop-feedback.js (all phases)
 
 ---
 
@@ -572,10 +572,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Contact center management
 
 **Process Integration**:
-- ticket-triage-routing.js (all phases)
-- escalation-management.js (all phases)
-- sla-management.js (all phases)
-- fcr-optimization.js (all phases)
+- workflows\ticket-triage-routing.js (all phases)
+- workflows\escalation-management.js (all phases)
+- workflows\sla-management.js (all phases)
+- workflows\fcr-optimization.js (all phases)
 
 ---
 
@@ -599,10 +599,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: KCS certified practitioner
 
 **Process Integration**:
-- knowledge-base-development.js (all phases)
-- kcs-implementation.js (all phases)
-- self-service-optimization.js (all phases)
-- fcr-optimization.js (knowledge access)
+- workflows\knowledge-base-development.js (all phases)
+- workflows\kcs-implementation.js (all phases)
+- workflows\self-service-optimization.js (all phases)
+- workflows\fcr-optimization.js (knowledge access)
 
 ---
 
@@ -626,10 +626,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: ITIL 4 Expert certified
 
 **Process Integration**:
-- itil-incident-management.js (all phases)
-- problem-management.js (all phases)
-- service-request-fulfillment.js (all phases)
-- sla-management.js (ITIL alignment)
+- workflows\itil-incident-management.js (all phases)
+- workflows\problem-management.js (all phases)
+- workflows\service-request-fulfillment.js (all phases)
+- workflows\sla-management.js (ITIL alignment)
 
 ---
 
@@ -653,9 +653,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Service design and UX
 
 **Process Integration**:
-- customer-journey-mapping.js (all phases)
-- touchpoint-optimization.js (all phases)
-- customer-onboarding.js (journey design)
+- workflows\customer-journey-mapping.js (all phases)
+- workflows\touchpoint-optimization.js (all phases)
+- workflows\customer-onboarding.js (journey design)
 
 ---
 
@@ -679,9 +679,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: SaaS retention analytics
 
 **Process Integration**:
-- churn-prevention.js (all phases)
-- customer-health-scoring.js (risk indicators)
-- closed-loop-feedback.js (detractor recovery)
+- workflows\churn-prevention.js (all phases)
+- workflows\customer-health-scoring.js (risk indicators)
+- workflows\closed-loop-feedback.js (detractor recovery)
 
 ---
 
@@ -705,8 +705,8 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Professional services leadership
 
 **Process Integration**:
-- customer-onboarding.js (all phases)
-- customer-health-scoring.js (onboarding health)
+- workflows\customer-onboarding.js (all phases)
+- workflows\customer-health-scoring.js (onboarding health)
 
 ---
 
@@ -730,10 +730,10 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Data science and CX
 
 **Process Integration**:
-- nps-survey-program.js (analysis phases)
-- csat-collection.js (analysis phases)
-- customer-health-scoring.js (metrics definition)
-- touchpoint-optimization.js (analytics)
+- workflows\nps-survey-program.js (analysis phases)
+- workflows\csat-collection.js (analysis phases)
+- workflows\customer-health-scoring.js (metrics definition)
+- workflows\touchpoint-optimization.js (analytics)
 
 ---
 
@@ -757,9 +757,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Technical support leadership
 
 **Process Integration**:
-- escalation-management.js (all phases)
-- itil-incident-management.js (escalation phases)
-- churn-prevention.js (critical escalations)
+- workflows\escalation-management.js (all phases)
+- workflows\itil-incident-management.js (escalation phases)
+- workflows\churn-prevention.js (critical escalations)
 
 ---
 
@@ -783,9 +783,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Digital transformation
 
 **Process Integration**:
-- self-service-optimization.js (all phases)
-- knowledge-base-development.js (content strategy)
-- fcr-optimization.js (self-service FCR)
+- workflows\self-service-optimization.js (all phases)
+- workflows\knowledge-base-development.js (content strategy)
+- workflows\fcr-optimization.js (self-service FCR)
 
 ---
 
@@ -809,9 +809,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: ITIL and Six Sigma
 
 **Process Integration**:
-- problem-management.js (all phases)
-- itil-incident-management.js (problem linkage)
-- knowledge-base-development.js (known errors)
+- workflows\problem-management.js (all phases)
+- workflows\itil-incident-management.js (problem linkage)
+- workflows\knowledge-base-development.js (known errors)
 
 ---
 
@@ -835,9 +835,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Customer marketing and engagement
 
 **Process Integration**:
-- customer-journey-mapping.js (customer input)
-- nps-survey-program.js (promoter engagement)
-- qbr-preparation.js (strategic customers)
+- workflows\customer-journey-mapping.js (customer input)
+- workflows\nps-survey-program.js (promoter engagement)
+- workflows\qbr-preparation.js (strategic customers)
 
 ---
 
@@ -861,9 +861,9 @@ All 20 implemented processes in this specialization currently use the `general-p
 - Background: Customer service excellence
 
 **Process Integration**:
-- closed-loop-feedback.js (all phases)
-- nps-survey-program.js (response phases)
-- churn-prevention.js (detractor recovery)
+- workflows\closed-loop-feedback.js (all phases)
+- workflows\nps-survey-program.js (response phases)
+- workflows\churn-prevention.js (detractor recovery)
 
 ---
 
@@ -873,26 +873,26 @@ All 20 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| customer-onboarding.js | SK-003, SK-010, SK-013 | AG-008, AG-001 |
-| customer-health-scoring.js | SK-003, SK-004, SK-010 | AG-001, AG-009 |
-| qbr-preparation.js | SK-018, SK-010 | AG-001, AG-009 |
-| churn-prevention.js | SK-003, SK-004, SK-010 | AG-007, AG-001 |
-| ticket-triage-routing.js | SK-005, SK-006, SK-011 | AG-003, AG-010 |
-| escalation-management.js | SK-005, SK-006, SK-014 | AG-010, AG-003 |
-| sla-management.js | SK-006, SK-011 | AG-003, AG-005 |
-| fcr-optimization.js | SK-005, SK-007, SK-017 | AG-003, AG-004 |
-| nps-survey-program.js | SK-001, SK-002, SK-016 | AG-002, AG-009 |
-| csat-collection.js | SK-001, SK-002, SK-016 | AG-002, AG-009 |
-| feedback-analysis-pipeline.js | SK-001, SK-002 | AG-002, AG-009 |
-| closed-loop-feedback.js | SK-001, SK-012 | AG-014, AG-002 |
-| knowledge-base-development.js | SK-007, SK-008 | AG-004, AG-011 |
-| kcs-implementation.js | SK-007, SK-008 | AG-004 |
-| self-service-optimization.js | SK-008, SK-017 | AG-011, AG-004 |
-| itil-incident-management.js | SK-005, SK-006, SK-015 | AG-005, AG-010 |
-| problem-management.js | SK-015, SK-007 | AG-012, AG-005 |
-| service-request-fulfillment.js | SK-005, SK-011 | AG-005, AG-003 |
-| customer-journey-mapping.js | SK-009, SK-001 | AG-006 |
-| touchpoint-optimization.js | SK-002, SK-009, SK-001 | AG-006, AG-009 |
+| workflows\customer-onboarding.js | SK-003, SK-010, SK-013 | AG-008, AG-001 |
+| workflows\customer-health-scoring.js | SK-003, SK-004, SK-010 | AG-001, AG-009 |
+| workflows\qbr-preparation.js | SK-018, SK-010 | AG-001, AG-009 |
+| workflows\churn-prevention.js | SK-003, SK-004, SK-010 | AG-007, AG-001 |
+| workflows\ticket-triage-routing.js | SK-005, SK-006, SK-011 | AG-003, AG-010 |
+| workflows\escalation-management.js | SK-005, SK-006, SK-014 | AG-010, AG-003 |
+| workflows\sla-management.js | SK-006, SK-011 | AG-003, AG-005 |
+| workflows\fcr-optimization.js | SK-005, SK-007, SK-017 | AG-003, AG-004 |
+| workflows\nps-survey-program.js | SK-001, SK-002, SK-016 | AG-002, AG-009 |
+| workflows\csat-collection.js | SK-001, SK-002, SK-016 | AG-002, AG-009 |
+| workflows\feedback-analysis-pipeline.js | SK-001, SK-002 | AG-002, AG-009 |
+| workflows\closed-loop-feedback.js | SK-001, SK-012 | AG-014, AG-002 |
+| workflows\knowledge-base-development.js | SK-007, SK-008 | AG-004, AG-011 |
+| workflows\kcs-implementation.js | SK-007, SK-008 | AG-004 |
+| workflows\self-service-optimization.js | SK-008, SK-017 | AG-011, AG-004 |
+| workflows\itil-incident-management.js | SK-005, SK-006, SK-015 | AG-005, AG-010 |
+| workflows\problem-management.js | SK-015, SK-007 | AG-012, AG-005 |
+| workflows\service-request-fulfillment.js | SK-005, SK-011 | AG-005, AG-003 |
+| workflows\customer-journey-mapping.js | SK-009, SK-001 | AG-006 |
+| workflows\touchpoint-optimization.js | SK-002, SK-009, SK-001 | AG-006, AG-009 |
 
 ---
 
@@ -988,3 +988,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

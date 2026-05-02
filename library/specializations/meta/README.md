@@ -1,4 +1,4 @@
-# Meta Specialization - Process, Skill, and Agent Creation
+﻿# Meta Specialization - Process, Skill, and Agent Creation
 
 **Category**: Meta/System Specialization
 **Focus**: Creating Domains, Specializations, Processes, Skills, and Agents
@@ -44,18 +44,18 @@ This specialization enables systematic, quality-gated creation of new capabiliti
 - Define skill capabilities and boundaries
 - Document skill inputs/outputs
 - Specify allowed tools for each skill
-- Create skill documentation (SKILL.md)
+- Create skill documentation (harnesses\claude-code\examples\SKILL.md)
 - Integrate skills with processes
 
 **Key Skills**:
-- SKILL.md frontmatter syntax
+- harnesses\claude-code\examples\SKILL.md frontmatter syntax
 - Tool permission management
 - Skill capability scoping
 - MCP server integration
 - Best practices documentation
 
 **Deliverables**:
-- SKILL.md files
+- harnesses\claude-code\examples\SKILL.md files
 - Skill README.md files
 - Supporting scripts
 - Reference documentation
@@ -112,38 +112,38 @@ This specialization enables systematic, quality-gated creation of new capabiliti
 
 ```
 specializations/
-├── meta/                           # This specialization
-│   ├── README.md                   # This file
-│   ├── references.md               # External references
-│   ├── processes-backlog.md        # Phase 2 output
-│   ├── skills-agents-backlog.md    # Phase 4 output
-│   ├── skills-agents-references.md # Phase 5 output
-│   ├── *.js                        # Process files (Phase 3)
-│   ├── skills/                     # Skills (Phase 6)
-│   │   └── <skill-name>/
-│   │       ├── SKILL.md
-│   │       ├── README.md
-│   │       └── scripts/
-│   └── agents/                     # Agents (Phase 6)
-│       └── <agent-name>/
-│           ├── AGENT.md
-│           └── README.md
-├── domains/
-│   ├── business/
-│   │   └── <specialization>/
-│   ├── science/
-│   │   └── <specialization>/
-│   └── social-sciences-humanities/
-│       └── <specialization>/
-└── <non-domain-specialization>/    # R&D/Engineering specializations
-    ├── README.md
-    ├── references.md
-    ├── processes-backlog.md
-    ├── skills-agents-backlog.md
-    ├── skills-agents-references.md
-    ├── *.js
-    ├── skills/
-    └── agents/
+â”œâ”€â”€ meta/                           # This specialization
+â”‚   â”œâ”€â”€ README.md                   # This file
+â”‚   â”œâ”€â”€ references.md               # External references
+â”‚   â”œâ”€â”€ processes-backlog.md        # Phase 2 output
+â”‚   â”œâ”€â”€ skills-agents-backlog.md    # Phase 4 output
+â”‚   â”œâ”€â”€ skills-agents-references.md # Phase 5 output
+â”‚   â”œâ”€â”€ *.js                        # Process files (Phase 3)
+â”‚   â”œâ”€â”€ skills/                     # Skills (Phase 6)
+â”‚   â”‚   â””â”€â”€ <skill-name>/
+â”‚   â”‚       â”œâ”€â”€ harnesses\claude-code\examples\SKILL.md
+â”‚   â”‚       â”œâ”€â”€ README.md
+â”‚   â”‚       â””â”€â”€ scripts/
+â”‚   â””â”€â”€ agents/                     # Agents (Phase 6)
+â”‚       â””â”€â”€ <agent-name>/
+â”‚           â”œâ”€â”€ AGENT.md
+â”‚           â””â”€â”€ README.md
+â”œâ”€â”€ domains/
+â”‚   â”œâ”€â”€ business/
+â”‚   â”‚   â””â”€â”€ <specialization>/
+â”‚   â”œâ”€â”€ science/
+â”‚   â”‚   â””â”€â”€ <specialization>/
+â”‚   â””â”€â”€ social-sciences-humanities/
+â”‚       â””â”€â”€ <specialization>/
+â””â”€â”€ <non-domain-specialization>/    # R&D/Engineering specializations
+    â”œâ”€â”€ README.md
+    â”œâ”€â”€ references.md
+    â”œâ”€â”€ processes-backlog.md
+    â”œâ”€â”€ skills-agents-backlog.md
+    â”œâ”€â”€ skills-agents-references.md
+    â”œâ”€â”€ *.js
+    â”œâ”€â”€ skills/
+    â””â”€â”€ agents/
 ```
 
 ## Creation Phases
@@ -313,12 +313,12 @@ export const taskName = defineTask('task-name', (args, taskCtx) => ({
 
 **Activities**:
 - Create directories for each skill/agent
-- Write SKILL.md/AGENT.md files
+- Write agents\agent-designer\AGENT.md files
 - Add README documentation
 - Create supporting scripts if needed
 - Mark completed in backlog
 
-**SKILL.md Structure**:
+**harnesses\claude-code\examples\SKILL.md Structure**:
 ```markdown
 ---
 name: skill-name
@@ -487,3 +487,5 @@ export const taskName = defineTask('task-name', (args, taskCtx) => ({
 - **backlog.md**: Master backlog with phase instructions
 - **references.md**: External reference materials
 - **Babysitter SDK Documentation**: SDK patterns and API
+
+

@@ -114,6 +114,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Review suggestions before finalizing
+  if (assumptionAnalysis.implicitAssumptions.length > 0 || notationSuggestions.suggestions.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -679,3 +680,4 @@ export const refinedProofGenerationTask = defineTask('refined-proof-generation',
   },
   labels: ['mathematics', 'proof-writing', 'generation']
 }));
+

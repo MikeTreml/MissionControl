@@ -104,6 +104,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check if design meets power requirements
+  if (powerAnalysis.achievedPower < desiredPower - 0.05) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -620,3 +621,4 @@ export const designDocumentationTask = defineTask('design-documentation', (args,
   },
   labels: ['mathematics', 'experimental-design', 'documentation']
 }));
+

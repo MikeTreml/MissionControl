@@ -1,4 +1,4 @@
-# Business Strategy and Operations - Skills and Agents References
+﻿# Business Strategy and Operations - Skills and Agents References
 
 This document catalogs existing Claude skills, MCP servers, agents, and community resources that can be reused or adapted for the Business Strategy specialization processes. These references are organized by capability area to facilitate implementation planning.
 
@@ -58,10 +58,10 @@ This reference document supports Phase 5 implementation by identifying:
 - DCF valuation data
 
 **Applicable Processes**:
-- business-case-development.js (financial modeling)
-- ma-target-screening.js (target valuation)
-- due-diligence-framework.js (financial DD)
-- competitive-intelligence.js (competitor financials)
+- workflows\business-case-development.js (financial modeling)
+- workflows\ma-target-screening.js (target valuation)
+- workflows\due-diligence-framework.js (financial DD)
+- workflows\competitive-intelligence.js (competitor financials)
 
 **License**: Apache 2.0 (requires FMP API key)
 
@@ -85,9 +85,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Financial statement analysis
 
 **Applicable Processes**:
-- due-diligence-framework.js (comprehensive DD)
-- ma-target-screening.js (financial evaluation)
-- business-case-development.js (investment analysis)
+- workflows\due-diligence-framework.js (comprehensive DD)
+- workflows\ma-target-screening.js (financial evaluation)
+- workflows\business-case-development.js (investment analysis)
 
 ---
 
@@ -104,9 +104,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Insider trading information
 
 **Applicable Processes**:
-- due-diligence-framework.js (regulatory filings)
-- ma-target-screening.js (public company research)
-- competitive-intelligence.js (competitor filings)
+- workflows\due-diligence-framework.js (regulatory filings)
+- workflows\ma-target-screening.js (public company research)
+- workflows\competitive-intelligence.js (competitor filings)
 
 ---
 
@@ -122,9 +122,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Cross-border financial data
 
 **Applicable Processes**:
-- pestel-analysis.js (European regulatory context)
-- ma-target-screening.js (EU target research)
-- due-diligence-framework.js (international DD)
+- workflows\pestel-analysis.js (European regulatory context)
+- workflows\ma-target-screening.js (EU target research)
+- workflows\due-diligence-framework.js (international DD)
 
 ---
 
@@ -140,8 +140,8 @@ This reference document supports Phase 5 implementation by identifying:
 - Real-time market data
 
 **Applicable Processes**:
-- scenario-planning.js (market scenarios)
-- business-case-development.js (market context)
+- workflows\scenario-planning.js (market scenarios)
+- workflows\business-case-development.js (market context)
 
 ---
 
@@ -159,8 +159,8 @@ This reference document supports Phase 5 implementation by identifying:
 - Analyst Ratings
 
 **Applicable Processes**:
-- porters-five-forces.js (industry financials)
-- competitive-intelligence.js (competitor metrics)
+- workflows\porters-five-forces.js (industry financials)
+- workflows\competitive-intelligence.js (competitor metrics)
 
 ---
 
@@ -179,10 +179,10 @@ This reference document supports Phase 5 implementation by identifying:
 - Market dynamics research
 
 **Applicable Processes**:
-- competitive-intelligence.js (comprehensive research)
-- pestel-analysis.js (macro analysis)
-- scenario-planning.js (trend research)
-- blue-ocean-strategy.js (market opportunity)
+- workflows\competitive-intelligence.js (comprehensive research)
+- workflows\pestel-analysis.js (macro analysis)
+- workflows\scenario-planning.js (trend research)
+- workflows\blue-ocean-strategy.js (market opportunity)
 
 ---
 
@@ -200,9 +200,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Deep web-based research
 
 **Applicable Processes**:
-- ma-target-screening.js (market intelligence)
-- due-diligence-framework.js (comprehensive research)
-- competitive-intelligence.js (competitor analysis)
+- workflows\ma-target-screening.js (market intelligence)
+- workflows\due-diligence-framework.js (comprehensive research)
+- workflows\competitive-intelligence.js (competitor analysis)
 
 ---
 
@@ -219,10 +219,10 @@ This reference document supports Phase 5 implementation by identifying:
 - Data integration (Alpha Vantage, BLS, Census, FRED, IMF, OECD, World Bank)
 
 **Applicable Processes**:
-- growth-strategy-ansoff.js (market assessment)
-- competitive-intelligence.js (market size)
-- business-case-development.js (opportunity sizing)
-- ma-target-screening.js (market evaluation)
+- workflows\growth-strategy-ansoff.js (market assessment)
+- workflows\competitive-intelligence.js (market size)
+- workflows\business-case-development.js (opportunity sizing)
+- workflows\ma-target-screening.js (market evaluation)
 
 ---
 
@@ -239,9 +239,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Competitive discussion monitoring
 
 **Applicable Processes**:
-- competitive-intelligence.js (social listening)
-- value-proposition-design.js (customer insights)
-- pestel-analysis.js (social trends)
+- workflows\competitive-intelligence.js (social listening)
+- workflows\value-proposition-design.js (customer insights)
+- workflows\pestel-analysis.js (social trends)
 
 ---
 
@@ -258,9 +258,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Business insights generation
 
 **Applicable Processes**:
-- competitive-intelligence.js (competitor tracking)
-- blue-ocean-strategy.js (market analysis)
-- swot-analysis.js (external analysis)
+- workflows\competitive-intelligence.js (competitor tracking)
+- workflows\blue-ocean-strategy.js (market analysis)
+- workflows\swot-analysis.js (external analysis)
 
 ---
 
@@ -280,9 +280,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Due diligence report generation
 
 **Applicable Processes**:
-- due-diligence-framework.js (UK company DD)
-- ma-target-screening.js (UK targets)
-- competitive-intelligence.js (UK competitors)
+- workflows\due-diligence-framework.js (UK company DD)
+- workflows\ma-target-screening.js (UK targets)
+- workflows\competitive-intelligence.js (UK competitors)
 
 ---
 
@@ -299,9 +299,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Contact and company information
 
 **Applicable Processes**:
-- balanced-scorecard.js (customer metrics)
-- okr-development.js (sales OKRs)
-- value-proposition-design.js (customer data)
+- workflows\balanced-scorecard.js (customer metrics)
+- workflows\okr-development.js (sales OKRs)
+- workflows\value-proposition-design.js (customer data)
 
 ---
 
@@ -318,9 +318,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Collaborative workspace data
 
 **Applicable Processes**:
-- strategy-map-creation.js (strategy documentation)
-- okr-development.js (OKR tracking)
-- annual-strategic-planning.js (planning documents)
+- workflows\strategy-map-creation.js (strategy documentation)
+- workflows\okr-development.js (OKR tracking)
+- workflows\annual-strategic-planning.js (planning documents)
 
 ---
 
@@ -336,9 +336,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Calendar-based planning
 
 **Applicable Processes**:
-- kotter-change-management.js (change timelines)
-- post-merger-integration.js (integration scheduling)
-- digital-transformation-roadmap.js (milestone planning)
+- workflows\kotter-change-management.js (change timelines)
+- workflows\post-merger-integration.js (integration scheduling)
+- workflows\digital-transformation-roadmap.js (milestone planning)
 
 ---
 
@@ -358,10 +358,10 @@ This reference document supports Phase 5 implementation by identifying:
 - Pin maps, treemaps
 
 **Applicable Processes**:
-- strategy-map-creation.js (strategy visualization)
-- balanced-scorecard.js (dashboard charts)
-- blue-ocean-strategy.js (strategy canvas)
-- value-stream-mapping.js (flow visualization)
+- workflows\strategy-map-creation.js (strategy visualization)
+- workflows\balanced-scorecard.js (dashboard charts)
+- workflows\blue-ocean-strategy.js (strategy canvas)
+- workflows\value-stream-mapping.js (flow visualization)
 
 ---
 
@@ -377,9 +377,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Radial gauge, speedometer
 
 **Applicable Processes**:
-- balanced-scorecard.js (KPI dashboards)
-- okr-development.js (progress tracking)
-- business-case-development.js (financial charts)
+- workflows\balanced-scorecard.js (KPI dashboards)
+- workflows\okr-development.js (progress tracking)
+- workflows\business-case-development.js (financial charts)
 
 ---
 
@@ -390,9 +390,9 @@ This reference document supports Phase 5 implementation by identifying:
 **Description**: Apache ECharts integration for dynamic chart generation.
 
 **Applicable Processes**:
-- annual-strategic-planning.js (roadmap visualization)
-- strategic-initiative-portfolio.js (portfolio views)
-- porters-five-forces.js (force diagrams)
+- workflows\annual-strategic-planning.js (roadmap visualization)
+- workflows\strategic-initiative-portfolio.js (portfolio views)
+- workflows\porters-five-forces.js (force diagrams)
 
 ---
 
@@ -403,9 +403,9 @@ This reference document supports Phase 5 implementation by identifying:
 **Description**: Mermaid diagram generation for flowcharts, sequences, and organizational charts.
 
 **Applicable Processes**:
-- operating-model-redesign.js (org charts)
-- value-stream-mapping.js (process flows)
-- business-process-reengineering.js (process diagrams)
+- workflows\operating-model-redesign.js (org charts)
+- workflows\value-stream-mapping.js (process flows)
+- workflows\business-process-reengineering.js (process diagrams)
 
 ---
 
@@ -416,9 +416,9 @@ This reference document supports Phase 5 implementation by identifying:
 **Description**: Excel manipulation with charts, pivot tables, and formulae.
 
 **Applicable Processes**:
-- business-case-development.js (financial models)
-- balanced-scorecard.js (scorecards)
-- six-sigma-dmaic.js (statistical analysis)
+- workflows\business-case-development.js (financial models)
+- workflows\balanced-scorecard.js (scorecards)
+- workflows\six-sigma-dmaic.js (statistical analysis)
 
 ---
 
@@ -434,10 +434,10 @@ This reference document supports Phase 5 implementation by identifying:
 
 | Skill | Description | Applicable Processes |
 |-------|-------------|---------------------|
-| `skills/xlsx` | Excel document creation with formulas and charts | business-case-development.js, balanced-scorecard.js |
-| `skills/pptx` | PowerPoint presentation generation | strategy-map-creation.js, annual-strategic-planning.js |
-| `skills/pdf` | PDF document generation | due-diligence-framework.js, business-case-development.js |
-| `skills/docx` | Word document creation | annual-strategic-planning.js, operating-model-redesign.js |
+| `skills/xlsx` | Excel document creation with formulas and charts | workflows\business-case-development.js, workflows\balanced-scorecard.js |
+| `skills/pptx` | PowerPoint presentation generation | workflows\strategy-map-creation.js, workflows\annual-strategic-planning.js |
+| `skills/pdf` | PDF document generation | workflows\due-diligence-framework.js, workflows\business-case-development.js |
+| `skills/docx` | Word document creation | workflows\annual-strategic-planning.js, workflows\operating-model-redesign.js |
 
 ---
 
@@ -465,9 +465,9 @@ This reference document supports Phase 5 implementation by identifying:
 - report_generator
 
 **Applicable Processes**:
-- business-case-development.js (all phases)
-- ma-target-screening.js (valuation analysis)
-- balanced-scorecard.js (performance reporting)
+- workflows\business-case-development.js (all phases)
+- workflows\ma-target-screening.js (valuation analysis)
+- workflows\balanced-scorecard.js (performance reporting)
 
 ---
 
@@ -485,9 +485,9 @@ This reference document supports Phase 5 implementation by identifying:
 
 | Skill | Description | Applicable Processes |
 |-------|-------------|---------------------|
-| `kaizen` | Continuous improvement methodology (Lean/Kaizen) | lean-process-optimization.js, six-sigma-dmaic.js |
-| `product-strategist` | OKR cascades, strategic planning | okr-development.js, annual-strategic-planning.js |
-| `meeting-insights-analyzer` | Meeting analysis, leadership patterns | kotter-change-management.js, stakeholder analysis |
+| `kaizen` | Continuous improvement methodology (Lean/Kaizen) | workflows\lean-process-optimization.js, workflows\six-sigma-dmaic.js |
+| `product-strategist` | OKR cascades, strategic planning | workflows\okr-development.js, workflows\annual-strategic-planning.js |
+| `meeting-insights-analyzer` | Meeting analysis, leadership patterns | workflows\kotter-change-management.js, stakeholder analysis |
 
 ---
 
@@ -502,9 +502,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Strategic planning capabilities
 
 **Applicable Processes**:
-- okr-development.js (OKR generation)
-- annual-strategic-planning.js (vision alignment)
-- strategy-map-creation.js (objective mapping)
+- workflows\okr-development.js (OKR generation)
+- workflows\annual-strategic-planning.js (vision alignment)
+- workflows\strategy-map-creation.js (objective mapping)
 
 ---
 
@@ -537,9 +537,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Dependency tracking
 
 **Applicable Processes**:
-- okr-development.js (all phases)
-- balanced-scorecard.js (objective alignment)
-- annual-strategic-planning.js (goal setting)
+- workflows\okr-development.js (all phases)
+- workflows\balanced-scorecard.js (objective alignment)
+- workflows\annual-strategic-planning.js (goal setting)
 
 ---
 
@@ -550,9 +550,9 @@ This reference document supports Phase 5 implementation by identifying:
 **Description**: Manus-style persistent markdown planning for project management.
 
 **Applicable Processes**:
-- strategic-initiative-portfolio.js (initiative tracking)
-- digital-transformation-roadmap.js (transformation planning)
-- post-merger-integration.js (integration planning)
+- workflows\strategic-initiative-portfolio.js (initiative tracking)
+- workflows\digital-transformation-roadmap.js (transformation planning)
+- workflows\post-merger-integration.js (integration planning)
 
 ---
 
@@ -574,9 +574,9 @@ This reference document supports Phase 5 implementation by identifying:
 | `metrics-dashboard.js` | Dashboard design, KPI tracking |
 
 **Applicable Business Strategy Processes**:
-- competitive-intelligence.js (from competitive-analysis.js)
-- value-proposition-design.js (from jtbd-analysis.js)
-- balanced-scorecard.js (from metrics-dashboard.js)
+- workflows\competitive-intelligence.js (from competitive-analysis.js)
+- workflows\value-proposition-design.js (from jtbd-analysis.js)
+- workflows\balanced-scorecard.js (from metrics-dashboard.js)
 
 ---
 
@@ -594,9 +594,9 @@ This reference document supports Phase 5 implementation by identifying:
 | `ab-testing-pipeline.js` | Experimental design |
 
 **Applicable Business Strategy Processes**:
-- balanced-scorecard.js (from bi-dashboard.js)
-- six-sigma-dmaic.js (from data-quality-framework.js)
-- business-case-development.js (from metrics-layer.js)
+- workflows\balanced-scorecard.js (from bi-dashboard.js)
+- workflows\six-sigma-dmaic.js (from data-quality-framework.js)
+- workflows\business-case-development.js (from metrics-layer.js)
 
 ---
 
@@ -613,9 +613,9 @@ This reference document supports Phase 5 implementation by identifying:
 | `cost-optimization.js` | Cost analysis methodology |
 
 **Applicable Business Strategy Processes**:
-- balanced-scorecard.js (from slo-sli-tracking.js)
-- lean-process-optimization.js (from cost-optimization.js)
-- kotter-change-management.js (from incident-response.js patterns)
+- workflows\balanced-scorecard.js (from slo-sli-tracking.js)
+- workflows\lean-process-optimization.js (from cost-optimization.js)
+- workflows\kotter-change-management.js (from incident-response.js patterns)
 
 ---
 
@@ -632,8 +632,8 @@ This reference document supports Phase 5 implementation by identifying:
 | `knowledge-base-setup.js` | Knowledge management |
 
 **Applicable Business Strategy Processes**:
-- strategy-map-creation.js (from content-strategy.js)
-- annual-strategic-planning.js (from adr-docs.js patterns)
+- workflows\strategy-map-creation.js (from content-strategy.js)
+- workflows\annual-strategic-planning.js (from adr-docs.js patterns)
 
 ---
 
@@ -650,9 +650,9 @@ This reference document supports Phase 5 implementation by identifying:
 | `experiment-planning.js` | Experimental design |
 
 **Applicable Business Strategy Processes**:
-- scenario-planning.js (from experiment-planning.js)
-- six-sigma-dmaic.js (from eda-pipeline.js)
-- business-case-development.js (from model-evaluation.js patterns)
+- workflows\scenario-planning.js (from experiment-planning.js)
+- workflows\six-sigma-dmaic.js (from eda-pipeline.js)
+- workflows\business-case-development.js (from model-evaluation.js patterns)
 
 ---
 
@@ -670,9 +670,9 @@ This reference document supports Phase 5 implementation by identifying:
 | `user-research.js` | Research synthesis |
 
 **Applicable Business Strategy Processes**:
-- value-proposition-design.js (from persona-development.js)
-- blue-ocean-strategy.js (from user-journey-mapping.js)
-- business-process-reengineering.js (from design-sprint.js)
+- workflows\value-proposition-design.js (from persona-development.js)
+- workflows\blue-ocean-strategy.js (from user-journey-mapping.js)
+- workflows\business-process-reengineering.js (from design-sprint.js)
 
 ---
 
@@ -691,9 +691,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Strategy-to-tactics connection
 
 **Applicable Processes**:
-- balanced-scorecard.js (methodology reference)
-- okr-development.js (OKR templates)
-- strategy-map-creation.js (mapping approach)
+- workflows\balanced-scorecard.js (methodology reference)
+- workflows\okr-development.js (OKR templates)
+- workflows\strategy-map-creation.js (mapping approach)
 
 ---
 
@@ -710,9 +710,9 @@ This reference document supports Phase 5 implementation by identifying:
 - Revenue model examples
 
 **Applicable Processes**:
-- business-model-canvas.js (methodology reference)
-- value-proposition-design.js (VP templates)
-- blue-ocean-strategy.js (business model innovation)
+- workflows\business-model-canvas.js (methodology reference)
+- workflows\value-proposition-design.js (VP templates)
+- workflows\blue-ocean-strategy.js (business model innovation)
 
 ---
 
@@ -728,8 +728,8 @@ This reference document supports Phase 5 implementation by identifying:
 - Export capabilities
 
 **Applicable Processes**:
-- business-model-canvas.js (canvas generation)
-- value-proposition-design.js (VP canvas)
+- workflows\business-model-canvas.js (canvas generation)
+- workflows\value-proposition-design.js (VP canvas)
 
 ---
 
@@ -740,7 +740,7 @@ This reference document supports Phase 5 implementation by identifying:
 **Description**: Open source Business Model Canvas generator using Ember.js.
 
 **Applicable Processes**:
-- business-model-canvas.js (visualization)
+- workflows\business-model-canvas.js (visualization)
 
 ---
 
@@ -773,62 +773,62 @@ This reference document supports Phase 5 implementation by identifying:
 
 | Process | Primary References | Secondary References |
 |---------|-------------------|---------------------|
-| swot-analysis.js | Octagon Deep Research, Adalyst MCP | product-management/competitive-analysis.js |
-| porters-five-forces.js | Financial Modeling Prep, TAM MCP | mcp-server-chart |
-| pestel-analysis.js | Octagon Deep Research, Reddit Research | data-science-ml/eda-pipeline.js |
-| scenario-planning.js | TAM MCP, Financial Datasets | data-science-ml/experiment-planning.js |
-| competitive-intelligence.js | Adalyst MCP, Octagon MCP, Reddit Research | product-management/competitive-analysis.js |
+| workflows\swot-analysis.js | Octagon Deep Research, Adalyst MCP | product-management/competitive-analysis.js |
+| workflows\porters-five-forces.js | Financial Modeling Prep, TAM MCP | mcp-server-chart |
+| workflows\pestel-analysis.js | Octagon Deep Research, Reddit Research | data-science-ml/eda-pipeline.js |
+| workflows\scenario-planning.js | TAM MCP, Financial Datasets | data-science-ml/experiment-planning.js |
+| workflows\competitive-intelligence.js | Adalyst MCP, Octagon MCP, Reddit Research | product-management/competitive-analysis.js |
 
 ### Business Model and Value Creation Processes
 
 | Process | Primary References | Secondary References |
 |---------|-------------------|---------------------|
-| business-model-canvas.js | business-model-canvas repo, bcanvas | xlsx skill |
-| value-proposition-design.js | Reddit Research, jtbd-analysis.js | persona-development.js |
-| blue-ocean-strategy.js | mcp-server-chart, Octagon Research | user-journey-mapping.js |
-| core-competency-assessment.js | Financial Modeling Prep | swot-analysis patterns |
+| workflows\business-model-canvas.js | business-model-canvas repo, bcanvas | xlsx skill |
+| workflows\value-proposition-design.js | Reddit Research, jtbd-analysis.js | persona-development.js |
+| workflows\blue-ocean-strategy.js | mcp-server-chart, Octagon Research | user-journey-mapping.js |
+| workflows\core-competency-assessment.js | Financial Modeling Prep | swot-analysis patterns |
 
 ### Strategic Planning and Execution Processes
 
 | Process | Primary References | Secondary References |
 |---------|-------------------|---------------------|
-| annual-strategic-planning.js | strategic-balanced-scorecard repo, product-strategist | pptx skill, planning-with-files |
-| okr-development.js | OKR Recipe, product-strategist | HubSpot MCP |
-| balanced-scorecard.js | strategic-balanced-scorecard repo, xlsx skill | bi-dashboard.js, mcp-server-chart |
-| strategy-map-creation.js | mcp-server-chart, mermaid MCP | pptx skill |
-| strategic-initiative-portfolio.js | planning-with-files, xlsx skill | Notion MCP |
+| workflows\annual-strategic-planning.js | strategic-balanced-scorecard repo, product-strategist | pptx skill, planning-with-files |
+| workflows\okr-development.js | OKR Recipe, product-strategist | HubSpot MCP |
+| workflows\balanced-scorecard.js | strategic-balanced-scorecard repo, xlsx skill | bi-dashboard.js, mcp-server-chart |
+| workflows\strategy-map-creation.js | mcp-server-chart, mermaid MCP | pptx skill |
+| workflows\strategic-initiative-portfolio.js | planning-with-files, xlsx skill | Notion MCP |
 
 ### Operational Excellence Processes
 
 | Process | Primary References | Secondary References |
 |---------|-------------------|---------------------|
-| lean-process-optimization.js | kaizen skill | cost-optimization.js |
-| six-sigma-dmaic.js | kaizen skill, eda-pipeline.js | data-quality-framework.js |
-| business-process-reengineering.js | mermaid MCP, design-sprint.js | value-stream-mapping patterns |
-| value-stream-mapping.js | mermaid MCP, mcp-server-chart | devops-sre patterns |
+| workflows\lean-process-optimization.js | kaizen skill | cost-optimization.js |
+| workflows\six-sigma-dmaic.js | kaizen skill, eda-pipeline.js | data-quality-framework.js |
+| workflows\business-process-reengineering.js | mermaid MCP, design-sprint.js | value-stream-mapping patterns |
+| workflows\value-stream-mapping.js | mermaid MCP, mcp-server-chart | devops-sre patterns |
 
 ### Change Management and Transformation Processes
 
 | Process | Primary References | Secondary References |
 |---------|-------------------|---------------------|
-| kotter-change-management.js | meeting-insights-analyzer | incident-response.js patterns |
-| digital-transformation-roadmap.js | planning-with-files, Notion MCP | Google Calendar MCP |
-| operating-model-redesign.js | mermaid MCP, docx skill | org chart visualization |
+| workflows\kotter-change-management.js | meeting-insights-analyzer | incident-response.js patterns |
+| workflows\digital-transformation-roadmap.js | planning-with-files, Notion MCP | Google Calendar MCP |
+| workflows\operating-model-redesign.js | mermaid MCP, docx skill | org chart visualization |
 
 ### M&A and Growth Processes
 
 | Process | Primary References | Secondary References |
 |---------|-------------------|---------------------|
-| ma-target-screening.js | Companies House MCP, Financial Modeling Prep, Octagon MCP | SEC MCP |
-| due-diligence-framework.js | Companies House MCP, SEC MCP, Financial Datasets | pdf skill |
-| post-merger-integration.js | planning-with-files, Google Calendar MCP | Notion MCP |
-| growth-strategy-ansoff.js | TAM MCP, Financial Modeling Prep | competitive-analysis.js |
+| workflows\ma-target-screening.js | Companies House MCP, Financial Modeling Prep, Octagon MCP | SEC MCP |
+| workflows\due-diligence-framework.js | Companies House MCP, SEC MCP, Financial Datasets | pdf skill |
+| workflows\post-merger-integration.js | planning-with-files, Google Calendar MCP | Notion MCP |
+| workflows\growth-strategy-ansoff.js | TAM MCP, Financial Modeling Prep | competitive-analysis.js |
 
 ### Business Case Processes
 
 | Process | Primary References | Secondary References |
 |---------|-------------------|---------------------|
-| business-case-development.js | financial_analyzer skill, Financial Modeling Prep, xlsx skill | pptx skill, report_generator |
+| workflows\business-case-development.js | financial_analyzer skill, Financial Modeling Prep, xlsx skill | pptx skill, report_generator |
 
 ---
 
@@ -942,3 +942,5 @@ This reference document supports Phase 5 implementation by identifying:
 **Version**: 1.0.0
 **Status**: Phase 5 - Skills and Agents References Completed
 **Next Step**: Phase 6 - Implement specialized skills and agents based on backlog priorities
+
+

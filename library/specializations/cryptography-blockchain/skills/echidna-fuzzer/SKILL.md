@@ -1,4 +1,4 @@
----
+﻿---
 name: echidna-fuzzer
 description: Property-based testing and fuzzing using Echidna for smart contracts. Includes invariant definition, corpus management, coverage analysis, and CI/CD integration for comprehensive security testing.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -242,13 +242,13 @@ open corpus/covered.html
 
 ```
 corpus/
-├── coverage/
-│   ├── covered.txt
-│   └── covered.html
-├── reproducers/
-│   └── failing_test.txt
-└── corpus/
-    └── sequence_1234.txt
+â”œâ”€â”€ coverage/
+â”‚   â”œâ”€â”€ covered.txt
+â”‚   â””â”€â”€ covered.html
+â”œâ”€â”€ reproducers/
+â”‚   â””â”€â”€ failing_test.txt
+â””â”€â”€ corpus/
+    â””â”€â”€ sequence_1234.txt
 ```
 
 ### Replay Corpus
@@ -345,8 +345,9 @@ shrinkLimit: 1000  # Reduce shrinking
 
 ## See Also
 
-- `skills/slither-analysis/SKILL.md` - Static analysis
-- `skills/mythril-symbolic/SKILL.md` - Symbolic execution
-- `skills/foundry-framework/SKILL.md` - Forge invariant testing
+- `SKILL.md` - Static analysis
+- `SKILL.md` - Symbolic execution
+- `SKILL.md` - Forge invariant testing
 - `agents/solidity-auditor/AGENT.md` - Security auditor
 - [Echidna Documentation](https://github.com/crytic/echidna)
+

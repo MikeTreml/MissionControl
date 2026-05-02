@@ -142,6 +142,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Functional verification must pass
+  if (!functionalSimulation.allTestsPassed) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -179,6 +180,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Timing must be met
+  if (!synthesisAnalysis.timingMet) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -819,3 +821,4 @@ export const implementationDocumentationTask = defineTask('implementation-docume
   },
   labels: ['ee', 'digital', 'hdl', 'documentation']
 }));
+

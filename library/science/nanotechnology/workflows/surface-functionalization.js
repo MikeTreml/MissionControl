@@ -116,6 +116,7 @@ export async function process(inputs, ctx) {
       characterization: coverageCharacterization
     });
 
+    if (currentCoverage < targetCoverage && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -146,6 +147,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Stability must meet threshold
+  if (stabilityAssessment.score < stabilityThreshold) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -612,3 +614,4 @@ export const functionalizationDocumentationTask = defineTask('functionalization-
   },
   labels: ['nanotechnology', 'documentation', 'functionalization']
 }));
+

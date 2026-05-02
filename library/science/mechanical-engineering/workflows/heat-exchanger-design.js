@@ -167,6 +167,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Pressure drop limits
   if (hydraulicResult.shellPressureDrop > pressureDropLimits.shell ||
+      hydraulicResult.tubePressureDrop > pressureDropLimits.tube) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -764,3 +765,5 @@ export const generateHXReportTask = defineTask('generate-hx-report', (args, task
   },
   labels: ['mechanical-engineering', 'heat-exchanger', 'reporting']
 }));
+
+

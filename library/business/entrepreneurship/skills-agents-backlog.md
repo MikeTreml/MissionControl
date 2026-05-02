@@ -1,4 +1,4 @@
-# Entrepreneurship and Startup Processes - Skills and Agents Backlog
+﻿# Entrepreneurship and Startup Processes - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Entrepreneurship and Startup processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized startup tooling.
 
@@ -23,43 +23,43 @@ All 25 implemented processes in this specialization currently use the `general-p
 ### Implemented Processes
 
 #### Idea Validation and Customer Discovery
-1. `customer-discovery-interview.js` - Customer discovery following The Mom Test
-2. `problem-solution-fit-validation.js` - Problem-solution fit validation
-3. `market-sizing-analysis.js` - TAM/SAM/SOM market sizing
-4. `competitive-landscape-mapping.js` - Competitive landscape analysis
+1. `workflows\customer-discovery-interview.js` - Customer discovery following The Mom Test
+2. `workflows\problem-solution-fit-validation.js` - Problem-solution fit validation
+3. `workflows\market-sizing-analysis.js` - TAM/SAM/SOM market sizing
+4. `workflows\competitive-landscape-mapping.js` - Competitive landscape analysis
 
 #### Pitch Deck and Presentations
-5. `investor-pitch-deck.js` - Investor pitch deck development
-6. `demo-day-presentation.js` - Demo day presentation preparation
-7. `board-meeting-presentation.js` - Board meeting presentations
+5. `workflows\investor-pitch-deck.js` - Investor pitch deck development
+6. `workflows\demo-day-presentation.js` - Demo day presentation preparation
+7. `workflows\board-meeting-presentation.js` - Board meeting presentations
 
 #### Fundraising Processes
-8. `pre-seed-fundraising.js` - Pre-seed/Seed fundraising
-9. `series-a-fundraising.js` - Series A fundraising
-10. `due-diligence-preparation.js` - Due diligence preparation
-11. `investor-update-communication.js` - Investor update communications
+8. `workflows\pre-seed-fundraising.js` - Pre-seed/Seed fundraising
+9. `workflows\series-a-fundraising.js` - Series A fundraising
+10. `workflows\due-diligence-preparation.js` - Due diligence preparation
+11. `workflows\investor-update-communication.js` - Investor update communications
 
 #### Business Planning and Strategy
-12. `business-model-canvas.js` - Business Model Canvas development
-13. `financial-model-development.js` - Financial model building
-14. `gtm-strategy-development.js` - Go-to-market strategy
-15. `business-plan-document.js` - Business plan creation
+12. `workflows\business-model-canvas.js` - Business Model Canvas development
+13. `workflows\financial-model-development.js` - Financial model building
+14. `workflows\gtm-strategy-development.js` - Go-to-market strategy
+15. `workflows\business-plan-document.js` - Business plan creation
 
 #### Product-Market Fit
-16. `mvp-definition-development.js` - MVP definition and development
-17. `product-market-fit-assessment.js` - PMF assessment
-18. `pivot-decision-framework.js` - Pivot or persevere decisions
+16. `workflows\mvp-definition-development.js` - MVP definition and development
+17. `workflows\product-market-fit-assessment.js` - PMF assessment
+18. `workflows\pivot-decision-framework.js` - Pivot or persevere decisions
 
 #### Growth and Scaling
-19. `traction-channel-identification.js` - Bullseye Framework traction channels
-20. `growth-experiment-design.js` - Growth experiment design
-21. `scaling-operations-playbook.js` - Scaling operations
-22. `international-expansion-planning.js` - International expansion
+19. `workflows\traction-channel-identification.js` - Bullseye Framework traction channels
+20. `workflows\growth-experiment-design.js` - Growth experiment design
+21. `workflows\scaling-operations-playbook.js` - Scaling operations
+22. `workflows\international-expansion-planning.js` - International expansion
 
 #### Team and Culture
-23. `founding-team-formation.js` - Co-founder evaluation and agreements
-24. `startup-hiring-process.js` - Early-stage hiring
-25. `startup-culture-definition.js` - Culture and values definition
+23. `workflows\founding-team-formation.js` - Co-founder evaluation and agreements
+24. `workflows\startup-hiring-process.js` - Early-stage hiring
+25. `workflows\startup-culture-definition.js` - Culture and values definition
 
 ### Goals
 - Provide deep expertise in startup methodologies (Lean Startup, Customer Development)
@@ -89,10 +89,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Export to various visual formats
 
 **Process Integration**:
-- business-model-canvas.js
-- problem-solution-fit-validation.js
-- pivot-decision-framework.js
-- financial-model-development.js
+- workflows\business-model-canvas.js
+- workflows\problem-solution-fit-validation.js
+- workflows\pivot-decision-framework.js
+- workflows\financial-model-development.js
 
 **Dependencies**: Canvas templates, visualization libraries
 
@@ -115,10 +115,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Export to PowerPoint/Keynote/Google Slides format
 
 **Process Integration**:
-- investor-pitch-deck.js
-- demo-day-presentation.js
-- series-a-fundraising.js
-- pre-seed-fundraising.js
+- workflows\investor-pitch-deck.js
+- workflows\demo-day-presentation.js
+- workflows\series-a-fundraising.js
+- workflows\pre-seed-fundraising.js
 
 **Dependencies**: Presentation templates, DocSend best practices
 
@@ -141,10 +141,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Validate market size assumptions
 
 **Process Integration**:
-- market-sizing-analysis.js
-- investor-pitch-deck.js
-- business-plan-document.js
-- series-a-fundraising.js
+- workflows\market-sizing-analysis.js
+- workflows\investor-pitch-deck.js
+- workflows\business-plan-document.js
+- workflows\series-a-fundraising.js
 
 **Dependencies**: Market data sources, industry reports
 
@@ -167,10 +167,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Compare to industry benchmarks
 
 **Process Integration**:
-- financial-model-development.js
-- product-market-fit-assessment.js
-- series-a-fundraising.js
-- investor-pitch-deck.js
+- workflows\financial-model-development.js
+- workflows\product-market-fit-assessment.js
+- workflows\series-a-fundraising.js
+- workflows\investor-pitch-deck.js
 
 **Dependencies**: Financial formulas, benchmark databases
 
@@ -193,10 +193,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Export to Excel/Google Sheets format
 
 **Process Integration**:
-- financial-model-development.js
-- series-a-fundraising.js
-- due-diligence-preparation.js
-- investor-pitch-deck.js
+- workflows\financial-model-development.js
+- workflows\series-a-fundraising.js
+- workflows\due-diligence-preparation.js
+- workflows\investor-pitch-deck.js
 
 **Dependencies**: Financial modeling templates, Excel generation
 
@@ -219,10 +219,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate investor-ready competitive slides
 
 **Process Integration**:
-- competitive-landscape-mapping.js
-- investor-pitch-deck.js
-- gtm-strategy-development.js
-- product-market-fit-assessment.js
+- workflows\competitive-landscape-mapping.js
+- workflows\investor-pitch-deck.js
+- workflows\gtm-strategy-development.js
+- workflows\product-market-fit-assessment.js
 
 **Dependencies**: Web scraping, news monitoring, Crunchbase API
 
@@ -245,10 +245,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate customer persona attributes
 
 **Process Integration**:
-- customer-discovery-interview.js
-- problem-solution-fit-validation.js
-- product-market-fit-assessment.js
-- mvp-definition-development.js
+- workflows\customer-discovery-interview.js
+- workflows\problem-solution-fit-validation.js
+- workflows\product-market-fit-assessment.js
+- workflows\mvp-definition-development.js
 
 **Dependencies**: NLP capabilities, interview templates
 
@@ -271,10 +271,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Model cap table impacts
 
 **Process Integration**:
-- pre-seed-fundraising.js
-- series-a-fundraising.js
-- due-diligence-preparation.js
-- founding-team-formation.js
+- workflows\pre-seed-fundraising.js
+- workflows\series-a-fundraising.js
+- workflows\due-diligence-preparation.js
+- workflows\founding-team-formation.js
 
 **Dependencies**: Legal term databases, NVCA model documents
 
@@ -297,10 +297,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Export to Carta/Pulley format
 
 **Process Integration**:
-- pre-seed-fundraising.js
-- series-a-fundraising.js
-- founding-team-formation.js
-- due-diligence-preparation.js
+- workflows\pre-seed-fundraising.js
+- workflows\series-a-fundraising.js
+- workflows\founding-team-formation.js
+- workflows\due-diligence-preparation.js
 
 **Dependencies**: Cap table templates, dilution calculators
 
@@ -323,10 +323,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Document MVP learnings framework
 
 **Process Integration**:
-- mvp-definition-development.js
-- problem-solution-fit-validation.js
-- pivot-decision-framework.js
-- product-market-fit-assessment.js
+- workflows\mvp-definition-development.js
+- workflows\problem-solution-fit-validation.js
+- workflows\pivot-decision-framework.js
+- workflows\product-market-fit-assessment.js
 
 **Dependencies**: MVP templates, Lean Startup methodology
 
@@ -349,10 +349,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Create NPS integration
 
 **Process Integration**:
-- product-market-fit-assessment.js
-- mvp-definition-development.js
-- pivot-decision-framework.js
-- growth-experiment-design.js
+- workflows\product-market-fit-assessment.js
+- workflows\mvp-definition-development.js
+- workflows\pivot-decision-framework.js
+- workflows\growth-experiment-design.js
 
 **Dependencies**: Survey platforms, statistical analysis
 
@@ -375,10 +375,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Document learnings and playbooks
 
 **Process Integration**:
-- growth-experiment-design.js
-- traction-channel-identification.js
-- product-market-fit-assessment.js
-- scaling-operations-playbook.js
+- workflows\growth-experiment-design.js
+- workflows\traction-channel-identification.js
+- workflows\product-market-fit-assessment.js
+- workflows\scaling-operations-playbook.js
 
 **Dependencies**: Statistical libraries, experimentation platforms
 
@@ -401,10 +401,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Compare to similar company channels
 
 **Process Integration**:
-- traction-channel-identification.js
-- growth-experiment-design.js
-- gtm-strategy-development.js
-- scaling-operations-playbook.js
+- workflows\traction-channel-identification.js
+- workflows\growth-experiment-design.js
+- workflows\gtm-strategy-development.js
+- workflows\scaling-operations-playbook.js
 
 **Dependencies**: Traction framework, channel benchmarks
 
@@ -427,10 +427,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Manage follow-up cadence
 
 **Process Integration**:
-- pre-seed-fundraising.js
-- series-a-fundraising.js
-- investor-update-communication.js
-- demo-day-presentation.js
+- workflows\pre-seed-fundraising.js
+- workflows\series-a-fundraising.js
+- workflows\investor-update-communication.js
+- workflows\demo-day-presentation.js
 
 **Dependencies**: CRM templates, investor databases
 
@@ -453,10 +453,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Track investor activity
 
 **Process Integration**:
-- due-diligence-preparation.js
-- series-a-fundraising.js
-- pre-seed-fundraising.js
-- board-meeting-presentation.js
+- workflows\due-diligence-preparation.js
+- workflows\series-a-fundraising.js
+- workflows\pre-seed-fundraising.js
+- workflows\board-meeting-presentation.js
 
 **Dependencies**: Data room templates, document management
 
@@ -479,10 +479,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Track investor responses
 
 **Process Integration**:
-- investor-update-communication.js
-- board-meeting-presentation.js
-- series-a-fundraising.js
-- due-diligence-preparation.js
+- workflows\investor-update-communication.js
+- workflows\board-meeting-presentation.js
+- workflows\series-a-fundraising.js
+- workflows\due-diligence-preparation.js
 
 **Dependencies**: Email templates, metrics integration
 
@@ -505,10 +505,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate board resolutions
 
 **Process Integration**:
-- founding-team-formation.js
-- due-diligence-preparation.js
-- startup-culture-definition.js
-- series-a-fundraising.js
+- workflows\founding-team-formation.js
+- workflows\due-diligence-preparation.js
+- workflows\startup-culture-definition.js
+- workflows\series-a-fundraising.js
 
 **Dependencies**: Legal templates, vesting calculators
 
@@ -531,10 +531,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Alert on metric thresholds
 
 **Process Integration**:
-- financial-model-development.js
-- product-market-fit-assessment.js
-- investor-update-communication.js
-- growth-experiment-design.js
+- workflows\financial-model-development.js
+- workflows\product-market-fit-assessment.js
+- workflows\investor-update-communication.js
+- workflows\growth-experiment-design.js
 
 **Dependencies**: Analytics platforms, visualization libraries
 
@@ -557,10 +557,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Plan geographic expansion
 
 **Process Integration**:
-- gtm-strategy-development.js
-- product-market-fit-assessment.js
-- scaling-operations-playbook.js
-- international-expansion-planning.js
+- workflows\gtm-strategy-development.js
+- workflows\product-market-fit-assessment.js
+- workflows\scaling-operations-playbook.js
+- workflows\international-expansion-planning.js
 
 **Dependencies**: GTM frameworks, channel templates
 
@@ -583,10 +583,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Track post-pivot progress
 
 **Process Integration**:
-- pivot-decision-framework.js
-- product-market-fit-assessment.js
-- business-model-canvas.js
-- mvp-definition-development.js
+- workflows\pivot-decision-framework.js
+- workflows\product-market-fit-assessment.js
+- workflows\business-model-canvas.js
+- workflows\mvp-definition-development.js
 
 **Dependencies**: Lean Startup methodology, decision frameworks
 
@@ -616,10 +616,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: YC/Techstars alumni, angel investor
 
 **Process Integration**:
-- founding-team-formation.js (all phases)
-- pivot-decision-framework.js (decision support)
-- startup-culture-definition.js (culture guidance)
-- business-model-canvas.js (business design)
+- workflows\founding-team-formation.js (all phases)
+- workflows\pivot-decision-framework.js (decision support)
+- workflows\startup-culture-definition.js (culture guidance)
+- workflows\business-model-canvas.js (business design)
 
 ---
 
@@ -643,10 +643,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Former founder, 50+ board seats
 
 **Process Integration**:
-- series-a-fundraising.js (all phases)
-- pre-seed-fundraising.js (strategy phases)
-- investor-pitch-deck.js (feedback)
-- board-meeting-presentation.js (board dynamics)
+- workflows\series-a-fundraising.js (all phases)
+- workflows\pre-seed-fundraising.js (strategy phases)
+- workflows\investor-pitch-deck.js (feedback)
+- workflows\board-meeting-presentation.js (board dynamics)
 
 ---
 
@@ -670,10 +670,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Eric Ries trained, Steve Blank certified
 
 **Process Integration**:
-- customer-discovery-interview.js (all phases)
-- mvp-definition-development.js (all phases)
-- problem-solution-fit-validation.js (all phases)
-- pivot-decision-framework.js (methodology)
+- workflows\customer-discovery-interview.js (all phases)
+- workflows\mvp-definition-development.js (all phases)
+- workflows\problem-solution-fit-validation.js (all phases)
+- workflows\pivot-decision-framework.js (methodology)
 
 ---
 
@@ -697,10 +697,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Big 4 accounting + multiple startup CFO roles
 
 **Process Integration**:
-- financial-model-development.js (all phases)
-- series-a-fundraising.js (financial preparation)
-- due-diligence-preparation.js (financial diligence)
-- investor-update-communication.js (financial reporting)
+- workflows\financial-model-development.js (all phases)
+- workflows\series-a-fundraising.js (financial preparation)
+- workflows\due-diligence-preparation.js (financial diligence)
+- workflows\investor-update-communication.js (financial reporting)
 
 ---
 
@@ -724,10 +724,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: 0-to-1 growth at multiple startups
 
 **Process Integration**:
-- growth-experiment-design.js (all phases)
-- traction-channel-identification.js (all phases)
-- product-market-fit-assessment.js (growth signals)
-- scaling-operations-playbook.js (growth scaling)
+- workflows\growth-experiment-design.js (all phases)
+- workflows\traction-channel-identification.js (all phases)
+- workflows\product-market-fit-assessment.js (growth signals)
+- workflows\scaling-operations-playbook.js (growth scaling)
 
 ---
 
@@ -751,10 +751,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Accelerator experience, former VC
 
 **Process Integration**:
-- investor-pitch-deck.js (all phases)
-- demo-day-presentation.js (all phases)
-- pre-seed-fundraising.js (pitch development)
-- series-a-fundraising.js (partner meetings)
+- workflows\investor-pitch-deck.js (all phases)
+- workflows\demo-day-presentation.js (all phases)
+- workflows\pre-seed-fundraising.js (pitch development)
+- workflows\series-a-fundraising.js (partner meetings)
 
 ---
 
@@ -778,10 +778,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Management consulting, equity research
 
 **Process Integration**:
-- market-sizing-analysis.js (all phases)
-- competitive-landscape-mapping.js (all phases)
-- gtm-strategy-development.js (market analysis)
-- international-expansion-planning.js (market selection)
+- workflows\market-sizing-analysis.js (all phases)
+- workflows\competitive-landscape-mapping.js (all phases)
+- workflows\gtm-strategy-development.js (market analysis)
+- workflows\international-expansion-planning.js (market selection)
 
 ---
 
@@ -805,10 +805,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Product leadership, startup advisor
 
 **Process Integration**:
-- product-market-fit-assessment.js (all phases)
-- mvp-definition-development.js (PMF planning)
-- pivot-decision-framework.js (PMF signals)
-- growth-experiment-design.js (post-PMF growth)
+- workflows\product-market-fit-assessment.js (all phases)
+- workflows\mvp-definition-development.js (PMF planning)
+- workflows\pivot-decision-framework.js (PMF signals)
+- workflows\growth-experiment-design.js (post-PMF growth)
 
 ---
 
@@ -832,10 +832,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Top startup law firm, in-house GC
 
 **Process Integration**:
-- founding-team-formation.js (legal structure)
-- pre-seed-fundraising.js (SAFE terms)
-- series-a-fundraising.js (definitive docs)
-- due-diligence-preparation.js (legal diligence)
+- workflows\founding-team-formation.js (legal structure)
+- workflows\pre-seed-fundraising.js (SAFE terms)
+- workflows\series-a-fundraising.js (definitive docs)
+- workflows\due-diligence-preparation.js (legal diligence)
 
 ---
 
@@ -859,10 +859,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Scaled multiple startups from 10 to 500+
 
 **Process Integration**:
-- scaling-operations-playbook.js (all phases)
-- international-expansion-planning.js (ops planning)
-- startup-hiring-process.js (hiring at scale)
-- startup-culture-definition.js (culture at scale)
+- workflows\scaling-operations-playbook.js (all phases)
+- workflows\international-expansion-planning.js (ops planning)
+- workflows\startup-hiring-process.js (hiring at scale)
+- workflows\startup-culture-definition.js (culture at scale)
 
 ---
 
@@ -886,10 +886,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Recruiting at hyper-growth startups
 
 **Process Integration**:
-- startup-hiring-process.js (all phases)
-- founding-team-formation.js (team composition)
-- startup-culture-definition.js (culture fit)
-- scaling-operations-playbook.js (hiring scaling)
+- workflows\startup-hiring-process.js (all phases)
+- workflows\founding-team-formation.js (team composition)
+- workflows\startup-culture-definition.js (culture fit)
+- workflows\scaling-operations-playbook.js (hiring scaling)
 
 ---
 
@@ -913,10 +913,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Strategyzer certified, McKinsey alumnus
 
 **Process Integration**:
-- business-model-canvas.js (all phases)
-- gtm-strategy-development.js (monetization)
-- financial-model-development.js (revenue modeling)
-- pivot-decision-framework.js (model pivots)
+- workflows\business-model-canvas.js (all phases)
+- workflows\gtm-strategy-development.js (monetization)
+- workflows\financial-model-development.js (revenue modeling)
+- workflows\pivot-decision-framework.js (model pivots)
 
 ---
 
@@ -940,10 +940,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Multiple 0-to-1 startups
 
 **Process Integration**:
-- customer-discovery-interview.js (all phases)
-- problem-solution-fit-validation.js (validation)
-- mvp-definition-development.js (customer testing)
-- product-market-fit-assessment.js (validation signals)
+- workflows\customer-discovery-interview.js (all phases)
+- workflows\problem-solution-fit-validation.js (validation)
+- workflows\mvp-definition-development.js (customer testing)
+- workflows\product-market-fit-assessment.js (validation signals)
 
 ---
 
@@ -967,10 +967,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Successful founder turned angel
 
 **Process Integration**:
-- pre-seed-fundraising.js (all phases)
-- investor-pitch-deck.js (angel feedback)
-- demo-day-presentation.js (angel audience)
-- investor-update-communication.js (angel updates)
+- workflows\pre-seed-fundraising.js (all phases)
+- workflows\investor-pitch-deck.js (angel feedback)
+- workflows\demo-day-presentation.js (angel audience)
+- workflows\investor-update-communication.js (angel updates)
 
 ---
 
@@ -994,10 +994,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Former founder, accelerator leadership
 
 **Process Integration**:
-- demo-day-presentation.js (all phases)
-- investor-pitch-deck.js (accelerator context)
-- pre-seed-fundraising.js (accelerator fundraising)
-- founding-team-formation.js (team feedback)
+- workflows\demo-day-presentation.js (all phases)
+- workflows\investor-pitch-deck.js (accelerator context)
+- workflows\pre-seed-fundraising.js (accelerator fundraising)
+- workflows\founding-team-formation.js (team feedback)
 
 ---
 
@@ -1007,31 +1007,31 @@ All 25 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| customer-discovery-interview.js | SK-007 | AG-003, AG-013 |
-| problem-solution-fit-validation.js | SK-007, SK-010 | AG-003, AG-008 |
-| market-sizing-analysis.js | SK-003, SK-006 | AG-007 |
-| competitive-landscape-mapping.js | SK-006 | AG-007 |
-| investor-pitch-deck.js | SK-002, SK-003, SK-004 | AG-006, AG-002 |
-| demo-day-presentation.js | SK-002 | AG-006, AG-015 |
-| board-meeting-presentation.js | SK-016, SK-018 | AG-004, AG-002 |
-| pre-seed-fundraising.js | SK-008, SK-009, SK-014 | AG-014, AG-003 |
-| series-a-fundraising.js | SK-004, SK-005, SK-008, SK-015 | AG-002, AG-004 |
-| due-diligence-preparation.js | SK-015, SK-09 | AG-009, AG-004 |
-| investor-update-communication.js | SK-016, SK-018 | AG-004, AG-014 |
-| business-model-canvas.js | SK-001, SK-004 | AG-012, AG-003 |
-| financial-model-development.js | SK-004, SK-005, SK-018 | AG-004 |
-| gtm-strategy-development.js | SK-019, SK-006 | AG-007, AG-005 |
-| business-plan-document.js | SK-001, SK-003, SK-005 | AG-012, AG-007 |
-| mvp-definition-development.js | SK-010, SK-007 | AG-003, AG-008 |
-| product-market-fit-assessment.js | SK-011, SK-004, SK-018 | AG-008, AG-005 |
-| pivot-decision-framework.js | SK-020, SK-001 | AG-003, AG-001 |
-| traction-channel-identification.js | SK-013, SK-012 | AG-005 |
-| growth-experiment-design.js | SK-012, SK-018 | AG-005, AG-008 |
-| scaling-operations-playbook.js | SK-019, SK-013 | AG-010 |
-| international-expansion-planning.js | SK-003, SK-019 | AG-010, AG-007 |
-| founding-team-formation.js | SK-017, SK-009 | AG-001, AG-009, AG-011 |
-| startup-hiring-process.js | SK-017 | AG-011, AG-010 |
-| startup-culture-definition.js | SK-017 | AG-001, AG-011, AG-010 |
+| workflows\customer-discovery-interview.js | SK-007 | AG-003, AG-013 |
+| workflows\problem-solution-fit-validation.js | SK-007, SK-010 | AG-003, AG-008 |
+| workflows\market-sizing-analysis.js | SK-003, SK-006 | AG-007 |
+| workflows\competitive-landscape-mapping.js | SK-006 | AG-007 |
+| workflows\investor-pitch-deck.js | SK-002, SK-003, SK-004 | AG-006, AG-002 |
+| workflows\demo-day-presentation.js | SK-002 | AG-006, AG-015 |
+| workflows\board-meeting-presentation.js | SK-016, SK-018 | AG-004, AG-002 |
+| workflows\pre-seed-fundraising.js | SK-008, SK-009, SK-014 | AG-014, AG-003 |
+| workflows\series-a-fundraising.js | SK-004, SK-005, SK-008, SK-015 | AG-002, AG-004 |
+| workflows\due-diligence-preparation.js | SK-015, SK-09 | AG-009, AG-004 |
+| workflows\investor-update-communication.js | SK-016, SK-018 | AG-004, AG-014 |
+| workflows\business-model-canvas.js | SK-001, SK-004 | AG-012, AG-003 |
+| workflows\financial-model-development.js | SK-004, SK-005, SK-018 | AG-004 |
+| workflows\gtm-strategy-development.js | SK-019, SK-006 | AG-007, AG-005 |
+| workflows\business-plan-document.js | SK-001, SK-003, SK-005 | AG-012, AG-007 |
+| workflows\mvp-definition-development.js | SK-010, SK-007 | AG-003, AG-008 |
+| workflows\product-market-fit-assessment.js | SK-011, SK-004, SK-018 | AG-008, AG-005 |
+| workflows\pivot-decision-framework.js | SK-020, SK-001 | AG-003, AG-001 |
+| workflows\traction-channel-identification.js | SK-013, SK-012 | AG-005 |
+| workflows\growth-experiment-design.js | SK-012, SK-018 | AG-005, AG-008 |
+| workflows\scaling-operations-playbook.js | SK-019, SK-013 | AG-010 |
+| workflows\international-expansion-planning.js | SK-003, SK-019 | AG-010, AG-007 |
+| workflows\founding-team-formation.js | SK-017, SK-009 | AG-001, AG-009, AG-011 |
+| workflows\startup-hiring-process.js | SK-017 | AG-011, AG-010 |
+| workflows\startup-culture-definition.js | SK-017 | AG-001, AG-011, AG-010 |
 
 ---
 
@@ -1136,3 +1136,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

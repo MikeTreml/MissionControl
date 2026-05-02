@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, analyticsProviders, privacyCompliance, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -135,3 +136,4 @@ export const dataRetentionTask = createAnalyticsTask('data-retention', 'Data Ret
 export const abTestingIntegrationTask = createAnalyticsTask('ab-testing-integration', 'A/B Testing Integration');
 export const attributionTrackingTask = createAnalyticsTask('attribution-tracking', 'Attribution Tracking');
 export const documentationTask = createAnalyticsTask('documentation', 'Analytics Documentation');
+

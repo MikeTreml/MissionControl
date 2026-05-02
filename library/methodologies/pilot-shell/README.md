@@ -1,4 +1,4 @@
-# Pilot Shell Methodology for Babysitter SDK
+﻿# Pilot Shell Methodology for Babysitter SDK
 
 Adapted from [Pilot Shell](https://github.com/maxritter/pilot-shell) by Max Ritter -- a spec-driven development framework with strict TDD, quality hooks, and persistent memory.
 
@@ -10,11 +10,11 @@ Pilot Shell is a comprehensive development methodology that enforces spec-driven
 
 | File | Process ID | Description | Tasks |
 |------|-----------|-------------|-------|
-| `pilot-shell-orchestrator.js` | `pilot-shell/orchestrator` | Full lifecycle: mode routing -> plan -> implement -> verify -> merge | 17 |
-| `pilot-shell-feature.js` | `pilot-shell/feature` | Feature mode: semantic search -> spec -> TDD -> unified review -> merge | 14 |
-| `pilot-shell-bugfix.js` | `pilot-shell/bugfix` | Bugfix mode: analysis -> behavior contract -> test-before-fix -> verify | 9 |
-| `pilot-shell-sync.js` | `pilot-shell/sync` | Codebase sync: explore -> index -> conventions -> rules | 8 |
-| `pilot-shell-quality-pipeline.js` | `pilot-shell/quality-pipeline` | Quality hooks: lint/format/typecheck -> TDD -> context monitoring | 9 |
+| `workflows\pilot-shell-orchestrator.js` | `pilot-shell/orchestrator` | Full lifecycle: mode routing -> plan -> implement -> verify -> merge | 17 |
+| `workflows\pilot-shell-feature.js` | `pilot-shell/feature` | Feature mode: semantic search -> spec -> TDD -> unified review -> merge | 14 |
+| `workflows\pilot-shell-bugfix.js` | `pilot-shell/bugfix` | Bugfix mode: analysis -> behavior contract -> test-before-fix -> verify | 9 |
+| `workflows\pilot-shell-sync.js` | `pilot-shell/sync` | Codebase sync: explore -> index -> conventions -> rules | 8 |
+| `workflows\pilot-shell-quality-pipeline.js` | `pilot-shell/quality-pipeline` | Quality hooks: lint/format/typecheck -> TDD -> context monitoring | 9 |
 
 ## Skills
 
@@ -83,3 +83,4 @@ See `examples/` directory for input JSON examples for each process.
 ## Attribution
 
 All processes, skills, and agents in this directory are adapted from [Pilot Shell](https://github.com/maxritter/pilot-shell) by Max Ritter. See `references.md` for detailed attribution.
+

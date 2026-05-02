@@ -175,6 +175,7 @@ export async function process(inputs, ctx) {
     arch => arch.exceedsBaseline === true
   );
 
+  if (viableCandidates.length === 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -290,6 +291,7 @@ export async function process(inputs, ctx) {
     risk => risk.severity === 'critical' && !risk.mitigationPlan
   );
 
+  if (criticalRisksWithoutMitigation.length > 0) {
       let lastFeedback_phase11Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase11Review) {
@@ -1472,3 +1474,4 @@ export const architectureRiskAnalysisTask = defineTask('architecture-risk-analys
   },
   labels: ['ml-architecture', 'planning', 'risk-analysis', 'risk-management']
 }));
+

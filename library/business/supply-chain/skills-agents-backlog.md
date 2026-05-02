@@ -1,4 +1,4 @@
-# Supply Chain Management - Skills and Agents Backlog (Phase 6 Complete)
+﻿# Supply Chain Management - Skills and Agents Backlog (Phase 6 Complete)
 
 ## Overview
 
@@ -15,8 +15,8 @@ This backlog identifies specialized skills and agents (subagents) that could enh
 
 ## Phase 6 Status: COMPLETE
 
-All skills and agents have been implemented with SKILL.md and AGENT.md files:
-- Skills location: `./skills/<skill-name>/SKILL.md`
+All skills and agents have been implemented with skills\capacity-constraint-analyzer\SKILL.md and AGENT.md files:
+- Skills location: `./skills/<skill-name>/skills\capacity-constraint-analyzer\SKILL.md`
 - Agents location: `./agents/<agent-name>/AGENT.md`
 
 ---
@@ -1374,3 +1374,5 @@ These skills and agents could be shared with other specializations:
 *Version: 2.0.0*
 *Status: Phase 6 - Skills and Agents Implemented*
 *Completion: All 32 skills and 24 agents have been implemented*
+
+

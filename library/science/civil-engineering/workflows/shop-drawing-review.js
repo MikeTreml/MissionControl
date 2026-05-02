@@ -90,6 +90,7 @@ export async function process(inputs, ctx) {
   const totalComments = specCompliance.comments.length +
                         designIntentReview.comments.length +
                         coordinationReview.comments.length +
+                        materialReview.comments.length;
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -517,3 +518,4 @@ export const responsePackageTask = defineTask('response-package', (args, taskCtx
   },
   labels: ['agent', 'civil-engineering', 'submittals', 'response']
 }));
+

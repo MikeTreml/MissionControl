@@ -220,6 +220,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Least privilege analysis complete - ${leastPrivilegeResult.excessivePermissions} excessive permissions, ${leastPrivilegeResult.unusedPermissions} unused permissions, ${leastPrivilegeResult.violations} violations`);
 
   // Quality Gate: Least privilege violations
+  if (leastPrivilegeResult.criticalViolations > 0) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -348,6 +349,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Privileged access management assessed - ${privilegedAccessResult.privilegedAccountsManaged} accounts managed, ${privilegedAccessResult.violationsFound} violations, JIT: ${privilegedAccessResult.jitEnabled}`);
 
     // Quality Gate: Privileged access violations
+    if (privilegedAccessResult.violationsFound > 0) {
         let lastFeedback_qualityGateApproval5 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval5) {
@@ -412,6 +414,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `MFA enforcement reviewed - ${mfaResult.mfaEnrollmentRate}% enrollment, ${mfaResult.usersWithoutMFA} users without MFA, ${mfaResult.privilegedAccountsWithoutMFA} privileged accounts without MFA`);
 
     // Quality Gate: MFA compliance
+    if (mfaResult.privilegedAccountsWithoutMFA > 0) {
         let lastFeedback_qualityGateApproval6 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval6) {
@@ -532,6 +535,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Segregation of duties analyzed - ${sodResult.sodPoliciesEvaluated} policies evaluated, ${sodResult.sodViolations} violations, ${sodResult.conflictingRoles} conflicting role assignments`);
 
     // Quality Gate: SOD violations
+    if (sodResult.sodViolations > 0) {
         let lastFeedback_qualityGateApproval8 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval8) {
@@ -615,6 +619,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Anomaly detection assessed - ${anomalyResult.anomaliesDetected} anomalies detected, ${anomalyResult.suspiciousAccess} suspicious access patterns, Monitoring coverage: ${anomalyResult.monitoringCoverage}%`);
 
     // Quality Gate: Suspicious activity review
+    if (anomalyResult.highRiskAnomalies > 0) {
         let lastFeedback_qualityGateApproval9 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval9) {
@@ -2167,3 +2172,4 @@ function getPasswordPolicyDetails(policy) {
   };
   return policies[policy] || policies.moderate;
 }
+

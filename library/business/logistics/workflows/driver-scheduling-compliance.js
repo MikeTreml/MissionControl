@@ -54,6 +54,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...complianceValidation.artifacts);
 
   // Quality Gate: Review compliance issues
+  if (complianceValidation.violations.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -157,3 +158,4 @@ export const eldIntegrationTask = defineTask('eld-integration', (args, taskCtx) 
 export const complianceReportTask = defineTask('compliance-report', (args, taskCtx) => ({
   kind: 'agent', title: 'Generate compliance report', agent: { name: 'compliance-report-specialist', prompt: { role: 'Compliance Report Specialist', task: 'Generate driver scheduling compliance report', context: args, instructions: ['Summarize schedule', 'Document compliance status', 'List violations', 'Present metrics', 'Include recommendations', 'Generate executive report'] }, outputSchema: { type: 'object', required: ['reportPath', 'artifacts'], properties: { reportPath: { type: 'string' }, executiveSummary: { type: 'string' }, artifacts: { type: 'array' } } } }, io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['agent', 'logistics', 'driver-scheduling', 'reporting']
 }));
+

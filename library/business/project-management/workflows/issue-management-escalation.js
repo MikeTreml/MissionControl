@@ -45,6 +45,7 @@ export async function process(inputs, ctx) {
 
   // Breakpoint: Review categorized issues
   const criticalIssues = issueCategorization.issues?.filter(i => i.severity === 'critical') || [];
+  if (criticalIssues.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -618,3 +619,4 @@ export const issueDocumentationTask = defineTask('issue-documentation', (args, t
   },
   labels: ['issue', 'documentation', 'deliverable']
 }));
+

@@ -68,6 +68,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `QC complete - ${qcResult.passedSamples.length}/${sampleIds.length} samples passed quality filters`);
 
   // Quality Gate: Sample quality check
+  if (qcResult.failedSamples.length > 0) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -327,6 +328,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Validation complete - QC Score: ${validationResult.qcScore}/100`);
 
   // Quality Gate: Validation results
+  if (validationResult.qcScore < 80) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -991,3 +993,4 @@ export const generateWGSReportTask = defineTask('generate-wgs-report', (args, ta
   },
   labels: ['bioinformatics', 'wgs', 'reporting', 'documentation']
 }));
+

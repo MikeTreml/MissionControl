@@ -67,6 +67,7 @@ export async function process(inputs, ctx) {
     let overlayIcon = await ctx.task(implementOverlayIconTask, { projectName, framework, outputDir });
     artifacts.push(...overlayIcon.artifacts);
     featureModules.overlayIcon = overlayIcon;
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -209,3 +210,4 @@ export const validateWindowsFeaturesTask = defineTask('validate-windows-features
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['desktop-development', 'windows', 'validation']
 }));
+

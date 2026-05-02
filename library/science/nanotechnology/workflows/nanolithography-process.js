@@ -132,6 +132,7 @@ export async function process(inputs, ctx) {
 
     currentExposureParams = exposureOptimization.optimizedParameters;
 
+    if (cdDeviation > cdTolerance && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -179,6 +180,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: CD must meet specifications
+  if (!metrologyValidation.cdWithinSpec) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -763,3 +765,4 @@ export const recipeDocumentationTask = defineTask('recipe-documentation', (args,
   },
   labels: ['nanotechnology', 'lithography', 'documentation']
 }));
+

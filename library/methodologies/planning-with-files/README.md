@@ -1,4 +1,4 @@
-# Planning with Files
+﻿# Planning with Files
 
 **Source:** [Planning with Files](https://github.com/OthmanAdi/planning-with-files) by OthmanAdi
 **Category:** Persistent Markdown-Based Planning (Context Engineering)
@@ -23,10 +23,10 @@ Central Principle: "Context Window = RAM (volatile); Filesystem = Disk (persiste
 
 | File | Description | Primary Agents |
 |------|-------------|----------------|
-| `planning-orchestrator.js` | Full lifecycle (plan, execute, verify) | All agents |
-| `planning-session.js` | Session lifecycle management | Session Manager, Plan Architect |
-| `planning-execution.js` | Task execution with 2-action rule | Execution Monitor, Error Analyst, Findings Curator |
-| `planning-verification.js` | Completion verification and scoring | Completion Verifier, all analysis agents |
+| `workflows\planning-orchestrator.js` | Full lifecycle (plan, execute, verify) | All agents |
+| `workflows\planning-session.js` | Session lifecycle management | Session Manager, Plan Architect |
+| `workflows\planning-execution.js` | Task execution with 2-action rule | Execution Monitor, Error Analyst, Findings Curator |
+| `workflows\planning-verification.js` | Completion verification and scoring | Completion Verifier, all analysis agents |
 
 ## Agent Personas
 
@@ -81,3 +81,4 @@ The progress file maintains session logs, test results, and error records. It su
 ## Examples
 
 See `examples/` directory for JSON input files covering various task types and configurations.
+

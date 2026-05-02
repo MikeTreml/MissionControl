@@ -120,6 +120,7 @@ export async function process(inputs, ctx) {
     });
 
     artifacts.push(...(labsResult.artifacts || []));
+  }
     let lastFeedback_phase4Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase4Review) {
@@ -619,3 +620,4 @@ export const programValidationTask = defineTask('qc-program-validation', (args, 
   },
   labels: ['quantum-computing', 'training', 'validation']
 }));
+

@@ -125,6 +125,7 @@ export async function process(inputs, ctx) {
 
     converged = refinement.convergenceScore >= convergenceThreshold;
 
+    if (!converged && iteration < iterations) {
         let lastFeedback = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback) {
@@ -447,3 +448,4 @@ export const synthesisTask = defineTask('synthesize-findings', (args, taskCtx) =
   },
   labels: ['agent', 'scientific-discovery', 'synthesis']
 }));
+

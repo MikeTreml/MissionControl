@@ -1,4 +1,4 @@
-# ClaudeKit Methodology
+﻿# ClaudeKit Methodology
 
 A coding safety net with real-time error prevention, checkpoint management, and specialized AI subagent orchestration. Adapted from [ClaudeKit](https://github.com/carlrannaberg/claudekit) by Carl Rannaberg.
 
@@ -17,11 +17,11 @@ A coding safety net with real-time error prevention, checkpoint management, and 
 
 | File | Process ID | Description |
 |------|-----------|-------------|
-| `claudekit-orchestrator.js` | `methodologies/claudekit/claudekit-orchestrator` | Main entry: setup hooks, file-guard, codebase-map, dispatch commands, safety checks, checkpoints |
-| `claudekit-code-review.js` | `methodologies/claudekit/claudekit-code-review` | 6-agent parallel code review with weighted scoring and recommendations |
-| `claudekit-spec-workflow.js` | `methodologies/claudekit/claudekit-spec-workflow` | Spec creation from research + 6-phase execution (implement, test, review, improve, commit, track) |
-| `claudekit-research.js` | `methodologies/claudekit/claudekit-research` | Parallel research orchestration with 5-10 concurrent agents |
-| `claudekit-safety-pipeline.js` | `methodologies/claudekit/claudekit-safety-pipeline` | Hook system: file-guard, typecheck/lint/test checks, checkpoints, profiling |
+| `workflows\claudekit-orchestrator.js` | `methodologies/claudekit/claudekit-orchestrator` | Main entry: setup hooks, file-guard, codebase-map, dispatch commands, safety checks, checkpoints |
+| `workflows\claudekit-code-review.js` | `methodologies/claudekit/claudekit-code-review` | 6-agent parallel code review with weighted scoring and recommendations |
+| `workflows\claudekit-spec-workflow.js` | `methodologies/claudekit/claudekit-spec-workflow` | Spec creation from research + 6-phase execution (implement, test, review, improve, commit, track) |
+| `workflows\claudekit-research.js` | `methodologies/claudekit/claudekit-research` | Parallel research orchestration with 5-10 concurrent agents |
+| `workflows\claudekit-safety-pipeline.js` | `methodologies/claudekit/claudekit-safety-pipeline` | Hook system: file-guard, typecheck/lint/test checks, checkpoints, profiling |
 
 ## Agents (8)
 
@@ -74,3 +74,4 @@ A coding safety net with real-time error prevention, checkpoint management, and 
 ## Attribution
 
 Adapted from [ClaudeKit](https://github.com/carlrannaberg/claudekit) by Carl Rannaberg.
+

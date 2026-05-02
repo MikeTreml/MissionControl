@@ -1,4 +1,4 @@
----
+﻿---
 name: skill-generator
 description: Generate SKILL.md files with proper YAML frontmatter, capabilities documentation, and usage examples following Babysitter SDK conventions.
 allowed-tools: Read Write Edit Glob Grep
@@ -143,7 +143,7 @@ Generate practical examples:
 
 ```json
 {
-  "skillPath": "path/to/skill-name/SKILL.md",
+  "skillPath": "SKILL.md",
   "frontmatter": {
     "name": "skill-name",
     "description": "...",
@@ -152,7 +152,7 @@ Generate practical examples:
   "sections": ["overview", "capabilities", "usage", "output", "integration"],
   "artifacts": [
     {
-      "path": "path/to/skill-name/SKILL.md",
+      "path": "SKILL.md",
       "type": "markdown",
       "label": "Skill definition"
     }
@@ -182,3 +182,4 @@ This skill integrates with:
 - allowed-tools must be valid tool names
 - Include backlog-id in metadata
 - Follow markdown formatting standards
+

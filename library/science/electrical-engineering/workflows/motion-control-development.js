@@ -146,6 +146,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Motion accuracy must meet specifications
+  if (!motionTesting.meetsSpecs) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -661,3 +662,4 @@ export const loadValidationTask = defineTask('load-validation', (args, taskCtx) 
   },
   labels: ['ee', 'motion-control', 'validation']
 }));
+

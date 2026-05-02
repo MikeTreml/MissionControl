@@ -1,4 +1,4 @@
-# Embedded Systems Engineering - Skills and Agents Backlog
+﻿# Embedded Systems Engineering - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Embedded Systems Engineering processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, hardware interaction capabilities, and integration with specialized embedded development tooling.
 
@@ -48,10 +48,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Fault handler analysis and debugging
 
 **Process Integration**:
-- hardware-bring-up.js
-- bootloader-implementation.js
-- device-driver-development.js
-- field-diagnostics.js
+- workflows\hardware-bring-up.js
+- workflows\bootloader-implementation.js
+- workflows\device-driver-development.js
+- workflows\field-diagnostics.js
 
 **Dependencies**: OpenOCD, J-Link software, ST-LINK utilities, probe hardware
 
@@ -74,10 +74,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Memory pool configuration (heap schemes)
 
 **Process Integration**:
-- rtos-integration.js
-- real-time-performance-validation.js
-- low-power-design.js
-- execution-speed-profiling.js
+- workflows\rtos-integration.js
+- workflows\real-time-performance-validation.js
+- workflows\low-power-design.js
+- workflows\execution-speed-profiling.js
 
 **Dependencies**: FreeRTOS source, kernel-aware debugger plugins
 
@@ -100,10 +100,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - MCUboot integration for secure boot
 
 **Process Integration**:
-- rtos-integration.js
-- secure-boot-implementation.js
-- ota-firmware-update.js
-- low-power-design.js
+- workflows\rtos-integration.js
+- workflows\secure-boot-implementation.js
+- workflows\ota-firmware-update.js
+- workflows\low-power-design.js
 
 **Dependencies**: Zephyr SDK, West tool, device trees
 
@@ -126,10 +126,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Integration with Saleae Logic and similar analyzers
 
 **Process Integration**:
-- device-driver-development.js
-- hardware-bring-up.js
-- signal-integrity-testing.js
-- bsp-development.js
+- workflows\device-driver-development.js
+- workflows\hardware-bring-up.js
+- workflows\signal-integrity-testing.js
+- workflows\bsp-development.js
 
 **Dependencies**: Logic analyzer software, protocol decoder libraries
 
@@ -152,10 +152,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Gateway and routing configuration
 
 **Process Integration**:
-- device-driver-development.js
-- signal-integrity-testing.js
-- hw-sw-interface-specification.js
-- functional-safety-certification.js
+- workflows\device-driver-development.js
+- workflows\signal-integrity-testing.js
+- workflows\hw-sw-interface-specification.js
+- workflows\functional-safety-certification.js
 
 **Dependencies**: CAN interface tools, DBC files, PEAK/Vector/Kvaser tools
 
@@ -178,11 +178,11 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Bit-banding and atomic operations
 
 **Process Integration**:
-- bsp-development.js
-- isr-design.js
-- memory-architecture-planning.js
-- real-time-architecture-design.js
-- bootloader-implementation.js
+- workflows\bsp-development.js
+- workflows\isr-design.js
+- workflows\memory-architecture-planning.js
+- workflows\real-time-architecture-design.js
+- workflows\bootloader-implementation.js
 
 **Dependencies**: ARM CMSIS, Cortex-M documentation
 
@@ -205,11 +205,11 @@ All 26 implemented processes in this specialization currently use generic agent 
 - STM32 power mode configuration
 
 **Process Integration**:
-- bsp-development.js
-- device-driver-development.js
-- dma-optimization.js
-- low-power-design.js
-- hardware-bring-up.js
+- workflows\bsp-development.js
+- workflows\device-driver-development.js
+- workflows\dma-optimization.js
+- workflows\low-power-design.js
+- workflows\hardware-bring-up.js
 
 **Dependencies**: STM32CubeMX, STM32 HAL, STM32CubeIDE
 
@@ -232,10 +232,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Thread/Matter protocol support
 
 **Process Integration**:
-- bsp-development.js
-- low-power-design.js
-- power-consumption-profiling.js
-- ota-firmware-update.js
+- workflows\bsp-development.js
+- workflows\low-power-design.js
+- workflows\power-consumption-profiling.js
+- workflows\ota-firmware-update.js
 
 **Dependencies**: nRF Connect SDK, nRF Command Line Tools, Segger RTT
 
@@ -258,9 +258,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Energy-per-operation measurements
 
 **Process Integration**:
-- power-consumption-profiling.js
-- low-power-design.js
-- real-time-performance-validation.js
+- workflows\power-consumption-profiling.js
+- workflows\low-power-design.js
+- workflows\real-time-performance-validation.js
 
 **Dependencies**: Power analyzer hardware and software (Otii Arc, Nordic PPK2, Joulescope)
 
@@ -283,10 +283,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Buffer overflow detection strategies
 
 **Process Integration**:
-- memory-architecture-planning.js
-- code-size-optimization.js
-- execution-speed-profiling.js
-- bootloader-implementation.js
+- workflows\memory-architecture-planning.js
+- workflows\code-size-optimization.js
+- workflows\execution-speed-profiling.js
+- workflows\bootloader-implementation.js
 
 **Dependencies**: Linker map parsers, stack analyzers, Puncover
 
@@ -309,9 +309,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Custom rule configuration
 
 **Process Integration**:
-- misra-c-compliance.js
-- functional-safety-certification.js
-- device-driver-development.js
+- workflows\misra-c-compliance.js
+- workflows\functional-safety-certification.js
+- workflows\device-driver-development.js
 
 **Dependencies**: Static analysis tools (PC-lint, Cppcheck, Coverity, Polyspace)
 
@@ -334,9 +334,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Off-target testing setup
 
 **Process Integration**:
-- embedded-unit-testing.js
-- device-driver-development.js
-- bsp-development.js
+- workflows\embedded-unit-testing.js
+- workflows\device-driver-development.js
+- workflows\bsp-development.js
 
 **Dependencies**: Unity, CMock, Ceedling, gcov
 
@@ -359,9 +359,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Measurement export and reporting
 
 **Process Integration**:
-- signal-integrity-testing.js
-- hardware-bring-up.js
-- real-time-performance-validation.js
+- workflows\signal-integrity-testing.js
+- workflows\hardware-bring-up.js
+- workflows\real-time-performance-validation.js
 
 **Dependencies**: Oscilloscope/logic analyzer software APIs (Keysight, Tektronix, Rigol, Saleae)
 
@@ -384,10 +384,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - MPU-aligned region configuration
 
 **Process Integration**:
-- memory-architecture-planning.js
-- bootloader-implementation.js
-- bsp-development.js
-- code-size-optimization.js
+- workflows\memory-architecture-planning.js
+- workflows\bootloader-implementation.js
+- workflows\bsp-development.js
+- workflows\code-size-optimization.js
 
 **Dependencies**: GNU linker documentation, MCU memory maps
 
@@ -410,9 +410,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Update progress and status reporting
 
 **Process Integration**:
-- ota-firmware-update.js
-- secure-boot-implementation.js
-- bootloader-implementation.js
+- workflows\ota-firmware-update.js
+- workflows\secure-boot-implementation.js
+- workflows\bootloader-implementation.js
 
 **Dependencies**: MCUboot, image signing tools, compression libraries
 
@@ -435,9 +435,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Side-channel attack mitigation
 
 **Process Integration**:
-- secure-boot-implementation.js
-- functional-safety-certification.js
-- ota-firmware-update.js
+- workflows\secure-boot-implementation.js
+- workflows\functional-safety-certification.js
+- workflows\ota-firmware-update.js
 - secrets-management.js
 
 **Dependencies**: mbedTLS, wolfSSL, hardware crypto documentation
@@ -461,9 +461,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Composite device configuration
 
 **Process Integration**:
-- device-driver-development.js
-- bootloader-implementation.js
-- hw-sw-interface-specification.js
+- workflows\device-driver-development.js
+- workflows\bootloader-implementation.js
+- workflows\hw-sw-interface-specification.js
 
 **Dependencies**: TinyUSB, STM32 USB stack, USB analyzer tools
 
@@ -486,9 +486,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Frequency hopping implementation
 
 **Process Integration**:
-- device-driver-development.js
-- low-power-design.js
-- functional-safety-certification.js
+- workflows\device-driver-development.js
+- workflows\low-power-design.js
+- workflows\functional-safety-certification.js
 
 **Dependencies**: LoRaWAN stack, Zigbee SDK, OpenThread, Matter SDK
 
@@ -511,9 +511,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Sensorless control algorithms
 
 **Process Integration**:
-- device-driver-development.js
-- real-time-architecture-design.js
-- isr-design.js
+- workflows\device-driver-development.js
+- workflows\real-time-architecture-design.js
+- workflows\isr-design.js
 
 **Dependencies**: Motor control libraries, current sensing hardware
 
@@ -536,9 +536,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Integration with Sphinx/MkDocs
 
 **Process Integration**:
-- firmware-api-documentation.js
-- hw-sw-interface-specification.js
-- version-control-config-management.js
+- workflows\firmware-api-documentation.js
+- workflows\hw-sw-interface-specification.js
+- workflows\version-control-config-management.js
 
 **Dependencies**: Doxygen, Graphviz, Sphinx
 
@@ -570,10 +570,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Automotive, medical, industrial automation
 
 **Process Integration**:
-- real-time-architecture-design.js (all phases)
-- memory-architecture-planning.js (all phases)
-- hardware-software-codesign.js (architecture phases)
-- isr-design.js (design phases)
+- workflows\real-time-architecture-design.js (all phases)
+- workflows\memory-architecture-planning.js (all phases)
+- workflows\hardware-software-codesign.js (architecture phases)
+- workflows\isr-design.js (design phases)
 
 ---
 
@@ -599,10 +599,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Aerospace, automotive RTOS development
 
 **Process Integration**:
-- rtos-integration.js (all phases)
-- real-time-performance-validation.js (all phases)
-- isr-design.js (priority analysis)
-- real-time-architecture-design.js (scheduling design)
+- workflows\rtos-integration.js (all phases)
+- workflows\real-time-performance-validation.js (all phases)
+- workflows\isr-design.js (priority analysis)
+- workflows\real-time-architecture-design.js (scheduling design)
 
 ---
 
@@ -628,9 +628,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: PCB design awareness, lab equipment expertise
 
 **Process Integration**:
-- hardware-bring-up.js (all phases)
-- bsp-development.js (initial development)
-- signal-integrity-testing.js (validation phases)
+- workflows\hardware-bring-up.js (all phases)
+- workflows\bsp-development.js (initial development)
+- workflows\signal-integrity-testing.js (validation phases)
 
 ---
 
@@ -656,10 +656,10 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Linux kernel drivers, bare-metal drivers
 
 **Process Integration**:
-- device-driver-development.js (all phases)
-- bsp-development.js (driver phases)
-- dma-optimization.js (all phases)
-- isr-design.js (interrupt handling)
+- workflows\device-driver-development.js (all phases)
+- workflows\bsp-development.js (driver phases)
+- workflows\dma-optimization.js (all phases)
+- workflows\isr-design.js (interrupt handling)
 
 ---
 
@@ -685,9 +685,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Cryptography, penetration testing, IoT security
 
 **Process Integration**:
-- secure-boot-implementation.js (all phases)
-- functional-safety-certification.js (security aspects)
-- ota-firmware-update.js (security phases)
+- workflows\secure-boot-implementation.js (all phases)
+- workflows\functional-safety-certification.js (security aspects)
+- workflows\ota-firmware-update.js (security phases)
 
 ---
 
@@ -713,9 +713,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Wearables, IoT sensors, medical devices
 
 **Process Integration**:
-- power-consumption-profiling.js (all phases)
-- low-power-design.js (all phases)
-- dma-optimization.js (power aspects)
+- workflows\power-consumption-profiling.js (all phases)
+- workflows\low-power-design.js (all phases)
+- workflows\dma-optimization.js (power aspects)
 
 ---
 
@@ -741,9 +741,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Automotive ASIL-D, medical Class III
 
 **Process Integration**:
-- functional-safety-certification.js (all phases)
-- misra-c-compliance.js (all phases)
-- real-time-performance-validation.js (safety validation)
+- workflows\functional-safety-certification.js (all phases)
+- workflows\misra-c-compliance.js (all phases)
+- workflows\real-time-performance-validation.js (safety validation)
 
 ---
 
@@ -769,9 +769,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Automotive validation, medical device testing
 
 **Process Integration**:
-- embedded-unit-testing.js (all phases)
-- hil-testing.js (all phases)
-- real-time-performance-validation.js (test phases)
+- workflows\embedded-unit-testing.js (all phases)
+- workflows\hil-testing.js (all phases)
+- workflows\real-time-performance-validation.js (test phases)
 
 ---
 
@@ -797,9 +797,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Automotive ECU, IoT devices, secure systems
 
 **Process Integration**:
-- bootloader-implementation.js (all phases)
-- ota-firmware-update.js (bootloader integration)
-- secure-boot-implementation.js (boot phases)
+- workflows\bootloader-implementation.js (all phases)
+- workflows\ota-firmware-update.js (bootloader integration)
+- workflows\secure-boot-implementation.js (boot phases)
 
 ---
 
@@ -825,9 +825,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Automotive networking, industrial protocols
 
 **Process Integration**:
-- device-driver-development.js (protocol drivers)
-- signal-integrity-testing.js (protocol validation)
-- hw-sw-interface-specification.js (interface definition)
+- workflows\device-driver-development.js (protocol drivers)
+- workflows\signal-integrity-testing.js (protocol validation)
+- workflows\hw-sw-interface-specification.js (interface definition)
 
 ---
 
@@ -853,9 +853,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: DSP, high-performance embedded, gaming
 
 **Process Integration**:
-- execution-speed-profiling.js (all phases)
-- code-size-optimization.js (all phases)
-- dma-optimization.js (all phases)
+- workflows\execution-speed-profiling.js (all phases)
+- workflows\code-size-optimization.js (all phases)
+- workflows\dma-optimization.js (all phases)
 
 ---
 
@@ -881,9 +881,9 @@ All 26 implemented processes in this specialization currently use generic agent 
 - Background: Semiconductor datasheets, SDK documentation
 
 **Process Integration**:
-- firmware-api-documentation.js (all phases)
-- hw-sw-interface-specification.js (documentation)
-- version-control-config-management.js (release docs)
+- workflows\firmware-api-documentation.js (all phases)
+- workflows\hw-sw-interface-specification.js (documentation)
+- workflows\version-control-config-management.js (release docs)
 
 ---
 
@@ -893,32 +893,32 @@ All 26 implemented processes in this specialization currently use generic agent 
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| hardware-bring-up.js | SK-001, SK-004, SK-013 | AG-003 |
-| bsp-development.js | SK-006, SK-007, SK-014 | AG-003, AG-004 |
-| device-driver-development.js | SK-001, SK-004, SK-006 | AG-004, AG-010 |
-| bootloader-implementation.js | SK-006, SK-010, SK-014, SK-015 | AG-009, AG-005 |
-| rtos-integration.js | SK-002, SK-003 | AG-002 |
-| hil-testing.js | SK-012, SK-013 | AG-008 |
-| embedded-unit-testing.js | SK-012 | AG-008 |
-| real-time-performance-validation.js | SK-002, SK-009 | AG-002, AG-008 |
-| power-consumption-profiling.js | SK-009 | AG-006 |
-| signal-integrity-testing.js | SK-004, SK-005, SK-013 | AG-003, AG-010 |
-| hardware-software-codesign.js | SK-006, SK-014 | AG-001 |
-| real-time-architecture-design.js | SK-002 | AG-001, AG-002 |
-| memory-architecture-planning.js | SK-010, SK-014 | AG-001 |
-| isr-design.js | SK-006 | AG-001, AG-004 |
-| code-size-optimization.js | SK-010, SK-011 | AG-011 |
-| execution-speed-profiling.js | SK-001, SK-010 | AG-011 |
-| low-power-design.js | SK-009, SK-002, SK-003 | AG-006 |
-| dma-optimization.js | SK-007 | AG-004, AG-011 |
-| functional-safety-certification.js | SK-011, SK-016 | AG-007 |
-| secure-boot-implementation.js | SK-015, SK-016 | AG-005, AG-009 |
-| ota-firmware-update.js | SK-015, SK-016 | AG-009, AG-005 |
-| field-diagnostics.js | SK-001, SK-004 | AG-010 |
-| version-control-config-management.js | SK-020 | AG-012 |
-| hw-sw-interface-specification.js | SK-004, SK-005, SK-017 | AG-004, AG-012 |
-| firmware-api-documentation.js | SK-020 | AG-012 |
-| misra-c-compliance.js | SK-011 | AG-007 |
+| workflows\hardware-bring-up.js | SK-001, SK-004, SK-013 | AG-003 |
+| workflows\bsp-development.js | SK-006, SK-007, SK-014 | AG-003, AG-004 |
+| workflows\device-driver-development.js | SK-001, SK-004, SK-006 | AG-004, AG-010 |
+| workflows\bootloader-implementation.js | SK-006, SK-010, SK-014, SK-015 | AG-009, AG-005 |
+| workflows\rtos-integration.js | SK-002, SK-003 | AG-002 |
+| workflows\hil-testing.js | SK-012, SK-013 | AG-008 |
+| workflows\embedded-unit-testing.js | SK-012 | AG-008 |
+| workflows\real-time-performance-validation.js | SK-002, SK-009 | AG-002, AG-008 |
+| workflows\power-consumption-profiling.js | SK-009 | AG-006 |
+| workflows\signal-integrity-testing.js | SK-004, SK-005, SK-013 | AG-003, AG-010 |
+| workflows\hardware-software-codesign.js | SK-006, SK-014 | AG-001 |
+| workflows\real-time-architecture-design.js | SK-002 | AG-001, AG-002 |
+| workflows\memory-architecture-planning.js | SK-010, SK-014 | AG-001 |
+| workflows\isr-design.js | SK-006 | AG-001, AG-004 |
+| workflows\code-size-optimization.js | SK-010, SK-011 | AG-011 |
+| workflows\execution-speed-profiling.js | SK-001, SK-010 | AG-011 |
+| workflows\low-power-design.js | SK-009, SK-002, SK-003 | AG-006 |
+| workflows\dma-optimization.js | SK-007 | AG-004, AG-011 |
+| workflows\functional-safety-certification.js | SK-011, SK-016 | AG-007 |
+| workflows\secure-boot-implementation.js | SK-015, SK-016 | AG-005, AG-009 |
+| workflows\ota-firmware-update.js | SK-015, SK-016 | AG-009, AG-005 |
+| workflows\field-diagnostics.js | SK-001, SK-004 | AG-010 |
+| workflows\version-control-config-management.js | SK-020 | AG-012 |
+| workflows\hw-sw-interface-specification.js | SK-004, SK-005, SK-017 | AG-004, AG-012 |
+| workflows\firmware-api-documentation.js | SK-020 | AG-012 |
+| workflows\misra-c-compliance.js | SK-011 | AG-007 |
 
 ---
 
@@ -1016,3 +1016,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

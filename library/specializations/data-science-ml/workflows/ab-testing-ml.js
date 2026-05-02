@@ -148,6 +148,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...sampleSizeCalc.artifacts);
 
   // Quality Gate: Check if sample size is achievable
+  if (!sampleSizeCalc.feasible) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -2049,7 +2050,7 @@ export const secondaryMetricsAnalysisTask = defineTask('secondary-metrics-analys
           type: 'string',
           enum: ['consistent', 'mixed', 'contradictory']
         },
-        holistic Interpretation: { type: 'string' },
+        holisticInterpretation: { type: 'string' },
         concerns: { type: 'array', items: { type: 'string' } },
         artifacts: { type: 'array', items: { type: 'string' } }
       }

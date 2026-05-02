@@ -1,4 +1,4 @@
-# AutoMaker
+﻿# AutoMaker
 
 **Source:** [AutoMaker](https://github.com/AutoMaker-Org/automaker) by AutoMaker-Org
 **Category:** Autonomous AI Development Studio
@@ -25,10 +25,10 @@ Unlike traditional development tools, AutoMaker positions AI agents as autonomou
 
 | File | Description | Primary Agents |
 |------|-------------|----------------|
-| `automaker-orchestrator.js` | Full lifecycle (all 5 phases) | All agents |
-| `automaker-feature-pipeline.js` | Feature intake, decomposition, dispatch | Feature Planner |
-| `automaker-agent-execution.js` | Single-feature execution with worktree | Code Generator, Test Runner, Worktree Manager |
-| `automaker-review-ship.js` | Review, merge, deploy, release | Code Reviewer, Deployment Engineer |
+| `workflows\automaker-orchestrator.js` | Full lifecycle (all 5 phases) | All agents |
+| `workflows\automaker-feature-pipeline.js` | Feature intake, decomposition, dispatch | Feature Planner |
+| `workflows\automaker-agent-execution.js` | Single-feature execution with worktree | Code Generator, Test Runner, Worktree Manager |
+| `workflows\automaker-review-ship.js` | Review, merge, deploy, release | Code Reviewer, Deployment Engineer |
 
 ## Agent Personas
 
@@ -77,3 +77,4 @@ babysitter run:create --process methodologies/automaker/automaker-agent-executio
 # Review and ship - review, merge, and deploy completed features
 babysitter run:create --process methodologies/automaker/automaker-review-ship --input examples/review-and-deploy.json
 ```
+

@@ -38,6 +38,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Sufficient data for reporting
+  if (!dataCollection.isComplete || dataCollection.completeness < 70) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -953,3 +954,4 @@ export const reportCompilationTask = defineTask('report-compilation', (args, tas
   },
   labels: ['reporting', 'compilation', 'documentation']
 }));
+

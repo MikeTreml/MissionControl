@@ -1,4 +1,4 @@
----
+﻿---
 name: foundry-framework
 description: Expert usage of Foundry (Forge, Cast, Anvil, Chisel) for smart contract development, testing, and deployment. Includes fuzzing, gas reporting, local development, and deployment scripting capabilities.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -358,7 +358,8 @@ chisel
 
 ## See Also
 
-- `skills/hardhat-framework/SKILL.md` - Alternative framework
-- `skills/echidna-fuzzer/SKILL.md` - Advanced fuzzing
-- `skills/gas-optimization/SKILL.md` - Gas optimization
+- `SKILL.md` - Alternative framework
+- `SKILL.md` - Advanced fuzzing
+- `SKILL.md` - Gas optimization
 - [Foundry Book](https://book.getfoundry.sh/)
+

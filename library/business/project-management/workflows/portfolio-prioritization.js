@@ -152,6 +152,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Validate optimization results
+  if (optimizedPortfolio.portfolioScore < 60) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -1206,3 +1207,4 @@ export const portfolioDashboardTask = defineTask('portfolio-dashboard', (args, t
   },
   labels: ['portfolio', 'dashboard', 'reporting']
 }));
+

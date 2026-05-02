@@ -154,6 +154,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Safety validation results
+  if (safetyValidation.openIssues && safetyValidation.openIssues.length > 0) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -745,3 +746,4 @@ export const safetyCaseTask = defineTask('safety-case', (args, taskCtx) => ({
   },
   labels: ['automotive', 'functional-safety', 'ISO26262', 'safety-case']
 }));
+

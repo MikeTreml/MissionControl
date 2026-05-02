@@ -437,6 +437,7 @@ export async function process(inputs, ctx) {
   // Quality Gate: Check if target flakiness rate achieved
   const targetMet = newFlakinessRate <= targetFlakiness;
 
+  if (!targetMet) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -1544,3 +1545,4 @@ export const flakinessEliminationReportTask = defineTask('flakiness-elimination-
   },
   labels: ['agent', 'test-automation', 'flakiness', 'reporting']
 }));
+

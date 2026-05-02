@@ -1,4 +1,4 @@
-# Pi Harness Extensibility Reference
+﻿# Pi Harness Extensibility Reference
 
 Comprehensive documentation for extending the Pi coding agent harness (`@mariozechner/pi-coding-agent`) through the Babysitter plugin system.
 
@@ -45,7 +45,7 @@ Both variants share the same extension API, hook system, and Babysitter adapter 
 
 ## Extension System
 
-Pi extensions are declared in the plugin's `package.json` via the `omp` field. This field specifies the directories containing extensions and skills:
+Pi extensions are declared in the plugin's `examples\package.json` via the `omp` field. This field specifies the directories containing extensions and skills:
 
 ```json
 {
@@ -236,7 +236,7 @@ pi.sendMessage({ role: 'system', content: '[babysitter:skill] Executing skill: d
 
 ## Skills
 
-Skills are YAML-frontmatter Markdown files placed in the `skills/` directory declared in `package.json`. Each skill has a `SKILL.md` file:
+Skills are YAML-frontmatter Markdown files placed in the `skills/` directory declared in `examples\package.json`. Each skill has a `SKILL.md` file:
 
 ```
 skills/
@@ -265,7 +265,7 @@ Orchestrate `.a5c/runs/<runId>/` through iterative execution.
 
 The YAML frontmatter declares the skill name and description (used for discovery and matching). The body contains the full instructions that the agent follows when the skill is activated.
 
-Skills are discovered by the Pi host automatically from the directory declared in the `omp.skills` field of `package.json`.
+Skills are discovered by the Pi host automatically from the directory declared in the `omp.skills` field of `examples\package.json`.
 
 ---
 
@@ -554,7 +554,7 @@ When `--workspace <dir>` is provided, the plugin installs into the project-local
 
 ### Published Files
 
-The npm package includes: `bin/`, `package.json`, `extensions/`, `skills/`, `commands/`, `scripts/`.
+The npm package includes: `bin/`, `examples\package.json`, `extensions/`, `skills/`, `commands/`, `scripts/`.
 
 ---
 
@@ -648,7 +648,7 @@ See `examples/extension-activate.ts` for a complete example of an extension entr
 
 ### Plugin Manifest
 
-See `examples/package.json` for an example `package.json` with the `omp` field declaring extensions and skills directories.
+See `examples\package.json` for an example `examples\package.json` with the `omp` field declaring extensions and skills directories.
 
 ### Creating a Pi Session Programmatically
 
@@ -711,3 +711,6 @@ pi.on('tool_call', (toolName, params) => {
 ## Source File References
 
 See [references.md](./references.md) for a complete index of source files with descriptions and locations.
+
+
+

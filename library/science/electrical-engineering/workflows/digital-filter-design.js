@@ -147,6 +147,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Filter must be stable
+  if (!stabilityAnalysis.stable) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -733,3 +734,4 @@ export const fixedPointOptimizationTask = defineTask('fixed-point-optimization',
   },
   labels: ['ee', 'dsp', 'filter', 'fixed-point']
 }));
+

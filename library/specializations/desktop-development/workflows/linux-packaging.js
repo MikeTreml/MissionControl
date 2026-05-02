@@ -69,6 +69,7 @@ export async function process(inputs, ctx) {
     let snap = await ctx.task(createSnapTask, { projectName, framework, outputDir });
     artifacts.push(...snap.artifacts);
     packages.push({ format: 'snap', ...snap });
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -236,3 +237,4 @@ export const validateLinuxPackagesTask = defineTask('validate-linux-packages', (
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['desktop-development', 'linux', 'validation']
 }));
+

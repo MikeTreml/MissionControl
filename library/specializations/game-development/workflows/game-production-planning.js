@@ -168,6 +168,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...dependencyMapping.artifacts);
 
   // Quality Gate: Dependency review
+  if (dependencyMapping.criticalDependencies.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -798,3 +799,4 @@ export const productionPlanDocTask = defineTask('production-plan-doc', (args, ta
   },
   labels: ['game-development', 'production', 'documentation']
 }));
+

@@ -1,4 +1,4 @@
-# Business Strategy and Operations - Skills and Agents Backlog
+﻿# Business Strategy and Operations - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Business Strategy processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized strategic planning methodologies.
 
@@ -23,44 +23,44 @@ All 26 implemented processes in this specialization currently use the `general-p
 ### Implemented Processes
 
 #### Strategic Analysis Processes
-1. `swot-analysis.js` - Systematic SWOT evaluation with TOWS strategies
-2. `porters-five-forces.js` - Industry competitive dynamics analysis
-3. `pestel-analysis.js` - Macro-environmental scanning
-4. `scenario-planning.js` - Multiple future scenarios development
-5. `competitive-intelligence.js` - Competitor and market intelligence gathering
+1. `workflows\swot-analysis.js` - Systematic SWOT evaluation with TOWS strategies
+2. `workflows\porters-five-forces.js` - Industry competitive dynamics analysis
+3. `workflows\pestel-analysis.js` - Macro-environmental scanning
+4. `workflows\scenario-planning.js` - Multiple future scenarios development
+5. `workflows\competitive-intelligence.js` - Competitor and market intelligence gathering
 
 #### Business Model and Value Creation Processes
-6. `business-model-canvas.js` - Nine building blocks business model design
-7. `value-proposition-design.js` - Customer-centric value proposition
-8. `blue-ocean-strategy.js` - Value innovation and market creation
-9. `core-competency-assessment.js` - Organizational capabilities analysis
+6. `workflows\business-model-canvas.js` - Nine building blocks business model design
+7. `workflows\value-proposition-design.js` - Customer-centric value proposition
+8. `workflows\blue-ocean-strategy.js` - Value innovation and market creation
+9. `workflows\core-competency-assessment.js` - Organizational capabilities analysis
 
 #### Strategic Planning and Execution Processes
-10. `annual-strategic-planning.js` - End-to-end strategic planning cycle
-11. `okr-development.js` - OKR framework implementation
-12. `balanced-scorecard.js` - Four-perspective performance management
-13. `strategy-map-creation.js` - Visual strategy articulation
-14. `strategic-initiative-portfolio.js` - Initiative prioritization and governance
+10. `workflows\annual-strategic-planning.js` - End-to-end strategic planning cycle
+11. `workflows\okr-development.js` - OKR framework implementation
+12. `workflows\balanced-scorecard.js` - Four-perspective performance management
+13. `workflows\strategy-map-creation.js` - Visual strategy articulation
+14. `workflows\strategic-initiative-portfolio.js` - Initiative prioritization and governance
 
 #### Operational Excellence Processes
-15. `lean-process-optimization.js` - Lean principles application
-16. `six-sigma-dmaic.js` - Data-driven quality improvement
-17. `business-process-reengineering.js` - Radical process redesign
-18. `value-stream-mapping.js` - End-to-end flow visualization
+15. `workflows\lean-process-optimization.js` - Lean principles application
+16. `workflows\six-sigma-dmaic.js` - Data-driven quality improvement
+17. `workflows\business-process-reengineering.js` - Radical process redesign
+18. `workflows\value-stream-mapping.js` - End-to-end flow visualization
 
 #### Change Management and Transformation Processes
-19. `kotter-change-management.js` - 8-step change leadership
-20. `digital-transformation-roadmap.js` - Technology-enabled transformation
-21. `operating-model-redesign.js` - Organizational structure redesign
+19. `workflows\kotter-change-management.js` - 8-step change leadership
+20. `workflows\digital-transformation-roadmap.js` - Technology-enabled transformation
+21. `workflows\operating-model-redesign.js` - Organizational structure redesign
 
 #### Mergers, Acquisitions, and Growth Processes
-22. `ma-target-screening.js` - Acquisition target identification
-23. `due-diligence-framework.js` - Comprehensive transaction investigation
-24. `post-merger-integration.js` - Integration planning and execution
-25. `growth-strategy-ansoff.js` - Ansoff matrix growth evaluation
+22. `workflows\ma-target-screening.js` - Acquisition target identification
+23. `workflows\due-diligence-framework.js` - Comprehensive transaction investigation
+24. `workflows\post-merger-integration.js` - Integration planning and execution
+25. `workflows\growth-strategy-ansoff.js` - Ansoff matrix growth evaluation
 
 #### Business Case and Decision Support Processes
-26. `business-case-development.js` - Investment proposal methodology
+26. `workflows\business-case-development.js` - Investment proposal methodology
 
 ### Goals
 - Provide deep expertise in strategic management frameworks and methodologies
@@ -90,10 +90,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Strategic posture determination (offensive/defensive)
 
 **Process Integration**:
-- swot-analysis.js (all phases)
-- competitive-intelligence.js (SWOT inputs)
-- annual-strategic-planning.js (situation analysis)
-- scenario-planning.js (SWOT per scenario)
+- workflows\swot-analysis.js (all phases)
+- workflows\competitive-intelligence.js (SWOT inputs)
+- workflows\annual-strategic-planning.js (situation analysis)
+- workflows\scenario-planning.js (SWOT per scenario)
 
 **Dependencies**: Strategic analysis frameworks, scoring algorithms
 
@@ -117,10 +117,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Profit pool mapping
 
 **Process Integration**:
-- porters-five-forces.js (all phases)
-- competitive-intelligence.js (industry context)
-- blue-ocean-strategy.js (industry analysis)
-- ma-target-screening.js (industry evaluation)
+- workflows\porters-five-forces.js (all phases)
+- workflows\competitive-intelligence.js (industry context)
+- workflows\blue-ocean-strategy.js (industry analysis)
+- workflows\ma-target-screening.js (industry evaluation)
 
 **Dependencies**: Industry databases, scoring frameworks
 
@@ -144,10 +144,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Geographic variation analysis
 
 **Process Integration**:
-- pestel-analysis.js (all phases)
-- scenario-planning.js (driving forces)
-- annual-strategic-planning.js (environmental scan)
-- digital-transformation-roadmap.js (technology factors)
+- workflows\pestel-analysis.js (all phases)
+- workflows\scenario-planning.js (driving forces)
+- workflows\annual-strategic-planning.js (environmental scan)
+- workflows\digital-transformation-roadmap.js (technology factors)
 
 **Dependencies**: News APIs, regulatory databases, economic data sources
 
@@ -171,10 +171,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Scenario probability assessment
 
 **Process Integration**:
-- scenario-planning.js (all phases)
-- annual-strategic-planning.js (scenario inputs)
-- pestel-analysis.js (scenario development)
-- digital-transformation-roadmap.js (future scenarios)
+- workflows\scenario-planning.js (all phases)
+- workflows\annual-strategic-planning.js (scenario inputs)
+- workflows\pestel-analysis.js (scenario development)
+- workflows\digital-transformation-roadmap.js (future scenarios)
 
 **Dependencies**: Foresight methodologies, trend databases
 
@@ -199,10 +199,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Win/loss analysis synthesis
 
 **Process Integration**:
-- competitive-intelligence.js (all phases)
-- porters-five-forces.js (rivalry analysis)
-- blue-ocean-strategy.js (current canvas)
-- swot-analysis.js (competitive inputs)
+- workflows\competitive-intelligence.js (all phases)
+- workflows\porters-five-forces.js (rivalry analysis)
+- workflows\blue-ocean-strategy.js (current canvas)
+- workflows\swot-analysis.js (competitive inputs)
 
 **Dependencies**: Web scraping, news APIs, company databases
 
@@ -228,10 +228,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Business model pattern recognition
 
 **Process Integration**:
-- business-model-canvas.js (all phases)
-- value-proposition-design.js (VP section)
-- blue-ocean-strategy.js (new model design)
-- growth-strategy-ansoff.js (model variations)
+- workflows\business-model-canvas.js (all phases)
+- workflows\value-proposition-design.js (VP section)
+- workflows\blue-ocean-strategy.js (new model design)
+- workflows\growth-strategy-ansoff.js (model variations)
 
 **Dependencies**: Business model templates, canvas visualization
 
@@ -256,10 +256,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Fit gap analysis and iteration recommendations
 
 **Process Integration**:
-- value-proposition-design.js (all phases)
-- business-model-canvas.js (VP section)
-- blue-ocean-strategy.js (value innovation)
-- competitive-intelligence.js (VP comparison)
+- workflows\value-proposition-design.js (all phases)
+- workflows\business-model-canvas.js (VP section)
+- workflows\blue-ocean-strategy.js (value innovation)
+- workflows\competitive-intelligence.js (VP comparison)
 
 **Dependencies**: JTBD frameworks, customer research synthesis
 
@@ -285,10 +285,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Tipping point leadership application
 
 **Process Integration**:
-- blue-ocean-strategy.js (all phases)
-- competitive-intelligence.js (current state)
-- value-proposition-design.js (value innovation)
-- business-model-canvas.js (new model)
+- workflows\blue-ocean-strategy.js (all phases)
+- workflows\competitive-intelligence.js (current state)
+- workflows\value-proposition-design.js (value innovation)
+- workflows\business-model-canvas.js (new model)
 
 **Dependencies**: Blue Ocean tools, visualization libraries
 
@@ -313,10 +313,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Cross-team dependency identification
 
 **Process Integration**:
-- okr-development.js (all phases)
-- balanced-scorecard.js (measure alignment)
-- annual-strategic-planning.js (goal setting)
-- strategy-map-creation.js (objective linkage)
+- workflows\okr-development.js (all phases)
+- workflows\balanced-scorecard.js (measure alignment)
+- workflows\annual-strategic-planning.js (goal setting)
+- workflows\strategy-map-creation.js (objective linkage)
 
 **Dependencies**: OKR platforms, scoring algorithms
 
@@ -341,10 +341,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Performance reporting design
 
 **Process Integration**:
-- balanced-scorecard.js (all phases)
-- strategy-map-creation.js (visualization)
-- okr-development.js (measure alignment)
-- annual-strategic-planning.js (measurement)
+- workflows\balanced-scorecard.js (all phases)
+- workflows\strategy-map-creation.js (visualization)
+- workflows\okr-development.js (measure alignment)
+- workflows\annual-strategic-planning.js (measurement)
 
 **Dependencies**: BSC methodology, visualization tools
 
@@ -370,10 +370,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Financial ratio analysis
 
 **Process Integration**:
-- business-case-development.js (all phases)
-- ma-target-screening.js (valuation)
-- due-diligence-framework.js (financial DD)
-- growth-strategy-ansoff.js (financial assessment)
+- workflows\business-case-development.js (all phases)
+- workflows\ma-target-screening.js (valuation)
+- workflows\due-diligence-framework.js (financial DD)
+- workflows\growth-strategy-ansoff.js (financial assessment)
 
 **Dependencies**: Financial calculation libraries, Excel integration
 
@@ -398,10 +398,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Integration planning frameworks
 
 **Process Integration**:
-- ma-target-screening.js (all phases)
-- due-diligence-framework.js (DD support)
-- post-merger-integration.js (integration planning)
-- competitive-intelligence.js (target research)
+- workflows\ma-target-screening.js (all phases)
+- workflows\due-diligence-framework.js (DD support)
+- workflows\post-merger-integration.js (integration planning)
+- workflows\competitive-intelligence.js (target research)
 
 **Dependencies**: Deal databases, financial data sources
 
@@ -426,10 +426,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Continuous improvement metrics
 
 **Process Integration**:
-- lean-process-optimization.js (all phases)
-- six-sigma-dmaic.js (all phases)
-- value-stream-mapping.js (all phases)
-- business-process-reengineering.js (current state)
+- workflows\lean-process-optimization.js (all phases)
+- workflows\six-sigma-dmaic.js (all phases)
+- workflows\value-stream-mapping.js (all phases)
+- workflows\business-process-reengineering.js (current state)
 
 **Dependencies**: Process mapping tools, statistical libraries
 
@@ -454,10 +454,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Cultural alignment assessment
 
 **Process Integration**:
-- kotter-change-management.js (all phases)
-- digital-transformation-roadmap.js (change aspects)
-- operating-model-redesign.js (change management)
-- post-merger-integration.js (cultural integration)
+- workflows\kotter-change-management.js (all phases)
+- workflows\digital-transformation-roadmap.js (change aspects)
+- workflows\operating-model-redesign.js (change management)
+- workflows\post-merger-integration.js (cultural integration)
 
 **Dependencies**: Change frameworks, assessment tools
 
@@ -482,10 +482,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Initiative portfolio view
 
 **Process Integration**:
-- strategy-map-creation.js (visualization)
-- balanced-scorecard.js (dashboard)
-- blue-ocean-strategy.js (strategy canvas)
-- annual-strategic-planning.js (roadmaps)
+- workflows\strategy-map-creation.js (visualization)
+- workflows\balanced-scorecard.js (dashboard)
+- workflows\blue-ocean-strategy.js (strategy canvas)
+- workflows\annual-strategic-planning.js (roadmaps)
 
 **Dependencies**: Visualization libraries, export formats
 
@@ -510,10 +510,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Market opportunity scoring
 
 **Process Integration**:
-- competitive-intelligence.js (market size)
-- growth-strategy-ansoff.js (market assessment)
-- ma-target-screening.js (market evaluation)
-- business-case-development.js (opportunity sizing)
+- workflows\competitive-intelligence.js (market size)
+- workflows\growth-strategy-ansoff.js (market assessment)
+- workflows\ma-target-screening.js (market evaluation)
+- workflows\business-case-development.js (opportunity sizing)
 
 **Dependencies**: Market research databases, industry reports
 
@@ -538,10 +538,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Trade-off analysis
 
 **Process Integration**:
-- strategic-initiative-portfolio.js (all phases)
-- annual-strategic-planning.js (initiative selection)
-- balanced-scorecard.js (initiative alignment)
-- okr-development.js (initiative mapping)
+- workflows\strategic-initiative-portfolio.js (all phases)
+- workflows\annual-strategic-planning.js (initiative selection)
+- workflows\balanced-scorecard.js (initiative alignment)
+- workflows\okr-development.js (initiative mapping)
 
 **Dependencies**: Portfolio management tools, optimization algorithms
 
@@ -566,10 +566,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Roadmap recommendation generation
 
 **Process Integration**:
-- digital-transformation-roadmap.js (all phases)
-- operating-model-redesign.js (digital capabilities)
-- core-competency-assessment.js (digital competencies)
-- annual-strategic-planning.js (digital strategy)
+- workflows\digital-transformation-roadmap.js (all phases)
+- workflows\operating-model-redesign.js (digital capabilities)
+- workflows\core-competency-assessment.js (digital competencies)
+- workflows\annual-strategic-planning.js (digital strategy)
 
 **Dependencies**: Maturity models, benchmark databases
 
@@ -594,10 +594,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Growth initiative portfolio design
 
 **Process Integration**:
-- growth-strategy-ansoff.js (all phases)
-- ma-target-screening.js (inorganic growth)
-- blue-ocean-strategy.js (market creation)
-- annual-strategic-planning.js (growth planning)
+- workflows\growth-strategy-ansoff.js (all phases)
+- workflows\ma-target-screening.js (inorganic growth)
+- workflows\blue-ocean-strategy.js (market creation)
+- workflows\annual-strategic-planning.js (growth planning)
 
 **Dependencies**: Growth frameworks, market data
 
@@ -622,10 +622,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Resource-based view analysis
 
 **Process Integration**:
-- core-competency-assessment.js (all phases)
-- swot-analysis.js (strengths analysis)
-- ma-target-screening.js (capability fit)
-- operating-model-redesign.js (capability design)
+- workflows\core-competency-assessment.js (all phases)
+- workflows\swot-analysis.js (strengths analysis)
+- workflows\ma-target-screening.js (capability fit)
+- workflows\operating-model-redesign.js (capability design)
 
 **Dependencies**: Capability frameworks, assessment tools
 
@@ -657,10 +657,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Top-tier consulting + C-suite experience
 
 **Process Integration**:
-- annual-strategic-planning.js (all phases)
-- swot-analysis.js (strategic implications)
-- scenario-planning.js (robust strategies)
-- strategy-map-creation.js (strategy articulation)
+- workflows\annual-strategic-planning.js (all phases)
+- workflows\swot-analysis.js (strategic implications)
+- workflows\scenario-planning.js (robust strategies)
+- workflows\strategy-map-creation.js (strategy articulation)
 
 ---
 
@@ -686,10 +686,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Strategy consulting + market research
 
 **Process Integration**:
-- competitive-intelligence.js (all phases)
-- porters-five-forces.js (rivalry analysis)
-- swot-analysis.js (external analysis)
-- blue-ocean-strategy.js (current canvas)
+- workflows\competitive-intelligence.js (all phases)
+- workflows\porters-five-forces.js (rivalry analysis)
+- workflows\swot-analysis.js (external analysis)
+- workflows\blue-ocean-strategy.js (current canvas)
 
 ---
 
@@ -715,10 +715,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Equity research + consulting
 
 **Process Integration**:
-- porters-five-forces.js (all phases)
-- pestel-analysis.js (industry context)
-- competitive-intelligence.js (industry dynamics)
-- ma-target-screening.js (industry evaluation)
+- workflows\porters-five-forces.js (all phases)
+- workflows\pestel-analysis.js (industry context)
+- workflows\competitive-intelligence.js (industry dynamics)
+- workflows\ma-target-screening.js (industry evaluation)
 
 ---
 
@@ -744,10 +744,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Shell scenario planning tradition
 
 **Process Integration**:
-- scenario-planning.js (all phases)
-- pestel-analysis.js (trend analysis)
-- annual-strategic-planning.js (scenario inputs)
-- digital-transformation-roadmap.js (future scenarios)
+- workflows\scenario-planning.js (all phases)
+- workflows\pestel-analysis.js (trend analysis)
+- workflows\annual-strategic-planning.js (scenario inputs)
+- workflows\digital-transformation-roadmap.js (future scenarios)
 
 ---
 
@@ -773,10 +773,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Strategyzer certified, innovation consulting
 
 **Process Integration**:
-- business-model-canvas.js (all phases)
-- value-proposition-design.js (all phases)
-- blue-ocean-strategy.js (model innovation)
-- growth-strategy-ansoff.js (model variations)
+- workflows\business-model-canvas.js (all phases)
+- workflows\value-proposition-design.js (all phases)
+- workflows\blue-ocean-strategy.js (model innovation)
+- workflows\growth-strategy-ansoff.js (model variations)
 
 ---
 
@@ -802,10 +802,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: INSEAD Blue Ocean Institute trained
 
 **Process Integration**:
-- blue-ocean-strategy.js (all phases)
-- competitive-intelligence.js (red ocean analysis)
-- value-proposition-design.js (value innovation)
-- business-model-canvas.js (new model)
+- workflows\blue-ocean-strategy.js (all phases)
+- workflows\competitive-intelligence.js (red ocean analysis)
+- workflows\value-proposition-design.js (value innovation)
+- workflows\business-model-canvas.js (new model)
 
 ---
 
@@ -831,10 +831,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: John Doerr methodology trained
 
 **Process Integration**:
-- okr-development.js (all phases)
-- balanced-scorecard.js (alignment)
-- annual-strategic-planning.js (goal setting)
-- strategy-map-creation.js (objective mapping)
+- workflows\okr-development.js (all phases)
+- workflows\balanced-scorecard.js (alignment)
+- workflows\annual-strategic-planning.js (goal setting)
+- workflows\strategy-map-creation.js (objective mapping)
 
 ---
 
@@ -860,10 +860,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Kaplan-Norton Balanced Scorecard Collaborative
 
 **Process Integration**:
-- balanced-scorecard.js (all phases)
-- strategy-map-creation.js (all phases)
-- annual-strategic-planning.js (measurement)
-- okr-development.js (integration)
+- workflows\balanced-scorecard.js (all phases)
+- workflows\strategy-map-creation.js (all phases)
+- workflows\annual-strategic-planning.js (measurement)
+- workflows\okr-development.js (integration)
 
 ---
 
@@ -889,10 +889,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Investment banking + corporate development
 
 **Process Integration**:
-- ma-target-screening.js (all phases)
-- due-diligence-framework.js (strategic DD)
-- post-merger-integration.js (planning)
-- growth-strategy-ansoff.js (inorganic options)
+- workflows\ma-target-screening.js (all phases)
+- workflows\due-diligence-framework.js (strategic DD)
+- workflows\post-merger-integration.js (planning)
+- workflows\growth-strategy-ansoff.js (inorganic options)
 
 ---
 
@@ -918,10 +918,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Big Four transaction services
 
 **Process Integration**:
-- due-diligence-framework.js (all phases)
-- ma-target-screening.js (preliminary DD)
-- post-merger-integration.js (DD findings)
-- business-case-development.js (investment DD)
+- workflows\due-diligence-framework.js (all phases)
+- workflows\ma-target-screening.js (preliminary DD)
+- workflows\post-merger-integration.js (DD findings)
+- workflows\business-case-development.js (investment DD)
 
 ---
 
@@ -947,10 +947,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Multiple large-scale integrations
 
 **Process Integration**:
-- post-merger-integration.js (all phases)
-- due-diligence-framework.js (integration planning)
-- kotter-change-management.js (change aspects)
-- operating-model-redesign.js (org design)
+- workflows\post-merger-integration.js (all phases)
+- workflows\due-diligence-framework.js (integration planning)
+- workflows\kotter-change-management.js (change aspects)
+- workflows\operating-model-redesign.js (org design)
 
 ---
 
@@ -976,10 +976,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Toyota Production System + Six Sigma certification
 
 **Process Integration**:
-- lean-process-optimization.js (all phases)
-- six-sigma-dmaic.js (all phases)
-- value-stream-mapping.js (all phases)
-- business-process-reengineering.js (methodology)
+- workflows\lean-process-optimization.js (all phases)
+- workflows\six-sigma-dmaic.js (all phases)
+- workflows\value-stream-mapping.js (all phases)
+- workflows\business-process-reengineering.js (methodology)
 
 ---
 
@@ -1005,10 +1005,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Prosci certified, large transformation experience
 
 **Process Integration**:
-- kotter-change-management.js (all phases)
-- digital-transformation-roadmap.js (change aspects)
-- operating-model-redesign.js (change management)
-- post-merger-integration.js (cultural change)
+- workflows\kotter-change-management.js (all phases)
+- workflows\digital-transformation-roadmap.js (change aspects)
+- workflows\operating-model-redesign.js (change management)
+- workflows\post-merger-integration.js (cultural change)
 
 ---
 
@@ -1034,10 +1034,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Technology + business strategy hybrid
 
 **Process Integration**:
-- digital-transformation-roadmap.js (all phases)
-- operating-model-redesign.js (digital aspects)
-- core-competency-assessment.js (digital capabilities)
-- annual-strategic-planning.js (digital strategy)
+- workflows\digital-transformation-roadmap.js (all phases)
+- workflows\operating-model-redesign.js (digital aspects)
+- workflows\core-competency-assessment.js (digital capabilities)
+- workflows\annual-strategic-planning.js (digital strategy)
 
 ---
 
@@ -1063,10 +1063,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Investment banking + corporate finance
 
 **Process Integration**:
-- business-case-development.js (all phases)
-- ma-target-screening.js (valuation)
-- due-diligence-framework.js (financial DD)
-- annual-strategic-planning.js (financial planning)
+- workflows\business-case-development.js (all phases)
+- workflows\ma-target-screening.js (valuation)
+- workflows\due-diligence-framework.js (financial DD)
+- workflows\annual-strategic-planning.js (financial planning)
 
 ---
 
@@ -1092,10 +1092,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Strategy consulting (operating model practice)
 
 **Process Integration**:
-- operating-model-redesign.js (all phases)
-- digital-transformation-roadmap.js (operating model)
-- post-merger-integration.js (org design)
-- core-competency-assessment.js (capability design)
+- workflows\operating-model-redesign.js (all phases)
+- workflows\digital-transformation-roadmap.js (operating model)
+- workflows\post-merger-integration.js (org design)
+- workflows\core-competency-assessment.js (capability design)
 
 ---
 
@@ -1121,10 +1121,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Strategy consulting + business development
 
 **Process Integration**:
-- growth-strategy-ansoff.js (all phases)
-- ma-target-screening.js (inorganic growth)
-- blue-ocean-strategy.js (market creation)
-- annual-strategic-planning.js (growth planning)
+- workflows\growth-strategy-ansoff.js (all phases)
+- workflows\ma-target-screening.js (inorganic growth)
+- workflows\blue-ocean-strategy.js (market creation)
+- workflows\annual-strategic-planning.js (growth planning)
 
 ---
 
@@ -1150,10 +1150,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Enterprise risk management
 
 **Process Integration**:
-- swot-analysis.js (threat analysis)
-- scenario-planning.js (risk scenarios)
-- due-diligence-framework.js (risk DD)
-- business-case-development.js (risk assessment)
+- workflows\swot-analysis.js (threat analysis)
+- workflows\scenario-planning.js (risk scenarios)
+- workflows\due-diligence-framework.js (risk DD)
+- workflows\business-case-development.js (risk assessment)
 
 ---
 
@@ -1179,10 +1179,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Central bank + corporate economics
 
 **Process Integration**:
-- pestel-analysis.js (economic factors)
-- scenario-planning.js (economic scenarios)
-- annual-strategic-planning.js (economic assumptions)
-- ma-target-screening.js (economic context)
+- workflows\pestel-analysis.js (economic factors)
+- workflows\scenario-planning.js (economic scenarios)
+- workflows\annual-strategic-planning.js (economic assumptions)
+- workflows\ma-target-screening.js (economic context)
 
 ---
 
@@ -1208,10 +1208,10 @@ All 26 implemented processes in this specialization currently use the `general-p
 - Background: Government affairs + risk consulting
 
 **Process Integration**:
-- pestel-analysis.js (political factors)
-- scenario-planning.js (political scenarios)
-- ma-target-screening.js (country risk)
-- competitive-intelligence.js (regulatory context)
+- workflows\pestel-analysis.js (political factors)
+- workflows\scenario-planning.js (political scenarios)
+- workflows\ma-target-screening.js (country risk)
+- workflows\competitive-intelligence.js (regulatory context)
 
 ---
 
@@ -1221,32 +1221,32 @@ All 26 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| swot-analysis.js | SK-001, SK-005, SK-015 | AG-001, AG-002, AG-018 |
-| porters-five-forces.js | SK-002, SK-016 | AG-003, AG-002 |
-| pestel-analysis.js | SK-003, SK-004 | AG-019, AG-020, AG-004 |
-| scenario-planning.js | SK-004, SK-003 | AG-004, AG-001 |
-| competitive-intelligence.js | SK-005, SK-016, SK-001 | AG-002, AG-003 |
-| business-model-canvas.js | SK-006, SK-007, SK-011 | AG-005, AG-015 |
-| value-proposition-design.js | SK-007, SK-006 | AG-005, AG-006 |
-| blue-ocean-strategy.js | SK-008, SK-007, SK-005 | AG-006, AG-005 |
-| core-competency-assessment.js | SK-020, SK-001 | AG-001, AG-016 |
-| annual-strategic-planning.js | SK-001, SK-017, SK-015 | AG-001, AG-007 |
-| okr-development.js | SK-009, SK-010 | AG-007, AG-008 |
-| balanced-scorecard.js | SK-010, SK-009, SK-015 | AG-008, AG-007 |
-| strategy-map-creation.js | SK-015, SK-010 | AG-008, AG-001 |
-| strategic-initiative-portfolio.js | SK-017, SK-011 | AG-001, AG-015 |
-| lean-process-optimization.js | SK-013 | AG-012 |
-| six-sigma-dmaic.js | SK-013 | AG-012 |
-| business-process-reengineering.js | SK-013, SK-020 | AG-012, AG-016 |
-| value-stream-mapping.js | SK-013 | AG-012 |
-| kotter-change-management.js | SK-014 | AG-013 |
-| digital-transformation-roadmap.js | SK-018, SK-014, SK-017 | AG-014, AG-013, AG-016 |
-| operating-model-redesign.js | SK-020, SK-014 | AG-016, AG-013 |
-| ma-target-screening.js | SK-012, SK-005, SK-011, SK-016 | AG-009, AG-015, AG-002 |
-| due-diligence-framework.js | SK-012, SK-011 | AG-010, AG-009, AG-015 |
-| post-merger-integration.js | SK-012, SK-014 | AG-011, AG-013 |
-| growth-strategy-ansoff.js | SK-019, SK-016, SK-012 | AG-017, AG-009 |
-| business-case-development.js | SK-011, SK-016, SK-017 | AG-015, AG-001 |
+| workflows\swot-analysis.js | SK-001, SK-005, SK-015 | AG-001, AG-002, AG-018 |
+| workflows\porters-five-forces.js | SK-002, SK-016 | AG-003, AG-002 |
+| workflows\pestel-analysis.js | SK-003, SK-004 | AG-019, AG-020, AG-004 |
+| workflows\scenario-planning.js | SK-004, SK-003 | AG-004, AG-001 |
+| workflows\competitive-intelligence.js | SK-005, SK-016, SK-001 | AG-002, AG-003 |
+| workflows\business-model-canvas.js | SK-006, SK-007, SK-011 | AG-005, AG-015 |
+| workflows\value-proposition-design.js | SK-007, SK-006 | AG-005, AG-006 |
+| workflows\blue-ocean-strategy.js | SK-008, SK-007, SK-005 | AG-006, AG-005 |
+| workflows\core-competency-assessment.js | SK-020, SK-001 | AG-001, AG-016 |
+| workflows\annual-strategic-planning.js | SK-001, SK-017, SK-015 | AG-001, AG-007 |
+| workflows\okr-development.js | SK-009, SK-010 | AG-007, AG-008 |
+| workflows\balanced-scorecard.js | SK-010, SK-009, SK-015 | AG-008, AG-007 |
+| workflows\strategy-map-creation.js | SK-015, SK-010 | AG-008, AG-001 |
+| workflows\strategic-initiative-portfolio.js | SK-017, SK-011 | AG-001, AG-015 |
+| workflows\lean-process-optimization.js | SK-013 | AG-012 |
+| workflows\six-sigma-dmaic.js | SK-013 | AG-012 |
+| workflows\business-process-reengineering.js | SK-013, SK-020 | AG-012, AG-016 |
+| workflows\value-stream-mapping.js | SK-013 | AG-012 |
+| workflows\kotter-change-management.js | SK-014 | AG-013 |
+| workflows\digital-transformation-roadmap.js | SK-018, SK-014, SK-017 | AG-014, AG-013, AG-016 |
+| workflows\operating-model-redesign.js | SK-020, SK-014 | AG-016, AG-013 |
+| workflows\ma-target-screening.js | SK-012, SK-005, SK-011, SK-016 | AG-009, AG-015, AG-002 |
+| workflows\due-diligence-framework.js | SK-012, SK-011 | AG-010, AG-009, AG-015 |
+| workflows\post-merger-integration.js | SK-012, SK-014 | AG-011, AG-013 |
+| workflows\growth-strategy-ansoff.js | SK-019, SK-016, SK-012 | AG-017, AG-009 |
+| workflows\business-case-development.js | SK-011, SK-016, SK-017 | AG-015, AG-001 |
 
 ---
 
@@ -1348,3 +1348,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

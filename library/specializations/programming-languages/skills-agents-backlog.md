@@ -1,4 +1,4 @@
-# Programming Languages and Compilers Development - Skills and Agents Backlog
+﻿# Programming Languages and Compilers Development - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Programming Languages processes beyond general-purpose capabilities. These tools would provide domain-specific expertise for lexer/parser development, AST manipulation, type systems, compiler backends, LLVM integration, interpreter implementation, and language server protocol support.
 
@@ -50,10 +50,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement error recovery with skip-to-next strategies
 
 **Process Integration**:
-- lexer-implementation.js
-- language-grammar-design.js
-- lsp-server-implementation.js
-- repl-development.js
+- workflows\lexer-implementation.js
+- workflows\language-grammar-design.js
+- workflows\lsp-server-implementation.js
+- workflows\repl-development.js
 
 **Dependencies**: Flex-like generators, RE2/Hyperscan libraries
 
@@ -76,10 +76,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement operator precedence parsing
 
 **Process Integration**:
-- parser-development.js
-- language-grammar-design.js
-- ast-design.js
-- lsp-server-implementation.js
+- workflows\parser-development.js
+- workflows\language-grammar-design.js
+- workflows\ast-design.js
+- workflows\lsp-server-implementation.js
 
 **Dependencies**: ANTLR4, tree-sitter, Bison/Yacc
 
@@ -102,12 +102,12 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Design span/location tracking systems
 
 **Process Integration**:
-- ast-design.js
-- semantic-analysis.js
-- ir-design.js
-- code-generation-llvm.js
-- lsp-server-implementation.js
-- macro-system-implementation.js
+- workflows\ast-design.js
+- workflows\semantic-analysis.js
+- workflows\ir-design.js
+- workflows\code-generation-llvm.js
+- workflows\lsp-server-implementation.js
+- workflows\macro-system-implementation.js
 
 **Dependencies**: None (core skill)
 
@@ -130,10 +130,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement type error message generation
 
 **Process Integration**:
-- type-system-implementation.js
-- semantic-analysis.js
-- generics-polymorphism.js
-- effect-system-design.js
+- workflows\type-system-implementation.js
+- workflows\semantic-analysis.js
+- workflows\generics-polymorphism.js
+- workflows\effect-system-design.js
 
 **Dependencies**: Academic type theory literature
 
@@ -156,10 +156,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Handle cross-compilation target triples
 
 **Process Integration**:
-- code-generation-llvm.js
-- jit-compiler-development.js
-- debugger-adapter-development.js
-- ir-design.js
+- workflows\code-generation-llvm.js
+- workflows\jit-compiler-development.js
+- workflows\debugger-adapter-development.js
+- workflows\ir-design.js
 
 **Dependencies**: LLVM C++ API, llvm-sys bindings
 
@@ -182,10 +182,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Design IR verification passes
 
 **Process Integration**:
-- ir-design.js
-- code-generation-llvm.js
-- jit-compiler-development.js
-- semantic-analysis.js
+- workflows\ir-design.js
+- workflows\code-generation-llvm.js
+- workflows\jit-compiler-development.js
+- workflows\semantic-analysis.js
 
 **Dependencies**: Compiler optimization textbooks
 
@@ -208,9 +208,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Design register pressure analysis
 
 **Process Integration**:
-- jit-compiler-development.js
-- code-generation-llvm.js
-- bytecode-vm-implementation.js
+- workflows\jit-compiler-development.js
+- workflows\code-generation-llvm.js
+- workflows\bytecode-vm-implementation.js
 
 **Dependencies**: None (algorithmic skill)
 
@@ -233,10 +233,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement finalizers and weak references
 
 **Process Integration**:
-- garbage-collector-implementation.js
-- memory-allocator-design.js
-- interpreter-implementation.js
-- bytecode-vm-implementation.js
+- workflows\garbage-collector-implementation.js
+- workflows\memory-allocator-design.js
+- workflows\interpreter-implementation.js
+- workflows\bytecode-vm-implementation.js
 
 **Dependencies**: GC Handbook literature
 
@@ -259,10 +259,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement address space layout optimization
 
 **Process Integration**:
-- memory-allocator-design.js
-- garbage-collector-implementation.js
-- interpreter-implementation.js
-- bytecode-vm-implementation.js
+- workflows\memory-allocator-design.js
+- workflows\garbage-collector-implementation.js
+- workflows\interpreter-implementation.js
+- workflows\bytecode-vm-implementation.js
 
 **Dependencies**: jemalloc, tcmalloc references
 
@@ -285,10 +285,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement bytecode serialization/deserialization
 
 **Process Integration**:
-- bytecode-vm-implementation.js
-- interpreter-implementation.js
-- jit-compiler-development.js
-- repl-development.js
+- workflows\bytecode-vm-implementation.js
+- workflows\interpreter-implementation.js
+- workflows\jit-compiler-development.js
+- workflows\repl-development.js
 
 **Dependencies**: VM implementation literature
 
@@ -311,9 +311,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement method inlining heuristics
 
 **Process Integration**:
-- jit-compiler-development.js
-- bytecode-vm-implementation.js
-- interpreter-implementation.js
+- workflows\jit-compiler-development.js
+- workflows\bytecode-vm-implementation.js
+- workflows\interpreter-implementation.js
 
 **Dependencies**: V8/HotSpot architecture references
 
@@ -338,10 +338,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement signature help
 
 **Process Integration**:
-- lsp-server-implementation.js
-- debugger-adapter-development.js
-- error-message-enhancement.js
-- semantic-analysis.js
+- workflows\lsp-server-implementation.js
+- workflows\debugger-adapter-development.js
+- workflows\error-message-enhancement.js
+- workflows\semantic-analysis.js
 
 **Dependencies**: LSP specification, vscode-languageserver
 
@@ -365,10 +365,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Support multi-threaded debugging
 
 **Process Integration**:
-- debugger-adapter-development.js
-- lsp-server-implementation.js
-- interpreter-implementation.js
-- bytecode-vm-implementation.js
+- workflows\debugger-adapter-development.js
+- workflows\lsp-server-implementation.js
+- workflows\interpreter-implementation.js
+- workflows\bytecode-vm-implementation.js
 
 **Dependencies**: DAP specification, vscode-debugadapter
 
@@ -391,11 +391,11 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Design error recovery strategies for better diagnostics
 
 **Process Integration**:
-- error-message-enhancement.js
-- parser-development.js
-- type-system-implementation.js
-- semantic-analysis.js
-- lsp-server-implementation.js
+- workflows\error-message-enhancement.js
+- workflows\parser-development.js
+- workflows\type-system-implementation.js
+- workflows\semantic-analysis.js
+- workflows\lsp-server-implementation.js
 
 **Dependencies**: Elm/Rust error message guidelines
 
@@ -418,10 +418,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Integrate with debuggers and stack traces
 
 **Process Integration**:
-- source-map-generation.js
-- code-generation-llvm.js
-- debugger-adapter-development.js
-- jit-compiler-development.js
+- workflows\source-map-generation.js
+- workflows\code-generation-llvm.js
+- workflows\debugger-adapter-development.js
+- workflows\jit-compiler-development.js
 
 **Dependencies**: Source map V3 specification
 
@@ -444,10 +444,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Support dynamic library loading
 
 **Process Integration**:
-- ffi-implementation.js
-- interpreter-implementation.js
-- bytecode-vm-implementation.js
-- code-generation-llvm.js
+- workflows\ffi-implementation.js
+- workflows\interpreter-implementation.js
+- workflows\bytecode-vm-implementation.js
+- workflows\code-generation-llvm.js
 
 **Dependencies**: libffi, platform ABI documentation
 
@@ -470,9 +470,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement macro expansion tracing
 
 **Process Integration**:
-- macro-system-implementation.js
-- parser-development.js
-- semantic-analysis.js
+- workflows\macro-system-implementation.js
+- workflows\parser-development.js
+- workflows\semantic-analysis.js
 
 **Dependencies**: Scheme macros literature
 
@@ -495,10 +495,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Design package/crate system integration
 
 **Process Integration**:
-- module-system-design.js
-- semantic-analysis.js
-- interpreter-implementation.js
-- lsp-server-implementation.js
+- workflows\module-system-design.js
+- workflows\semantic-analysis.js
+- workflows\interpreter-implementation.js
+- workflows\lsp-server-implementation.js
 
 **Dependencies**: ES modules, Rust modules references
 
@@ -521,10 +521,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate efficient match dispatch code
 
 **Process Integration**:
-- pattern-matching-implementation.js
-- parser-development.js
-- code-generation-llvm.js
-- interpreter-implementation.js
+- workflows\pattern-matching-implementation.js
+- workflows\parser-development.js
+- workflows\code-generation-llvm.js
+- workflows\interpreter-implementation.js
 
 **Dependencies**: ML pattern matching literature
 
@@ -547,10 +547,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement green threads/goroutines
 
 **Process Integration**:
-- concurrency-primitives.js
-- interpreter-implementation.js
-- bytecode-vm-implementation.js
-- garbage-collector-implementation.js
+- workflows\concurrency-primitives.js
+- workflows\interpreter-implementation.js
+- workflows\bytecode-vm-implementation.js
+- workflows\garbage-collector-implementation.js
 
 **Dependencies**: Concurrency theory, Go scheduler references
 
@@ -573,9 +573,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Support special REPL commands (:help, :type, etc.)
 
 **Process Integration**:
-- repl-development.js
-- interpreter-implementation.js
-- lsp-server-implementation.js
+- workflows\repl-development.js
+- workflows\interpreter-implementation.js
+- workflows\lsp-server-implementation.js
 
 **Dependencies**: rustyline, readline libraries
 
@@ -598,9 +598,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Handle grammar evolution and backwards compatibility
 
 **Process Integration**:
-- language-grammar-design.js
-- lexer-implementation.js
-- parser-development.js
+- workflows\language-grammar-design.js
+- workflows\lexer-implementation.js
+- workflows\parser-development.js
 
 **Dependencies**: Parsing theory literature
 
@@ -623,9 +623,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Generate effect-based optimizations
 
 **Process Integration**:
-- effect-system-design.js
-- type-system-implementation.js
-- concurrency-primitives.js
+- workflows\effect-system-design.js
+- workflows\type-system-implementation.js
+- workflows\concurrency-primitives.js
 
 **Dependencies**: Effect systems research literature
 
@@ -648,10 +648,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Implement generic method dispatch
 
 **Process Integration**:
-- generics-polymorphism.js
-- type-system-implementation.js
-- code-generation-llvm.js
-- ir-design.js
+- workflows\generics-polymorphism.js
+- workflows\type-system-implementation.js
+- workflows\code-generation-llvm.js
+- workflows\ir-design.js
 
 **Dependencies**: Generic programming literature
 
@@ -674,10 +674,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Test grammars with corpus files
 
 **Process Integration**:
-- language-grammar-design.js
-- lexer-implementation.js
-- parser-development.js
-- lsp-server-implementation.js
+- workflows\language-grammar-design.js
+- workflows\lexer-implementation.js
+- workflows\parser-development.js
+- workflows\lsp-server-implementation.js
 
 **Dependencies**: tree-sitter CLI, tree-sitter crates
 
@@ -707,11 +707,11 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Dragon Book, Crafting Interpreters, academic parsing research
 
 **Process Integration**:
-- language-grammar-design.js (all phases)
-- lexer-implementation.js (all phases)
-- parser-development.js (all phases)
-- ast-design.js (all phases)
-- error-message-enhancement.js (all phases)
+- workflows\language-grammar-design.js (all phases)
+- workflows\lexer-implementation.js (all phases)
+- workflows\parser-development.js (all phases)
+- workflows\ast-design.js (all phases)
+- workflows\error-message-enhancement.js (all phases)
 
 ---
 
@@ -736,10 +736,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: TAPL, ATTAPL, academic type theory, TypeScript/Flow/Rust compiler experience
 
 **Process Integration**:
-- type-system-implementation.js (all phases)
-- semantic-analysis.js (type-related phases)
-- generics-polymorphism.js (all phases)
-- effect-system-design.js (all phases)
+- workflows\type-system-implementation.js (all phases)
+- workflows\semantic-analysis.js (type-related phases)
+- workflows\generics-polymorphism.js (all phases)
+- workflows\effect-system-design.js (all phases)
 
 ---
 
@@ -764,10 +764,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Clang, Rust compiler, Julia, major LLVM-based language implementations
 
 **Process Integration**:
-- code-generation-llvm.js (all phases)
-- ir-design.js (LLVM-related phases)
-- jit-compiler-development.js (codegen phases)
-- debugger-adapter-development.js (debug info)
+- workflows\code-generation-llvm.js (all phases)
+- workflows\ir-design.js (LLVM-related phases)
+- workflows\jit-compiler-development.js (codegen phases)
+- workflows\debugger-adapter-development.js (debug info)
 
 ---
 
@@ -792,12 +792,12 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: V8, HotSpot JVM, PyPy, Ruby MRI/JRuby experience
 
 **Process Integration**:
-- interpreter-implementation.js (all phases)
-- bytecode-vm-implementation.js (all phases)
-- garbage-collector-implementation.js (all phases)
-- memory-allocator-design.js (all phases)
-- jit-compiler-development.js (runtime phases)
-- concurrency-primitives.js (all phases)
+- workflows\interpreter-implementation.js (all phases)
+- workflows\bytecode-vm-implementation.js (all phases)
+- workflows\garbage-collector-implementation.js (all phases)
+- workflows\memory-allocator-design.js (all phases)
+- workflows\jit-compiler-development.js (runtime phases)
+- workflows\concurrency-primitives.js (all phases)
 
 ---
 
@@ -822,11 +822,11 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Rust Analyzer, TypeScript language server, VS Code extension development
 
 **Process Integration**:
-- lsp-server-implementation.js (all phases)
-- debugger-adapter-development.js (all phases)
-- repl-development.js (all phases)
-- source-map-generation.js (all phases)
-- error-message-enhancement.js (tooling phases)
+- workflows\lsp-server-implementation.js (all phases)
+- workflows\debugger-adapter-development.js (all phases)
+- workflows\repl-development.js (all phases)
+- workflows\source-map-generation.js (all phases)
+- workflows\error-message-enhancement.js (tooling phases)
 
 ---
 
@@ -851,9 +851,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: V8 TurboFan, HotSpot C2, GraalVM, LuaJIT experience
 
 **Process Integration**:
-- jit-compiler-development.js (all phases)
-- bytecode-vm-implementation.js (JIT phases)
-- interpreter-implementation.js (optimization phases)
+- workflows\jit-compiler-development.js (all phases)
+- workflows\bytecode-vm-implementation.js (JIT phases)
+- workflows\interpreter-implementation.js (optimization phases)
 
 ---
 
@@ -878,10 +878,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: GC Handbook authors, V8 GC team, Go GC, Azul C4 experience
 
 **Process Integration**:
-- garbage-collector-implementation.js (all phases)
-- memory-allocator-design.js (all phases)
-- interpreter-implementation.js (memory phases)
-- bytecode-vm-implementation.js (memory phases)
+- workflows\garbage-collector-implementation.js (all phases)
+- workflows\memory-allocator-design.js (all phases)
+- workflows\interpreter-implementation.js (memory phases)
+- workflows\bytecode-vm-implementation.js (memory phases)
 
 ---
 
@@ -906,10 +906,10 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Multi-pass compiler experience, IDE semantic analysis
 
 **Process Integration**:
-- semantic-analysis.js (all phases)
-- type-system-implementation.js (environment phases)
-- module-system-design.js (resolution phases)
-- lsp-server-implementation.js (semantic phases)
+- workflows\semantic-analysis.js (all phases)
+- workflows\type-system-implementation.js (environment phases)
+- workflows\module-system-design.js (resolution phases)
+- workflows\lsp-server-implementation.js (semantic phases)
 
 ---
 
@@ -934,9 +934,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: LLVM IR, Graal IR, academic compiler optimization
 
 **Process Integration**:
-- ir-design.js (all phases)
-- code-generation-llvm.js (IR phases)
-- jit-compiler-development.js (IR phases)
+- workflows\ir-design.js (all phases)
+- workflows\code-generation-llvm.js (IR phases)
+- workflows\jit-compiler-development.js (IR phases)
 
 ---
 
@@ -961,12 +961,12 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Academic PL research, multiple production language involvement
 
 **Process Integration**:
-- pattern-matching-implementation.js (all phases)
-- module-system-design.js (all phases)
-- macro-system-implementation.js (all phases)
-- generics-polymorphism.js (design phases)
-- effect-system-design.js (design phases)
-- concurrency-primitives.js (design phases)
+- workflows\pattern-matching-implementation.js (all phases)
+- workflows\module-system-design.js (all phases)
+- workflows\macro-system-implementation.js (all phases)
+- workflows\generics-polymorphism.js (design phases)
+- workflows\effect-system-design.js (design phases)
+- workflows\concurrency-primitives.js (design phases)
 
 ---
 
@@ -992,9 +992,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 
 **Process Integration**:
 - All processes (benchmarking phases)
-- jit-compiler-development.js (performance phases)
-- garbage-collector-implementation.js (performance phases)
-- bytecode-vm-implementation.js (performance phases)
+- workflows\jit-compiler-development.js (performance phases)
+- workflows\garbage-collector-implementation.js (performance phases)
+- workflows\bytecode-vm-implementation.js (performance phases)
 
 ---
 
@@ -1019,9 +1019,9 @@ All 25 implemented processes in this specialization currently use the `general-p
 - Background: Python ctypes/cffi, Rust FFI, JNI, Node.js N-API experience
 
 **Process Integration**:
-- ffi-implementation.js (all phases)
-- interpreter-implementation.js (FFI phases)
-- bytecode-vm-implementation.js (FFI phases)
+- workflows\ffi-implementation.js (all phases)
+- workflows\interpreter-implementation.js (FFI phases)
+- workflows\bytecode-vm-implementation.js (FFI phases)
 
 ---
 
@@ -1031,31 +1031,31 @@ All 25 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| language-grammar-design.js | SK-022, SK-001, SK-002, SK-025 | AG-001 |
-| lexer-implementation.js | SK-001, SK-014, SK-025 | AG-001 |
-| parser-development.js | SK-002, SK-003, SK-014 | AG-001 |
-| ast-design.js | SK-003, SK-014 | AG-001, AG-008 |
-| type-system-implementation.js | SK-004, SK-024, SK-014 | AG-002 |
-| semantic-analysis.js | SK-003, SK-004, SK-018 | AG-008, AG-002 |
-| ir-design.js | SK-006, SK-003 | AG-009, AG-003 |
-| code-generation-llvm.js | SK-005, SK-006, SK-007, SK-015 | AG-003 |
-| interpreter-implementation.js | SK-010, SK-009, SK-016 | AG-004 |
-| repl-development.js | SK-021, SK-001, SK-012 | AG-005, AG-004 |
-| bytecode-vm-implementation.js | SK-010, SK-011, SK-009 | AG-004, AG-006 |
-| jit-compiler-development.js | SK-011, SK-007, SK-005, SK-006 | AG-006, AG-003 |
-| garbage-collector-implementation.js | SK-008, SK-009 | AG-007 |
-| memory-allocator-design.js | SK-009, SK-008 | AG-007 |
-| concurrency-primitives.js | SK-020, SK-009 | AG-004, AG-010 |
-| lsp-server-implementation.js | SK-012, SK-003, SK-014 | AG-005 |
-| debugger-adapter-development.js | SK-013, SK-015, SK-012 | AG-005 |
-| error-message-enhancement.js | SK-014, SK-012 | AG-001, AG-005 |
-| source-map-generation.js | SK-015, SK-005 | AG-005, AG-003 |
-| ffi-implementation.js | SK-016, SK-009 | AG-012 |
-| macro-system-implementation.js | SK-017, SK-003, SK-002 | AG-010, AG-001 |
-| module-system-design.js | SK-018, SK-003 | AG-010, AG-008 |
-| pattern-matching-implementation.js | SK-019, SK-002, SK-003 | AG-010, AG-001 |
-| generics-polymorphism.js | SK-024, SK-004 | AG-002, AG-010 |
-| effect-system-design.js | SK-023, SK-004 | AG-002, AG-010 |
+| workflows\language-grammar-design.js | SK-022, SK-001, SK-002, SK-025 | AG-001 |
+| workflows\lexer-implementation.js | SK-001, SK-014, SK-025 | AG-001 |
+| workflows\parser-development.js | SK-002, SK-003, SK-014 | AG-001 |
+| workflows\ast-design.js | SK-003, SK-014 | AG-001, AG-008 |
+| workflows\type-system-implementation.js | SK-004, SK-024, SK-014 | AG-002 |
+| workflows\semantic-analysis.js | SK-003, SK-004, SK-018 | AG-008, AG-002 |
+| workflows\ir-design.js | SK-006, SK-003 | AG-009, AG-003 |
+| workflows\code-generation-llvm.js | SK-005, SK-006, SK-007, SK-015 | AG-003 |
+| workflows\interpreter-implementation.js | SK-010, SK-009, SK-016 | AG-004 |
+| workflows\repl-development.js | SK-021, SK-001, SK-012 | AG-005, AG-004 |
+| workflows\bytecode-vm-implementation.js | SK-010, SK-011, SK-009 | AG-004, AG-006 |
+| workflows\jit-compiler-development.js | SK-011, SK-007, SK-005, SK-006 | AG-006, AG-003 |
+| workflows\garbage-collector-implementation.js | SK-008, SK-009 | AG-007 |
+| workflows\memory-allocator-design.js | SK-009, SK-008 | AG-007 |
+| workflows\concurrency-primitives.js | SK-020, SK-009 | AG-004, AG-010 |
+| workflows\lsp-server-implementation.js | SK-012, SK-003, SK-014 | AG-005 |
+| workflows\debugger-adapter-development.js | SK-013, SK-015, SK-012 | AG-005 |
+| workflows\error-message-enhancement.js | SK-014, SK-012 | AG-001, AG-005 |
+| workflows\source-map-generation.js | SK-015, SK-005 | AG-005, AG-003 |
+| workflows\ffi-implementation.js | SK-016, SK-009 | AG-012 |
+| workflows\macro-system-implementation.js | SK-017, SK-003, SK-002 | AG-010, AG-001 |
+| workflows\module-system-design.js | SK-018, SK-003 | AG-010, AG-008 |
+| workflows\pattern-matching-implementation.js | SK-019, SK-002, SK-003 | AG-010, AG-001 |
+| workflows\generics-polymorphism.js | SK-024, SK-004 | AG-002, AG-010 |
+| workflows\effect-system-design.js | SK-023, SK-004 | AG-002, AG-010 |
 
 ---
 
@@ -1156,3 +1156,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.1.0
 **Status**: Phase 6 - All Skills and Agents Implemented
 **Completed**: 2026-01-24
+
+

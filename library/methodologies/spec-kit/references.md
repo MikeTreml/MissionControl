@@ -1,4 +1,4 @@
-# Spec Kit References and Attribution
+﻿# Spec Kit References and Attribution
 
 ## Primary Source
 
@@ -11,16 +11,16 @@
 The following Spec Kit concepts have been adapted into babysitter process definitions:
 
 ### Core Workflow Phases
-- **Constitution** (/speckit.constitution) -> constitution tasks in `spec-kit-orchestrator.js`, `spec-kit-specification.js`
-- **Specification** (/speckit.specify) -> specification tasks in `spec-kit-specification.js`
-- **Clarification** (/speckit.clarify) -> clarification tasks in `spec-kit-specification.js`
-- **Planning** (/speckit.plan) -> planning tasks in `spec-kit-planning.js`
-- **Task Breakdown** (/speckit.tasks) -> decomposition tasks in `spec-kit-planning.js`
-- **Implementation** (/speckit.implement) -> execution tasks in `spec-kit-implementation.js`
+- **Constitution** (/speckit.constitution) -> constitution tasks in `workflows\spec-kit-orchestrator.js`, `workflows\spec-kit-specification.js`
+- **Specification** (/speckit.specify) -> specification tasks in `workflows\spec-kit-specification.js`
+- **Clarification** (/speckit.clarify) -> clarification tasks in `workflows\spec-kit-specification.js`
+- **Planning** (/speckit.plan) -> planning tasks in `workflows\spec-kit-planning.js`
+- **Task Breakdown** (/speckit.tasks) -> decomposition tasks in `workflows\spec-kit-planning.js`
+- **Implementation** (/speckit.implement) -> execution tasks in `workflows\spec-kit-implementation.js`
 
 ### Quality Gates (mapped to process steps)
-- `/speckit.analyze` -> `spec-kit-plan-analyze-consistency` task in `spec-kit-planning.js`
-- `/speckit.checklist` -> `spec-kit-impl-quality-checklist` task in `spec-kit-implementation.js`
+- `/speckit.analyze` -> `spec-kit-plan-analyze-consistency` task in `workflows\spec-kit-planning.js`
+- `/speckit.checklist` -> `spec-kit-impl-quality-checklist` task in `workflows\spec-kit-implementation.js`
 
 ### Agents (mapped to agent definitions)
 - **constitution-architect** -> `agents/constitution-architect/` (governing principles establishment)
@@ -64,3 +64,6 @@ The following Spec Kit concepts have been adapted into babysitter process defini
 ## Acknowledgment
 
 This adaptation brings GitHub's Spec Kit Spec-Driven Development methodology into the babysitter process system. All credit for the original concepts, workflow design, and methodology belongs to GitHub and the Spec Kit project contributors. The original repository is available at https://github.com/github/spec-kit.
+
+
+

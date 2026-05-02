@@ -136,6 +136,7 @@ export async function process(inputs, ctx) {
 
     currentAnnealingParams = annealingOptimization.optimizedParameters;
 
+    if (defectDensity > defectTarget && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -175,6 +176,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Defect density must be acceptable
+  if (defectDensity > defectTarget) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -820,3 +822,4 @@ export const recipeDocumentationTask = defineTask('recipe-documentation', (args,
   },
   labels: ['nanotechnology', 'dsa', 'documentation']
 }));
+

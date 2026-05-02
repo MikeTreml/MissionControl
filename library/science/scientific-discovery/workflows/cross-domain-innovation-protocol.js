@@ -51,6 +51,7 @@ export async function process(inputs, ctx) {
     targetAnalysis,
     innovationGoal,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -577,3 +578,4 @@ export const synthesizeCrossDomainInnovationTask = defineTask('synthesize-cross-
   },
   labels: ['agent', 'cross-domain-innovation', 'synthesis']
 }));
+

@@ -66,6 +66,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Diagnostic Confidence
+  if (refinedDifferential.topDiagnosis.confidence < 0.6) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -540,3 +541,4 @@ export const planPreventionTask = defineTask('troubleshoot-prevention-planning',
   },
   labels: ['troubleshooting', 'prevention-planning']
 }));
+

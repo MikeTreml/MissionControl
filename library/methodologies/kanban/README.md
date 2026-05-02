@@ -1,4 +1,4 @@
-# Kanban
+﻿# Kanban
 
 **Creator**: Adapted from Toyota Production System by David J. Anderson
 **Year**: 2007 (modern knowledge work adaptation)
@@ -389,7 +389,7 @@ Number of items currently being worked on.
 
 Percentage of time work is actively being worked on (vs waiting).
 
-**Formula**: (Active time / Total time) × 100
+**Formula**: (Active time / Total time) Ã— 100
 
 **Typical Range**: 15-30% (knowledge work often has low flow efficiency)
 
@@ -440,11 +440,11 @@ Stacked area chart showing WIP in each stage over time.
 ## Examples
 
 See the `examples/` directory for:
-- `software-development.json` - Software development team
-- `devops-team.json` - DevOps/SRE team managing deployments
-- `support-team.json` - Customer support workflow
-- `marketing-team.json` - Marketing content production
-- `simple.json` - Basic Kanban setup
+- `examples\software-development.json` - Software development team
+- `examples\devops-team.json` - DevOps/SRE team managing deployments
+- `examples\support-team.json` - Customer support workflow
+- `examples\marketing-team.json` - Marketing content production
+- `examples\simple.json` - Basic Kanban setup
 
 ## Integration with Other Methodologies
 
@@ -519,10 +519,10 @@ Don't redesign your process upfront. Visualize what you do today, then evolve.
 
 Start with limits equal to or less than team size.
 
-**Formula**: WIP Limit = Team Size × 0.5 to 1.0
+**Formula**: WIP Limit = Team Size Ã— 0.5 to 1.0
 
 **Examples**:
-- Team of 6 → Start with WIP limit of 3-6
+- Team of 6 â†’ Start with WIP limit of 3-6
 - Gradually reduce to expose bottlenecks
 
 ### 3. Pull from Right to Left
@@ -575,9 +575,9 @@ Schedule regular replenishment meetings (weekly or bi-weekly).
 Review cumulative flow diagram regularly.
 
 **Patterns to Watch**:
-- Widening bands → Too much WIP
-- Bulges → Bottlenecks
-- Flat lines → Starvation
+- Widening bands â†’ Too much WIP
+- Bulges â†’ Bottlenecks
+- Flat lines â†’ Starvation
 
 ### 10. Run Small Experiments
 
@@ -740,6 +740,7 @@ To improve this Kanban implementation:
 
 ---
 
-**Implementation Status**: ✅ Implemented
+**Implementation Status**: âœ… Implemented
 **Last Updated**: 2026-01-23
 **Version**: 1.0.0
+

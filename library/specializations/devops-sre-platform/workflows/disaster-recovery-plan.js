@@ -559,6 +559,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Cost analysis complete - Estimated monthly cost: ${costAnalysisResult.totalMonthlyCost}, Annual: ${costAnalysisResult.totalAnnualCost}`);
 
   // Quality Gate: Cost Review
+  if (costAnalysisResult.budgetExceeded) {
       let lastFeedback_phase13Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase13Review) {
@@ -2502,3 +2503,4 @@ export const assessDRReadinessTask = defineTask('assess-dr-readiness', (args, ta
   },
   labels: ['agent', 'disaster-recovery', 'readiness-assessment']
 }));
+

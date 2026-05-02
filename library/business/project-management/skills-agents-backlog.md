@@ -1,4 +1,4 @@
-# Project Management and Leadership - Skills and Agents Backlog
+﻿# Project Management and Leadership - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Project Management processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized tooling.
 
@@ -23,11 +23,11 @@ All implemented processes in this specialization currently use the `general-purp
 ### Implemented Processes
 
 #### Phase 3 (Standard Priority) - Implemented
-1. `budget-development.js` - Budget Development and Cost Estimation using multiple estimation techniques
-2. `earned-value-management.js` - Earned Value Management (EVM) for schedule and cost performance tracking
-3. `agile-metrics-velocity.js` - Agile Metrics and Velocity Tracking for forecasting and continuous improvement
-4. `portfolio-prioritization.js` - Portfolio Prioritization and Investment Analysis using strategic alignment and financial metrics
-5. `benefits-realization.js` - Benefits Realization Management for tracking business outcomes
+1. `workflows\budget-development.js` - Budget Development and Cost Estimation using multiple estimation techniques
+2. `workflows\earned-value-management.js` - Earned Value Management (EVM) for schedule and cost performance tracking
+3. `workflows\agile-metrics-velocity.js` - Agile Metrics and Velocity Tracking for forecasting and continuous improvement
+4. `workflows\portfolio-prioritization.js` - Portfolio Prioritization and Investment Analysis using strategic alignment and financial metrics
+5. `workflows\benefits-realization.js` - Benefits Realization Management for tracking business outcomes
 
 ### Processes Backlog (25 Total)
 
@@ -97,8 +97,8 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Schedule Development and Critical Path Analysis
-- earned-value-management.js
-- agile-metrics-velocity.js
+- workflows\earned-value-management.js
+- workflows\agile-metrics-velocity.js
 - Program Dependency Management
 
 **Dependencies**: Visualization libraries, date/time libraries, scheduling algorithms
@@ -123,7 +123,7 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Schedule Development and Critical Path Analysis
-- earned-value-management.js
+- workflows\earned-value-management.js
 - Program Dependency Management
 - Risk Planning and Assessment
 
@@ -149,8 +149,8 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Resource Planning and Allocation
-- budget-development.js
-- portfolio-prioritization.js
+- workflows\budget-development.js
+- workflows\portfolio-prioritization.js
 - Team Formation and Development
 
 **Dependencies**: Optimization algorithms, resource calendars
@@ -176,9 +176,9 @@ All implemented processes in this specialization currently use the `general-purp
 - Perform trend analysis on indices
 
 **Process Integration**:
-- earned-value-management.js
-- budget-development.js
-- portfolio-prioritization.js
+- workflows\earned-value-management.js
+- workflows\budget-development.js
+- workflows\portfolio-prioritization.js
 - Status Reporting and Communication Management
 
 **Dependencies**: Financial calculations, time series analysis
@@ -203,7 +203,7 @@ All implemented processes in this specialization currently use the `general-purp
 - Calculate predictability metrics
 
 **Process Integration**:
-- agile-metrics-velocity.js
+- workflows\agile-metrics-velocity.js
 - Sprint Planning and Backlog Refinement
 - Kanban Flow Optimization
 - Release Forecasting
@@ -232,8 +232,8 @@ All implemented processes in this specialization currently use the `general-purp
 **Process Integration**:
 - Risk Planning and Assessment
 - Risk Monitoring and Response Execution
-- budget-development.js
-- portfolio-prioritization.js
+- workflows\budget-development.js
+- workflows\portfolio-prioritization.js
 
 **Dependencies**: Probability analysis, Monte Carlo simulation, visualization
 
@@ -257,8 +257,8 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Work Breakdown Structure (WBS) Development
-- budget-development.js
-- earned-value-management.js
+- workflows\budget-development.js
+- workflows\earned-value-management.js
 - Resource Planning and Allocation
 
 **Dependencies**: Tree data structures, decomposition algorithms
@@ -310,9 +310,9 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Business Case Development
-- budget-development.js
-- portfolio-prioritization.js
-- benefits-realization.js
+- workflows\budget-development.js
+- workflows\portfolio-prioritization.js
+- workflows\benefits-realization.js
 
 **Dependencies**: Financial mathematics, numerical computation
 
@@ -336,7 +336,7 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Sprint Planning and Backlog Refinement
-- agile-metrics-velocity.js
+- workflows\agile-metrics-velocity.js
 - Resource Planning and Allocation
 - Team Formation and Development
 
@@ -361,8 +361,8 @@ All implemented processes in this specialization currently use the `general-purp
 - Alert on benefit realization risks
 
 **Process Integration**:
-- benefits-realization.js
-- portfolio-prioritization.js
+- workflows\benefits-realization.js
+- workflows\portfolio-prioritization.js
 - Business Case Development
 - Lessons Learned and Knowledge Management
 
@@ -388,7 +388,7 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Change Control Management
-- earned-value-management.js
+- workflows\earned-value-management.js
 - Risk Monitoring and Response Execution
 - Issue Management and Escalation
 
@@ -413,9 +413,9 @@ All implemented processes in this specialization currently use the `general-purp
 - Support dynamic portfolio rebalancing
 
 **Process Integration**:
-- portfolio-prioritization.js
+- workflows\portfolio-prioritization.js
 - Resource Planning and Allocation
-- benefits-realization.js
+- workflows\benefits-realization.js
 - Business Case Development
 
 **Dependencies**: Optimization algorithms, constraint solvers, financial models
@@ -466,7 +466,7 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Sprint Retrospective Facilitation
-- agile-metrics-velocity.js
+- workflows\agile-metrics-velocity.js
 - Lessons Learned and Knowledge Management
 - Team Formation and Development
 
@@ -492,7 +492,7 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Kanban Flow Optimization
-- agile-metrics-velocity.js
+- workflows\agile-metrics-velocity.js
 - Issue Management and Escalation
 - Status Reporting and Communication Management
 
@@ -520,7 +520,7 @@ All implemented processes in this specialization currently use the `general-purp
 - Project Charter Development
 - Business Case Development
 - Stakeholder Analysis and Engagement Planning
-- budget-development.js
+- workflows\budget-development.js
 
 **Dependencies**: Document templates, formatting libraries
 
@@ -545,7 +545,7 @@ All implemented processes in this specialization currently use the `general-purp
 **Process Integration**:
 - Lessons Learned and Knowledge Management
 - Sprint Retrospective Facilitation
-- benefits-realization.js
+- workflows\benefits-realization.js
 - Project Charter Development
 
 **Dependencies**: Knowledge base, search/retrieval, pattern analysis
@@ -570,7 +570,7 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Program Dependency Management
-- portfolio-prioritization.js
+- workflows\portfolio-prioritization.js
 - Schedule Development and Critical Path Analysis
 - Risk Planning and Assessment
 
@@ -630,8 +630,8 @@ All implemented processes in this specialization currently use the `general-purp
 - All project initiation, planning, execution, and control processes
 - Project Charter Development
 - Schedule Development and Critical Path Analysis
-- budget-development.js
-- earned-value-management.js
+- workflows\budget-development.js
+- workflows\earned-value-management.js
 
 ---
 
@@ -659,7 +659,7 @@ All implemented processes in this specialization currently use the `general-purp
 - Sprint Planning and Backlog Refinement
 - Sprint Review and Demonstration
 - Sprint Retrospective Facilitation
-- agile-metrics-velocity.js
+- workflows\agile-metrics-velocity.js
 - Kanban Flow Optimization
 
 ---
@@ -685,8 +685,8 @@ All implemented processes in this specialization currently use the `general-purp
 - Background: Construction, engineering, IT projects
 
 **Process Integration**:
-- budget-development.js (all phases)
-- earned-value-management.js (all phases)
+- workflows\budget-development.js (all phases)
+- workflows\earned-value-management.js (all phases)
 - Business Case Development
 - Resource Planning and Allocation
 
@@ -714,7 +714,7 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Schedule Development and Critical Path Analysis
-- earned-value-management.js
+- workflows\earned-value-management.js
 - Resource Planning and Allocation
 - Program Dependency Management
 
@@ -743,8 +743,8 @@ All implemented processes in this specialization currently use the `general-purp
 **Process Integration**:
 - Risk Planning and Assessment
 - Risk Monitoring and Response Execution
-- budget-development.js (reserve analysis)
-- portfolio-prioritization.js (portfolio risk)
+- workflows\budget-development.js (reserve analysis)
+- workflows\portfolio-prioritization.js (portfolio risk)
 
 ---
 
@@ -769,8 +769,8 @@ All implemented processes in this specialization currently use the `general-purp
 - Background: IT portfolio, capital programs, executive leadership
 
 **Process Integration**:
-- portfolio-prioritization.js (all phases)
-- benefits-realization.js (all phases)
+- workflows\portfolio-prioritization.js (all phases)
+- workflows\benefits-realization.js (all phases)
 - Business Case Development
 - Program Dependency Management
 
@@ -800,7 +800,7 @@ All implemented processes in this specialization currently use the `general-purp
 - Sprint Planning and Backlog Refinement
 - Sprint Review and Demonstration
 - Sprint Retrospective Facilitation
-- agile-metrics-velocity.js
+- workflows\agile-metrics-velocity.js
 - Team Formation and Development
 
 ---
@@ -826,8 +826,8 @@ All implemented processes in this specialization currently use the `general-purp
 - Background: Large transformation programs, business change
 
 **Process Integration**:
-- benefits-realization.js (all phases)
-- portfolio-prioritization.js (benefits analysis)
+- workflows\benefits-realization.js (all phases)
+- workflows\portfolio-prioritization.js (benefits analysis)
 - Business Case Development
 - Lessons Learned and Knowledge Management
 
@@ -855,7 +855,7 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Change Control Management
-- earned-value-management.js (baseline changes)
+- workflows\earned-value-management.js (baseline changes)
 - Issue Management and Escalation
 - Quality Assurance Implementation
 
@@ -883,8 +883,8 @@ All implemented processes in this specialization currently use the `general-purp
 
 **Process Integration**:
 - Program Dependency Management
-- portfolio-prioritization.js
-- benefits-realization.js
+- workflows\portfolio-prioritization.js
+- workflows\benefits-realization.js
 - Stakeholder Analysis and Engagement Planning
 
 ---
@@ -912,7 +912,7 @@ All implemented processes in this specialization currently use the `general-purp
 **Process Integration**:
 - Vendor and Procurement Management
 - Risk Monitoring and Response Execution
-- budget-development.js (vendor costs)
+- workflows\budget-development.js (vendor costs)
 - Quality Assurance Implementation
 
 ---
@@ -969,7 +969,7 @@ All implemented processes in this specialization currently use the `general-purp
 - Stakeholder Analysis and Engagement Planning
 - Status Reporting and Communication Management
 - Team Formation and Development
-- benefits-realization.js (benefit owners)
+- workflows\benefits-realization.js (benefit owners)
 
 ---
 
@@ -994,10 +994,10 @@ All implemented processes in this specialization currently use the `general-purp
 - Background: Government contracting, defense, aerospace
 
 **Process Integration**:
-- earned-value-management.js (all phases)
-- budget-development.js (cost baseline)
+- workflows\earned-value-management.js (all phases)
+- workflows\budget-development.js (cost baseline)
 - Status Reporting and Communication Management
-- portfolio-prioritization.js
+- workflows\portfolio-prioritization.js
 
 ---
 
@@ -1024,8 +1024,8 @@ All implemented processes in this specialization currently use the `general-purp
 **Process Integration**:
 - Resource Planning and Allocation
 - Team Formation and Development
-- portfolio-prioritization.js (resource constraints)
-- agile-metrics-velocity.js (team capacity)
+- workflows\portfolio-prioritization.js (resource constraints)
+- workflows\agile-metrics-velocity.js (team capacity)
 
 ---
 
@@ -1035,11 +1035,11 @@ All implemented processes in this specialization currently use the `general-purp
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| budget-development.js | SK-004, SK-009, SK-007 | AG-003, AG-001 |
-| earned-value-management.js | SK-004, SK-001, SK-002 | AG-014, AG-003, AG-004 |
-| agile-metrics-velocity.js | SK-005, SK-010, SK-016 | AG-002, AG-007 |
-| portfolio-prioritization.js | SK-009, SK-013, SK-006, SK-019 | AG-006, AG-010 |
-| benefits-realization.js | SK-011, SK-009 | AG-008, AG-006 |
+| workflows\budget-development.js | SK-004, SK-009, SK-007 | AG-003, AG-001 |
+| workflows\earned-value-management.js | SK-004, SK-001, SK-002 | AG-014, AG-003, AG-004 |
+| workflows\agile-metrics-velocity.js | SK-005, SK-010, SK-016 | AG-002, AG-007 |
+| workflows\portfolio-prioritization.js | SK-009, SK-013, SK-006, SK-019 | AG-006, AG-010 |
+| workflows\benefits-realization.js | SK-011, SK-009 | AG-008, AG-006 |
 | Project Charter Development | SK-017, SK-008 | AG-001, AG-013 |
 | Stakeholder Analysis | SK-008 | AG-013, AG-001 |
 | Business Case Development | SK-009, SK-006 | AG-006, AG-003 |
@@ -1162,3 +1162,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

@@ -50,6 +50,7 @@ export async function process(inputs, ctx) {
     toolAnalyses.push(toolAnalysis);
     revealedAspects[tool.name] = toolAnalysis.reveals;
     hiddenAspects[tool.name] = toolAnalysis.hides;
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -504,3 +505,4 @@ export const synthesizeMultiToolViewTask = defineTask('synthesize-multi-tool-vie
   },
   labels: ['agent', 'tool-as-lens', 'synthesis']
 }));
+

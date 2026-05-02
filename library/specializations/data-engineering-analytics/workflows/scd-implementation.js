@@ -482,6 +482,7 @@ export async function process(inputs, ctx) {
   const validationScore = implementationValidation.overallScore;
   const implementationValid = validationScore >= 85;
 
+  if (!implementationValid) {
       let lastFeedback_phase15Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase15Review) {
@@ -2399,3 +2400,4 @@ export const implementationValidationTask = defineTask('implementation-validatio
   },
   labels: ['data-engineering', 'scd', 'validation', 'quality-assurance']
 }));
+

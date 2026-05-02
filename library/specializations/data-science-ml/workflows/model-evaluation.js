@@ -80,6 +80,7 @@ export async function process(inputs, ctx) {
   validationResults.modelLoad = modelLoadResult;
 
   // Quality Gate: Model must load successfully and have valid structure
+  if (!modelLoadResult.modelValid || modelLoadResult.structureIssues.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -127,6 +128,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Check if target metrics are met
   const metricsNotMet = performanceEval.metricsComparison.filter(m => !m.targetMet);
+  if (metricsNotMet.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -221,6 +223,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...calibrationResult.artifacts);
 
     // Quality Gate: Check calibration quality
+    if (calibrationResult.calibrationScore < 70) {
         let lastFeedback_phase4Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase4Review) {
@@ -302,6 +305,7 @@ export async function process(inputs, ctx) {
     );
 
     // Quality Gate: Check robustness score
+    if (robustnessResults.overallRobustnessScore < 70) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -357,6 +361,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: Check for fairness violations
     const fairnessViolations = fairnessResults.metrics.filter(m => m.violation);
+    if (fairnessViolations.length > 0) {
         let lastFeedback_phase6Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase6Review) {
@@ -452,6 +457,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...driftAnalysis.artifacts);
 
   // Quality Gate: Check for significant drift
+  if (driftAnalysis.significantDriftDetected) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -500,6 +506,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...productionSimResult.artifacts);
 
     // Quality Gate: Check production readiness metrics
+    if (productionSimResult.latencyP99 > productionSimResult.latencyThreshold) {
         let lastFeedback_phase9Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase9Review) {
@@ -1805,3 +1812,4 @@ export const productionReadinessTask = defineTask('production-readiness', (args,
   },
   labels: ['agent', 'model-evaluation', 'production-readiness', 'final-review']
 }));
+

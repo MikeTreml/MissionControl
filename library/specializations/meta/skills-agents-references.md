@@ -1,4 +1,4 @@
-# Meta Specialization - Skills and Agents References
+﻿# Meta Specialization - Skills and Agents References
 
 External references for skills and agents that can be used or adapted for the Meta Specialization.
 
@@ -152,7 +152,7 @@ External references for skills and agents that can be used or adapted for the Me
 ### Common Patterns to Follow
 
 1. **Skill Structure**:
-   - Follow SKILL.md format from existing skills
+   - Follow harnesses\claude-code\examples\SKILL.md format from existing skills
    - Use consistent tool permissions
    - Include comprehensive examples
 
@@ -174,7 +174,7 @@ External references for skills and agents that can be used or adapted for the Me
 
 ```
 "claude skills" in:readme
-"SKILL.md" path:skills
+"harnesses\claude-code\examples\SKILL.md" path:skills
 "AGENT.md" path:agents
 "defineTask" language:javascript
 "babysitter" skill
@@ -187,3 +187,5 @@ mcphub.io search: documentation
 mcphub.io search: validation
 mcphub.io search: generation
 ```
+
+

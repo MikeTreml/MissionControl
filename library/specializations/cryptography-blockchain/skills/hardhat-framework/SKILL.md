@@ -1,4 +1,4 @@
----
+﻿---
 name: hardhat-framework
 description: Expert usage of Hardhat for smart contract development, testing, and deployment. Includes TypeChain generation, plugin ecosystem, network forking, and deployment management.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -356,6 +356,7 @@ npx hardhat verify --network mainnet <address>
 
 ## See Also
 
-- `skills/foundry-framework/SKILL.md` - Alternative framework
-- `skills/openzeppelin/SKILL.md` - Contract libraries
+- `SKILL.md` - Alternative framework
+- `SKILL.md` - Contract libraries
 - [Hardhat Documentation](https://hardhat.org/docs)
+

@@ -83,6 +83,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...journeyAnalysis.artifacts);
 
   // Quality Gate: Minimum journey coverage
+  if (journeyAnalysis.identifiedJourneys.length < 5) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -131,6 +132,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Test scenario completeness
   const totalScenarios = testDesign.testScenarios.length;
+  if (totalScenarios < 10) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -180,6 +182,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Page Object coverage
   const screensCovered = pageObjectDevelopment.pageObjects.length;
+  if (screensCovered < journeyAnalysis.estimatedScreenCount * 0.8) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -229,6 +232,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...testDataSetup.artifacts);
 
   // Quality Gate: Test data availability
+  if (!testDataSetup.dataReady || testDataSetup.dataGaps.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -329,6 +333,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Initial test pass rate
   const initialPassRate = initialExecution.passRate;
+  if (initialPassRate < 50) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -416,6 +421,7 @@ export async function process(inputs, ctx) {
   const flakinessRate = finalExecution.flakinessRate;
 
   // Quality Gate: Final test pass rate
+  if (finalPassRate < acceptanceCriteria.passRate) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -451,6 +457,7 @@ export async function process(inputs, ctx) {
     } }
 
   // Quality Gate: Flakiness rate
+  if (flakinessRate > acceptanceCriteria.flakiness) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -505,6 +512,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...codeReview.artifacts);
 
   // Quality Gate: Code review approval
+  if (codeReview.criticalIssues.length > 0) {
       let lastFeedback_phase10Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase10Review) {
@@ -699,7 +707,7 @@ export async function process(inputs, ctx) {
       journeysCovered: journeyAnalysis.identifiedJourneys.length,
       testScenarios: testDesign.testScenarios.length,
       pageObjectsCreated: pageObjectDevelopment.pageObjects.length,
-      authenticatio nTests: authenticationTests.testCount,
+      authenticationTests: authenticationTests.testCount,
       coreWorkflowTests: coreWorkflowTests.testCount,
       dataManagementTests: dataManagementTests.testCount
     },

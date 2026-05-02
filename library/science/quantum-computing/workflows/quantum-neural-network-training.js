@@ -99,6 +99,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...(barrenResult.artifacts || []));
 
+  if (barrenResult.barrenPlateauRisk === 'high') {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -743,3 +744,4 @@ export const qnnReportTask = defineTask('qnn-report', (args, taskCtx) => ({
   },
   labels: ['quantum-computing', 'qnn', 'reporting']
 }));
+

@@ -112,6 +112,7 @@ export async function process(inputs, ctx) {
     constraints
   });
 
+  if (workPackageValidation.invalidPackages?.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -985,3 +986,4 @@ export const wbsDocumentationTask = defineTask('wbs-documentation', (args, taskC
   },
   labels: ['wbs', 'documentation', 'deliverable']
 }));
+

@@ -168,6 +168,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Compliance review complete. Score: ${complianceScore}/100`);
 
   // Quality Gate: Compliance threshold
+  if (complianceScore < 80) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -755,3 +756,4 @@ export const finalAssemblyTask = defineTask('final-assembly', (args, taskCtx) =>
   },
   labels: ['agent', 'contract-drafting', 'assembly']
 }));
+

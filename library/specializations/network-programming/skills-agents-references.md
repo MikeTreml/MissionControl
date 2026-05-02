@@ -1,4 +1,4 @@
-# Network Programming and Protocols - Skills and Agents References
+﻿# Network Programming and Protocols - Skills and Agents References
 
 This document provides curated links to community-created Claude skills, agents, plugins, and MCP (Model Context Protocol) servers that align with the identified skills and agents in the Network Programming specialization backlog.
 
@@ -538,7 +538,7 @@ This reference document maps community-created tools and MCP servers to the skil
 
 ### cc-trace
 
-**Reference**: [https://claude-plugins.dev/skills/@alexfazio/cc-trace/SKILL.md](https://claude-plugins.dev/skills/@alexfazio/cc-trace/SKILL.md)
+**Reference**: [https://claude-plugins.dev/skills/@skills\dns-protocol\SKILL.md](https://claude-plugins.dev/skills/@skills\dns-protocol\SKILL.md)
 
 **Description**: Claude skill for tracing and debugging network requests.
 
@@ -788,3 +788,4 @@ This reference document maps community-created tools and MCP servers to the skil
 **Version**: 1.0.0
 **Status**: Phase 5 - Skills and Agents References Compiled
 **Next Step**: Evaluate and integrate selected tools into specialization processes
+

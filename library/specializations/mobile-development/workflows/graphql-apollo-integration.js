@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, graphqlEndpoint, framework, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -135,3 +136,4 @@ export const authenticationTask = createGraphQLTask('authentication', 'Authentic
 export const offlineSupportTask = createGraphQLTask('offline-support', 'Offline Support');
 export const testingTask = createGraphQLTask('testing', 'GraphQL Testing Setup');
 export const documentationTask = createGraphQLTask('documentation', 'GraphQL Documentation');
+

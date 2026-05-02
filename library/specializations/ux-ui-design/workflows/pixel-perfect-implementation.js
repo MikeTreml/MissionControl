@@ -314,6 +314,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Iteration ${iteration} complete: ${currentScore}/${targetQuality} (+${improvement})`);
 
     // Step 3.5: Breakpoint for review (based on interval setting)
+    if (!converged && (iteration % breakpointInterval === 0 || improvement < 0)) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -1109,3 +1110,4 @@ export const verifyAccessibilityTask = defineTask('verify-accessibility', (args,
   },
   labels: ['agent', 'accessibility', 'verification']
 }));
+

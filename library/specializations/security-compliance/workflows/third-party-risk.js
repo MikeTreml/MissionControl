@@ -1710,7 +1710,7 @@ export const identifyRiskFindingsTask = defineTask('identify-risk-findings', (ar
           }
         },
         criticalFindings: { type: 'array', items: { type: 'object' } },
-        systemic: Issues: { type: 'array', items: { type: 'object' }, description: 'Issues affecting multiple vendors' },
+        systemicIssues: { type: 'array', items: { type: 'object' }, description: 'Issues affecting multiple vendors' },
         artifacts: { type: 'array' }
       }
     }

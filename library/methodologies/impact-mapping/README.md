@@ -1,4 +1,4 @@
-# Impact Mapping Methodology
+﻿# Impact Mapping Methodology
 
 **Creator**: Gojko Adzic
 **Year**: Modern (2012)
@@ -16,13 +16,13 @@ This methodology prevents scope creep, enables better prioritization, and helps 
 Impact Mapping uses a four-level hierarchy to connect strategy to execution:
 
 ```
-🎯 GOAL (Why?)
-    └─ 👤 ACTOR (Who?)
-        └─ 💫 IMPACT (How?)
-            └─ 📦 DELIVERABLE (What?)
+ðŸŽ¯ GOAL (Why?)
+    â””â”€ ðŸ‘¤ ACTOR (Who?)
+        â””â”€ ðŸ’« IMPACT (How?)
+            â””â”€ ðŸ“¦ DELIVERABLE (What?)
 ```
 
-### 1. 🎯 Goal - WHY are we doing this?
+### 1. ðŸŽ¯ Goal - WHY are we doing this?
 
 The business objective we want to achieve. Must be:
 - **Specific**: Clear and well-defined
@@ -36,7 +36,7 @@ The business objective we want to achieve. Must be:
 - "Reduce customer churn from 8% to 4% within 6 months"
 - "Achieve 100,000 active users by end of year"
 
-### 2. 👤 Actor - WHO can create impact?
+### 2. ðŸ‘¤ Actor - WHO can create impact?
 
 The people, systems, or organizations who can help achieve (or hinder) the goal.
 
@@ -54,7 +54,7 @@ The people, systems, or organizations who can help achieve (or hinder) the goal.
 - "Customer success team"
 - "Competitors (negative actor)"
 
-### 3. 💫 Impact - HOW should their behavior change?
+### 3. ðŸ’« Impact - HOW should their behavior change?
 
 The desired change in actor behavior that contributes to the goal.
 
@@ -74,7 +74,7 @@ The desired change in actor behavior that contributes to the goal.
 - "Support team resolves tickets 50% faster"
 - "Competitors lose market share to us"
 
-### 4. 📦 Deliverable - WHAT can we build?
+### 4. ðŸ“¦ Deliverable - WHAT can we build?
 
 Features, stories, or capabilities that create the desired impact.
 
@@ -171,7 +171,7 @@ Update the map as you learn. When assumptions are validated or invalidated, adju
 ### Basic Example
 
 ```javascript
-import { process } from './impact-mapping.js';
+import { process } from 'workflows\impact-mapping.js';
 
 const result = await process({
   goal: "Increase monthly recurring revenue by 30% in Q2 2026",
@@ -232,7 +232,7 @@ const result = await process({
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `goal` | string | ✅ Yes | - | Business goal or objective |
+| `goal` | string | âœ… Yes | - | Business goal or objective |
 | `timeframe` | string | No | "6 months" | Timeline for achieving goal |
 | `successMetrics` | array | No | [] | KPIs to measure goal success |
 | `constraints` | object | No | {} | Budget, team, technical, regulatory |
@@ -392,15 +392,15 @@ const result = await process({
 
 ```
 Impact Mapping (Strategic)
-    ↓
+    â†“
 Hypothesis-Driven Development (Assumption Validation)
-    ↓
+    â†“
 Spec-Driven Development (Define Implementation)
-    ↓
+    â†“
 Example Mapping (Elaborate Stories)
-    ↓
+    â†“
 BDD/TDD (Build and Test)
-    ↓
+    â†“
 GSD Execution (Deliver)
 ```
 
@@ -408,100 +408,100 @@ GSD Execution (Deliver)
 
 A successful Impact Mapping session produces:
 
-- ✅ Clear, measurable SMART goal with 3-5 KPIs
-- ✅ Diverse actor types identified (primary, secondary, negative)
-- ✅ Specific, measurable behavioral impacts per actor
-- ✅ Multiple deliverable options per impact
-- ✅ Prioritized roadmap with 2-4 milestones
-- ✅ Critical assumptions flagged for validation
-- ✅ Visual map for stakeholder communication
-- ✅ Team alignment on strategy and priorities
+- âœ… Clear, measurable SMART goal with 3-5 KPIs
+- âœ… Diverse actor types identified (primary, secondary, negative)
+- âœ… Specific, measurable behavioral impacts per actor
+- âœ… Multiple deliverable options per impact
+- âœ… Prioritized roadmap with 2-4 milestones
+- âœ… Critical assumptions flagged for validation
+- âœ… Visual map for stakeholder communication
+- âœ… Team alignment on strategy and priorities
 
 ## Warning Signs
 
 If Impact Mapping reveals these issues, consider refinement:
 
-- ❌ Goal is vague or not measurable
-- ❌ Only 1-2 actors identified (too narrow)
-- ❌ Impacts are features, not behaviors
-- ❌ All deliverables are "must-have" (no prioritization)
-- ❌ Dozens of assumptions with no validation plan
-- ❌ Map is too complex (more than 50 deliverables)
-- ❌ Stakeholders can't explain the strategy from the map
+- âŒ Goal is vague or not measurable
+- âŒ Only 1-2 actors identified (too narrow)
+- âŒ Impacts are features, not behaviors
+- âŒ All deliverables are "must-have" (no prioritization)
+- âŒ Dozens of assumptions with no validation plan
+- âŒ Map is too complex (more than 50 deliverables)
+- âŒ Stakeholders can't explain the strategy from the map
 
-→ **Refine the goal**, simplify the scope, or break into multiple maps
+â†’ **Refine the goal**, simplify the scope, or break into multiple maps
 
 ## Best Practices
 
 ### Do's
-- ✅ Start with a single, clear goal per map
-- ✅ Think broadly about actors (don't forget negative actors)
-- ✅ Focus impacts on behavior, not features
-- ✅ Generate multiple deliverable options (divergent thinking)
-- ✅ Flag assumptions early and often
-- ✅ Validate critical assumptions before building
-- ✅ Update the map as you learn
-- ✅ Use the map for stakeholder communication
+- âœ… Start with a single, clear goal per map
+- âœ… Think broadly about actors (don't forget negative actors)
+- âœ… Focus impacts on behavior, not features
+- âœ… Generate multiple deliverable options (divergent thinking)
+- âœ… Flag assumptions early and often
+- âœ… Validate critical assumptions before building
+- âœ… Update the map as you learn
+- âœ… Use the map for stakeholder communication
 
 ### Don'ts
-- ❌ Don't try to map multiple goals at once
-- ❌ Don't skip actors and jump to features
-- ❌ Don't assume one solution per impact
-- ❌ Don't build everything - prioritize ruthlessly
-- ❌ Don't ignore negative actors
-- ❌ Don't create the map alone - collaborate
-- ❌ Don't let the map become stale - keep it updated
+- âŒ Don't try to map multiple goals at once
+- âŒ Don't skip actors and jump to features
+- âŒ Don't assume one solution per impact
+- âŒ Don't build everything - prioritize ruthlessly
+- âŒ Don't ignore negative actors
+- âŒ Don't create the map alone - collaborate
+- âŒ Don't let the map become stale - keep it updated
 
 ## Example: SaaS Revenue Growth
 
 ### Goal
-> 🎯 **Increase monthly recurring revenue (MRR) from $100K to $150K by Q3 2026**
+> ðŸŽ¯ **Increase monthly recurring revenue (MRR) from $100K to $150K by Q3 2026**
 
 **Success Metrics**:
-- MRR: $100K → $150K (50% increase)
-- Customer count: 500 → 700 customers
-- Average revenue per customer: $200 → $214
-- Churn rate: 8% → 5%
+- MRR: $100K â†’ $150K (50% increase)
+- Customer count: 500 â†’ 700 customers
+- Average revenue per customer: $200 â†’ $214
+- Churn rate: 8% â†’ 5%
 
 ### Actors and Impacts
 
-**👤 Actor: Free Tier Users** (Primary)
-- 💫 Impact: Convert to paid plans
-  - 📦 Advanced analytics dashboard (must-have) ⚡
-  - 📦 Customizable reports (should-have)
-  - 📦 Data export API (could-have)
+**ðŸ‘¤ Actor: Free Tier Users** (Primary)
+- ðŸ’« Impact: Convert to paid plans
+  - ðŸ“¦ Advanced analytics dashboard (must-have) âš¡
+  - ðŸ“¦ Customizable reports (should-have)
+  - ðŸ“¦ Data export API (could-have)
 
-- 💫 Impact: Increase engagement before conversion
-  - 📦 Interactive product tour (must-have)
-  - 📦 Onboarding email sequence (must-have)
-  - 📦 Usage milestone notifications (should-have)
+- ðŸ’« Impact: Increase engagement before conversion
+  - ðŸ“¦ Interactive product tour (must-have)
+  - ðŸ“¦ Onboarding email sequence (must-have)
+  - ðŸ“¦ Usage milestone notifications (should-have)
 
-**👥 Actor: Existing Paid Customers** (Primary)
-- 💫 Impact: Upgrade to higher tiers
-  - 📦 Team collaboration features (must-have) ⚡
-  - 📦 Advanced permissions system (should-have)
-  - 📦 Priority support tier (should-have)
+**ðŸ‘¥ Actor: Existing Paid Customers** (Primary)
+- ðŸ’« Impact: Upgrade to higher tiers
+  - ðŸ“¦ Team collaboration features (must-have) âš¡
+  - ðŸ“¦ Advanced permissions system (should-have)
+  - ðŸ“¦ Priority support tier (should-have)
 
-- 💫 Impact: Reduce churn by increasing value
-  - 📦 Customer success program (must-have)
-  - 📦 Regular feature adoption webinars (should-have)
-  - 📦 In-app usage recommendations (could-have)
+- ðŸ’« Impact: Reduce churn by increasing value
+  - ðŸ“¦ Customer success program (must-have)
+  - ðŸ“¦ Regular feature adoption webinars (should-have)
+  - ðŸ“¦ In-app usage recommendations (could-have)
 
-**👥 Actor: Customer Success Team** (Secondary)
-- 💫 Impact: Proactively prevent churn
-  - 📦 Churn risk dashboard (must-have)
-  - 📦 Automated health score alerts (must-have)
-  - 📦 Customer journey playbooks (should-have)
+**ðŸ‘¥ Actor: Customer Success Team** (Secondary)
+- ðŸ’« Impact: Proactively prevent churn
+  - ðŸ“¦ Churn risk dashboard (must-have)
+  - ðŸ“¦ Automated health score alerts (must-have)
+  - ðŸ“¦ Customer journey playbooks (should-have)
 
-**⚠️ Actor: Competitors** (Negative)
-- 💫 Impact: Prevent customer loss to competitors
-  - 📦 Competitive feature parity analysis (must-have)
-  - 📦 Unique differentiating feature (must-have) ⚡
-  - 📦 Price comparison tool for prospects (could-have)
+**âš ï¸ Actor: Competitors** (Negative)
+- ðŸ’« Impact: Prevent customer loss to competitors
+  - ðŸ“¦ Competitive feature parity analysis (must-have)
+  - ðŸ“¦ Unique differentiating feature (must-have) âš¡
+  - ðŸ“¦ Price comparison tool for prospects (could-have)
 
-### Assumptions (⚡ = Critical)
-1. ⚡ Free users will pay for advanced analytics (Validation: User interviews + pricing survey)
-2. ⚡ Team features justify higher price tiers (Validation: Beta testing with 10 customers)
+### Assumptions (âš¡ = Critical)
+1. âš¡ Free users will pay for advanced analytics (Validation: User interviews + pricing survey)
+2. âš¡ Team features justify higher price tiers (Validation: Beta testing with 10 customers)
 3. Customer success can reduce churn by 3% (Validation: 3-month pilot program)
 4. Competitors are not planning major feature releases (Validation: Market monitoring)
 
@@ -517,7 +517,7 @@ If Impact Mapping reveals these issues, consider refinement:
 - Goal: Reduce churn and increase customer lifetime value
 - Deliverables: Customer success program, team features, onboarding sequence
 - Experiments: A/B test onboarding flows, measure retention impact
-- Target: Churn from 8% → 6%
+- Target: Churn from 8% â†’ 6%
 
 **Milestone 3: Expansion (Weeks 17-24)**
 - Goal: Drive upgrades and market differentiation
@@ -552,3 +552,4 @@ If Impact Mapping reveals these issues, consider refinement:
 This methodology implementation is part of the Babysitter SDK orchestration framework.
 
 Creator credit: Gojko Adzic for the Impact Mapping technique.
+

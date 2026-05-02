@@ -80,6 +80,7 @@ export async function process(inputs, ctx) {
       recommendations: designResult.recommendations,
       screeningReport: designResult.screeningReport
     };
+  }
     let lastFeedback_designApproval = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_designApproval) {
@@ -152,6 +153,7 @@ export async function process(inputs, ctx) {
       characterization: synthesisResult.characterization
     };
 
+    if (!synthesisConverged && synthesisIteration < maxSynthesisIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -280,6 +282,7 @@ export async function process(inputs, ctx) {
     currentCatalyst = modificationResult.modifiedCatalyst;
     currentPerformance = newPerformance;
 
+    if (!performanceConverged && optimizationIteration < maxOptimizationIterations) {
         let lastFeedback_iterationApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval2) {
@@ -316,6 +319,7 @@ export async function process(inputs, ctx) {
     targetReaction,
     performanceData: currentPerformance,
     characterizationData: currentCatalyst.characterization
+  });
     let lastFeedback_phase5Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase5Review) {
@@ -359,6 +363,7 @@ export async function process(inputs, ctx) {
       catalyst: currentCatalyst,
       stabilityData: stabilityResult,
       deactivationMechanisms: stabilityResult.deactivationAnalysis
+  });
       let lastFeedback_assessmentApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_assessmentApproval) {
@@ -412,6 +417,7 @@ export async function process(inputs, ctx) {
     qualitySpecifications: currentCatalyst.characterization.specifications
   });
 
+  if (!scaleValidation.validated) {
       let lastFeedback_validationApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_validationApproval) {
@@ -1134,3 +1140,6 @@ export const processDocumentationTask = defineTask('process-documentation', (arg
   },
   labels: ['nanotechnology', 'catalyst', 'documentation']
 }));
+
+
+

@@ -95,6 +95,7 @@ export async function process(inputs, ctx) {
   const worstHotMargin = Math.min(...hotCaseAnalysis.temperatureMargins);
   const worstColdMargin = Math.min(...coldCaseAnalysis.temperatureMargins);
 
+  if (worstHotMargin < 5 || worstColdMargin < 5) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -633,3 +634,4 @@ export const thermalReportTask = defineTask('thermal-report', (args, taskCtx) =>
   },
   labels: ['thermal', 'reporting', 'aerospace']
 }));
+

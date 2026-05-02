@@ -150,6 +150,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...aggregatedVulnerabilities.artifacts);
 
   // Quality Gate: Check vulnerability thresholds
+  if (criticalCount > qualityCriteria.maxCriticalVulnerabilities || highCount > qualityCriteria.maxHighVulnerabilities) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -263,6 +264,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `License analysis complete: ${licenseViolations.length} violations, ${licenseReviews.length} requiring review`);
 
   // Quality Gate: License compliance
+  if (licenseViolations.length > 0 && qualityCriteria.licenseComplianceRequired) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -1447,3 +1449,4 @@ export const complianceReportingTask = defineTask('compliance-reporting', (args,
   },
   labels: ['agent', 'sca', 'compliance-reporting']
 }));
+

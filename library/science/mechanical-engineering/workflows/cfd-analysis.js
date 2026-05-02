@@ -81,6 +81,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Mesh generated - ${meshResult.cellCount} cells, ${meshResult.meshQuality.orthogonality} orthogonality`);
 
   // Quality Gate: Mesh quality check
+  if (meshResult.meshQuality.orthogonality < 0.2 || meshResult.meshQuality.skewness > 0.85) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -213,6 +214,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Solver complete - ${solveResult.iterations} iterations, Residuals: ${solveResult.finalResiduals}`);
 
   // Quality Gate: Convergence check
+  if (!solveResult.converged) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -789,3 +791,4 @@ export const generateCFDReportTask = defineTask('generate-cfd-report', (args, ta
   },
   labels: ['mechanical-engineering', 'cfd', 'reporting']
 }));
+

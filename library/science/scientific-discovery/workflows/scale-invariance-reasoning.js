@@ -48,6 +48,7 @@ export async function process(inputs, ctx) {
     scaleTransformations,
     quantities,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -455,3 +456,4 @@ export const synthesizeScaleInsightsTask = defineTask('synthesize-scale-insights
   },
   labels: ['agent', 'scale-invariance', 'synthesis']
 }));
+

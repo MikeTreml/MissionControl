@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, syncStrategy, conflictResolution, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -134,3 +135,4 @@ export const dataMigrationTask = createOfflineTask('data-migration', 'Data Migra
 export const cacheInvalidationTask = createOfflineTask('cache-invalidation', 'Cache Invalidation');
 export const testingTask = createOfflineTask('testing', 'Offline Testing Strategy');
 export const documentationTask = createOfflineTask('documentation', 'Offline Architecture Documentation');
+

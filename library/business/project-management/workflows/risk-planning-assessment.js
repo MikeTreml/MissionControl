@@ -106,6 +106,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: High-priority risks identified
   const highPriorityRisks = qualitativeAnalysis.risks?.filter(r => r.priority === 'high') || [];
+  if (highPriorityRisks.length === 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -1042,3 +1043,4 @@ export const riskDocumentationGenerationTask = defineTask('risk-documentation-ge
   },
   labels: ['risk', 'documentation', 'deliverable']
 }));
+

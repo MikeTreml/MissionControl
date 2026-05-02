@@ -1,4 +1,4 @@
-# CC10X References and Attribution
+﻿# CC10X References and Attribution
 
 ## Primary Source
 
@@ -11,11 +11,11 @@
 The following CC10X concepts have been adapted into babysitter process definitions:
 
 ### Workflows (mapped to process files)
-- **BUILD workflow**: TDD-enforced feature development -> `cc10x-build.js`
-- **DEBUG workflow**: Log-first bug investigation -> `cc10x-debug.js`
-- **REVIEW workflow**: Multi-dimensional code analysis -> `cc10x-review.js`
-- **PLAN workflow**: Comprehensive planning with research -> `cc10x-plan.js`
-- **Router**: Intent detection and dispatch -> `cc10x-router.js`
+- **BUILD workflow**: TDD-enforced feature development -> `workflows\cc10x-build.js`
+- **DEBUG workflow**: Log-first bug investigation -> `workflows\cc10x-debug.js`
+- **REVIEW workflow**: Multi-dimensional code analysis -> `workflows\cc10x-review.js`
+- **PLAN workflow**: Comprehensive planning with research -> `workflows\cc10x-plan.js`
+- **Router**: Intent detection and dispatch -> `workflows\cc10x-router.js`
 
 ### Agents (mapped to agent definitions)
 - **cc10x-router**: Single entry point orchestrator -> `agents/cc10x-router/`
@@ -59,3 +59,4 @@ The following CC10X concepts have been adapted into babysitter process definitio
 ## Acknowledgment
 
 This adaptation brings CC10X's intelligent workflow orchestration patterns into the babysitter process framework. All credit for the original concepts, terminology, and design philosophy belongs to Rom Iluz and the CC10X project contributors.
+

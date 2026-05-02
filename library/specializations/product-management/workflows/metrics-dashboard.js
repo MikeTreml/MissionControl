@@ -195,6 +195,7 @@ export async function process(inputs, ctx) {
     a => a.severity === 'critical'
   ).length;
 
+  if (criticalMetricsWithAlerts === 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -2561,3 +2562,4 @@ export const rolloutPlanTask = defineTask('rollout-plan', (args, taskCtx) => ({
   },
   labels: ['metrics-dashboard', 'rollout', 'adoption']
 }));
+

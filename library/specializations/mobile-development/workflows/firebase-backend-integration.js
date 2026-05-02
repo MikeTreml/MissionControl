@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, firebaseServices, authProviders, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -134,3 +135,4 @@ export const appCheckTask = createFirebaseTask('app-check', 'App Check Implement
 export const performanceMonitoringTask = createFirebaseTask('performance-monitoring', 'Performance Monitoring');
 export const testingTask = createFirebaseTask('testing', 'Firebase Testing Setup');
 export const documentationTask = createFirebaseTask('documentation', 'Firebase Documentation');
+

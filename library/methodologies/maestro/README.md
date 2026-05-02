@@ -1,4 +1,4 @@
-# Maestro App Factory
+﻿# Maestro App Factory
 
 **Source:** [Maestro](https://github.com/SnapdragonPartners/maestro) by SnapdragonPartners
 **Category:** Multi-Agent App Factory Framework
@@ -23,12 +23,12 @@ Maestro orchestrates AI agents mimicking high-performing human dev teams for pro
 
 | File | Description | Primary Agents |
 |------|-------------|----------------|
-| `maestro-orchestrator.js` | Full lifecycle (PM interview through merge) | All agents |
-| `maestro-bootstrap.js` | New project scaffold and setup | Architect, Coder |
-| `maestro-development.js` | Feature development cycle | Architect, Coder, Test Engineer |
-| `maestro-hotfix.js` | Fast-path production fixes | Hotfix Specialist, Architect |
-| `maestro-maintenance.js` | Technical debt management | Maintenance Engineer, Knowledge Curator |
-| `maestro-knowledge-graph.js` | Knowledge capture, validation, sync | Knowledge Curator |
+| `workflows\maestro-orchestrator.js` | Full lifecycle (PM interview through merge) | All agents |
+| `workflows\maestro-bootstrap.js` | New project scaffold and setup | Architect, Coder |
+| `workflows\maestro-development.js` | Feature development cycle | Architect, Coder, Test Engineer |
+| `workflows\maestro-hotfix.js` | Fast-path production fixes | Hotfix Specialist, Architect |
+| `workflows\maestro-maintenance.js` | Technical debt management | Maintenance Engineer, Knowledge Curator |
+| `workflows\maestro-knowledge-graph.js` | Knowledge capture, validation, sync | Knowledge Curator |
 
 ## Agent Personas
 
@@ -81,3 +81,4 @@ Technical debt management after every N specs: branch cleanup, knowledge sync, d
 ## Attribution
 
 Adapted from [Maestro App Factory](https://github.com/SnapdragonPartners/maestro) by SnapdragonPartners. Licensed under MIT.
+

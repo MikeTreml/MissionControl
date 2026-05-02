@@ -156,6 +156,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Estimated Improvement: ${optimizationStrategy.estimatedTimeReduction}s (${optimizationStrategy.estimatedImprovementPercent}%)`);
 
   // Quality Gate: Strategy validation
+  if (optimizationStrategy.estimatedImprovementPercent < 20) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -406,6 +407,7 @@ export async function process(inputs, ctx) {
       ctx.log('info', `Iteration ${iterationCount} - Target not reached. Goals met: ${goalsMetPercent}%, Time: ${performanceMeasurement.metrics.totalTime}s vs ${optimizationGoals.targetBuildTime}s`);
 
       // Breakpoint: Review iteration and decide whether to continue
+      if (iterationCount < maxIterations) {
           let lastFeedback_iterationApproval2 = null;
         for (let attempt = 0; attempt < 3; attempt++) {
           if (lastFeedback_iterationApproval2) {
@@ -508,6 +510,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Cost Impact: ${costAnalysis.monthlySavings} ${costAnalysis.currency}/month (${costAnalysis.savingsPercent}%)`);
 
   // Quality Gate: Regression test failures
+  if (regressionTest.failed > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -547,6 +550,7 @@ export async function process(inputs, ctx) {
     } }
 
   // Quality Gate: Security validation
+  if (!securityValidation.passed) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -1825,3 +1829,4 @@ export const generateFinalReviewTask = defineTask('generate-final-review', (args
 
   labels: ['agent', 'review', 'final']
 }));
+

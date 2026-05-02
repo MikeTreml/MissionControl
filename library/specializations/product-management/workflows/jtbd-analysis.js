@@ -298,6 +298,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...competitiveAnalysis.artifacts);
   }
   // Breakpoint: Review competing solutions
+  if (competitiveAnalysis) {
       let lastFeedback_phase10Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase10Review) {
@@ -2019,3 +2020,4 @@ export const qualityValidationTask = defineTask('quality-validation', (args, tas
   },
   labels: ['agent', 'jtbd-analysis', 'quality-validation']
 }));
+

@@ -47,6 +47,7 @@ export async function process(inputs, ctx) {
   if (ethicalGuidelines) {
     let ethicsReview = await ctx.task(ethicsReviewTask, { projectName, strategy, economyDesign, outputDir });
     artifacts.push(...ethicsReview.artifacts);
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -147,3 +148,4 @@ export const ethicsReviewTask = defineTask('ethics-review', (args, taskCtx) => (
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['game-development', 'monetization', 'ethics']
 }));
+

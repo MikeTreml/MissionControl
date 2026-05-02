@@ -146,6 +146,7 @@ export async function process(inputs, ctx) {
     });
 
     // Quality Gate: Model must meet performance threshold
+    if (predictiveModels.bestModelScore < 0.7) {
         let lastFeedback_phase6Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase6Review) {
@@ -714,3 +715,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['nanotechnology', 'reporting', 'analysis']
 }));
+

@@ -1,4 +1,4 @@
-# UX/UI Design and User Experience Specialization
+﻿# UX/UI Design and User Experience Specialization
 
 **User Experience and User Interface Design**
 
@@ -36,60 +36,60 @@ This specialization encompasses the full spectrum of UX/UI design practices, fro
 The UX/UI design process follows a structured yet iterative approach, emphasizing continuous learning and improvement:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    UX/UI DESIGN PROCESS                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  1. DISCOVER (Research and Understanding)                       │
-│     └─ User research (interviews, surveys, observation)         │
-│     └─ Stakeholder interviews (business goals, constraints)     │
-│     └─ Competitive analysis (market evaluation)                 │
-│     └─ Analytics review (current usage patterns)                │
-│     └─ Heuristic evaluation (expert usability review)           │
-│     └─ Technical constraints (feasibility assessment)           │
-│                                                                  │
-│  2. DEFINE (Synthesis and Strategy)                             │
-│     └─ Personas (user archetypes with goals and needs)          │
-│     └─ Journey maps (visualize user experience over time)       │
-│     └─ Problem statements (articulate core user problems)       │
-│     └─ User stories (capture functionality from user POV)       │
-│     └─ Success metrics (define how to measure success)          │
-│     └─ Design principles (guiding values for decisions)         │
-│     └─ Information architecture (content structure)             │
-│                                                                  │
-│  3. IDEATE (Concept Generation)                                 │
-│     └─ Brainstorming (divergent thinking, many ideas)           │
-│     └─ Sketching (rapid visual exploration)                     │
-│     └─ Design studios (collaborative ideation workshops)        │
-│     └─ Storyboarding (visualize user scenarios)                 │
-│     └─ Concept mapping (organize and connect ideas)             │
-│     └─ Pattern application (apply proven solutions)             │
-│                                                                  │
-│  4. PROTOTYPE (Build and Visualize)                             │
-│     └─ Low-fidelity (paper sketches, basic wireframes)          │
-│     └─ Medium-fidelity (digital wireframes with flows)          │
-│     └─ High-fidelity (polished designs with interactions)       │
-│     └─ Interactive prototypes (clickable, testable)             │
-│     └─ Design systems (scalable component libraries)            │
-│     └─ Developer handoff (specs, assets, documentation)         │
-│                                                                  │
-│  5. TEST (Validate and Iterate)                                 │
-│     └─ Usability testing (observe users completing tasks)       │
-│     └─ A/B testing (compare design variations)                  │
-│     └─ Accessibility testing (ensure inclusive design)          │
-│     └─ Analytics validation (confirm success metrics)           │
-│     └─ Synthesis (analyze findings)                             │
-│     └─ Iteration (refine based on feedback)                     │
-│                                                                  │
-│  6. IMPLEMENT (Collaborate and Launch)                          │
-│     └─ Design QA (ensure implementation matches design)         │
-│     └─ Collaboration (work with developers during build)        │
-│     └─ Documentation (update design system, patterns)           │
-│     └─ Launch (release to users)                                │
-│     └─ Monitor (track metrics, gather feedback)                 │
-│     └─ Continuous improvement (iterate post-launch)             │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    UX/UI DESIGN PROCESS                          â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                  â”‚
+â”‚  1. DISCOVER (Research and Understanding)                       â”‚
+â”‚     â””â”€ User research (interviews, surveys, observation)         â”‚
+â”‚     â””â”€ Stakeholder interviews (business goals, constraints)     â”‚
+â”‚     â””â”€ Competitive analysis (market evaluation)                 â”‚
+â”‚     â””â”€ Analytics review (current usage patterns)                â”‚
+â”‚     â””â”€ Heuristic evaluation (expert usability review)           â”‚
+â”‚     â””â”€ Technical constraints (feasibility assessment)           â”‚
+â”‚                                                                  â”‚
+â”‚  2. DEFINE (Synthesis and Strategy)                             â”‚
+â”‚     â””â”€ Personas (user archetypes with goals and needs)          â”‚
+â”‚     â””â”€ Journey maps (visualize user experience over time)       â”‚
+â”‚     â””â”€ Problem statements (articulate core user problems)       â”‚
+â”‚     â””â”€ User stories (capture functionality from user POV)       â”‚
+â”‚     â””â”€ Success metrics (define how to measure success)          â”‚
+â”‚     â””â”€ Design principles (guiding values for decisions)         â”‚
+â”‚     â””â”€ Information architecture (content structure)             â”‚
+â”‚                                                                  â”‚
+â”‚  3. IDEATE (Concept Generation)                                 â”‚
+â”‚     â””â”€ Brainstorming (divergent thinking, many ideas)           â”‚
+â”‚     â””â”€ Sketching (rapid visual exploration)                     â”‚
+â”‚     â””â”€ Design studios (collaborative ideation workshops)        â”‚
+â”‚     â””â”€ Storyboarding (visualize user scenarios)                 â”‚
+â”‚     â””â”€ Concept mapping (organize and connect ideas)             â”‚
+â”‚     â””â”€ Pattern application (apply proven solutions)             â”‚
+â”‚                                                                  â”‚
+â”‚  4. PROTOTYPE (Build and Visualize)                             â”‚
+â”‚     â””â”€ Low-fidelity (paper sketches, basic wireframes)          â”‚
+â”‚     â””â”€ Medium-fidelity (digital wireframes with flows)          â”‚
+â”‚     â””â”€ High-fidelity (polished designs with interactions)       â”‚
+â”‚     â””â”€ Interactive prototypes (clickable, testable)             â”‚
+â”‚     â””â”€ Design systems (scalable component libraries)            â”‚
+â”‚     â””â”€ Developer handoff (specs, assets, documentation)         â”‚
+â”‚                                                                  â”‚
+â”‚  5. TEST (Validate and Iterate)                                 â”‚
+â”‚     â””â”€ Usability testing (observe users completing tasks)       â”‚
+â”‚     â””â”€ A/B testing (compare design variations)                  â”‚
+â”‚     â””â”€ Accessibility testing (ensure inclusive design)          â”‚
+â”‚     â””â”€ Analytics validation (confirm success metrics)           â”‚
+â”‚     â””â”€ Synthesis (analyze findings)                             â”‚
+â”‚     â””â”€ Iteration (refine based on feedback)                     â”‚
+â”‚                                                                  â”‚
+â”‚  6. IMPLEMENT (Collaborate and Launch)                          â”‚
+â”‚     â””â”€ Design QA (ensure implementation matches design)         â”‚
+â”‚     â””â”€ Collaboration (work with developers during build)        â”‚
+â”‚     â””â”€ Documentation (update design system, patterns)           â”‚
+â”‚     â””â”€ Launch (release to users)                                â”‚
+â”‚     â””â”€ Monitor (track metrics, gather feedback)                 â”‚
+â”‚     â””â”€ Continuous improvement (iterate post-launch)             â”‚
+â”‚                                                                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Process Characteristics
@@ -857,7 +857,7 @@ This specialization includes pre-built processes for common UX/UI workflows.
 
 A comprehensive iterative convergence process for achieving pixel-perfect UI implementation from design mocks.
 
-**Location**: `specializations/ux-ui-design/pixel-perfect-implementation.js`
+**Location**: `workflows\pixel-perfect-implementation.js`
 
 **Purpose**: Takes a design mock and target URL, then iteratively refines the implementation until it matches the mock with configurable quality thresholds.
 
@@ -900,7 +900,7 @@ A comprehensive iterative convergence process for achieving pixel-perfect UI imp
 **Phases**:
 1. **Mock Analysis** - Extract detailed specifications from design mock
 2. **Initial Assessment** - Capture and score current implementation
-3. **Iterative Convergence** - Plan → Implement → Capture → Score → Review loop
+3. **Iterative Convergence** - Plan â†’ Implement â†’ Capture â†’ Score â†’ Review loop
 4. **Responsive Verification** (optional) - Test across viewports
 5. **Accessibility Verification** (optional) - WCAG compliance check
 6. **Final Quality Gate** - Human approval or automatic pass
@@ -917,7 +917,7 @@ A comprehensive iterative convergence process for achieving pixel-perfect UI imp
 ```bash
 babysitter run:create \
   --process-id ux-ui-design/pixel-perfect-implementation \
-  --entry library/specializations/ux-ui-design/pixel-perfect-implementation.js#process \
+  --entry workflows\pixel-perfect-implementation.js#process \
   --inputs inputs.json
 ```
 
@@ -925,7 +925,7 @@ babysitter run:create \
 
 Lightweight design QA process for verifying implementation against design specs.
 
-**Location**: `specializations/ux-ui-design/design-qa.js`
+**Location**: `workflows\design-qa.js`
 
 ---
 
@@ -940,3 +940,5 @@ Success in this specialization requires empathy, curiosity, creativity, and anal
 **Created**: 2026-01-23
 **Version**: 1.0.0
 **Specialization ID**: `specializations/ux-ui-design`
+
+

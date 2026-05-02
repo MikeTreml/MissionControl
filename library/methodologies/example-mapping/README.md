@@ -1,4 +1,4 @@
-# Example Mapping Methodology
+﻿# Example Mapping Methodology
 
 **Creator**: Matt Wynne (Cucumber Ltd)
 **Year**: Modern BDD practice (2015)
@@ -15,21 +15,21 @@ This methodology bridges the gap between high-level user stories and detailed ac
 
 Example Mapping uses four colored cards to organize information:
 
-- **🔵 Blue Card** - **User Story** (one per session)
+- **ðŸ”µ Blue Card** - **User Story** (one per session)
   - The feature or requirement being mapped
   - Typically in "As a [role], I want [feature], so that [benefit]" format
 
-- **🟡 Yellow Cards** - **Rules/Acceptance Criteria**
+- **ðŸŸ¡ Yellow Cards** - **Rules/Acceptance Criteria**
   - Business rules that apply to the story
   - Constraints and validation logic
   - What makes the story "done"
 
-- **🟢 Green Cards** - **Examples**
+- **ðŸŸ¢ Green Cards** - **Examples**
   - Concrete scenarios illustrating each rule
   - Given-When-Then format
   - Happy paths, edge cases, and error cases
 
-- **🔴 Red Cards** - **Questions**
+- **ðŸ”´ Red Cards** - **Questions**
   - Unknowns that need clarification
   - Assumptions to validate
   - Risks and dependencies
@@ -38,7 +38,7 @@ Example Mapping uses four colored cards to organize information:
 
 1. **25-Minute Timebox**: If mapping takes longer, the story is probably too big
 2. **Conversation Over Documentation**: Collaborative exploration is key
-3. **Outside-In**: Start with story → identify rules → illustrate with examples
+3. **Outside-In**: Start with story â†’ identify rules â†’ illustrate with examples
 4. **Ready Indicator**: Story is ready when questions are resolved and examples cover all rules
 
 ## Process Flow
@@ -85,7 +85,7 @@ Example Mapping uses four colored cards to organize information:
 ### Basic Example
 
 ```javascript
-import { process } from './example-mapping.js';
+import { process } from 'workflows\example-mapping.js';
 
 const result = await process({
   userStory: `As a customer, I want to search for products by name,
@@ -126,7 +126,7 @@ const result = await process({
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `userStory` | string | ✅ Yes | - | The user story to map |
+| `userStory` | string | âœ… Yes | - | The user story to map |
 | `timeboxMinutes` | number | No | 25 | Session time limit |
 | `sessionMode` | string | No | 'collaborative' | 'collaborative', 'solo', or 'async' |
 | `existingContext` | object | No | null | Domain knowledge, related stories |
@@ -171,7 +171,7 @@ const result = await process({
   artifacts: {
     storyAnalysis: 'artifacts/example-mapping/story-analysis.json',
     rules: 'artifacts/example-mapping/rules.md',
-    examples: 'artifacts/example-mapping/examples.json',
+    examples: 'examples\examples.json',
     questions: 'artifacts/example-mapping/questions.md',
     gherkin: 'artifacts/example-mapping/scenarios.feature',
     readinessReport: 'artifacts/example-mapping/readiness-report.md',
@@ -213,43 +213,43 @@ const result = await process({
 
 A successful Example Mapping session produces:
 
-- ✅ Clear understanding of the story scope
-- ✅ 3-8 business rules identified
-- ✅ Multiple examples per rule (happy path + edge cases)
-- ✅ All critical questions answered or documented
-- ✅ Complete Gherkin scenarios ready for automation
-- ✅ Session completed within timebox (usually 25 minutes)
-- ✅ Team consensus on story readiness
+- âœ… Clear understanding of the story scope
+- âœ… 3-8 business rules identified
+- âœ… Multiple examples per rule (happy path + edge cases)
+- âœ… All critical questions answered or documented
+- âœ… Complete Gherkin scenarios ready for automation
+- âœ… Session completed within timebox (usually 25 minutes)
+- âœ… Team consensus on story readiness
 
 ## Signs a Story Needs Splitting
 
 If Example Mapping reveals:
 
-- ❌ More than 8 rules
-- ❌ Session exceeds timebox significantly
-- ❌ Too many unknowns and red cards
-- ❌ Multiple distinct features in one story
-- ❌ Complexity score above 8/10
-- ❌ Unable to reach consensus
+- âŒ More than 8 rules
+- âŒ Session exceeds timebox significantly
+- âŒ Too many unknowns and red cards
+- âŒ Multiple distinct features in one story
+- âŒ Complexity score above 8/10
+- âŒ Unable to reach consensus
 
-→ **Split the story** and map each piece separately
+â†’ **Split the story** and map each piece separately
 
 ## Best Practices
 
 ### Do's
-- ✅ Keep sessions timeboxed (25 minutes)
-- ✅ Use concrete, specific examples (not abstract)
-- ✅ Include multiple perspectives (product, dev, test)
-- ✅ Capture questions immediately (don't debate endlessly)
-- ✅ Focus on understanding, not perfect documentation
-- ✅ Split stories that exceed timebox
+- âœ… Keep sessions timeboxed (25 minutes)
+- âœ… Use concrete, specific examples (not abstract)
+- âœ… Include multiple perspectives (product, dev, test)
+- âœ… Capture questions immediately (don't debate endlessly)
+- âœ… Focus on understanding, not perfect documentation
+- âœ… Split stories that exceed timebox
 
 ### Don'ts
-- ❌ Don't skip the workshop and do it alone
-- ❌ Don't try to answer all questions in session
-- ❌ Don't write full Gherkin during the workshop
-- ❌ Don't map multiple stories in one session
-- ❌ Don't force stories that don't fit
+- âŒ Don't skip the workshop and do it alone
+- âŒ Don't try to answer all questions in session
+- âŒ Don't write full Gherkin during the workshop
+- âŒ Don't map multiple stories in one session
+- âŒ Don't force stories that don't fit
 
 ## Example Session Output
 
@@ -257,11 +257,11 @@ If Example Mapping reveals:
 > As a customer, I want to apply discount codes at checkout, so that I can save money on my purchase
 
 ### Rules (Yellow Cards)
-1. ✅ Valid codes reduce order total by code percentage
-2. ✅ Expired codes are rejected with error message
-3. ✅ One code per order (no stacking)
-4. ✅ Minimum order value may apply
-5. ✅ Code is case-insensitive
+1. âœ… Valid codes reduce order total by code percentage
+2. âœ… Expired codes are rejected with error message
+3. âœ… One code per order (no stacking)
+4. âœ… Minimum order value may apply
+5. âœ… Code is case-insensitive
 
 ### Examples (Green Cards)
 
@@ -281,9 +281,9 @@ If Example Mapping reveals:
 - Then: Error shown "Only one code allowed", original code remains
 
 ### Questions (Red Cards)
-1. ❓ What happens if code brings total below $0? (blocking)
-2. ❓ Do codes apply to shipping costs? (high priority)
-3. ❓ Can codes be used with sale items? (medium priority)
+1. â“ What happens if code brings total below $0? (blocking)
+2. â“ Do codes apply to shipping costs? (high priority)
+3. â“ Can codes be used with sale items? (medium priority)
 
 ### Gherkin Output
 
@@ -340,3 +340,4 @@ Scenario: Prevent stacking multiple codes
 This methodology implementation is part of the Babysitter SDK orchestration framework.
 
 Creator credit: Matt Wynne and Cucumber Ltd for the Example Mapping technique.
+

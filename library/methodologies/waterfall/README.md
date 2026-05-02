@@ -1,6 +1,6 @@
-# Waterfall Methodology
+﻿# Waterfall Methodology
 
-> Sequential SDLC methodology with distinct phases: Requirements → Design → Implementation → Testing → Deployment → Maintenance
+> Sequential SDLC methodology with distinct phases: Requirements â†’ Design â†’ Implementation â†’ Testing â†’ Deployment â†’ Maintenance
 
 **Creator**: Winston W. Royce (1970)
 **Category**: Sequential SDLC
@@ -43,7 +43,7 @@ This implementation provides a complete Waterfall SDLC process for the Babysitte
 # Using Babysitter SDK CLI
 babysitter run:create \
   --process-id methodologies/waterfall \
-  --entry library/methodologies/waterfall/waterfall.js#process \
+  --entry workflows\waterfall.js#process \
   --inputs inputs.json \
   --run-id my-waterfall-project
 
@@ -216,10 +216,10 @@ The process returns:
 When `includeVModel: true`, the process implements V-Model testing traceability:
 
 ```
-Requirements ←→ User Acceptance Testing (UAT)
-Design       ←→ System Testing
-Architecture ←→ Integration Testing
-Modules      ←→ Unit Testing
+Requirements â†â†’ User Acceptance Testing (UAT)
+Design       â†â†’ System Testing
+Architecture â†â†’ Integration Testing
+Modules      â†â†’ Unit Testing
 ```
 
 Each test level validates its corresponding development level, ensuring complete traceability from requirements to tests.
@@ -298,64 +298,64 @@ All artifacts are organized under `artifacts/waterfall/`:
 
 ```
 artifacts/waterfall/
-├── phase-1-requirements/
-│   ├── srs.md                      # Software Requirements Specification
-│   ├── requirements.json           # Structured requirements data
-│   ├── use-cases.md               # Use case documentation
-│   ├── traceability-matrix.md     # Requirements traceability
-│   └── stakeholder-signoffs.md    # Sign-off documentation
-├── phase-2-design/
-│   ├── sdd.md                     # Software Design Document
-│   ├── architecture-diagram.md    # Architecture visualization
-│   ├── database-schema.md         # Database design
-│   ├── component-diagram.md       # Component breakdown
-│   ├── interface-specifications.json
-│   └── data-flow-diagrams.md
-├── phase-3-implementation/
-│   ├── implementation-report.md
-│   ├── modules.json
-│   ├── code-review-summary.md
-│   ├── unit-test-report.md
-│   └── code-metrics.json
-├── phase-4-testing/
-│   ├── test-plan.md
-│   ├── integration-test-report.md
-│   ├── system-test-report.md
-│   ├── performance-test-report.md
-│   ├── security-test-report.md
-│   ├── uat-report.md
-│   ├── defect-log.json
-│   └── requirements-coverage.md
-├── phase-5-deployment/
-│   ├── deployment-plan.md
-│   ├── deployment-report.md
-│   ├── verification-results.md
-│   ├── rollback-plan.md
-│   ├── release-notes.md
-│   └── environment-configuration.json
-├── phase-6-maintenance/
-│   ├── maintenance-plan.md
-│   ├── support-procedures.md
-│   ├── sla.md
-│   ├── bug-tracking-workflow.md
-│   ├── training-materials.md
-│   ├── backup-recovery-procedures.md
-│   └── eol-plan.md
-├── project-summary.md
-├── project-metrics.json
-├── lessons-learned.md
-└── final-documentation-index.md
+â”œâ”€â”€ phase-1-requirements/
+â”‚   â”œâ”€â”€ srs.md                      # Software Requirements Specification
+â”‚   â”œâ”€â”€ requirements.json           # Structured requirements data
+â”‚   â”œâ”€â”€ use-cases.md               # Use case documentation
+â”‚   â”œâ”€â”€ traceability-matrix.md     # Requirements traceability
+â”‚   â””â”€â”€ stakeholder-signoffs.md    # Sign-off documentation
+â”œâ”€â”€ phase-2-design/
+â”‚   â”œâ”€â”€ sdd.md                     # Software Design Document
+â”‚   â”œâ”€â”€ architecture-diagram.md    # Architecture visualization
+â”‚   â”œâ”€â”€ database-schema.md         # Database design
+â”‚   â”œâ”€â”€ component-diagram.md       # Component breakdown
+â”‚   â”œâ”€â”€ interface-specifications.json
+â”‚   â””â”€â”€ data-flow-diagrams.md
+â”œâ”€â”€ phase-3-implementation/
+â”‚   â”œâ”€â”€ implementation-report.md
+â”‚   â”œâ”€â”€ modules.json
+â”‚   â”œâ”€â”€ code-review-summary.md
+â”‚   â”œâ”€â”€ unit-test-report.md
+â”‚   â””â”€â”€ code-metrics.json
+â”œâ”€â”€ phase-4-testing/
+â”‚   â”œâ”€â”€ test-plan.md
+â”‚   â”œâ”€â”€ integration-test-report.md
+â”‚   â”œâ”€â”€ system-test-report.md
+â”‚   â”œâ”€â”€ performance-test-report.md
+â”‚   â”œâ”€â”€ security-test-report.md
+â”‚   â”œâ”€â”€ uat-report.md
+â”‚   â”œâ”€â”€ defect-log.json
+â”‚   â””â”€â”€ requirements-coverage.md
+â”œâ”€â”€ phase-5-deployment/
+â”‚   â”œâ”€â”€ deployment-plan.md
+â”‚   â”œâ”€â”€ deployment-report.md
+â”‚   â”œâ”€â”€ verification-results.md
+â”‚   â”œâ”€â”€ rollback-plan.md
+â”‚   â”œâ”€â”€ release-notes.md
+â”‚   â””â”€â”€ environment-configuration.json
+â”œâ”€â”€ phase-6-maintenance/
+â”‚   â”œâ”€â”€ maintenance-plan.md
+â”‚   â”œâ”€â”€ support-procedures.md
+â”‚   â”œâ”€â”€ sla.md
+â”‚   â”œâ”€â”€ bug-tracking-workflow.md
+â”‚   â”œâ”€â”€ training-materials.md
+â”‚   â”œâ”€â”€ backup-recovery-procedures.md
+â”‚   â””â”€â”€ eol-plan.md
+â”œâ”€â”€ project-summary.md
+â”œâ”€â”€ project-metrics.json
+â”œâ”€â”€ lessons-learned.md
+â””â”€â”€ final-documentation-index.md
 ```
 
 ## Examples
 
 See the `examples/` directory for complete input samples:
-- `enterprise-system.json` - Large enterprise application
-- `medical-device-software.json` - FDA-regulated medical software
-- `financial-system.json` - Banking system with compliance
-- `government-project.json` - Government contract project
-- `infrastructure-upgrade.json` - Infrastructure modernization
-- `data-migration-project.json` - Legacy system migration
+- `examples\enterprise-system.json` - Large enterprise application
+- `examples\medical-device-software.json` - FDA-regulated medical software
+- `examples\financial-system.json` - Banking system with compliance
+- `examples\government-project.json` - Government contract project
+- `examples\infrastructure-upgrade.json` - Infrastructure modernization
+- `examples\data-migration-project.json` - Legacy system migration
 
 ## Regulatory Compliance
 
@@ -424,3 +424,4 @@ For issues or questions:
 - GitHub Issues: [babysitter repository]
 - Documentation: See SDK documentation
 - Examples: Check the `examples/` directory
+

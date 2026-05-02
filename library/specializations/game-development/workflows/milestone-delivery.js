@@ -46,6 +46,7 @@ export async function process(inputs, ctx) {
   });
   artifacts.push(...bugTriage.artifacts);
 
+  if (bugTriage.criticalBugs > bugTriageThreshold.critical) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -210,3 +211,4 @@ export const milestoneRetrospectiveTask = defineTask('milestone-retrospective', 
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['game-development', 'milestone', 'retrospective']
 }));
+

@@ -82,6 +82,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Significant Biases
   const significantBiases = biasFindings.filter(b => b.findings.severity >= 0.6);
+  if (significantBiases.length > 0) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -661,3 +662,4 @@ export const generateRecommendationsTask = defineTask('debiasing-recommendations
   },
   labels: ['debiasing', 'recommendations']
 }));
+

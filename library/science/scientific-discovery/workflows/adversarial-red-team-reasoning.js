@@ -60,6 +60,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Critical Vulnerabilities
+  if (attackSimulation.criticalVulnerabilities.length > 0) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -548,3 +549,4 @@ export const recommendMitigationsTask = defineTask('redteam-mitigation-recommend
   },
   labels: ['red-team', 'mitigation-recommendations']
 }));
+

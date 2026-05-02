@@ -1,4 +1,4 @@
-# References
+﻿# References
 
 ## Source Attribution
 
@@ -54,6 +54,7 @@ This babysitter adaptation translates Planning with Files concepts into the baby
 - Manus principles become process flow patterns (re-read before decide, log before continue)
 - Hook system (PreToolUse, PostToolUse, Stop) maps to `ctx.breakpoint()` gates and convergence loops
 - Commands (/plan, /plan:status) map to separate process files (orchestrator, verification)
-- Session recovery maps to the planning-session.js process with detect/recover/merge tasks
-- 2-Action Rule maps to action counting in planning-execution.js with batch persistence
-- Quality gates map to weighted scoring in planning-verification.js
+- Session recovery maps to the workflows\planning-session.js process with detect/recover/merge tasks
+- 2-Action Rule maps to action counting in workflows\planning-execution.js with batch persistence
+- Quality gates map to weighted scoring in workflows\planning-verification.js
+

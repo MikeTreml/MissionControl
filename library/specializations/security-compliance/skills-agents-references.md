@@ -1,4 +1,4 @@
-# Security, Compliance, and Risk Management - Skills and Agents References
+﻿# Security, Compliance, and Risk Management - Skills and Agents References
 
 This document catalogs community-created Claude skills, agents, plugins, and MCP servers that align with the identified skills and agents in the backlog for the Security, Compliance, and Risk Management specialization.
 
@@ -154,7 +154,7 @@ This document catalogs community-created Claude skills, agents, plugins, and MCP
 | Resource | URL | Mapping | Description |
 |----------|-----|---------|-------------|
 | **Claude Code Security Review** | [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) | secure-code-reviewer-agent | Official Anthropic AI-powered security review action |
-| **code-reviewer skill** | [WomenDefiningAI/claude-code-skills](https://github.com/WomenDefiningAI/claude-code-skills/blob/main/skills/code-reviewer/README.md) | secure-code-reviewer-agent | OWASP Top 10 checks, CWE/OWASP references, SAST integration |
+| **code-reviewer skill** | [WomenDefiningAI/claude-code-skills](https://README.md) | secure-code-reviewer-agent | OWASP Top 10 checks, CWE/OWASP references, SAST integration |
 | **Trail of Bits building-secure-contracts** | [trailofbits/skills](https://github.com/trailofbits/skills) | secure-code-reviewer-agent | Smart contract security toolkit with vulnerability scanners |
 | **Trail of Bits entry-point-analyzer** | [trailofbits/skills](https://github.com/trailofbits/skills) | secure-code-reviewer-agent | Identify state-changing entry points for security auditing |
 | **Trail of Bits spec-to-code-compliance** | [trailofbits/skills](https://github.com/trailofbits/skills) | security-requirements-agent | Specification-to-code compliance checker |
@@ -291,3 +291,4 @@ The following backlog items have limited or no community references found:
 4. Identify gaps requiring custom skill development
 5. Establish contribution guidelines for community-sourced skills
 6. Build test suites for validating skill integrations
+

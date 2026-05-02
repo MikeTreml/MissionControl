@@ -1,4 +1,4 @@
-# References
+﻿# References
 
 ## Source Attribution
 
@@ -67,11 +67,13 @@ The AutoMaker babysitter process definitions are adapted from the AutoMaker open
 
 | AutoMaker Concept | Babysitter Process | Notes |
 |-------------------|--------------------|-------|
-| Kanban board | `automaker-orchestrator.js` Phase 1 | Feature intake and board initialization |
-| Feature decomposition | `automaker-feature-pipeline.js` | Triage, decompose, dispatch |
-| Agent execution | `automaker-agent-execution.js` | Worktree setup, code gen, tests |
-| Code review | `automaker-review-ship.js` | Review, quality gates, merge |
-| Deployment | `automaker-review-ship.js` Stage 4-5 | Build, deploy, release notes |
+| Kanban board | `workflows\automaker-orchestrator.js` Phase 1 | Feature intake and board initialization |
+| Feature decomposition | `workflows\automaker-feature-pipeline.js` | Triage, decompose, dispatch |
+| Agent execution | `workflows\automaker-agent-execution.js` | Worktree setup, code gen, tests |
+| Code review | `workflows\automaker-review-ship.js` | Review, quality gates, merge |
+| Deployment | `workflows\automaker-review-ship.js` Stage 4-5 | Build, deploy, release notes |
 | Streaming UI | Progress Streamer agent | Real-time event emission |
 | Worktree isolation | Worktree Manager agent | Git worktree lifecycle |
 | Mock agent mode | Babysitter test harness | Deterministic test execution |
+
+

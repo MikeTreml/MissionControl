@@ -82,6 +82,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...requirementsAnalysis.artifacts);
 
   // Quality Gate: Requirements completeness
+  if (!requirementsAnalysis.requirementsComplete) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -131,6 +132,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...workloadModeling.artifacts);
 
   // Quality Gate: Workload model validation
+  if (workloadModeling.scenariosCovered < testScenarios.length * 0.8) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -179,6 +181,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...environmentSetup.artifacts);
 
   // Quality Gate: Environment readiness
+  if (!environmentSetup.environmentReady) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -249,6 +252,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...testScriptDevelopment.artifacts);
 
   // Quality Gate: Script validation
+  if (testScriptDevelopment.scriptErrors.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -334,6 +338,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Spike Test - Recovery Time: ${spikeTestResults.recoveryTime}s, Pass: ${spikeTestResults.passed}`);
 
   // Quality Gate: Load test performance
+  if (!loadTestResults.passed) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -386,6 +391,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...soakTestResults.artifacts);
 
   // Quality Gate: Soak test stability
+  if (soakTestResults.memoryLeakDetected || soakTestResults.performanceDegradation) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -441,6 +447,7 @@ export async function process(inputs, ctx) {
   const criticalBottlenecks = bottleneckAnalysis.bottlenecks.filter(b => b.severity === 'critical');
 
   // Quality Gate: Critical bottlenecks
+  if (criticalBottlenecks.length > 0) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -534,6 +541,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...comparativeAnalysis.artifacts);
 
     // Quality Gate: Performance regression
+    if (comparativeAnalysis.regressionDetected) {
         let lastFeedback_phase11Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase11Review) {
@@ -1975,3 +1983,4 @@ export const cicdIntegrationTask = defineTask('cicd-integration', (args, taskCtx
   },
   labels: ['agent', 'performance-testing', 'cicd', 'devops']
 }));
+

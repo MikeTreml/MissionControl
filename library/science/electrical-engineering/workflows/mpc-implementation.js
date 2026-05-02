@@ -141,6 +141,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Constraints must be handled properly
+  if (constraintTesting.infeasibilityIssues && constraintTesting.infeasibilityIssues.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -674,3 +675,4 @@ export const performanceMonitoringTask = defineTask('performance-monitoring', (a
   },
   labels: ['ee', 'mpc', 'monitoring']
 }));
+

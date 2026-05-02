@@ -124,6 +124,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...environmentSetup.artifacts);
 
   // Quality Gate: Environment properly configured
+  if (!environmentSetup.toolsInstalled || environmentSetup.missingDependencies.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -1777,3 +1778,4 @@ export const testReportGenerationTask = defineTask('test-report-generation', (ar
   },
   labels: ['iac-testing', 'reporting', 'final']
 }));
+

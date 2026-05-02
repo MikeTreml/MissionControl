@@ -475,6 +475,7 @@ export async function process(inputs, ctx) {
   const projectScore = validation.overallScore;
   const validationPassed = projectScore >= 80;
 
+  if (!validationPassed) {
       let lastFeedback_phase15Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase15Review) {
@@ -1864,3 +1865,4 @@ export const setupGuideTask = defineTask('setup-guide', (args, taskCtx) => ({
   },
   labels: ['dbt', 'analytics', 'documentation', 'setup-guide']
 }));
+

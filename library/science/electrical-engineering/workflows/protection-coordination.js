@@ -178,6 +178,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Coordination must be achieved
+  if (!coordinationVerification.fullyCoordinated) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -766,3 +767,4 @@ export const studyDocumentationTask = defineTask('study-documentation', (args, t
   },
   labels: ['ee', 'protection', 'documentation']
 }));
+

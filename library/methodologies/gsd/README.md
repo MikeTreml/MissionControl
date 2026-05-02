@@ -1,4 +1,4 @@
-# GSD-Adapted Workflows for Babysitter SDK
+﻿# GSD-Adapted Workflows for Babysitter SDK
 
 This directory contains workflows adapted from the [Get Shit Done](https://github.com/glittercowboy/get-shit-done) methodology for the Babysitter SDK orchestration framework.
 
@@ -8,36 +8,36 @@ These processes implement the GSD philosophy of systematic planning, research, e
 
 ## Core Workflows
 
-### 1. New Project Initialization (`new-project.js`)
+### 1. New Project Initialization (`workflows\new-project.js`)
 - Systematic vision capture through agent-guided questions
 - Parallel domain research (stack, features, architecture, pitfalls)
 - Requirements scoping (v1/v2 separation)
 - Roadmap creation with phased milestones
 
-### 2. Phase Discussion (`discuss-phase.js`)
+### 2. Phase Discussion (`workflows\discuss-phase.js`)
 - Captures implementation preferences before planning
 - Identifies decision points (layouts, API patterns, structure)
 - Creates context document for guided research
 
-### 3. Phase Planning (`plan-phase.js`)
+### 3. Phase Planning (`workflows\plan-phase.js`)
 - Agent-based research informed by discussion context
 - Creates atomic task plans with verification
 - Plan checker validates against requirements
 - Iterative refinement until plans pass quality gates
 
-### 4. Phase Execution (`execute-phase.js`)
+### 4. Phase Execution (`workflows\execute-phase.js`)
 - Parallel task execution with fresh agent contexts
 - Atomic git commits per task
 - Progress tracking and dependency management
 - Automated verification gates
 
-### 5. Work Verification (`verify-work.js`)
+### 5. Work Verification (`workflows\verify-work.js`)
 - User acceptance testing gates
 - Automated issue diagnosis
 - Fix plan generation
 - Re-verification loop
 
-### 6. Milestone Audit (`audit-milestone.js`)
+### 6. Milestone Audit (`workflows\audit-milestone.js`)
 - Comprehensive milestone review
 - Definition-of-done verification
 - Quality assessment
@@ -45,13 +45,13 @@ These processes implement the GSD philosophy of systematic planning, research, e
 
 ## Advanced Workflows
 
-### 7. Codebase Mapping (`map-codebase.js`)
+### 7. Codebase Mapping (`workflows\map-codebase.js`)
 - Brownfield project analysis
 - Architecture understanding
 - Pattern identification
 - Integration planning
 
-### 8. Iterative Convergence (`iterative-convergence.js`)
+### 8. Iterative Convergence (`workflows\iterative-convergence.js`)
 - Quality-gated development loop
 - TDD with agent scoring
 - Refinement cycles until target quality reached
@@ -79,14 +79,14 @@ Each workflow is a self-contained process module that can be:
 ```bash
 babysitter run:create \
   --process-id gsd/new-project \
-  --entry gsd/new-project.js#process \
+  --entry workflows\new-project.js#process \
   --inputs inputs.json
 ```
 
 2. **Composed into larger workflows:**
 ```javascript
-import { process as discussPhase } from './discuss-phase.js';
-import { process as planPhase } from './plan-phase.js';
+import { process as discussPhase } from './workflows\discuss-phase.js';
+import { process as planPhase } from './workflows\plan-phase.js';
 
 export async function process(inputs, ctx) {
   const discussion = await ctx.task(discussPhase, inputs);
@@ -124,21 +124,21 @@ Extend or modify any workflow to match your project requirements.
 
 ```
 gsd/
-├── README.md                    # This file
-├── new-project.js              # Project initialization
-├── discuss-phase.js            # Phase discussion
-├── plan-phase.js               # Phase planning with verification
-├── execute-phase.js            # Parallel execution with commits
-├── verify-work.js              # UAT and automated diagnosis
-├── audit-milestone.js          # Milestone completion check
-├── map-codebase.js             # Brownfield analysis
-├── iterative-convergence.js    # Quality convergence loop
-├── state-manager.js            # State persistence utilities
-├── research.js                 # Research orchestration
-└── examples/                   # Example input files
-    ├── new-project-example.json
-    ├── phase-example.json
-    └── milestone-example.json
+â”œâ”€â”€ README.md                    # This file
+â”œâ”€â”€ workflows\new-project.js              # Project initialization
+â”œâ”€â”€ workflows\discuss-phase.js            # Phase discussion
+â”œâ”€â”€ workflows\plan-phase.js               # Phase planning with verification
+â”œâ”€â”€ workflows\execute-phase.js            # Parallel execution with commits
+â”œâ”€â”€ workflows\verify-work.js              # UAT and automated diagnosis
+â”œâ”€â”€ workflows\audit-milestone.js          # Milestone completion check
+â”œâ”€â”€ workflows\map-codebase.js             # Brownfield analysis
+â”œâ”€â”€ workflows\iterative-convergence.js    # Quality convergence loop
+â”œâ”€â”€ state-manager.js            # State persistence utilities
+â”œâ”€â”€ research.js                 # Research orchestration
+â””â”€â”€ examples/                   # Example input files
+    â”œâ”€â”€ examples\new-project-example.json
+    â”œâ”€â”€ examples\phase-example.json
+    â””â”€â”€ examples\milestone-example.json
 ```
 
 ## Integration with Babysitter SDK
@@ -170,17 +170,20 @@ npm i -g @a5c-ai/babysitter-sdk@latest
 ```bash
 babysitter run:create \
   --process-id gsd/new-project \
-  --entry gsd/new-project.js#process \
+  --entry workflows\new-project.js#process \
   --inputs '{"projectName": "My App"}'
 ```
 
-3. Follow the workflow through discussion → planning → execution → verification
+3. Follow the workflow through discussion â†’ planning â†’ execution â†’ verification
 
 ## Contributing
 
 When adding new workflows:
-- Follow the GSD methodology of research → plan → verify
+- Follow the GSD methodology of research â†’ plan â†’ verify
 - Use agent tasks for reasoning, node/shell tasks for execution
 - Include breakpoints at key decision points
 - Document expected inputs and outputs
 - Provide example input files
+
+
+

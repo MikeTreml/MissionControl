@@ -102,6 +102,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Design audit complete: ${designAudit.inconsistenciesFound} inconsistencies found`);
 
   // Quality Gate: Audit completeness
+  if (designAudit.coverageScore < 70) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -203,6 +204,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Color system: ${colorSystem.palettes.length} palettes, ${colorSystem.totalColors} colors defined`);
 
   // Quality Gate: Color contrast compliance
+  if (colorSystem.accessibilityScore < 100 && accessibilityLevel !== 'none') {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -442,6 +444,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Component accessibility
   const accessibilityIssues = components.filter(c => c.accessibilityScore < 90).length;
+  if (accessibilityIssues > 0 && accessibilityLevel !== 'none') {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -665,6 +668,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Accessibility compliance
   const requiredScore = accessibilityLevel === 'WCAG-AAA' ? 95 : 85;
+  if (accessibilityScore < requiredScore) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -803,6 +807,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Design system validation: ${validationScore}% complete`);
 
   // Quality Gate: Design system completeness
+  if (validationScore < 85) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -2751,3 +2756,5 @@ export const finalReviewTask = defineTask('final-review', (args, taskCtx) => ({
   },
   labels: ['agent', 'design-system', 'review', 'approval']
 }));
+
+

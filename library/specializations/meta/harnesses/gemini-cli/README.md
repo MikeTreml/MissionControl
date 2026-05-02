@@ -1,4 +1,4 @@
-# Gemini CLI Harness Extensibility
+﻿# Gemini CLI Harness Extensibility
 
 Comprehensive documentation for extending Google's Gemini CLI -- the official command-line interface for Google Gemini models.
 
@@ -12,15 +12,15 @@ Comprehensive documentation for extending Google's Gemini CLI -- the official co
 
 Gemini CLI is Google's official open-source command-line interface for interacting with Gemini models. It provides an extensible architecture built around extensions -- self-contained packages that add capabilities through prompts, MCP servers, commands, themes, hooks, sub-agents, and skills.
 
-Extensions are distributed as directories containing a `gemini-extension.json` manifest and optional supporting files. They can be installed from GitHub repositories, local paths, or the community extension gallery.
+Extensions are distributed as directories containing a `examples\gemini-extension.json` manifest and optional supporting files. They can be installed from GitHub repositories, local paths, or the community extension gallery.
 
 ---
 
 ## Extension System
 
-### Extension Manifest: `gemini-extension.json`
+### Extension Manifest: `examples\gemini-extension.json`
 
-Every Gemini CLI extension requires a `gemini-extension.json` manifest at the root of the extension directory. The manifest declares the extension's identity, capabilities, and MCP server configurations.
+Every Gemini CLI extension requires a `examples\gemini-extension.json` manifest at the root of the extension directory. The manifest declares the extension's identity, capabilities, and MCP server configurations.
 
 **Manifest fields:**
 
@@ -59,13 +59,13 @@ A complete extension directory may contain:
 
 ```
 my-extension/
-  gemini-extension.json    # Required: extension manifest
+  examples\gemini-extension.json    # Required: extension manifest
   GEMINI.md                # Project instruction file (contextFileName)
   commands/                # Custom slash commands (TOML format)
     my-command/
       do-thing.toml
   hooks/                   # Lifecycle hooks
-    hooks.json             # Hook registration (NOT in manifest)
+    examples\hooks.json             # Hook registration (NOT in manifest)
     session-start.sh       # SessionStart hook script
     after-agent.sh         # AfterAgent hook script
   skills/                  # Agent skills (Agent Skills format)
@@ -148,9 +148,9 @@ Commands are invoked as slash commands in the Gemini CLI: `/extension-name:comma
 
 ## Hooks
 
-Hooks are the primary mechanism for extensions to intercept and control the Gemini CLI session lifecycle. Hook registration lives in `hooks/hooks.json` within the extension directory -- **not** in the `gemini-extension.json` manifest.
+Hooks are the primary mechanism for extensions to intercept and control the Gemini CLI session lifecycle. Hook registration lives in `examples\hooks.json` within the extension directory -- **not** in the `examples\gemini-extension.json` manifest.
 
-### hooks.json Format
+### examples\hooks.json Format
 
 ```json
 {
@@ -286,7 +286,7 @@ This pattern enables deterministic, event-sourced orchestration loops where the 
 
 ## MCP (Model Context Protocol)
 
-MCP servers are configured directly in the `gemini-extension.json` manifest under the `mcpServers` field. Each key is a server name, and the value is the server configuration.
+MCP servers are configured directly in the `examples\gemini-extension.json` manifest under the `mcpServers` field. Each key is a server name, and the value is the server configuration.
 
 **Example with MCP servers:**
 
@@ -366,7 +366,7 @@ gemini extensions install https://github.com/owner/extension-repo --ref v2.1.0
 gemini extensions install /path/to/extension
 ```
 
-The `gemini-extension.json` manifest must be at the repository root.
+The `examples\gemini-extension.json` manifest must be at the repository root.
 
 ### GitHub Releases with Pre-Built Archives
 
@@ -384,7 +384,7 @@ The extension gallery at [geminicli.com/extensions](https://geminicli.com/extens
 
 ### Repository Migration
 
-If an extension repository moves, add `"migratedTo": "https://github.com/new-owner/new-repo"` to the old repo's `gemini-extension.json`. Gemini CLI follows the redirect on install.
+If an extension repository moves, add `"migratedTo": "https://github.com/new-owner/new-repo"` to the old repo's `examples\gemini-extension.json`. Gemini CLI follows the redirect on install.
 
 ### Secondary: npm Packages
 
@@ -412,7 +412,7 @@ Project-level configuration is primarily done through:
 
 ### Extension Settings
 
-Extensions define settings in the `settings` array of `gemini-extension.json`. Each setting specifies:
+Extensions define settings in the `settings` array of `examples\gemini-extension.json`. Each setting specifies:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -474,7 +474,7 @@ The Babysitter SDK provides a full Gemini CLI extension (`@a5c-ai/babysitter-gem
 }
 ```
 
-### Full hooks.json with Multiple Hooks
+### Full examples\hooks.json with Multiple Hooks
 
 ```json
 {
@@ -569,3 +569,6 @@ You are a repository analysis agent. Analyze the codebase structure: {{args}}
 | Babysitter Gemini Plugin | [github.com/a5c-ai/babysitter/tree/main/plugins/babysitter-gemini](https://github.com/a5c-ai/babysitter/tree/main/plugins/babysitter-gemini) | 2026-04-03 |
 | Babysitter SDK | [npmjs.com/package/@a5c-ai/babysitter-sdk](https://www.npmjs.com/package/@a5c-ai/babysitter-sdk) | 2026-04-03 |
 | Babysitter Gemini Extension (npm) | [npmjs.com/package/@a5c-ai/babysitter-gemini](https://www.npmjs.com/package/@a5c-ai/babysitter-gemini) | 2026-04-03 |
+
+
+

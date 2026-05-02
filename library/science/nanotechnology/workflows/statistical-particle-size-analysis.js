@@ -141,6 +141,7 @@ export async function process(inputs, ctx) {
       significanceAchieved: statisticalSignificance
     });
 
+    if (!statisticalSignificance && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -781,3 +782,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['nanotechnology', 'reporting', 'statistics']
 }));
+

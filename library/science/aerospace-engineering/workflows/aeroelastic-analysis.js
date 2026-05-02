@@ -84,6 +84,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Flutter margin
+  if (flutterAnalysis.lowestFlutterSpeed < flightEnvelope.vd * 1.15) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -642,3 +643,4 @@ export const aeroelasticCertificationTask = defineTask('aeroelastic-certificatio
   },
   labels: ['aeroelastic', 'certification', 'aerospace']
 }));
+

@@ -1,4 +1,4 @@
-# GCP DrawIO Diagram Generator
+﻿# GCP DrawIO Diagram Generator
 
 Generate professional DrawIO architecture diagrams for Google Cloud Platform.
 
@@ -95,7 +95,7 @@ Upload a GCP architecture diagram image and the skill will:
 - Apigee (`apigee_api_platform`)
 - API Gateway (`api_gateway`)
 
-**Full list:** See `assets/gcp-icons.json` for all services with shape names and keywords.
+**Full list:** See `assets\gcp-icons.json` for all services with shape names and keywords.
 
 ## Container Types
 
@@ -125,7 +125,7 @@ These services are still fully functional but won't display the official GCP ico
 
 - **33/35 services** (94.3%) have exact shape matches
 - All 35 services validated against official DrawIO gcp2 stencil
-- See `assets/ICON-COMPATIBILITY.md` for complete validation details
+- See `assets\ICON-COMPATIBILITY.md` for complete validation details
 
 ## Design Guidelines
 
@@ -142,18 +142,18 @@ These services are still fully functional but won't display the official GCP ico
 - Use dashed containers for logical groupings
 - Keep diagrams focused (max 15-20 icons per diagram)
 
-**Complete guidelines:** See `references/DIAGRAM-BEST-PRACTICES.md`
+**Complete guidelines:** See `references\DIAGRAM-BEST-PRACTICES.md`
 
 ## Validation & Export
 
 ### Validate Generated Diagrams
 ```bash
-python scripts/validate-drawio.py output.drawio --verbose
+python scripts\validate-drawio.py output.drawio --verbose
 ```
 
 ### Check Icon Compatibility
 ```bash
-python scripts/validate-gcp-icons.py
+python scripts\validate-gcp-icons.py
 ```
 
 ### Export to PNG/PDF
@@ -172,25 +172,25 @@ Requires DrawIO Desktop: `brew install drawio`
 
 ```
 generating-gcp-diagrams/
-├── SKILL.md                    # Main skill instructions
-├── README.md                   # This file
-├── assets/
-│   ├── gcp-icons.json          # 35 GCP services
-│   ├── containers.json         # 9 container types
-│   ├── ICON-COMPATIBILITY.md   # Validation reference
-│   └── templates/              # XML templates
-├── references/
-│   ├── DIAGRAM-BEST-PRACTICES.md
-│   ├── xml-examples.md
-│   ├── xml-parser-guide.md
-│   ├── coordinate-system.md
-│   └── style-guide.md
-└── scripts/
-    ├── validate-drawio.py      # Generic validation
-    ├── validate-gcp-icons.py   # GCP-specific validation
-    ├── fix-gcp-icons.py        # Auto-fix shape names
-    ├── analyze-existing.py     # Extract shapes/connections
-    └── ...
+â”œâ”€â”€ SKILL.md                    # Main skill instructions
+â”œâ”€â”€ README.md                   # This file
+â”œâ”€â”€ assets/
+â”‚   â”œâ”€â”€ assets\gcp-icons.json          # 35 GCP services
+â”‚   â”œâ”€â”€ assets\containers.json         # 9 container types
+â”‚   â”œâ”€â”€ assets\ICON-COMPATIBILITY.md   # Validation reference
+â”‚   â””â”€â”€ templates/              # XML templates
+â”œâ”€â”€ references/
+â”‚   â”œâ”€â”€ references\DIAGRAM-BEST-PRACTICES.md
+â”‚   â”œâ”€â”€ references\xml-examples.md
+â”‚   â”œâ”€â”€ references\xml-parser-guide.md
+â”‚   â”œâ”€â”€ references\coordinate-system.md
+â”‚   â””â”€â”€ references\style-guide.md
+â””â”€â”€ scripts/
+    â”œâ”€â”€ scripts\validate-drawio.py      # Generic validation
+    â”œâ”€â”€ scripts\validate-gcp-icons.py   # GCP-specific validation
+    â”œâ”€â”€ scripts\fix-gcp-icons.py        # Auto-fix shape names
+    â”œâ”€â”€ scripts\analyze-existing.py     # Extract shapes/connections
+    â””â”€â”€ ...
 ```
 
 ## Examples
@@ -201,10 +201,10 @@ Example diagrams are available in the parent project's `assets/examples/` direct
 
 ## Support
 
-- **Icon issues:** Check `assets/ICON-COMPATIBILITY.md`
-- **Validation errors:** Run `python scripts/validate-drawio.py`
-- **Layout help:** See `references/coordinate-system.md`
-- **Style questions:** See `references/style-guide.md`
+- **Icon issues:** Check `assets\ICON-COMPATIBILITY.md`
+- **Validation errors:** Run `python scripts\validate-drawio.py`
+- **Layout help:** See `references\coordinate-system.md`
+- **Style questions:** See `references\style-guide.md`
 
 ## Version
 
@@ -213,3 +213,5 @@ Example diagrams are available in the parent project's `assets/examples/` direct
 - **Stencil library:** mxgraph.gcp2
 - **Services:** 35 (8 categories)
 - **Validation:** 94.3% (33 exact, 2 fallback)
+
+

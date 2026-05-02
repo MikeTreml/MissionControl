@@ -1,4 +1,4 @@
-# Metaswarm Methodology
+﻿# Metaswarm Methodology
 
 **Source**: [dsifry/metaswarm](https://github.com/dsifry/metaswarm) by David Sifry
 **Category**: Autonomous Multi-Agent Orchestration / Issue-to-PR Lifecycle
@@ -21,12 +21,12 @@ Metaswarm is an autonomous multi-agent orchestration framework that manages the 
 
 | Process | File | Description | Task Count |
 |---------|------|-------------|------------|
-| Issue Orchestrator | `metaswarm-orchestrator.js` | Full 7-phase lifecycle: research to PR | 12 |
-| Design Review Gate | `metaswarm-design-review.js` | 6 parallel specialist reviews, unanimous approval | 7 |
-| Execution Loop | `metaswarm-execution-loop.js` | 4-phase cycle: Implement -> Validate -> Review -> Commit | 4 |
-| Swarm Coordinator | `metaswarm-swarm-coordinator.js` | Multi-issue parallel management across worktrees | 6 |
-| Knowledge Cycle | `metaswarm-knowledge-cycle.js` | Context priming and self-reflection | 5 |
-| PR Shepherd | `metaswarm-pr-shepherd.js` | PR lifecycle through merge | 3 |
+| Issue Orchestrator | `workflows\metaswarm-orchestrator.js` | Full 7-phase lifecycle: research to PR | 12 |
+| Design Review Gate | `workflows\metaswarm-design-review.js` | 6 parallel specialist reviews, unanimous approval | 7 |
+| Execution Loop | `workflows\metaswarm-execution-loop.js` | 4-phase cycle: Implement -> Validate -> Review -> Commit | 4 |
+| Swarm Coordinator | `workflows\metaswarm-swarm-coordinator.js` | Multi-issue parallel management across worktrees | 6 |
+| Knowledge Cycle | `workflows\metaswarm-knowledge-cycle.js` | Context priming and self-reflection | 5 |
+| PR Shepherd | `workflows\metaswarm-pr-shepherd.js` | PR lifecycle through merge | 3 |
 
 ## Skills Catalog
 
@@ -90,3 +90,4 @@ Issue -> Research -> Plan -> Plan Review Gate (3 adversarial) -> Preflight -> De
 - **Fresh reviewers** over experienced reviewers (prevent bias)
 - **Knowledge extraction** before context is lost
 - **Human escalation** after bounded retry (3 attempts)
+

@@ -32,6 +32,7 @@ export async function process(inputs, ctx) {
     let cert = await ctx.task(certificateGenerationTask, { candidateId, topic, scoring, outputDir });
     artifacts.push(...cert.artifacts);
     certificate = cert.certificate;
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -147,3 +148,4 @@ export const certificateGenerationTask = defineTask('certificate-generation', (a
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'certification', 'certificate']
 }));
+

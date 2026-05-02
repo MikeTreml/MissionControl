@@ -112,6 +112,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: High-influence stakeholders must have engagement strategy
   const highInfluenceWithoutStrategy = engagementAssessment.gaps?.filter(g => g.severity === 'high') || [];
+  if (highInfluenceWithoutStrategy.length > 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -990,3 +991,4 @@ export const stakeholderDocumentGenerationTask = defineTask('stakeholder-documen
   },
   labels: ['stakeholder', 'documentation', 'deliverable']
 }));
+

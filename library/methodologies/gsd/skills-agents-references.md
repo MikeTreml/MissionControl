@@ -1,4 +1,4 @@
-# GSD Skills & Agents References
+﻿# GSD Skills & Agents References
 
 References for GSD patterns, agent design, skill architecture, and the underlying methodology.
 
@@ -47,7 +47,7 @@ Skills are composable utilities that agents invoke for specific operations:
 
 ### Skill Layering
 ```
-Process (quick.js, debug.js, etc.)
+Process (workflows\quick.js, workflows\debug.js, etc.)
   -> Agent (gsd-executor, gsd-debugger, etc.)
     -> Skill (git-integration, state-management, etc.)
       -> Tool (Bash, Read, Write, Edit, Glob, Grep)
@@ -128,3 +128,4 @@ Three cost/quality profiles for agent model selection:
 - [Event Sourcing Pattern](https://martinfowler.com/eaaDev/EventSourcing.html) - Foundation for journal-based state
 - [Saga Pattern](https://microservices.io/patterns/data/saga.html) - Multi-step process coordination
 - [Scientific Method for Debugging](https://www.debuggingrules.com/) - Basis for gsd-debugger agent approach
+

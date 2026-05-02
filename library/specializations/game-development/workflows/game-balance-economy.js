@@ -174,6 +174,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...imbalanceAnalysis.artifacts);
 
   // Quality Gate: Critical imbalances
+  if (imbalanceAnalysis.criticalIssues.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -678,3 +679,4 @@ export const balanceDocumentationTask = defineTask('balance-documentation', (arg
   },
   labels: ['game-development', 'balance', 'documentation']
 }));
+

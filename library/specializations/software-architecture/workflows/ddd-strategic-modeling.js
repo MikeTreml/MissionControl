@@ -325,6 +325,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Model must pass validation
   const validationIssues = modelValidation.issues.filter(issue => issue.severity === 'critical');
+  if (validationIssues.length > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -1784,3 +1785,4 @@ export const strategyDocumentationTask = defineTask('strategy-documentation', (a
   },
   labels: ['ddd', 'strategic-modeling', 'documentation', 'strategy']
 }));
+

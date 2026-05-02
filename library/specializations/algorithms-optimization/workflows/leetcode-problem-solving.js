@@ -158,6 +158,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...testingResult.artifacts);
 
   // Quality Gate: Test validation
+  if (!testingResult.allTestsPassed) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -654,3 +655,4 @@ export const patternNotesTask = defineTask('pattern-notes', (args, taskCtx) => (
   },
   labels: ['agent', 'leetcode', 'pattern-notes']
 }));
+

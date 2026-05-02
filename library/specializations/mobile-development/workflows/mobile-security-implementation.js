@@ -60,6 +60,7 @@ export async function process(inputs, ctx) {
       appName, platforms, securityLevel, compliance, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -136,3 +137,4 @@ export const loggingSecurityTask = createSecurityTask('logging-security', 'Secur
 export const vulnerabilityScanningTask = createSecurityTask('vulnerability-scanning', 'Vulnerability Scanning');
 export const penetrationTestingTask = createSecurityTask('penetration-testing', 'Penetration Testing');
 export const complianceValidationTask = createSecurityTask('compliance-validation', 'Compliance Validation');
+

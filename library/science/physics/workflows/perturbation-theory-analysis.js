@@ -107,6 +107,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check convergence
+  if (!convergenceAnalysis.isConvergent && convergenceAnalysis.divergenceType !== 'asymptotic') {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -878,3 +879,4 @@ export const synthesisTask = defineTask('results-synthesis', (args, taskCtx) => 
   },
   labels: ['physics', 'perturbation-theory', 'synthesis', 'documentation']
 }));
+

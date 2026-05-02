@@ -1,4 +1,4 @@
-# CLI and MCP Development - Processes Backlog
+﻿# CLI and MCP Development - Processes Backlog
 
 This document contains identified processes, workflows, and methodologies specific to CLI and MCP Development that can be implemented as Babysitter SDK orchestration processes.
 
@@ -442,7 +442,7 @@ Each process should be implemented following the Babysitter SDK patterns:
 - Publish to documentation site
 
 **References**:
-- https://github.com/spf13/cobra/blob/main/doc/README.md
+- https://README.md
 - https://oclif.io/docs/commands#readme-generation
 
 **Estimated Complexity**: Medium
@@ -818,3 +818,4 @@ Each process should be implemented following the Babysitter SDK patterns:
 **Version**: 1.0.0
 **Status**: Phase 2 - Processes Identified
 **Next Step**: Phase 3 - Implement process JavaScript files
+

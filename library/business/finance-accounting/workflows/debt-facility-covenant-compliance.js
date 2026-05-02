@@ -78,6 +78,7 @@ export async function process(inputs, ctx) {
   results.steps.push({ name: 'trend-analysis', result: trendResult });
 
   // Breakpoint if any covenant at risk
+  if (complianceResult.atRiskCovenants?.length > 0) {
       let lastFeedback_analysisApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_analysisApproval) {

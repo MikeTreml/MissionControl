@@ -64,6 +64,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Geometry prepared - ${geometryResult.bodyCount} bodies, ${geometryResult.surfaceCount} surfaces`);
 
   // Breakpoint: Review geometry cleanup
+  if (geometryResult.cleanupRequired) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -112,6 +113,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Mesh generated - ${meshResult.nodeCount} nodes, ${meshResult.elementCount} elements`);
 
   // Quality Gate: Mesh quality check
+  if (meshResult.qualityScore < 0.8) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -251,6 +253,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Pre-solve validation complete - Status: ${validationResult.validationStatus}`);
 
   // Quality Gate: Validation errors
+  if (validationResult.errors.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -301,6 +304,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Solver complete - Status: ${solveResult.solverStatus}, Time: ${solveResult.solveTime}`);
 
   // Quality Gate: Solver convergence
+  if (solveResult.solverStatus !== 'converged') {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -958,3 +962,4 @@ export const generateFEAReportTask = defineTask('generate-fea-report', (args, ta
   },
   labels: ['mechanical-engineering', 'fea', 'reporting', 'documentation']
 }));
+

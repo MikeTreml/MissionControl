@@ -97,6 +97,7 @@ export async function process(inputs, ctx) {
   const criticalFailures = stepVerification.verificationResults.filter(
     r => r.status === 'failed' && r.severity === 'critical'
   );
+  if (criticalFailures.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -650,3 +651,4 @@ export const gapAnalysisTask = defineTask('gap-analysis', (args, taskCtx) => ({
   },
   labels: ['mathematics', 'proof-verification', 'gap-analysis', 'reporting']
 }));
+

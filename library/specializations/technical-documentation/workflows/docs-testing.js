@@ -70,6 +70,7 @@ export async function process(inputs, ctx) {
   // ============================================================================
 
   let structureValidation = null;
+  if (validateStructure) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -142,6 +143,7 @@ export async function process(inputs, ctx) {
   // ============================================================================
 
   let codeExampleTests = null;
+  if (testCodeExamples && docsInventory.codeExampleCount > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -179,6 +181,7 @@ export async function process(inputs, ctx) {
   // ============================================================================
 
   let linkValidation = null;
+  if (checkLinks) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -216,6 +219,7 @@ export async function process(inputs, ctx) {
   // ============================================================================
 
   let grammarCheck = null;
+  if (checkGrammar) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -252,6 +256,7 @@ export async function process(inputs, ctx) {
   // ============================================================================
 
   let accessibilityValidation = null;
+  if (validateAccessibility && (docType === 'html' || docType === 'api-docs')) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -335,6 +340,7 @@ export async function process(inputs, ctx) {
   const highPriorityIssues = qualityScore.highPriorityIssues || [];
 
   let remediationPlan = null;
+  if (!qualityMet || criticalIssues.length > 0) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -1168,3 +1174,4 @@ export const testReportGenerationTask = defineTask('test-report-generation', (ar
   },
   labels: ['agent', 'docs-testing', 'report-generation']
 }));
+

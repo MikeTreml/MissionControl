@@ -145,6 +145,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `SAST complete - Found ${sastResult.vulnerabilitiesCount} vulnerabilities (Critical: ${sastResult.critical}, High: ${sastResult.high})`);
 
     // Quality Gate: Critical SAST findings
+    if (sastResult.critical > 0) {
         let lastFeedback_qualityGateApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval) {
@@ -204,6 +205,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `SCA complete - Scanned ${scaResult.dependenciesCount} dependencies, found ${scaResult.vulnerabilitiesCount} vulnerabilities`);
 
     // Quality Gate: Vulnerable dependencies
+    if (scaResult.critical > 0 || scaResult.high > 5) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -263,6 +265,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Secrets scan complete - Found ${secretsResult.secretsCount} potential secrets (High confidence: ${secretsResult.highConfidence})`);
 
     // Quality Gate: Secrets found (critical issue)
+    if (secretsResult.highConfidence > 0) {
         let lastFeedback_qualityGateApproval3 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval3) {
@@ -334,6 +337,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Container scanning complete - Scanned ${consolidatedContainerResult.imagesScanned} images, found ${consolidatedContainerResult.vulnerabilitiesCount} vulnerabilities`);
 
     // Quality Gate: Container vulnerabilities
+    if (consolidatedContainerResult.critical > 0) {
         let lastFeedback_qualityGateApproval4 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval4) {
@@ -392,6 +396,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `IaC scanning complete - Found ${iacResult.misconfigurationsCount} misconfigurations (Critical: ${iacResult.critical}, High: ${iacResult.high})`);
 
     // Quality Gate: IaC misconfigurations
+    if (iacResult.critical > 0 || iacResult.high > 5) {
         let lastFeedback_qualityGateApproval5 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval5) {
@@ -453,6 +458,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `DAST complete - Tested ${dastResult.endpointsTested} endpoints, found ${dastResult.vulnerabilitiesCount} vulnerabilities`);
 
     // Quality Gate: DAST findings
+    if (dastResult.critical > 0) {
         let lastFeedback_qualityGateApproval6 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval6) {
@@ -511,6 +517,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Compliance validation complete - ${complianceResult.passedCount}/${complianceResult.totalChecks} checks passed (${complianceResult.complianceScore}% compliant)`);
 
   // Quality Gate: Compliance validation
+  if (complianceResult.complianceScore < 80) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -2399,3 +2406,4 @@ export const securityScoringTask = defineTask('security-scoring', (args, taskCtx
   },
   labels: ['agent', 'security-scanning', 'scoring']
 }));
+

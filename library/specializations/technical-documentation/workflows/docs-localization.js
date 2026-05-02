@@ -116,6 +116,7 @@ export async function process(inputs, ctx) {
     };
   }
   // Quality Gate: i18n readiness issues
+  if (contentInventory.i18nIssues.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -349,6 +350,7 @@ export async function process(inputs, ctx) {
     r.translationQuality < acceptanceCriteria.minTranslationQuality
   );
 
+  if (localesWithIssues.length > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -411,6 +413,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: QA failures
   const failedQA = qaResults.filter(r => !r.passed);
+  if (failedQA.length > 0) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -513,6 +516,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Localization testing failures
   const testFailures = testingResults.filter(r => r.failedTests > 0);
+  if (testFailures.length > 0) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -638,6 +642,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Overall quality assessment
   const overallQuality = metricsAssessment.overallQualityScore;
+  if (overallQuality < acceptanceCriteria.minTranslationQuality) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -1931,3 +1936,4 @@ export const localizationDeploymentTask = defineTask('localization-deployment', 
   },
   labels: ['agent', 'localization', 'deployment']
 }));
+

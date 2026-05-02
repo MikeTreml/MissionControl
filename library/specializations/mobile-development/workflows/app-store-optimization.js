@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, targetMarkets, competitors, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -134,3 +135,4 @@ export const localizationTask = createASOTask('localization-strategy', 'Localiza
 export const abTestingTask = createASOTask('ab-testing-plan', 'A/B Testing Plan');
 export const performanceTrackingTask = createASOTask('performance-tracking', 'Performance Tracking Setup');
 export const iterationPlanTask = createASOTask('iteration-plan', 'Iteration and Improvement Plan');
+

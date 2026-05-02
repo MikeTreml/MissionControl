@@ -50,6 +50,7 @@ export async function process(inputs, ctx) {
     goalAnalysis,
     domain,
     explorationDepth
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -517,3 +518,4 @@ export const refineGoalUnderstandingTask = defineTask('refine-goal-understanding
   },
   labels: ['agent', 'inverted-goal', 'refinement']
 }));
+

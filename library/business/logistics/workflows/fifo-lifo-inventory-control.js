@@ -48,6 +48,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...expirationAssessment.artifacts);
 
   // Quality Gate: Critical expirations
+  if (expirationAssessment.criticalItems.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -317,3 +318,4 @@ export const rotationPerformanceTask = defineTask('rotation-performance', (args,
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'logistics', 'inventory-rotation', 'performance']
 }));
+

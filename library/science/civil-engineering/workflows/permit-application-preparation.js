@@ -93,6 +93,7 @@ export async function process(inputs, ctx) {
   const totalPermits = buildingPermit.applicationCount +
                        sitePermit.applicationCount +
                        environmentalPermits.applicationCount +
+                       utilityPermits.applicationCount;
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -531,3 +532,4 @@ export const submissionPackageTask = defineTask('submission-package', (args, tas
   },
   labels: ['agent', 'civil-engineering', 'permits', 'submission']
 }));
+

@@ -66,6 +66,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate for failed tests
     const failedTests = testingResults.results.filter(r => r.result === 'failed');
+    if (failedTests.length > 0) {
         let lastFeedback_phase3Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase3Review) {
@@ -239,3 +240,4 @@ export const complianceTestingReportTask = defineTask('compliance-testing-report
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'compliance-testing']
 }));
+

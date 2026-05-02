@@ -64,6 +64,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Exogenous variables must be identified
+  if (!abductionResult.exogenousIdentified) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -888,3 +889,4 @@ export const robustnessAssessmentTask = defineTask('robustness-assessment', (arg
   },
   labels: ['counterfactual', 'robustness', 'sensitivity-analysis']
 }));
+

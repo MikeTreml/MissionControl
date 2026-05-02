@@ -1,4 +1,4 @@
----
+﻿---
 name: subgraph-indexing
 description: Subgraph development for The Graph protocol. Includes manifest configuration, GraphQL schema design, AssemblyScript handlers, entity relationships, and deployment to hosted and decentralized networks.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -48,15 +48,15 @@ cd my-subgraph
 
 ```
 my-subgraph/
-├── subgraph.yaml          # Manifest
-├── schema.graphql         # GraphQL schema
-├── src/
-│   └── mapping.ts         # Event handlers
-├── abis/
-│   └── Contract.json      # Contract ABIs
-├── tests/
-│   └── contract.test.ts   # Unit tests
-└── package.json
+â”œâ”€â”€ subgraph.yaml          # Manifest
+â”œâ”€â”€ schema.graphql         # GraphQL schema
+â”œâ”€â”€ src/
+â”‚   â””â”€â”€ mapping.ts         # Event handlers
+â”œâ”€â”€ abis/
+â”‚   â””â”€â”€ Contract.json      # Contract ABIs
+â”œâ”€â”€ tests/
+â”‚   â””â”€â”€ contract.test.ts   # Unit tests
+â””â”€â”€ package.json
 ```
 
 ## Manifest (subgraph.yaml)
@@ -342,6 +342,7 @@ test("Creates Transfer entity", () => {
 
 ## See Also
 
-- `skills/wallet-integration/SKILL.md` - dApp integration
+- `SKILL.md` - dApp integration
 - `agents/web3-frontend/AGENT.md` - Frontend expert
 - [The Graph Documentation](https://thegraph.com/docs/)
+

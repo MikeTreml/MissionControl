@@ -55,6 +55,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Concept Viability
+  if (conceptEvaluation.bestConcept.feasibilityScore < 0.5) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -112,6 +113,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Risk Acceptability
+  if (riskAnalysis.unacceptableRisks.length > 0) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -586,3 +588,4 @@ export const planValidationTask = defineTask('engineering-validation-planning', 
   },
   labels: ['engineering-design', 'validation']
 }));
+

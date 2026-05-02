@@ -1,4 +1,4 @@
----
+﻿---
 name: wallet-integration
 description: Wallet connection and transaction management for dApps using wagmi and viem. Supports multiple connectors, chain switching, EIP-712 signing, and hardware wallet integration.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -388,7 +388,8 @@ export function parseContractError(error: unknown): string {
 
 ## See Also
 
-- `skills/subgraph-indexing/SKILL.md` - Data indexing
+- `SKILL.md` - Data indexing
 - `agents/web3-frontend/AGENT.md` - Frontend expert
 - [wagmi Documentation](https://wagmi.sh/)
 - [viem Documentation](https://viem.sh/)
+

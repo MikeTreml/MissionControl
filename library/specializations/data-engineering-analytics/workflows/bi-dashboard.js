@@ -122,6 +122,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Using specified platform: ${selectedPlatform}`);
   }
   // Breakpoint: Platform selection review
+  if (platformEvaluation) {
       let lastFeedback_reviewApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_reviewApproval2) {
@@ -1574,3 +1575,4 @@ export const qualityAssessmentTask = defineTask('quality-assessment', (args, tas
   },
   labels: ['agent', 'bi-dashboard', 'quality', 'assessment']
 }));
+

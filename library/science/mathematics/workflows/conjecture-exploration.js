@@ -85,6 +85,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check if counterexamples were found
+  if (computationalVerification.counterexamplesFound.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -516,3 +517,4 @@ export const patternAnalysisTask = defineTask('pattern-analysis', (args, taskCtx
   },
   labels: ['mathematics', 'conjecture-exploration', 'pattern-analysis']
 }));
+

@@ -501,6 +501,7 @@ export async function process(inputs, ctx) {
     accessControl
   });
 
+  if (securityAudit.criticalIssues > 0) {
       let lastFeedback_securityApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_securityApproval) {
@@ -659,6 +660,7 @@ export async function process(inputs, ctx) {
     costConstraints
   });
 
+  if (costAnalysis.projectedMonthlyCost > costConstraints.maxMonthlyCost) {
       let lastFeedback_analysisApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_analysisApproval) {
@@ -2605,3 +2607,4 @@ export const finalReportGenerationTask = defineTask('final-report-generation', (
   },
   labels: ['environment-management', 'reporting', 'final']
 }));
+

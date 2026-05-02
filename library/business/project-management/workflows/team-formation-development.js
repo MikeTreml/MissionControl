@@ -106,6 +106,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Skills gaps identified
   const criticalGaps = skillsAssessment.gaps?.filter(g => g.severity === 'critical') || [];
+  if (criticalGaps.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -918,3 +919,4 @@ export const teamCharterGenerationTask = defineTask('team-charter-generation', (
   },
   labels: ['team', 'charter', 'documentation']
 }));
+

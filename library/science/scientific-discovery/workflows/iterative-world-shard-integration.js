@@ -94,6 +94,7 @@ export async function process(inputs, ctx) {
         domain
       }).then(r => r.updatedShards);
     }
+    if (iteration < integrationIterations - 1) {
   let lastFeedback = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback) {
@@ -564,3 +565,4 @@ export const synthesizeShardInsightsTask = defineTask('synthesize-shard-insights
   },
   labels: ['agent', 'world-shard', 'synthesis']
 }));
+

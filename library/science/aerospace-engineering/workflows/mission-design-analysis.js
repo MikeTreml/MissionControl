@@ -87,6 +87,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Delta-V margin
+  if (deltaVBudget.margin < 0.1) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -583,3 +584,4 @@ export const missionDocumentationTask = defineTask('mission-documentation', (arg
   },
   labels: ['space-mission', 'documentation', 'aerospace']
 }));
+

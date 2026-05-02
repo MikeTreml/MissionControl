@@ -109,6 +109,7 @@ export async function process(inputs, ctx) {
   });
 
   // Phase 4: Exclusive/Embargo Coordination
+  if (exclusiveStrategy) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -644,3 +645,4 @@ export const analyzeCampaignPerformanceTask = defineTask('analyze-campaign-perfo
   },
   labels: ['agent', 'public-relations', 'campaign-analysis']
 }));
+

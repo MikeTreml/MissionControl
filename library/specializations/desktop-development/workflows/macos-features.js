@@ -65,6 +65,7 @@ export async function process(inputs, ctx) {
     let nativeTabs = await ctx.task(implementNativeTabsTask, { projectName, framework, outputDir });
     artifacts.push(...nativeTabs.artifacts);
     featureModules.nativeTabs = nativeTabs;
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -208,3 +209,4 @@ export const validateMacosFeaturesTask = defineTask('validate-macos-features', (
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['desktop-development', 'macos', 'validation']
 }));
+

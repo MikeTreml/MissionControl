@@ -1,4 +1,4 @@
-# Ruflo Methodology
+﻿# Ruflo Methodology
 
 **Source**: [ruvnet/ruflo](https://github.com/ruvnet/ruflo) by ruvnet
 **Category**: Multi-Agent Swarm Orchestration / Self-Learning Architecture
@@ -21,11 +21,11 @@ Ruflo v3 is a multi-agent orchestration platform deploying 60+ specialized agent
 
 | Process | File | Description | Task Count |
 |---------|------|-------------|------------|
-| Swarm Orchestrator | `ruflo-orchestrator.js` | Main pipeline: routing -> swarm -> execution -> consensus -> verify | 8 |
-| Swarm Coordination | `ruflo-swarm-coordination.js` | Topology, consensus, anti-drift, agent lifecycle | 8 |
-| RuVector Intelligence | `ruflo-intelligence.js` | Pattern extraction, ReasoningBank, SONA, knowledge graph | 8 |
-| Smart Task Routing | `ruflo-task-routing.js` | Complexity assessment, Agent Booster, Q-Learning, MoE | 7 |
-| Security Audit | `ruflo-security-audit.js` | AIDefence: injection, validation, SAST, sandbox, compliance | 8 |
+| Swarm Orchestrator | `workflows\ruflo-orchestrator.js` | Main pipeline: routing -> swarm -> execution -> consensus -> verify | 8 |
+| Swarm Coordination | `workflows\ruflo-swarm-coordination.js` | Topology, consensus, anti-drift, agent lifecycle | 8 |
+| RuVector Intelligence | `workflows\ruflo-intelligence.js` | Pattern extraction, ReasoningBank, SONA, knowledge graph | 8 |
+| Smart Task Routing | `workflows\ruflo-task-routing.js` | Complexity assessment, Agent Booster, Q-Learning, MoE | 7 |
+| Security Audit | `workflows\ruflo-security-audit.js` | AIDefence: injection, validation, SAST, sandbox, compliance | 8 |
 
 ## Skills Catalog
 
@@ -103,3 +103,4 @@ User Layer (CLI/MCP) -> Routing Layer (Q-Learning + 8 MoE) -> Swarm Coordination
 2. **Consensus Voting** - Weighted majority with Queen 3x (blocking)
 3. **Output Verification** - Quality score >= threshold (blocking, max 3 attempts)
 4. **Security Audit** - No critical vulnerabilities (blocking)
+

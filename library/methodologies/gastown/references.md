@@ -1,4 +1,4 @@
-# Gas Town References and Attribution
+﻿# Gas Town References and Attribution
 
 ## Primary Source
 
@@ -11,11 +11,11 @@
 The following Gas Town concepts have been adapted into babysitter process definitions:
 
 ### Infrastructure Roles
-- **Mayor**: Global coordinator -> `gastown-orchestrator.js`
-- **Deacon**: Daemon supervisor -> `gastown-patrol.js`
-- **Witness**: Per-rig lifecycle manager -> `gastown-patrol.js` (integrated)
-- **Refinery**: Merge queue processor -> `gastown-merge-queue.js`
-- **Boot (Dog)**: Deacon watcher -> `gastown-patrol.js` (integrated)
+- **Mayor**: Global coordinator -> `workflows\gastown-orchestrator.js`
+- **Deacon**: Daemon supervisor -> `workflows\gastown-patrol.js`
+- **Witness**: Per-rig lifecycle manager -> `workflows\gastown-patrol.js` (integrated)
+- **Refinery**: Merge queue processor -> `workflows\gastown-merge-queue.js`
+- **Boot (Dog)**: Deacon watcher -> `workflows\gastown-patrol.js` (integrated)
 
 ### Worker Roles
 - **Crew**: Long-lived persistent agents -> `agents/crew-lead/`
@@ -23,14 +23,14 @@ The following Gas Town concepts have been adapted into babysitter process defini
 - **Dogs**: Infrastructure helpers -> integrated into Deacon patrol
 
 ### Work Units
-- **Bead**: Git-backed atomic work unit -> `gastown-convoy.js`
-- **Formula**: TOML-based workflow template -> `gastown-molecule.js`
-- **Protomolecule**: Frozen template -> `gastown-molecule.js`
-- **Molecule**: Active durable workflow -> `gastown-molecule.js`
-- **Wisp**: Ephemeral bead -> `gastown-convoy.js`
+- **Bead**: Git-backed atomic work unit -> `workflows\gastown-convoy.js`
+- **Formula**: TOML-based workflow template -> `workflows\gastown-molecule.js`
+- **Protomolecule**: Frozen template -> `workflows\gastown-molecule.js`
+- **Molecule**: Active durable workflow -> `workflows\gastown-molecule.js`
+- **Wisp**: Ephemeral bead -> `workflows\gastown-convoy.js`
 - **Hook**: Agent work queue -> integrated across all processes
-- **Convoy**: Primary work order -> `gastown-convoy.js`
-- **MEOW**: Molecular Expression of Work -> `gastown-orchestrator.js`
+- **Convoy**: Primary work order -> `workflows\gastown-convoy.js`
+- **MEOW**: Molecular Expression of Work -> `workflows\gastown-orchestrator.js`
 
 ### Core Principles
 - **GUPP**: Gas Town Universal Propulsion Principle
@@ -52,3 +52,5 @@ The following Gas Town concepts have been adapted into babysitter process defini
 ## Acknowledgment
 
 This adaptation brings Gas Town's multi-agent orchestration patterns into the babysitter process framework. All credit for the original concepts, terminology, and design philosophy belongs to Steve Yegge and the Gas Town project contributors.
+
+

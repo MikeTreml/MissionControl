@@ -1,4 +1,4 @@
-# Common Utilities
+﻿# Common Utilities
 
 Reusable task definitions and utility functions for composing babysitter processes.
 
@@ -10,7 +10,7 @@ A shared HTML-to-DOCX conversion task using pandoc with graceful fallback.
 
 **Usage:**
 ```javascript
-import { convertToDocxTask } from '../common-utilities/index.js';
+import { convertToDocxTask } from 'workflows\index.js';
 
 // In your process:
 const result = await ctx.task(convertToDocxTask, {
@@ -27,7 +27,7 @@ Utility functions for parallel task execution with fan-out/fan-in patterns.
 
 **fanOutFanIn** - Run multiple tasks in parallel with shared input:
 ```javascript
-import { fanOutFanIn } from '../common-utilities/index.js';
+import { fanOutFanIn } from 'workflows\index.js';
 
 const [strengths, weaknesses] = await fanOutFanIn(ctx, { essay, analysis }, [
   { task: evaluateStrengthsTask },
@@ -37,7 +37,7 @@ const [strengths, weaknesses] = await fanOutFanIn(ctx, { essay, analysis }, [
 
 **pipeline** - Sequential phases with optional parallel steps:
 ```javascript
-import { pipeline } from '../common-utilities/index.js';
+import { pipeline } from 'workflows\index.js';
 
 const result = await pipeline(ctx, { essay }, [
   { task: analyzeTask, key: 'analysis' },
@@ -52,3 +52,4 @@ const result = await pipeline(ctx, { essay }, [
 ## Origin
 
 These utilities were extracted from a retrospective analysis of essay-critique, extract-oral-prep, and essay-grading processes where identical patterns were duplicated across multiple files.
+

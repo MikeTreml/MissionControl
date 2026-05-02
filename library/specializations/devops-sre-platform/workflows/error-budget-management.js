@@ -171,6 +171,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Low budget warning
   const criticalServices = errorBudgets.filter(eb => eb.budgetRemainingPercent < alertThresholds.budgetRemaining);
+  if (criticalServices.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -226,6 +227,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Burn rate analysis complete - ${burnRateAnalysis.fastBurnServices.length} services with fast burn rate`);
 
   // Quality Gate: Fast burn rate alert
+  if (burnRateAnalysis.fastBurnServices.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -279,6 +281,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Incident correlation complete - ${incidentCorrelationResult.correlatedIncidents} incidents correlated with budget consumption`);
 
     // Quality Gate: High-impact incidents review
+    if (incidentCorrelationResult.highImpactIncidents.length > 0) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -358,6 +361,7 @@ export async function process(inputs, ctx) {
 
     // Quality Gate: Policy decisions requiring approval
     const criticalDecisions = policyEnforcement.decisions.filter(d => d.requiresApproval);
+    if (criticalDecisions.length > 0) {
         let lastFeedback_qualityGateApproval3 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval3) {
@@ -441,6 +445,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Review high-priority recommendations
   const highPriorityRecs = recommendations.filter(r => r.priority === 'critical' || r.priority === 'high');
+  if (highPriorityRecs.length > 0) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -1910,3 +1915,4 @@ export const generateErrorBudgetDocumentationTask = defineTask('generate-error-b
   },
   labels: ['agent', 'error-budget', 'documentation']
 }));
+

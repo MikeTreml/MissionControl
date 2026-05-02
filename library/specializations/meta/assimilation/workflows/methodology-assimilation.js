@@ -733,6 +733,7 @@ export async function process(inputs, ctx) {
       sourceRepo,
       methodologyName,
       methodologyDisplayName
+    });
     let lastFeedback_finalApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_finalApproval2) {

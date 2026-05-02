@@ -46,6 +46,7 @@ export async function process(inputs, ctx) {
 
   // Breakpoint: Review resource gaps
   const gaps = availabilityAssessment.gaps || [];
+  if (gaps.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -532,3 +533,4 @@ export const resourceManagementPlanTask = defineTask('resource-management-plan',
   },
   labels: ['resource', 'management', 'plan']
 }));
+

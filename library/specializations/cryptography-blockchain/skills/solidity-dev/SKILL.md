@@ -1,4 +1,4 @@
----
+﻿---
 name: solidity-dev
 description: Deep expertise in Solidity language features, patterns, and best practices for secure smart contract development. Covers ERC standards, gas optimization, upgradeable contracts, and security patterns.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -240,8 +240,9 @@ This skill integrates with:
 
 ## See Also
 
-- `skills/foundry-framework/SKILL.md` - Foundry development
-- `skills/hardhat-framework/SKILL.md` - Hardhat development
-- `skills/openzeppelin/SKILL.md` - OpenZeppelin contracts
-- `skills/gas-optimization/SKILL.md` - Gas optimization
+- `SKILL.md` - Foundry development
+- `SKILL.md` - Hardhat development
+- `SKILL.md` - OpenZeppelin contracts
+- `SKILL.md` - Gas optimization
 - `agents/solidity-auditor/AGENT.md` - Security auditor agent
+

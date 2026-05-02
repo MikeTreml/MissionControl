@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...assessment.artifacts);
 
   // Quality Gate: High severity breach
+  if (assessment.severity === 'high' || assessment.severity === 'critical') {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -335,3 +336,4 @@ export const postIncidentReviewTask = defineTask('post-incident-review', (args, 
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'breach-response']
 }));
+

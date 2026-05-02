@@ -89,6 +89,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Force field must be validated
+  if (!forceFieldValidation.validated) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -172,6 +173,7 @@ export async function process(inputs, ctx) {
       metrics: equilibrationMetrics
     });
 
+    if (!equilibrated && equilibrationCycle < maxEquilibrationCycles) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -200,6 +202,7 @@ export async function process(inputs, ctx) {
       }   }
   }
   // Quality Gate: System must be equilibrated
+  if (!equilibrated) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -930,3 +933,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['nanotechnology', 'md', 'reporting']
 }));
+

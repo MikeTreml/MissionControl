@@ -42,6 +42,7 @@ export async function process(inputs, ctx) {
     targetNanomaterial,
     sustainabilityGoals,
     greenChemistryAnalysis
+  });
     let lastFeedback_phase2Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase2Review) {
@@ -100,6 +101,7 @@ export async function process(inputs, ctx) {
       greenScore: currentGreenScore
     });
 
+    if (currentGreenScore < greenScoreTarget && iteration < maxIterations) {
         let lastFeedback_iterationApproval = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_iterationApproval) {
@@ -148,6 +150,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Must achieve property parity
+  if (!propertyValidation.parityAchieved) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -183,6 +186,7 @@ export async function process(inputs, ctx) {
     energyAssessment,
     comparisonAnalysis,
     propertyValidation
+  });
     let lastFeedback_finalApproval = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_finalApproval) {
@@ -611,3 +615,5 @@ export const greenSynthesisDocumentationTask = defineTask('green-synthesis-docum
   },
   labels: ['nanotechnology', 'documentation', 'green-synthesis']
 }));
+
+

@@ -67,6 +67,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...optimization.artifacts);
 
   // Quality Gate: Review optimization recommendations
+  if (optimization.recommendations.length > 0) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -211,3 +212,4 @@ export const portfolioReportTask = defineTask('portfolio-report', (args, taskCtx
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'ip-portfolio']
 }));
+

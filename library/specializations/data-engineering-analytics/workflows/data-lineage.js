@@ -152,6 +152,7 @@ export async function process(inputs, ctx) {
     }
 
     ctx.log('info', `Extracted ${columnLineageResults.reduce((sum, r) => sum + r.columnRelationships.length, 0)} column-level relationships`);
+  }
     let lastFeedback_stepApproval = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_stepApproval) {
@@ -1629,3 +1630,4 @@ export const lineageReportGenerationTask = defineTask('lineage-report-generation
   },
   labels: ['data-lineage', 'reporting', 'documentation']
 }));
+

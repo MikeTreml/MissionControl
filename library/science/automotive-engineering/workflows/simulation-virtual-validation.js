@@ -38,6 +38,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Digital twin must be validated
+  if (!digitalTwin.validationStatus || digitalTwin.validationStatus !== 'validated') {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -135,6 +136,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Coverage targets
+  if (scenarioTesting.coverage < (coverageTargets.scenarioCoverage || 90)) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -691,3 +693,4 @@ export const validationReportTask = defineTask('validation-report', (args, taskC
   },
   labels: ['automotive', 'simulation', 'validation', 'reporting']
 }));
+

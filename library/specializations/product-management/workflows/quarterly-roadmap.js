@@ -181,6 +181,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Capacity must not exceed 100%
+  if (capacityPlanning.totalCapacityUsed > 100) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -1742,3 +1743,4 @@ export const roadmapDocumentGenerationTask = defineTask('roadmap-document-genera
   },
   labels: ['roadmap-planning', 'documentation', 'roadmap-document']
 }));
+

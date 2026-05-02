@@ -551,7 +551,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...stakeholderPresentation.artifacts);
   }
   const endTime = ctx.now();
-  const duration = endTime - startTime;
+  const elapsedMs = endTime - startTime;
 
   return {
     success: true,
@@ -614,7 +614,7 @@ export async function process(inputs, ctx) {
       keySlides: stakeholderPresentation.keySlides
     } : null,
     artifacts,
-    duration,
+      duration: elapsedMs,
     metadata: {
       processId: 'ux-ui-design/design-sprint',
       timestamp: startTime,

@@ -247,6 +247,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Damage accumulation: D = ${damageResult.totalDamage}`);
 
   // Quality Gate: Damage exceeds 1.0
+  if (damageResult.totalDamage > 1.0) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -914,3 +915,4 @@ export const generateFatigueReportTask = defineTask('generate-fatigue-report', (
   },
   labels: ['mechanical-engineering', 'fatigue', 'reporting']
 }));
+

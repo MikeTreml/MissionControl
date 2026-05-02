@@ -1,12 +1,12 @@
-# Babysitter Process Methodologies
+﻿# Babysitter Process Methodologies
 
 This directory contains process workflows and methodologies for the Babysitter SDK orchestration framework.
 
 ## Quick Links
 
-- **[GSD Workflows](gsd/README.md)** - Get Shit Done methodology adapted for Babysitter SDK
+- **[GSD Workflows](README.md)** - Get Shit Done methodology adapted for Babysitter SDK
 - **[Spec-Kit Workflows](SPEC-KIT.md)** - GitHub Spec-Kit inspired spec-driven development
-- **[TDD Quality Convergence](tdd-quality-convergence.md)** - Test-driven development with quality gates
+- **[TDD Quality Convergence](methodologies\atdd-tdd\workflows\tdd-quality-convergence.md)** - Test-driven development with quality gates
 
 ## Available Methodologies
 
@@ -16,19 +16,19 @@ This directory contains process workflows and methodologies for the Babysitter S
 
 Executable specifications that drive implementation through systematic phases:
 
-1. **[spec-driven-development.js](methodologies/spec-driven-development.js)** - Complete 5-step workflow
-   - Constitution → Specification → Plan → Tasks → Implementation
+1. **[methodologies\spec-driven-development.js](methodologies\spec-driven-development.js)** - Complete 5-step workflow
+   - Constitution â†’ Specification â†’ Plan â†’ Tasks â†’ Implementation
    - Full quality gates and validation
 
-2. **[spec-kit-constitution.js](methodologies/spec-kit-constitution.js)** - Standalone constitution
+2. **[methodologies\spec-kit-constitution.js](methodologies\spec-kit-constitution.js)** - Standalone constitution
    - Establish governance principles
    - Code quality, UX, performance, security standards
 
-3. **[spec-kit-quality-checklist.js](methodologies/spec-kit-quality-checklist.js)** - Quality validation
+3. **[methodologies\spec-kit-quality-checklist.js](methodologies\spec-kit-quality-checklist.js)** - Quality validation
    - "Unit tests for English"
    - Custom checklists per artifact type
 
-4. **[spec-kit-brownfield.js](methodologies/spec-kit-brownfield.js)** - Brownfield development
+4. **[methodologies\spec-kit-brownfield.js](methodologies\spec-kit-brownfield.js)** - Brownfield development
    - Add features to existing systems
    - Integration analysis and risk validation
 
@@ -42,16 +42,16 @@ Executable specifications that drive implementation through systematic phases:
 
 Systematic project development preventing context degradation:
 
-1. **[gsd/new-project.js](gsd/new-project.js)** - Project initialization
-2. **[gsd/discuss-phase.js](gsd/discuss-phase.js)** - Phase discussion
-3. **[gsd/plan-phase.js](gsd/plan-phase.js)** - Planning with verification
-4. **[gsd/execute-phase.js](gsd/execute-phase.js)** - Parallel execution
-5. **[gsd/verify-work.js](gsd/verify-work.js)** - UAT and fixes
-6. **[gsd/audit-milestone.js](gsd/audit-milestone.js)** - Milestone audit
-7. **[gsd/map-codebase.js](gsd/map-codebase.js)** - Codebase analysis
-8. **[gsd/iterative-convergence.js](gsd/iterative-convergence.js)** - Quality convergence
+1. **[methodologies\gsd\workflows\new-project.js](methodologies\gsd\workflows\new-project.js)** - Project initialization
+2. **[methodologies\gsd\workflows\discuss-phase.js](methodologies\gsd\workflows\discuss-phase.js)** - Phase discussion
+3. **[methodologies\gsd\workflows\plan-phase.js](methodologies\gsd\workflows\plan-phase.js)** - Planning with verification
+4. **[methodologies\gsd\workflows\execute-phase.js](methodologies\gsd\workflows\execute-phase.js)** - Parallel execution
+5. **[methodologies\gsd\workflows\verify-work.js](methodologies\gsd\workflows\verify-work.js)** - UAT and fixes
+6. **[methodologies\gsd\workflows\audit-milestone.js](methodologies\gsd\workflows\audit-milestone.js)** - Milestone audit
+7. **[methodologies\gsd\workflows\map-codebase.js](methodologies\gsd\workflows\map-codebase.js)** - Codebase analysis
+8. **[methodologies\gsd\workflows\iterative-convergence.js](methodologies\gsd\workflows\iterative-convergence.js)** - Quality convergence
 
-**Documentation:** [gsd/README.md](gsd/README.md)
+**Documentation:** [README.md](README.md)
 
 ---
 
@@ -59,20 +59,20 @@ Systematic project development preventing context degradation:
 
 Located in [methodologies/](methodologies/):
 
-- **[devin.js](methodologies/devin.js)** - Plan → Code → Debug → Deploy
-- **[ralph.js](methodologies/ralph.js)** - Simple persistent iteration loop
-- **[plan-and-execute.js](methodologies/plan-and-execute.js)** - Detailed planning then execution
-- **[agile.js](methodologies/agile.js)** - Sprint-based iterative development
-- **[bottom-up.js](methodologies/bottom-up.js)** - Component-first development
-- **[top-down.js](methodologies/top-down.js)** - Architecture-first development
-- **[evolutionary.js](methodologies/evolutionary.js)** - Incremental evolution
-- **[graph-of-thoughts.js](methodologies/graph-of-thoughts.js)** - Multi-path reasoning
-- **[adversarial-spec-debates.js](methodologies/adversarial-spec-debates.js)** - Adversarial validation
-- **[consensus-and-voting-mechanisms.js](methodologies/consensus-and-voting-mechanisms.js)** - Multi-agent consensus
-- **[state-machine-orchestration.js](methodologies/state-machine-orchestration.js)** - State-based workflows
-- **[self-assessment.js](methodologies/self-assessment.js)** - Self-validation loops
-- **[build-realtime-remediation.js](methodologies/build-realtime-remediation.js)** - Real-time error fixing
-- **[base44.js](methodologies/base44.js)** - Base44 methodology
+- **[methodologies\devin.js](methodologies\devin.js)** - Plan â†’ Code â†’ Debug â†’ Deploy
+- **[methodologies\ralph.js](methodologies\ralph.js)** - Simple persistent iteration loop
+- **[methodologies\plan-and-execute.js](methodologies\plan-and-execute.js)** - Detailed planning then execution
+- **[methodologies\agile.js](methodologies\agile.js)** - Sprint-based iterative development
+- **[methodologies\bottom-up.js](methodologies\bottom-up.js)** - Component-first development
+- **[methodologies\top-down.js](methodologies\top-down.js)** - Architecture-first development
+- **[methodologies\evolutionary.js](methodologies\evolutionary.js)** - Incremental evolution
+- **[methodologies\graph-of-thoughts.js](methodologies\graph-of-thoughts.js)** - Multi-path reasoning
+- **[methodologies\adversarial-spec-debates.js](methodologies\adversarial-spec-debates.js)** - Adversarial validation
+- **[methodologies\consensus-and-voting-mechanisms.js](methodologies\consensus-and-voting-mechanisms.js)** - Multi-agent consensus
+- **[methodologies\state-machine-orchestration.js](methodologies\state-machine-orchestration.js)** - State-based workflows
+- **[methodologies\self-assessment.js](methodologies\self-assessment.js)** - Self-validation loops
+- **[methodologies\build-realtime-remediation.js](methodologies\build-realtime-remediation.js)** - Real-time error fixing
+- **[methodologies\base44.js](methodologies\base44.js)** - Base44 methodology
 
 ---
 
@@ -83,7 +83,7 @@ Located in [methodologies/](methodologies/):
 ```bash
 babysitter run:create \
   --process-id methodologies/spec-driven-development \
-  --entry library/methodologies/spec-driven-development.js#process \
+  --entry methodologies\spec-driven-development.js#process \
   --inputs inputs.json
 ```
 
@@ -93,15 +93,15 @@ babysitter run:create \
 # Use example inputs directly
 babysitter run:create \
   --process-id methodologies/spec-kit-constitution \
-  --entry library/methodologies/spec-kit-constitution.js#process \
+  --entry methodologies\spec-kit-constitution.js#process \
   --inputs examples/spec-kit-examples.json#constitutionOnly.inputs
 ```
 
 ### Compose Processes
 
 ```javascript
-import { process as specDriven } from './methodologies/spec-driven-development.js';
-import { process as gsdNewProject } from './gsd/new-project.js';
+import { process as specDriven } from './methodologies\spec-driven-development.js';
+import { process as gsdNewProject } from './methodologies\gsd\workflows\new-project.js';
 
 export async function process(inputs, ctx) {
   // Combine methodologies
@@ -146,10 +146,10 @@ When adding new methodologies:
 ## Documentation
 
 - **[SPEC-KIT.md](SPEC-KIT.md)** - Complete Spec-Kit documentation
-- **[gsd/README.md](gsd/README.md)** - GSD workflows documentation
-- **[gsd/QUICK_START.md](gsd/QUICK_START.md)** - GSD quick reference
-- **[gsd/SUMMARY.md](gsd/SUMMARY.md)** - GSD implementation details
-- **[tdd-quality-convergence.md](tdd-quality-convergence.md)** - TDD with convergence
+- **[README.md](README.md)** - GSD workflows documentation
+- **[methodologies\gsd\QUICK_START.md](methodologies\gsd\QUICK_START.md)** - GSD quick reference
+- **[methodologies\gsd\SUMMARY.md](methodologies\gsd\SUMMARY.md)** - GSD implementation details
+- **[methodologies\atdd-tdd\workflows\tdd-quality-convergence.md](methodologies\atdd-tdd\workflows\tdd-quality-convergence.md)** - TDD with convergence
 
 ---
 
@@ -157,10 +157,13 @@ When adding new methodologies:
 
 - **[spec-kit-examples.json](examples/spec-kit-examples.json)** - 8 Spec-Kit examples
 - **[gsd/examples/](gsd/examples/)** - GSD workflow examples
-- **[tdd-quality-convergence-example.json](examples/tdd-quality-convergence-example.json)** - TDD example
+- **[methodologies\atdd-tdd\examples\tdd-quality-convergence-example.json](methodologies\atdd-tdd\examples\tdd-quality-convergence-example.json)** - TDD example
 
 ---
 
 ## License
 
 See repository root LICENSE file.
+
+
+

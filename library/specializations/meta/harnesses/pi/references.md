@@ -1,4 +1,4 @@
-# Pi Harness Source File References
+﻿# Pi Harness Source File References
 
 All paths are relative to the babysitter monorepo root. Last verified: 2026-04-02.
 
@@ -37,7 +37,7 @@ All paths are relative to the babysitter monorepo root. Last verified: 2026-04-0
 
 | File | Description |
 |------|-------------|
-| `package.json` | Plugin manifest with `omp` field declaring extensions/skills dirs, peer dep on `@mariozechner/pi-coding-agent` |
+| `examples\package.json` | Plugin manifest with `omp` field declaring extensions/skills dirs, peer dep on `@mariozechner/pi-coding-agent` |
 | `AGENTS.md` | Agent behavioral instructions for the babysitter-pi plugin (auto-init, commands, orchestration protocol, effect types, completion proof) |
 | `.gitignore` | Ignore patterns for the plugin package |
 
@@ -100,3 +100,4 @@ All paths are relative to the babysitter monorepo root. Last verified: 2026-04-0
 | `packages/sdk/src/compression/config-loader.ts` | `loadCompressionConfig()` -- used by PiSessionHandle for compaction settings |
 | `packages/sdk/src/session/` | Session state management used by Pi adapter's `bindSession()` |
 | `packages/sdk/src/cli/main.ts` | CLI entry point -- `harness:install`, `harness:install-plugin` commands for Pi |
+

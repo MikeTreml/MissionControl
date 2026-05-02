@@ -46,6 +46,7 @@ export async function process(inputs, ctx) {
     abstraction,
     structuralProperties,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -497,3 +498,4 @@ export const synthesizeGenericInsightsTask = defineTask('synthesize-generic-insi
   },
   labels: ['agent', 'domain-generic', 'synthesis']
 }));
+

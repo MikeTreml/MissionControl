@@ -1,4 +1,4 @@
-# Network Programming and Protocols - Skills and Agents Backlog
+﻿# Network Programming and Protocols - Skills and Agents Backlog
 
 This document identifies specialized skills and agents (subagents) that could enhance the Network Programming processes beyond general-purpose capabilities. These tools would provide domain-specific expertise, automation capabilities, and integration with specialized tooling.
 
@@ -46,10 +46,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Handle platform differences (BSD sockets, Winsock)
 
 **Process Integration**:
-- tcp-socket-server.js
-- udp-socket-server.js
-- event-driven-socket-handler.js
-- connection-pool.js
+- workflows\tcp-socket-server.js
+- workflows\udp-socket-server.js
+- workflows\event-driven-socket-handler.js
+- workflows\connection-pool.js
 
 **Dependencies**: System socket APIs, netstat/ss tools
 
@@ -71,10 +71,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Generate test vectors for parsers
 
 **Process Integration**:
-- binary-protocol-parser.js
-- custom-protocol-design.js
-- protocol-state-machine.js
-- message-framing.js
+- workflows\binary-protocol-parser.js
+- workflows\custom-protocol-design.js
+- workflows\protocol-state-machine.js
+- workflows\message-framing.js
 
 **Dependencies**: Protocol Buffers, FlatBuffers, custom parser generators
 
@@ -96,9 +96,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Create custom capture filters
 
 **Process Integration**:
-- packet-capture-analysis.js
-- protocol-dissector.js
-- network-traffic-analyzer.js
+- workflows\packet-capture-analysis.js
+- workflows\protocol-dissector.js
+- workflows\network-traffic-analyzer.js
 
 **Dependencies**: libpcap/npcap, tcpdump, tshark, Wireshark
 
@@ -121,9 +121,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Generate secure cipher suite configurations
 
 **Process Integration**:
-- tls-integration.js
-- mtls-implementation.js
-- certificate-management.js
+- workflows\tls-integration.js
+- workflows\mtls-implementation.js
+- workflows\certificate-management.js
 
 **Dependencies**: OpenSSL CLI, certbot, ssl-config-generator
 
@@ -145,9 +145,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Analyze WebSocket traffic
 
 **Process Integration**:
-- websocket-server.js
-- websocket-client.js
-- realtime-messaging-system.js
+- workflows\websocket-server.js
+- workflows\websocket-client.js
+- workflows\realtime-messaging-system.js
 
 **Dependencies**: Autobahn Test Suite, wscat, websocat
 
@@ -169,10 +169,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Debug chunked encoding and keep-alive issues
 
 **Process Integration**:
-- http-server.js
-- http2-server.js
-- http-client-library.js
-- rest-api-client-generator.js
+- workflows\http-server.js
+- workflows\http2-server.js
+- workflows\http-client-library.js
+- workflows\rest-api-client-generator.js
 
 **Dependencies**: curl, h2spec, nghttp2, quiche
 
@@ -194,9 +194,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Optimize gRPC performance
 
 **Process Integration**:
-- realtime-messaging-system.js (gRPC streaming)
-- custom-protocol-design.js (gRPC-based)
-- layer7-load-balancer.js (gRPC routing)
+- workflows\realtime-messaging-system.js (gRPC streaming)
+- workflows\custom-protocol-design.js (gRPC-based)
+- workflows\layer7-load-balancer.js (gRPC routing)
 
 **Dependencies**: protoc, grpcurl, grpc-web
 
@@ -218,9 +218,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Optimize for high availability
 
 **Process Integration**:
-- layer4-load-balancer.js
-- layer7-load-balancer.js
-- health-check-system.js
+- workflows\layer4-load-balancer.js
+- workflows\layer7-load-balancer.js
+- workflows\health-check-system.js
 
 **Dependencies**: HAProxy, NGINX, LVS/IPVS
 
@@ -242,9 +242,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Design DNS-based service discovery
 
 **Process Integration**:
-- realtime-messaging-system.js (service discovery)
-- layer7-load-balancer.js (DNS-based routing)
-- http-proxy-server.js (DNS resolution)
+- workflows\realtime-messaging-system.js (service discovery)
+- workflows\layer7-load-balancer.js (DNS-based routing)
+- workflows\http-proxy-server.js (DNS resolution)
 
 **Dependencies**: dig, nslookup, BIND utilities
 
@@ -266,9 +266,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Benchmark network performance
 
 **Process Integration**:
-- network-testing-framework.js
-- load-testing-tool.js
-- protocol-fuzzer.js
+- workflows\network-testing-framework.js
+- workflows\load-testing-tool.js
+- workflows\protocol-fuzzer.js
 
 **Dependencies**: iperf3, netperf, wrk, k6, tc (traffic control)
 
@@ -290,9 +290,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Report security vulnerabilities
 
 **Process Integration**:
-- protocol-fuzzer.js
-- binary-protocol-parser.js
-- network-testing-framework.js
+- workflows\protocol-fuzzer.js
+- workflows\binary-protocol-parser.js
+- workflows\network-testing-framework.js
 
 **Dependencies**: AFL++, libFuzzer, boofuzz, Peach Fuzzer
 
@@ -314,10 +314,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Implement io_uring operations
 
 **Process Integration**:
-- event-driven-socket-handler.js
-- tcp-socket-server.js
-- websocket-server.js
-- layer4-load-balancer.js
+- workflows\event-driven-socket-handler.js
+- workflows\tcp-socket-server.js
+- workflows\websocket-server.js
+- workflows\layer4-load-balancer.js
 
 **Dependencies**: strace, perf, libuv, io_uring
 
@@ -339,9 +339,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Generate proxy PAC files
 
 **Process Integration**:
-- http-proxy-server.js
-- socks5-proxy.js
-- transparent-proxy.js
+- workflows\http-proxy-server.js
+- workflows\socks5-proxy.js
+- workflows\transparent-proxy.js
 
 **Dependencies**: Squid, mitmproxy, iptables, nftables
 
@@ -363,10 +363,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Generate chaos engineering scenarios
 
 **Process Integration**:
-- network-testing-framework.js
-- load-testing-tool.js
-- protocol-fuzzer.js
-- tcp-socket-server.js
+- workflows\network-testing-framework.js
+- workflows\load-testing-tool.js
+- workflows\protocol-fuzzer.js
+- workflows\tcp-socket-server.js
 
 **Dependencies**: tc, ip netns, mininet, toxiproxy
 
@@ -388,10 +388,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Handle schema evolution
 
 **Process Integration**:
-- binary-protocol-parser.js
-- custom-protocol-design.js
-- message-framing.js
-- websocket-server.js
+- workflows\binary-protocol-parser.js
+- workflows\custom-protocol-design.js
+- workflows\message-framing.js
+- workflows\websocket-server.js
 
 **Dependencies**: protoc, flatc, msgpack tools
 
@@ -421,10 +421,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: High-scale distributed systems, protocol design
 
 **Process Integration**:
-- tcp-socket-server.js (architecture design)
-- custom-protocol-design.js (all phases)
-- layer4-load-balancer.js (architecture)
-- layer7-load-balancer.js (architecture)
+- workflows\tcp-socket-server.js (architecture design)
+- workflows\custom-protocol-design.js (all phases)
+- workflows\layer4-load-balancer.js (architecture)
+- workflows\layer7-load-balancer.js (architecture)
 
 ---
 
@@ -448,10 +448,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: IETF standards work, protocol implementations
 
 **Process Integration**:
-- binary-protocol-parser.js (all phases)
-- custom-protocol-design.js (design phases)
-- protocol-state-machine.js (all phases)
-- websocket-server.js (RFC compliance)
+- workflows\binary-protocol-parser.js (all phases)
+- workflows\custom-protocol-design.js (design phases)
+- workflows\protocol-state-machine.js (all phases)
+- workflows\websocket-server.js (RFC compliance)
 
 ---
 
@@ -475,10 +475,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: Cryptography, penetration testing, security auditing
 
 **Process Integration**:
-- tls-integration.js (all phases)
-- mtls-implementation.js (all phases)
-- certificate-management.js (all phases)
-- protocol-fuzzer.js (vulnerability analysis)
+- workflows\tls-integration.js (all phases)
+- workflows\mtls-implementation.js (all phases)
+- workflows\certificate-management.js (all phases)
+- workflows\protocol-fuzzer.js (vulnerability analysis)
 
 ---
 
@@ -502,10 +502,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: HFT systems, game servers, CDN infrastructure
 
 **Process Integration**:
-- event-driven-socket-handler.js (all phases)
-- tcp-socket-server.js (performance optimization)
-- layer4-load-balancer.js (performance)
-- connection-pool.js (optimization)
+- workflows\event-driven-socket-handler.js (all phases)
+- workflows\tcp-socket-server.js (performance optimization)
+- workflows\layer4-load-balancer.js (performance)
+- workflows\connection-pool.js (optimization)
 
 ---
 
@@ -529,10 +529,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: NOC operations, incident response, Wireshark expertise
 
 **Process Integration**:
-- packet-capture-analysis.js (all phases)
-- protocol-dissector.js (all phases)
-- network-traffic-analyzer.js (all phases)
-- network-testing-framework.js (analysis)
+- workflows\packet-capture-analysis.js (all phases)
+- workflows\protocol-dissector.js (all phases)
+- workflows\network-traffic-analyzer.js (all phases)
+- workflows\network-testing-framework.js (analysis)
 
 ---
 
@@ -556,10 +556,10 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: Large-scale web infrastructure, CDN operations
 
 **Process Integration**:
-- layer4-load-balancer.js (all phases)
-- layer7-load-balancer.js (all phases)
-- health-check-system.js (all phases)
-- http-proxy-server.js (reverse proxy)
+- workflows\layer4-load-balancer.js (all phases)
+- workflows\layer7-load-balancer.js (all phases)
+- workflows\health-check-system.js (all phases)
+- workflows\http-proxy-server.js (reverse proxy)
 
 ---
 
@@ -583,9 +583,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: Chat systems, gaming, live collaboration
 
 **Process Integration**:
-- websocket-server.js (all phases)
-- websocket-client.js (all phases)
-- realtime-messaging-system.js (all phases)
+- workflows\websocket-server.js (all phases)
+- workflows\websocket-client.js (all phases)
+- workflows\realtime-messaging-system.js (all phases)
 
 ---
 
@@ -609,9 +609,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: Enterprise proxy, security gateways
 
 **Process Integration**:
-- http-proxy-server.js (all phases)
-- socks5-proxy.js (all phases)
-- transparent-proxy.js (all phases)
+- workflows\http-proxy-server.js (all phases)
+- workflows\socks5-proxy.js (all phases)
+- workflows\transparent-proxy.js (all phases)
 
 ---
 
@@ -635,9 +635,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: QA automation, performance engineering
 
 **Process Integration**:
-- network-testing-framework.js (all phases)
-- load-testing-tool.js (all phases)
-- protocol-fuzzer.js (testing strategy)
+- workflows\network-testing-framework.js (all phases)
+- workflows\load-testing-tool.js (all phases)
+- workflows\protocol-fuzzer.js (testing strategy)
 
 ---
 
@@ -661,9 +661,9 @@ All 30 implemented processes in this specialization currently use the `general-p
 - Background: Bug bounty, vulnerability research, fuzzing
 
 **Process Integration**:
-- protocol-fuzzer.js (all phases)
-- network-testing-framework.js (security testing)
-- binary-protocol-parser.js (fuzz testing)
+- workflows\protocol-fuzzer.js (all phases)
+- workflows\network-testing-framework.js (security testing)
+- workflows\binary-protocol-parser.js (fuzz testing)
 
 ---
 
@@ -673,36 +673,36 @@ All 30 implemented processes in this specialization currently use the `general-p
 
 | Process File | Primary Skills | Primary Agents |
 |-------------|---------------|----------------|
-| tcp-socket-server.js | SK-001, SK-012, SK-014 | AG-001, AG-004 |
-| udp-socket-server.js | SK-001, SK-014 | AG-001 |
-| event-driven-socket-handler.js | SK-001, SK-012 | AG-004 |
-| connection-pool.js | SK-001, SK-012 | AG-004 |
-| binary-protocol-parser.js | SK-002, SK-015, SK-011 | AG-002, AG-010 |
-| custom-protocol-design.js | SK-002, SK-015 | AG-001, AG-002 |
-| protocol-state-machine.js | SK-002 | AG-002 |
-| message-framing.js | SK-002, SK-015 | AG-002 |
-| tls-integration.js | SK-004 | AG-003 |
-| mtls-implementation.js | SK-004 | AG-003 |
-| certificate-management.js | SK-004 | AG-003 |
-| http-server.js | SK-006 | AG-001 |
-| http2-server.js | SK-006 | AG-001, AG-004 |
-| http-client-library.js | SK-006 | AG-001 |
-| rest-api-client-generator.js | SK-006, SK-007 | AG-001 |
-| websocket-server.js | SK-005, SK-012 | AG-007 |
-| websocket-client.js | SK-005 | AG-007 |
-| realtime-messaging-system.js | SK-005, SK-007, SK-009 | AG-007 |
-| packet-capture-analysis.js | SK-003 | AG-005 |
-| protocol-dissector.js | SK-003, SK-002 | AG-005 |
-| network-traffic-analyzer.js | SK-003, SK-010 | AG-005 |
-| layer4-load-balancer.js | SK-008, SK-001, SK-012 | AG-006, AG-004 |
-| layer7-load-balancer.js | SK-008, SK-006 | AG-006 |
-| health-check-system.js | SK-008, SK-010 | AG-006 |
-| http-proxy-server.js | SK-013, SK-006 | AG-008 |
-| socks5-proxy.js | SK-013, SK-001 | AG-008 |
-| transparent-proxy.js | SK-013, SK-014 | AG-008 |
-| network-testing-framework.js | SK-010, SK-014 | AG-009 |
-| load-testing-tool.js | SK-010, SK-014 | AG-009 |
-| protocol-fuzzer.js | SK-011, SK-002 | AG-010, AG-009 |
+| workflows\tcp-socket-server.js | SK-001, SK-012, SK-014 | AG-001, AG-004 |
+| workflows\udp-socket-server.js | SK-001, SK-014 | AG-001 |
+| workflows\event-driven-socket-handler.js | SK-001, SK-012 | AG-004 |
+| workflows\connection-pool.js | SK-001, SK-012 | AG-004 |
+| workflows\binary-protocol-parser.js | SK-002, SK-015, SK-011 | AG-002, AG-010 |
+| workflows\custom-protocol-design.js | SK-002, SK-015 | AG-001, AG-002 |
+| workflows\protocol-state-machine.js | SK-002 | AG-002 |
+| workflows\message-framing.js | SK-002, SK-015 | AG-002 |
+| workflows\tls-integration.js | SK-004 | AG-003 |
+| workflows\mtls-implementation.js | SK-004 | AG-003 |
+| workflows\certificate-management.js | SK-004 | AG-003 |
+| workflows\http-server.js | SK-006 | AG-001 |
+| workflows\http2-server.js | SK-006 | AG-001, AG-004 |
+| workflows\http-client-library.js | SK-006 | AG-001 |
+| workflows\rest-api-client-generator.js | SK-006, SK-007 | AG-001 |
+| workflows\websocket-server.js | SK-005, SK-012 | AG-007 |
+| workflows\websocket-client.js | SK-005 | AG-007 |
+| workflows\realtime-messaging-system.js | SK-005, SK-007, SK-009 | AG-007 |
+| workflows\packet-capture-analysis.js | SK-003 | AG-005 |
+| workflows\protocol-dissector.js | SK-003, SK-002 | AG-005 |
+| workflows\network-traffic-analyzer.js | SK-003, SK-010 | AG-005 |
+| workflows\layer4-load-balancer.js | SK-008, SK-001, SK-012 | AG-006, AG-004 |
+| workflows\layer7-load-balancer.js | SK-008, SK-006 | AG-006 |
+| workflows\health-check-system.js | SK-008, SK-010 | AG-006 |
+| workflows\http-proxy-server.js | SK-013, SK-006 | AG-008 |
+| workflows\socks5-proxy.js | SK-013, SK-001 | AG-008 |
+| workflows\transparent-proxy.js | SK-013, SK-014 | AG-008 |
+| workflows\network-testing-framework.js | SK-010, SK-014 | AG-009 |
+| workflows\load-testing-tool.js | SK-010, SK-014 | AG-009 |
+| workflows\protocol-fuzzer.js | SK-011, SK-002 | AG-010, AG-009 |
 
 ---
 
@@ -786,3 +786,5 @@ These skills and agents are strong candidates for extraction to a shared library
 **Version**: 1.0.0
 **Status**: Phase 4 - Skills and Agents Identified
 **Next Step**: Phase 5 - Implement specialized skills and agents
+
+

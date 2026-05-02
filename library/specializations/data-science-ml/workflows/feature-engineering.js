@@ -216,6 +216,7 @@ export async function process(inputs, ctx) {
       ctx.log('warn', `Quality below target: ${currentQuality}/${targetQuality}`);
 
       // Breakpoint: Review iteration results before continuing
+      if (iteration < maxIterations) {
           let lastFeedback_iterationApproval = null;
         for (let attempt = 0; attempt < 3; attempt++) {
           if (lastFeedback_iterationApproval) {
@@ -1156,3 +1157,4 @@ export const featureFinalReviewTask = defineTask('feature-final-review', (args, 
 
   labels: ['agent', 'feature-engineering', 'final-review']
 }));
+

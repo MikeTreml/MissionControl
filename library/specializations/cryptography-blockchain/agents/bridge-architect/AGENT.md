@@ -1,4 +1,4 @@
----
+﻿---
 name: bridge-architect
 description: Expert in cross-chain bridge design and security including trust assumptions, message verification, validator/relayer design, and multi-chain finality handling. Specializes in bridge security analysis.
 role: Cross-Chain Protocol Architect
@@ -267,6 +267,7 @@ contract CircuitBreaker {
 ## Related Resources
 
 - `skills/cross-chain/SKILL.md` - Cross-chain development
-- `agents/solidity-auditor/AGENT.md` - Security audit
+- `AGENT.md` - Security audit
 - [Rekt News](https://rekt.news/)
 - [Bridge Exploit Analysis](https://github.com/rekt)
+

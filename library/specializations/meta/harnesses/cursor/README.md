@@ -1,4 +1,4 @@
-# Cursor Harness Extensibility Reference
+﻿# Cursor Harness Extensibility Reference
 
 > Comprehensive reference for Cursor IDE extensibility surfaces relevant to Babysitter harness integration.
 > Last updated: 2026-04-02
@@ -13,9 +13,9 @@ Cursor uses a fork of VS Code and maintains broad compatibility with VS Code ext
 
 ## Plugin System (v2.5, February 2026)
 
-Cursor introduced a first-party plugin system in v2.5 (February 2026), separate from VS Code extensions. Plugins are declared via a `.cursor-plugin/plugin.json` manifest and can provide skills, commands, rules, subagents, MCP servers, and hooks.
+Cursor introduced a first-party plugin system in v2.5 (February 2026), separate from VS Code extensions. Plugins are declared via a `examples\plugin.json` manifest and can provide skills, commands, rules, subagents, MCP servers, and hooks.
 
-### Plugin Manifest: `.cursor-plugin/plugin.json`
+### Plugin Manifest: `examples\plugin.json`
 
 The manifest is the entry point for all plugin components. It lives at the root of the plugin package.
 
@@ -58,7 +58,7 @@ The manifest is the entry point for all plugin components. It lives at the root 
 }
 ```
 
-See [examples/plugin.json](examples/plugin.json) for a complete example.
+See [examples\plugin.json](examples\plugin.json) for a complete example.
 
 ### Component Types
 
@@ -265,7 +265,7 @@ Cursor v2.4 introduced `PreToolUse` and `PostToolUse` hook types, aligning with 
 - **PreToolUse**: Fires before any tool is invoked. Can block, modify, or approve the tool call.
 - **PostToolUse**: Fires after a tool completes. Can trigger follow-up actions based on tool output.
 
-### hooks.json Format
+### examples\hooks.json Format
 
 ```json
 {
@@ -307,13 +307,13 @@ Cursor v2.4 introduced `PreToolUse` and `PostToolUse` hook types, aligning with 
 
 Hooks are discovered from three locations, merged in priority order:
 
-1. **Project**: `.cursor/hooks.json` -- project-specific hooks
-2. **Enterprise**: `/etc/cursor/hooks.json` -- organization-wide enforcement (Linux/macOS) or equivalent Windows path
-3. **User**: `~/.cursor/hooks.json` -- user-level personal hooks
+1. **Project**: `examples\hooks.json` -- project-specific hooks
+2. **Enterprise**: `/examples\hooks.json` -- organization-wide enforcement (Linux/macOS) or equivalent Windows path
+3. **User**: `~/examples\hooks.json` -- user-level personal hooks
 
 Enterprise hooks cannot be overridden by project or user hooks, enabling centralized policy enforcement.
 
-See [examples/hooks.json](examples/hooks.json) for a complete example.
+See [examples\hooks.json](examples\hooks.json) for a complete example.
 
 ---
 
@@ -478,7 +478,7 @@ Subagents with `readonly: true` cannot modify files, providing a safety boundary
 
 ### Hook-Based Enforcement
 
-Hooks (especially enterprise hooks at `/etc/cursor/hooks.json`) can enforce policies:
+Hooks (especially enterprise hooks at `/examples\hooks.json`) can enforce policies:
 
 - Block dangerous commands via `beforeShellExecution`
 - Audit file access via `beforeReadFile`
@@ -545,8 +545,8 @@ Cursor supports a `stop` hook that fires when the agent finishes its turn. The B
 ```
 
 The `loop_limit` field controls how many times the stop hook can re-enter the orchestration loop:
-- `null` — unlimited re-entry (used for Babysitter's deterministic replay)
-- A number — maximum re-entry count before the loop terminates
+- `null` â€” unlimited re-entry (used for Babysitter's deterministic replay)
+- A number â€” maximum re-entry count before the loop terminates
 
 This enables the same hook-driven orchestration model as Claude Code, with the stop hook calling `babysitter run:iterate` after each agent turn.
 
@@ -561,31 +561,31 @@ The Cursor harness adapter is registered in the Babysitter SDK at:
 
 ```
 plugins/babysitter-cursor/
-├── plugin.json              # Plugin manifest
-├── hooks.json               # Hook configuration (version 1)
-├── hooks/
-│   ├── hooks-cursor.json    # Cursor-specific hooks
-│   ├── session-start.sh     # Session start hook (Unix)
-│   ├── session-start.ps1    # Session start hook (Windows)
-│   ├── stop-hook.sh         # Stop hook (Unix) — orchestration re-entry
-│   └── stop-hook.ps1        # Stop hook (Windows)
-├── skills/                  # 10 skill directories
-│   ├── babysit/SKILL.md
-│   ├── call/SKILL.md
-│   ├── plan/SKILL.md
-│   ├── resume/SKILL.md
-│   └── ...
-├── commands/                # 15 command markdown files
-│   ├── call.md
-│   ├── plan.md
-│   ├── resume.md
-│   └── ...
-├── scripts/
-│   └── team-install.js
-├── test/
-├── package.json
-├── versions.json
-└── README.md
+â”œâ”€â”€ examples\plugin.json              # Plugin manifest
+â”œâ”€â”€ examples\hooks.json               # Hook configuration (version 1)
+â”œâ”€â”€ hooks/
+â”‚   â”œâ”€â”€ hooks-cursor.json    # Cursor-specific hooks
+â”‚   â”œâ”€â”€ session-start.sh     # Session start hook (Unix)
+â”‚   â”œâ”€â”€ session-start.ps1    # Session start hook (Windows)
+â”‚   â”œâ”€â”€ stop-hook.sh         # Stop hook (Unix) â€” orchestration re-entry
+â”‚   â””â”€â”€ stop-hook.ps1        # Stop hook (Windows)
+â”œâ”€â”€ skills/                  # 10 skill directories
+â”‚   â”œâ”€â”€ babysit/SKILL.md
+â”‚   â”œâ”€â”€ call/SKILL.md
+â”‚   â”œâ”€â”€ plan/SKILL.md
+â”‚   â”œâ”€â”€ resume/SKILL.md
+â”‚   â””â”€â”€ ...
+â”œâ”€â”€ commands/                # 15 command markdown files
+â”‚   â”œâ”€â”€ call.md
+â”‚   â”œâ”€â”€ plan.md
+â”‚   â”œâ”€â”€ resume.md
+â”‚   â””â”€â”€ ...
+â”œâ”€â”€ scripts/
+â”‚   â””â”€â”€ team-install.js
+â”œâ”€â”€ test/
+â”œâ”€â”€ package.json
+â”œâ”€â”€ versions.json
+â””â”€â”€ README.md
 ```
 
 ### Plugin Installation
@@ -602,3 +602,6 @@ babysitter plugin:install babysitter --project
 ## References
 
 See [references.md](references.md) for a complete list of external references with URLs and access dates.
+
+
+

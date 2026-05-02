@@ -44,6 +44,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...predictiveAnalysis.artifacts);
 
   // Quality Gate: Review critical predictions
+  if (predictiveAnalysis.criticalPredictions.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -157,3 +158,4 @@ export const uptimeOptimizationTask = defineTask('uptime-optimization', (args, t
 export const maintenanceReportTask = defineTask('maintenance-report', (args, taskCtx) => ({
   kind: 'agent', title: 'Generate maintenance report', agent: { name: 'maintenance-report-specialist', prompt: { role: 'Maintenance Report Specialist', task: 'Generate comprehensive maintenance planning report', context: args, instructions: ['Summarize health status', 'Present predictions', 'Document schedule', 'Include cost forecast', 'Present uptime metrics', 'Generate executive report'] }, outputSchema: { type: 'object', required: ['reportPath', 'artifacts'], properties: { reportPath: { type: 'string' }, executiveSummary: { type: 'string' }, artifacts: { type: 'array' } } } }, io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` }, labels: ['agent', 'logistics', 'fleet-management', 'reporting']
 }));
+

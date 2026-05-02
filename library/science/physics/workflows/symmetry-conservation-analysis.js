@@ -89,6 +89,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Verify conservation laws
+  if (!noetherAnalysis.conservedQuantities || noetherAnalysis.conservedQuantities.length === 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -910,3 +911,4 @@ export const simplificationTask = defineTask('calculation-simplification', (args
   },
   labels: ['physics', 'symmetry', 'computational', 'simplification']
 }));
+

@@ -109,6 +109,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Formative evaluation findings must be addressed
   const criticalFindings = formativeEvaluation.criticalFindings || [];
+  if (criticalFindings.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -941,3 +942,4 @@ export const hfeFileCompilationTask = defineTask('hfe-file-compilation', (args, 
   },
   labels: ['human-factors', 'iec-62366', 'documentation', 'medical-device']
 }));
+

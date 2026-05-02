@@ -1,4 +1,4 @@
-# References and Attribution
+﻿# References and Attribution
 
 ## Source Repository
 
@@ -51,10 +51,11 @@ This babysitter process definition adapts the following from the Superpowers Ext
 
 ## Adaptation Notes
 
-The original Superpowers methodology is designed as Claude Code plugin skills (SKILL.md files with YAML frontmatter). This adaptation translates those skills into babysitter SDK process definitions with:
+The original Superpowers methodology is designed as Claude Code plugin skills (skills\brainstorming\SKILL.md files with YAML frontmatter). This adaptation translates those skills into babysitter SDK process definitions with:
 - `defineTask()` for agent tasks
 - `ctx.task()` for orchestrated execution
 - `ctx.breakpoint()` for human review gates
 - `ctx.parallel.all()` for independent parallel work
 - `ctx.log()` for progress tracking
 - Quality-gated retry loops for review cycles
+

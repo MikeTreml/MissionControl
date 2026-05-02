@@ -45,6 +45,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...(readinessValidation.artifacts || []));
 
   // Quality Gate: Check readiness
+  if (!readinessValidation.ready) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -762,3 +763,4 @@ export const seriesAClosingTask = defineTask('series-a-closing', (args, taskCtx)
   },
   labels: ['entrepreneurship', 'series-a', 'closing']
 }));
+

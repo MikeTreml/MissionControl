@@ -75,6 +75,7 @@ export async function process(inputs, ctx) {
     adaptationTriggers: adaptationTriggers
   });
 
+  if (coherenceCheck.coherenceScore < 0.7) {
       let lastFeedback = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback) {
@@ -600,3 +601,4 @@ export const synthesizeMetaPlanTask = defineTask('meta-plan-synthesis', (args, t
   },
   labels: ['meta-reasoning', 'synthesis']
 }));
+

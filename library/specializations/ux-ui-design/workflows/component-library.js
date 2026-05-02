@@ -168,6 +168,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...colorSystem.artifacts);
 
   // Quality Gate: Color accessibility validation
+  if (colorSystem.accessibilityScore < 90) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -430,6 +431,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Accessibility audit: ${accessibilityScore}/100, ${criticalIssues.length} critical issues`);
 
   // Quality Gate: Accessibility compliance
+  if (criticalIssues.length > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -1475,3 +1477,4 @@ export const componentLibraryValidationTask = defineTask('component-library-vali
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['agent', 'design-system', 'validation']
 }));
+

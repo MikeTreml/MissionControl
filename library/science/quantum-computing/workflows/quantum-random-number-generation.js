@@ -144,6 +144,7 @@ export async function process(inputs, ctx) {
 
   artifacts.push(...(qualityResult.artifacts || []));
 
+  if (!qualityResult.qualityPassed) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -572,3 +573,4 @@ export const securityPropertiesDocumentationTask = defineTask('qrng-security-doc
   },
   labels: ['quantum-computing', 'qrng', 'security-docs']
 }));
+

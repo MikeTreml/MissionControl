@@ -92,6 +92,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...exceptionDetection.artifacts);
 
   // Quality Gate: Review critical exceptions
+  if (exceptionDetection.criticalExceptions.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -614,3 +615,4 @@ export const trackingReportTask = defineTask('tracking-report', (args, taskCtx) 
   },
   labels: ['agent', 'logistics', 'tracking', 'reporting']
 }));
+

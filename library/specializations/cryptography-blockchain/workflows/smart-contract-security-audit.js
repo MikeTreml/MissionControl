@@ -120,6 +120,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Critical Findings Review
   const criticalFindings = totalFindings.filter(f => f.severity === 'critical');
+  if (criticalFindings.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -852,3 +853,4 @@ export const auditReportTask = defineTask('audit-report', (args, taskCtx) => ({
   },
   labels: ['blockchain', 'security', 'audit-report']
 }));
+

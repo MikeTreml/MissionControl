@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, performanceTargets, framework, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -133,3 +134,4 @@ export const codeSplittingTask = createPerformanceTask('code-splitting', 'Code S
 export const nativeModulesTask = createPerformanceTask('native-modules', 'Native Module Optimization');
 export const testingValidationTask = createPerformanceTask('testing-validation', 'Performance Testing and Validation');
 export const monitoringSetupTask = createPerformanceTask('monitoring-setup', 'Performance Monitoring Setup');
+

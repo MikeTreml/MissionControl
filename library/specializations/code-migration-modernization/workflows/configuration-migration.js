@@ -64,6 +64,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...secretIdentification.artifacts);
 
   // Breakpoint: Secret review
+  if (secretIdentification.secretCount > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -453,3 +454,4 @@ export const configValidationTask = defineTask('config-validation', (args, taskC
   },
   labels: ['config-migration', 'validation', 'testing']
 }));
+

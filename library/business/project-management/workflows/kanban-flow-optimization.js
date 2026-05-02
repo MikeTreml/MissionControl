@@ -48,6 +48,7 @@ export async function process(inputs, ctx) {
 
   // Breakpoint: Review bottlenecks
   const bottlenecks = bottleneckAnalysis.bottlenecks || [];
+  if (bottlenecks.length > 0) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -637,3 +638,4 @@ export const optimizationDocumentationTask = defineTask('optimization-documentat
   },
   labels: ['kanban', 'documentation', 'deliverable']
 }));
+

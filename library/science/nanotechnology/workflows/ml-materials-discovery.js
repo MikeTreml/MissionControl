@@ -127,6 +127,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Model must pass validation
+  if (!modelValidation.passed) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -909,3 +910,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['nanotechnology', 'ml', 'reporting']
 }));
+

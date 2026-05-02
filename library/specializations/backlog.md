@@ -1,11 +1,11 @@
-For each specialization, ensure a directory under `specializations/[name]/` with the following structure:
+﻿For each specialization, ensure a directory under `specializations/[name]/` with the following structure:
 ```
 specializations/
-├── domains/
-    ├── [domain-name-slugified]/
-        ├── [specialization-name-slugified]/
-                ├── references.md - research for reference materials for processes and methodologies for this specialization. Make sure to include links to the references.
-                ├── README.md - roles and responsibilities for this specialization, goals and objectives, use cases, common flows, description of the specialization, and other relevant information.
+â”œâ”€â”€ domains/
+    â”œâ”€â”€ [domain-name-slugified]/
+        â”œâ”€â”€ [specialization-name-slugified]/
+                â”œâ”€â”€ ai-agents-conversational\references.md - research for reference materials for processes and methodologies for this specialization. Make sure to include links to the references.
+                â”œâ”€â”€ README.md - roles and responsibilities for this specialization, goals and objectives, use cases, common flows, description of the specialization, and other relevant information.
 ```
 
 Software and R&D Specializations (give a proper name to each specialization) - in specialization directory without the domain directory: 
@@ -105,27 +105,27 @@ Social Sciences and Humanities Specializations (give a proper name to each speci
 
 ## Phase 1: Research, Readme and References
 
-At this phase, only research the specializations and their references for common practices, etc. Do not create the actual process.js files from the references yet. only create the README.md and references.md files. for each.
+At this phase, only research the specializations and their references for common practices, etc. Do not create the actual process.js files from the references yet. only create the README.md and ai-agents-conversational\references.md files. for each.
 
 ## Phase 2: Identifying Processes, methodologies, work patterns, flows, processes, etc.
 
-Create a processes-backlog.md file in the directory. This file will contain the list of processes, methodologies, work patterns, flows, processes, etc. for this specialization. with bullet point (open todo, for each process identified - with a short description of the process, and a link to the reference if available)
+Create a ai-agents-conversational\processes-backlog.md file in the directory. This file will contain the list of processes, methodologies, work patterns, flows, processes, etc. for this specialization. with bullet point (open todo, for each process identified - with a short description of the process, and a link to the reference if available)
 
 ## Phase 3: Create process javascript files for each process identified
 
-for each process in the processes-backlog.md file, create a js file in the directory. according to the syntax, conventions and patterns of the Babysitter SDK and the rest of the existing processes.
+for each process in the ai-agents-conversational\processes-backlog.md file, create a js file in the directory. according to the syntax, conventions and patterns of the Babysitter SDK and the rest of the existing processes.
 
 ## Phase 4: Identify skills and agents to support the processes
 
-For each process implemented as a js file, identify agents (subagents) or relevant skills (some of them are currently using the general-purpose agents) to be created or searched for to support the process. and create a skills-agents-backlog.md file in the directory. this file will contain the list of skills and agents to be created or searched for to support the process. with bullet point (open todo, for each skill and agent identified - with a short description of the skill and agent, and a link to the reference if available)
+For each process implemented as a js file, identify agents (subagents) or relevant skills (some of them are currently using the general-purpose agents) to be created or searched for to support the process. and create a ai-agents-conversational\skills-agents-backlog.md file in the directory. this file will contain the list of skills and agents to be created or searched for to support the process. with bullet point (open todo, for each skill and agent identified - with a short description of the skill and agent, and a link to the reference if available)
 
-if the skill or agent is common or shared between specializations, create the skills or agents directory in common ancestors directories. for example, if the skill name is as generic as developer-skill, put it in the skills-agents-backlog.md file in the common ancestors directories (could also be under a specific domain directory).
+if the skill or agent is common or shared between specializations, create the skills or agents directory in common ancestors directories. for example, if the skill name is as generic as developer-skill, put it in the ai-agents-conversational\skills-agents-backlog.md file in the common ancestors directories (could also be under a specific domain directory).
 
-## Phase 5: Research and add references to the skills-agents-references.md file
+## Phase 5: Research and add references to the ai-agents-conversational\references.md file
 
-from skills-agents-backlog.md (at any level of the directory structure)
+from ai-agents-conversational\skills-agents-backlog.md (at any level of the directory structure)
 
-Look online (mostly in github) for community created claude skills, agents, plugins and mcps that can be used to support the processes. and add them to the skills-agents-references.md file.
+Look online (mostly in github) for community created claude skills, agents, plugins and mcps that can be used to support the processes. and add them to the ai-agents-conversational\references.md file.
 
 Reference links for skills and agents search:
 
@@ -188,17 +188,20 @@ if found online, copy the entire content include supporting files, scripts, docu
 
 if not found online, create the skill or agent file in the relevant directory. include supporting files, scripts, documentation, etc.
 
-if the skill or agent is for a specific specialization under a domain, create the skills or agents directory in the relevant directory, then create the directory for the skill or agent, then create the files (SKILL.md, README.md, references/ , scripts/ etc.). include supporting files, scripts, documentation, etc.
-for example, if the skill name is analyzer-skill, for the domain of business and the specialization of business-analysis, create the library/specializations/business/skills/business-analysis/analyzer-skill/ directory, then create the files (SKILL.md, README.md, references/ , scripts/ etc.). include supporting files, scripts, documentation, etc.
+if the skill or agent is for a specific specialization under a domain, create the skills or agents directory in the relevant directory, then create the directory for the skill or agent, then create the files (ai-agents-conversational\skills\autogen-setup\SKILL.md, README.md, references/ , scripts/ etc.). include supporting files, scripts, documentation, etc.
+for example, if the skill name is analyzer-skill, for the domain of business and the specialization of business-analysis, create the library/specializations/business/skills/business-analysis/analyzer-skill/ directory, then create the files (ai-agents-conversational\skills\autogen-setup\SKILL.md, README.md, references/ , scripts/ etc.). include supporting files, scripts, documentation, etc.
 
 the same domain and specialization dir as the process file. rnd specialzations does not have a domain directory and are under the specializations directory. for example: specializations/data-science-ml/skills and specializations/data-science-ml/agents
 
-if the skill or agent is common or shared between specializations, create the skills or agents directory in common ancestors directories. for example, if the skill name is as generic as developer-skill, create the library/specializations/skills/developer-skill/ directory, then create the files (SKILL.md, README.md, references/ , scripts/ etc.). include supporting files, scripts, documentation, etc.
+if the skill or agent is common or shared between specializations, create the skills or agents directory in common ancestors directories. for example, if the skill name is as generic as developer-skill, create the library/specializations/skills/developer-skill/ directory, then create the files (ai-agents-conversational\skills\autogen-setup\SKILL.md, README.md, references/ , scripts/ etc.). include supporting files, scripts, documentation, etc.
 
-do it for ALL the skills and agents in the skills-agents-backlog.md file. mark when done with a checkmark.
-iterate again and map gaps in the skills-agents-backlog.md file until all gaps are filled and all the skills and agents are created.
+do it for ALL the skills and agents in the ai-agents-conversational\skills-agents-backlog.md file. mark when done with a checkmark.
+iterate again and map gaps in the ai-agents-conversational\skills-agents-backlog.md file until all gaps are filled and all the skills and agents are created.
 
 ## Phase 7: integrate the skill or agent into the process file
 
 For each skill and agent, update the relevant processes js files to use it
-do it for ALL the skills and agents in the skills-agents-backlog.md file and in the processes js files. 
+do it for ALL the skills and agents in the ai-agents-conversational\skills-agents-backlog.md file and in the processes js files. 
+
+
+

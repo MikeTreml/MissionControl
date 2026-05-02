@@ -1,4 +1,4 @@
-# RPIKit References and Attribution
+﻿# RPIKit References and Attribution
 
 ## Primary Source
 
@@ -11,12 +11,12 @@
 The following RPIKit concepts have been adapted into babysitter process definitions:
 
 ### Core Workflow Phases
-- **Brainstorm**: Requirement clarification -> `rpikit-brainstorm.js`
-- **Research**: Codebase exploration (Iron Law) -> `rpikit-research.js`
-- **Plan**: Stakes-based implementation planning -> `rpikit-plan.js`
-- **Implement**: Disciplined execution with verification -> `rpikit-implement.js`
-- **Review**: Code quality + security assessment -> `rpikit-review.js`
-- **Decision**: Architecture Decision Records -> `rpikit-decision.js`
+- **Brainstorm**: Requirement clarification -> `workflows\rpikit-brainstorm.js`
+- **Research**: Codebase exploration (Iron Law) -> `workflows\rpikit-research.js`
+- **Plan**: Stakes-based implementation planning -> `workflows\rpikit-plan.js`
+- **Implement**: Disciplined execution with verification -> `workflows\rpikit-implement.js`
+- **Review**: Code quality + security assessment -> `workflows\rpikit-review.js`
+- **Decision**: Architecture Decision Records -> `workflows\rpikit-decision.js`
 
 ### Commands (mapped to process steps)
 - `/rpikit:brainstorm` -> rpikit-brainstorm explore-problem task
@@ -64,3 +64,4 @@ The following RPIKit concepts have been adapted into babysitter process definiti
 ## Acknowledgment
 
 This adaptation brings RPIKit's Research-Plan-Implement framework into the babysitter process system. All credit for the original concepts, workflow design, and methodology belongs to Matthew Boston and the RPIKit project contributors.
+

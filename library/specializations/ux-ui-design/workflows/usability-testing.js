@@ -877,7 +877,7 @@ export const testProtocolPreparationTask = defineTask('test-protocol-preparation
           type: 'object',
           properties: {
             welcome: { type: 'string' },
-            introductionTalking Points: { type: 'array', items: { type: 'string' } },
+            introductionTalkingPoints: { type: 'array', items: { type: 'string' } },
             backgroundQuestions: { type: 'array', items: { type: 'string' } },
             thinkAloudTraining: { type: 'string' },
             taskIntroTemplate: { type: 'string' },

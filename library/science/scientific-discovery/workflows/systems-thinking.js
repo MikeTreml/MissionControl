@@ -53,6 +53,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Must identify feedback loops
+  if (!feedbackMapping.loops || feedbackMapping.loops.length === 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -1187,3 +1188,4 @@ export const systemsInsightSynthesisTask = defineTask('systems-insight-synthesis
   },
   labels: ['systems-thinking', 'synthesis', 'insights']
 }));
+

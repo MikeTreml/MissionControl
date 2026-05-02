@@ -104,6 +104,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Check for critical stability issues
   const criticalIssues = boundaryTesting.testResults.filter(r => r.severity === 'critical');
+  if (criticalIssues.length > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -641,3 +642,4 @@ export const stabilityRecommendationsTask = defineTask('stability-recommendation
   },
   labels: ['mathematics', 'numerical-analysis', 'stability-recommendations']
 }));
+

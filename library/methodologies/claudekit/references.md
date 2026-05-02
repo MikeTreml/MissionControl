@@ -1,4 +1,4 @@
-# ClaudeKit References and Attribution
+﻿# ClaudeKit References and Attribution
 
 ## Primary Source
 
@@ -11,19 +11,19 @@
 The following ClaudeKit concepts have been adapted into babysitter process definitions:
 
 ### Hook System (mapped to safety pipeline)
-- **PreToolUse file-guard**: 195+ patterns, 12 categories -> `claudekit-safety-pipeline.js` initFileGuardTask
-- **PostToolUse checks**: typecheck, lint, test, comment-replacement, unused-params -> `claudekit-safety-pipeline.js` quality check tasks
-- **UserPromptSubmit**: codebase-map, thinking-level -> `claudekit-orchestrator.js` init tasks
-- **Stop hooks**: checkpoint, typecheck-project, lint-project, test-project, self-review -> `claudekit-safety-pipeline.js` and `claudekit-orchestrator.js`
+- **PreToolUse file-guard**: 195+ patterns, 12 categories -> `workflows\claudekit-safety-pipeline.js` initFileGuardTask
+- **PostToolUse checks**: typecheck, lint, test, comment-replacement, unused-params -> `workflows\claudekit-safety-pipeline.js` quality check tasks
+- **UserPromptSubmit**: codebase-map, thinking-level -> `workflows\claudekit-orchestrator.js` init tasks
+- **Stop hooks**: checkpoint, typecheck-project, lint-project, test-project, self-review -> `workflows\claudekit-safety-pipeline.js` and `workflows\claudekit-orchestrator.js`
 
 ### Slash Commands (mapped to process dispatch)
-- `/checkpoint:create`, `/checkpoint:restore` -> `claudekit-orchestrator.js` checkpoint tasks
-- `/code-review [target]` -> `claudekit-code-review.js` (6 parallel agents)
-- `/validate-and-fix` -> `claudekit-safety-pipeline.js`
-- `/research [query]` -> `claudekit-research.js` (5-10 parallel agents)
-- `/spec:create [feature]` -> `claudekit-spec-workflow.js` (create mode)
-- `/spec:execute [file]` -> `claudekit-spec-workflow.js` (execute mode)
-- `/hook:disable`, `/hook:enable`, `/hook:status` -> `claudekit-orchestrator.js` hook config
+- `/checkpoint:create`, `/checkpoint:restore` -> `workflows\claudekit-orchestrator.js` checkpoint tasks
+- `/code-review [target]` -> `workflows\claudekit-code-review.js` (6 parallel agents)
+- `/validate-and-fix` -> `workflows\claudekit-safety-pipeline.js`
+- `/research [query]` -> `workflows\claudekit-research.js` (5-10 parallel agents)
+- `/spec:create [feature]` -> `workflows\claudekit-spec-workflow.js` (create mode)
+- `/spec:execute [file]` -> `workflows\claudekit-spec-workflow.js` (execute mode)
+- `/hook:disable`, `/hook:enable`, `/hook:status` -> `workflows\claudekit-orchestrator.js` hook config
 
 ### Subagents (mapped to agent definitions)
 - **code-review-expert** (6-agent parallel) -> `agents/code-review-coordinator/`
@@ -36,12 +36,12 @@ The following ClaudeKit concepts have been adapted into babysitter process defin
 - **triage-expert** (diagnosis and routing) -> `agents/triage-specialist/`
 
 ### Spec Execution Workflow (mapped to 6 phases)
-1. Implementation phase -> `claudekit-spec-workflow.js` implementPhaseTask
-2. Test writing phase -> `claudekit-spec-workflow.js` testPhaseTask
-3. Code review phase -> `claudekit-spec-workflow.js` reviewPhaseTask
-4. Iterative improvement phase -> `claudekit-spec-workflow.js` improvePhaseTask
-5. Commit phase -> `claudekit-spec-workflow.js` commitPhaseTask
-6. Progress tracking phase -> `claudekit-spec-workflow.js` trackProgressTask
+1. Implementation phase -> `workflows\claudekit-spec-workflow.js` implementPhaseTask
+2. Test writing phase -> `workflows\claudekit-spec-workflow.js` testPhaseTask
+3. Code review phase -> `workflows\claudekit-spec-workflow.js` reviewPhaseTask
+4. Iterative improvement phase -> `workflows\claudekit-spec-workflow.js` improvePhaseTask
+5. Commit phase -> `workflows\claudekit-spec-workflow.js` commitPhaseTask
+6. Progress tracking phase -> `workflows\claudekit-spec-workflow.js` trackProgressTask
 
 ### Key Patterns (mapped to skills)
 - **Context engineering**: codebase-map, thinking-level -> `skills/codebase-mapping/`, `skills/hook-management/`
@@ -56,3 +56,5 @@ The following ClaudeKit concepts have been adapted into babysitter process defin
 ## Acknowledgment
 
 This adaptation brings ClaudeKit's coding safety net patterns -- hook-driven error prevention, multi-agent code review, specification workflows, and parallel research -- into the babysitter process framework. All credit for the original concepts, terminology, and design philosophy belongs to Carl Rannaberg and the ClaudeKit project contributors.
+
+

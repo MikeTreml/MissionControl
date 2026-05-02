@@ -166,6 +166,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Traceability must be complete
   const traceabilityCoverage = traceabilityMatrix.coverageScore || 0;
+  if (traceabilityCoverage < 100) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -878,3 +879,4 @@ export const designHistoryFileTask = defineTask('design-history-file', (args, ta
   },
   labels: ['design-control', 'dhf', 'regulatory', 'fda-820.30']
 }));
+

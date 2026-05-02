@@ -113,6 +113,7 @@ export async function process(inputs, ctx) {
   const passedTests = directedTests.passedCount + randomTests.passedCount;
   const failedTests = directedTests.failedCount + randomTests.failedCount;
 
+  if (failedTests > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -688,3 +689,4 @@ export const simulationReportTask = defineTask('simulation-report', (args, taskC
   },
   labels: ['fpga', 'simulation', 'report']
 }));
+

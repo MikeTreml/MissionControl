@@ -1,4 +1,4 @@
-# BMAD Method
+﻿# BMAD Method
 
 **Source:** [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD) by BMad Code Org
 **Category:** AI-Driven Agile Development Framework
@@ -23,12 +23,12 @@ Unlike traditional AI tools, BMAD positions AI agents as expert collaborators wh
 
 | File | Description | Primary Agents |
 |------|-------------|----------------|
-| `bmad-orchestrator.js` | Full lifecycle (all 4 phases) | All agents |
-| `bmad-quick-flow.js` | Lean solo-developer workflow | Barry (Solo Dev) |
-| `bmad-analysis.js` | Standalone analysis phase | Mary (Analyst) |
-| `bmad-implementation.js` | Standalone implementation sprints | Bob, Amelia, Quinn |
-| `bmad-party-mode.js` | Multi-agent collaboration | All agents |
-| `bmad-document-project.js` | Project documentation generation | Paige (Tech Writer) |
+| `workflows\bmad-orchestrator.js` | Full lifecycle (all 4 phases) | All agents |
+| `workflows\bmad-quick-flow.js` | Lean solo-developer workflow | Barry (Solo Dev) |
+| `workflows\bmad-analysis.js` | Standalone analysis phase | Mary (Analyst) |
+| `workflows\bmad-implementation.js` | Standalone implementation sprints | Bob, Amelia, Quinn |
+| `workflows\bmad-party-mode.js` | Multi-agent collaboration | All agents |
+| `workflows\bmad-document-project.js` | Project documentation generation | Paige (Tech Writer) |
 
 ## Agent Personas
 
@@ -89,3 +89,4 @@ Paige (Tech Writer) generates comprehensive project documentation from all lifec
 ## Examples
 
 See `examples/` directory for JSON input files covering various project types and complexity levels.
+

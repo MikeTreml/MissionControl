@@ -46,6 +46,7 @@ export async function process(inputs, ctx) {
     targetAudience
   });
 
+  if (newsAssessment.newsValue < 3) {
       let lastFeedback_phase1Review2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review2) {
@@ -716,3 +717,4 @@ export const validatePressReleaseQualityTask = defineTask('validate-press-releas
   },
   labels: ['agent', 'public-relations', 'quality-validation']
 }));
+

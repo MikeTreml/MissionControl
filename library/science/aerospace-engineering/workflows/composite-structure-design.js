@@ -97,6 +97,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: First ply failure check
+  if (laminateAnalysis.firstPlyFailureMargin < 0) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -700,3 +701,4 @@ export const compositeReportTask = defineTask('composite-report', (args, taskCtx
   },
   labels: ['composites', 'reporting', 'aerospace']
 }));
+

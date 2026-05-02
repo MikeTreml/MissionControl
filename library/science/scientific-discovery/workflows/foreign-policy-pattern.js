@@ -51,6 +51,7 @@ export async function process(inputs, ctx) {
     nations: nationMapping.nations,
     internalPolicies,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -508,3 +509,4 @@ export const synthesizeForeignPolicyInsightsTask = defineTask('synthesize-foreig
   },
   labels: ['agent', 'foreign-policy', 'synthesis']
 }));
+

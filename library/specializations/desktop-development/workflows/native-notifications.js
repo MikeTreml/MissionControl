@@ -67,6 +67,7 @@ export async function process(inputs, ctx) {
   if (notificationTypes.includes('scheduled')) {
     scheduledNotifications = await ctx.task(implementScheduledNotificationsTask, { projectName, framework, targetPlatforms, outputDir });
     artifacts.push(...scheduledNotifications.artifacts);
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -246,3 +247,4 @@ export const validateNotificationsTask = defineTask('validate-notifications', (a
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['desktop-development', 'notifications', 'validation']
 }));
+

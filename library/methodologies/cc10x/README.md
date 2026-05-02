@@ -1,4 +1,4 @@
-# CC10X Methodology
+﻿# CC10X Methodology
 
 Intelligent workflow orchestration for Claude Code development. CC10X routes all development requests through a single entry point that detects intent and dispatches to specialized workflows with evidence-first validation, TDD enforcement, and persistent session memory.
 
@@ -24,11 +24,11 @@ Intelligent workflow orchestration for Claude Code development. CC10X routes all
 
 | File | Process ID | Description |
 |------|-----------|-------------|
-| `cc10x-router.js` | `methodologies/cc10x/cc10x-router` | Single entry point: intent detection, workflow dispatch, contract validation, memory persistence |
-| `cc10x-build.js` | `methodologies/cc10x/cc10x-build` | BUILD workflow: TDD cycle, parallel review, integration verification |
-| `cc10x-debug.js` | `methodologies/cc10x/cc10x-debug` | DEBUG workflow: log-first investigation, targeted fix, verification |
-| `cc10x-review.js` | `methodologies/cc10x/cc10x-review` | REVIEW workflow: 4-dimension parallel analysis with confidence scoring |
-| `cc10x-plan.js` | `methodologies/cc10x/cc10x-plan` | PLAN workflow: research, brainstorming, plan creation with build continuity |
+| `workflows\cc10x-router.js` | `methodologies/cc10x/cc10x-router` | Single entry point: intent detection, workflow dispatch, contract validation, memory persistence |
+| `workflows\cc10x-build.js` | `methodologies/cc10x/cc10x-build` | BUILD workflow: TDD cycle, parallel review, integration verification |
+| `workflows\cc10x-debug.js` | `methodologies/cc10x/cc10x-debug` | DEBUG workflow: log-first investigation, targeted fix, verification |
+| `workflows\cc10x-review.js` | `methodologies/cc10x/cc10x-review` | REVIEW workflow: 4-dimension parallel analysis with confidence scoring |
+| `workflows\cc10x-plan.js` | `methodologies/cc10x/cc10x-plan` | PLAN workflow: research, brainstorming, plan creation with build continuity |
 
 ## Agents (8)
 
@@ -80,3 +80,4 @@ Plans created by the PLAN workflow are saved to `docs/plans/` and referenced in 
 ## Attribution
 
 Adapted from [CC10X](https://github.com/romiluz13/cc10x) by Rom Iluz.
+

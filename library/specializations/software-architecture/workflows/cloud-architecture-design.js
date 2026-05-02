@@ -29,6 +29,7 @@ export async function process(inputs, ctx) {
     requirements,
     cloudProviders
   });
+  results.phases.push({ phase: 1, name: 'Cloud Strategy', result: strategyResult });
     let lastFeedback_phase1Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase1Review) {
@@ -62,6 +63,7 @@ export async function process(inputs, ctx) {
     strategy: strategyResult,
     candidates: cloudProviders
   });
+  results.selectedProvider = providerResult.selectedProvider;
   results.phases.push({ phase: 2, name: 'Provider Selection', result: providerResult });
     let lastFeedback_phase2Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -116,6 +118,7 @@ export async function process(inputs, ctx) {
     compute: computeResult,
     data: dataResult,
     network: networkResult
+  }});
     let lastFeedback_designApproval = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_designApproval) {
@@ -157,6 +160,7 @@ export async function process(inputs, ctx) {
     network: networkResult
   });
   results.phases.push({ phase: 4, name: 'Security & Compliance', result: securityResult });
+  results.security = securityResult;
     let lastFeedback_phase4Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase4Review) {
@@ -212,6 +216,7 @@ export async function process(inputs, ctx) {
     ha: haResult
   });
   results.phases.push({ phase: 6, name: 'Cost Optimization', result: costResult });
+  results.cost = costResult;
     let lastFeedback_phase6Review = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback_phase6Review) {

@@ -1,4 +1,4 @@
----
+﻿---
 name: certora-prover
 description: Formal verification using Certora Prover with CVL specification language. Supports invariant rules, parametric verification, ghost variables, and counterexample analysis for mathematical proof of contract correctness.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -40,14 +40,14 @@ certoraRun --version
 
 ```
 project/
-├── contracts/
-│   └── Token.sol
-├── certora/
-│   ├── conf/
-│   │   └── token.conf
-│   └── specs/
-│       └── token.spec
-└── foundry.toml
+â”œâ”€â”€ contracts/
+â”‚   â””â”€â”€ Token.sol
+â”œâ”€â”€ certora/
+â”‚   â”œâ”€â”€ conf/
+â”‚   â”‚   â””â”€â”€ token.conf
+â”‚   â””â”€â”€ specs/
+â”‚       â””â”€â”€ token.spec
+â””â”€â”€ foundry.toml
 ```
 
 ### Configuration File
@@ -210,11 +210,11 @@ certoraRun certora/conf/token.conf --debug
 
 ```
 Rule: transferPreservesTotalSupply
-  Status: VERIFIED ✓
+  Status: VERIFIED âœ“
   Time: 45s
 
 Rule: balanceUnderSupply
-  Status: VIOLATED ✗
+  Status: VIOLATED âœ—
   Counterexample:
     - user: 0x1234...
     - Initial balance: 100
@@ -334,7 +334,8 @@ jobs:
 
 ## See Also
 
-- `skills/slither-analysis/SKILL.md` - Static analysis
-- `skills/echidna-fuzzer/SKILL.md` - Property fuzzing
+- `SKILL.md` - Static analysis
+- `SKILL.md` - Property fuzzing
 - `agents/formal-methods/AGENT.md` - Verification expert
 - [Certora Documentation](https://docs.certora.com/)
+

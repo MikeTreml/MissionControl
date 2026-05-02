@@ -71,6 +71,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...readinessAssessment.artifacts);
 
   // Quality Gate: Design readiness check
+  if (readinessAssessment.readinessScore < 70) {
       let lastFeedback_phase1Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase1Review) {
@@ -2068,3 +2069,4 @@ export const handoffQualityValidationTask = defineTask('handoff-quality-validati
   },
   labels: ['agent', 'design-handoff', 'quality-validation', 'ux-ui-design']
 }));
+

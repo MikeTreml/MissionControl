@@ -1,4 +1,4 @@
-# GSD Skills & Agents Backlog
+﻿# GSD Skills & Agents Backlog
 
 Future skills and agents ideas for the GSD methodology enrichment. Items are organized by priority and category.
 
@@ -57,6 +57,7 @@ Future skills and agents ideas for the GSD methodology enrichment. Items are org
 ## Notes
 
 - All new agents should follow the AGENT.md format in `agents/` directory.
-- All new skills should follow the SKILL.md format in `skills/` directory.
+- All new skills should follow the skills\context-engineering\SKILL.md format in `skills/` directory.
 - Priority should be re-evaluated after each milestone completion based on user feedback.
 - Consider composability: new agents/skills should integrate with existing ones rather than duplicating functionality.
+

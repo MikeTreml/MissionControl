@@ -1,4 +1,4 @@
-# Maestro References
+﻿# Maestro References
 
 ## Source Attribution
 
@@ -15,13 +15,13 @@ This methodology adaptation is based on:
 | PM Agent (singleton) | `agents/product-manager/` + `maestro-pm-interview` task |
 | Architect Agent (singleton) | `agents/architect/` + `maestro-architect-*` tasks |
 | Coder Agents (goroutines) | `agents/coder/` + `ctx.parallel.all()` dispatch |
-| Bootstrap Mode | `maestro-bootstrap.js` process |
-| Development Mode | `maestro-development.js` process |
-| Hotfix Mode | `maestro-hotfix.js` process |
-| Maintenance Mode | `maestro-maintenance.js` process |
+| Bootstrap Mode | `workflows\maestro-bootstrap.js` process |
+| Development Mode | `workflows\maestro-development.js` process |
+| Hotfix Mode | `workflows\maestro-hotfix.js` process |
+| Maintenance Mode | `workflows\maestro-maintenance.js` process |
 | Claude Code Mode | Native babysitter CLI integration |
 | `.maestro/config.json` | Process inputs configuration |
-| `.maestro/knowledge.dot` | `maestro-knowledge-graph.js` process |
+| `.maestro/knowledge.dot` | `workflows\maestro-knowledge-graph.js` process |
 | SQLite state (coders) | Babysitter run directory state |
 | Story queue | `storyQueue` array with `splice()` dispatch |
 | PR submission | `maestro-coder-implement` task output |
@@ -56,3 +56,4 @@ This methodology adaptation is based on:
 5. **Hotfix simple-fix skip** preserves Maestro's fast-path where simple fixes bypass the planning phase.
 
 6. **Maintenance frequency** is an input parameter rather than a config file setting, since babysitter processes are invoked explicitly.
+

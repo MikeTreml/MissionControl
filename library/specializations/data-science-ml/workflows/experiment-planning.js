@@ -113,6 +113,7 @@ export async function process(inputs, ctx) {
   const expectedDailyTraffic = inputs.expectedDailyTraffic || sampleSizeCalculation.estimatedDailyTraffic || 0;
   const estimatedDuration = requiredSampleSize / expectedDailyTraffic;
 
+  if (estimatedDuration > experimentDuration * 2) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -258,6 +259,7 @@ export async function process(inputs, ctx) {
   const highSeverityRisks = riskAssessment.risks.filter(r => r.severity === 'high');
   if (highSeverityRisks.length > 0) {
     const unmitigatedRisks = highSeverityRisks.filter(r => !r.mitigationPlan || r.mitigationPlan.trim() === '');
+    if (unmitigatedRisks.length > 0) {
         let lastFeedback_qualityGateApproval3 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval3) {
@@ -1617,3 +1619,4 @@ export const experimentDocumentationTask = defineTask('experiment-documentation'
   },
   labels: ['agent', 'experiment-planning', 'documentation']
 }));
+

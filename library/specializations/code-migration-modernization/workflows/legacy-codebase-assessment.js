@@ -69,6 +69,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...staticCodeAnalysis.artifacts);
 
   // Quality Gate: Code analysis completion
+  if (staticCodeAnalysis.completeness < 80) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -126,6 +127,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...dependencyAnalysis.artifacts);
 
   // Quality Gate: Security vulnerabilities
+  if (dependencyAnalysis.criticalVulnerabilities > 0) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -748,3 +750,4 @@ export const recommendationsReportTask = defineTask('recommendations-report', (a
   },
   labels: ['legacy-assessment', 'recommendations', 'report']
 }));
+

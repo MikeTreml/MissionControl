@@ -1,4 +1,4 @@
-# References and Attribution
+﻿# References and Attribution
 
 ## Primary Source
 
@@ -13,11 +13,11 @@
 
 | Pilot Shell Command | Babysitter Process |
 |--------------------|--------------------|
-| `/spec [description]` (Feature Mode) | `pilot-shell-orchestrator.js` (mode: 'feature') / `pilot-shell-feature.js` |
-| `/spec [description]` (Bugfix Mode) | `pilot-shell-orchestrator.js` (mode: 'bugfix') / `pilot-shell-bugfix.js` |
-| `/spec [description]` (Quick Mode) | `pilot-shell-orchestrator.js` (mode: 'quick') |
-| `/sync` | `pilot-shell-sync.js` |
-| Quality Hooks Pipeline | `pilot-shell-quality-pipeline.js` |
+| `/spec [description]` (Feature Mode) | `workflows\pilot-shell-orchestrator.js` (mode: 'feature') / `workflows\pilot-shell-feature.js` |
+| `/spec [description]` (Bugfix Mode) | `workflows\pilot-shell-orchestrator.js` (mode: 'bugfix') / `workflows\pilot-shell-bugfix.js` |
+| `/spec [description]` (Quick Mode) | `workflows\pilot-shell-orchestrator.js` (mode: 'quick') |
+| `/sync` | `workflows\pilot-shell-sync.js` |
+| Quality Hooks Pipeline | `workflows\pilot-shell-quality-pipeline.js` |
 
 ### Sub-Agents to Agents
 
@@ -73,10 +73,12 @@ The following Pilot Shell features are not directly adapted as they are either o
 ## Adaptation Principles
 
 1. **Pilot Shell hooks** became Babysitter agent tasks (PostToolUse hooks -> agent tasks in process files)
-2. **Pilot Shell rules** became Babysitter skills (rule documents -> SKILL.md with structured capabilities)
+2. **Pilot Shell rules** became Babysitter skills (rule documents -> skills\behavior-contract\SKILL.md with structured capabilities)
 3. **Pilot Shell sub-agents** became Babysitter agents (sub-agent configs -> AGENT.md with structured definitions)
 4. **Pilot Shell CLI commands** became Babysitter process files (CLI workflows -> process definitions with defineTask)
 5. **State model** preserved: PENDING -> COMPLETE -> VERIFIED task tracking maintained in process logic
 6. **Convergence loops** used for quality pipeline auto-fix and TDD iteration
 7. **ctx.parallel.all()** used where Pilot Shell uses parallel execution (research phases, quality checks)
 8. **ctx.breakpoint()** used where Pilot Shell uses human approval gates
+
+

@@ -79,6 +79,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...marketAnalysis.artifacts);
 
   // Quality Gate: Market viability check
+  if (marketAnalysis.viabilityScore < 0.5) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -696,3 +697,4 @@ export const conceptValidationTask = defineTask('concept-validation', (args, tas
   },
   labels: ['game-development', 'concept', 'validation']
 }));
+

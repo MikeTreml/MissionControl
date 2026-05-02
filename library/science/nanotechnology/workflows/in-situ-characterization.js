@@ -173,6 +173,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Data must pass validation
+  if (!dataValidation.valid) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -705,3 +706,4 @@ export const reportGenerationTask = defineTask('report-generation', (args, taskC
   },
   labels: ['nanotechnology', 'in-situ', 'reporting']
 }));
+

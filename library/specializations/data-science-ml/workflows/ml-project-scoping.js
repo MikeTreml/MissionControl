@@ -96,6 +96,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Data availability must meet minimum threshold
   const dataAvailabilityScore = dataAssessment.availabilityScore || 0;
+  if (dataAvailabilityScore < 60) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -176,6 +177,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Ethical risks must be assessed
+  if (ethicsAssessment.highRiskFactors && ethicsAssessment.highRiskFactors.length > 0) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -1456,3 +1458,4 @@ export const scopeDocumentGenerationTask = defineTask('scope-document-generation
   },
   labels: ['ml-scoping', 'planning', 'documentation', 'scope-document']
 }));
+

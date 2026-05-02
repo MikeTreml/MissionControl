@@ -59,6 +59,7 @@ export async function process(inputs, ctx) {
       appName, platforms, apiBaseUrl, authMethod, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -134,3 +135,4 @@ export const rateLimitingTask = createAPITask('rate-limiting', 'Rate Limiting Ha
 export const loggingDebuggingTask = createAPITask('logging-debugging', 'Logging and Debugging');
 export const testingTask = createAPITask('testing', 'API Testing Setup');
 export const documentationTask = createAPITask('documentation', 'API Integration Documentation');
+

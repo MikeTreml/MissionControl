@@ -277,6 +277,7 @@ export async function process(inputs, ctx) {
     risk => risk.severity === 'critical' && !risk.mitigationPlan
   );
 
+  if (criticalRisksWithoutMitigation.length > 0) {
       let lastFeedback_phase12Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase12Review) {
@@ -1830,3 +1831,4 @@ export const strategyDocumentTask = defineTask('strategy-document', (args, taskC
   },
   labels: ['microservices', 'documentation', 'strategy-document']
 }));
+

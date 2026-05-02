@@ -97,6 +97,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Baseline analysis complete - Max temp: ${baselineResult.maxTemperature}C`);
 
   // Quality Gate: Thermal limit exceeded
+  if (baselineResult.maxTemperature > constraints.maxSystemTemp) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -215,6 +216,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Thermal margin
   const thermalMargin = constraints.maxSystemTemp - simulationResult.maxJunctionTemp;
+  if (thermalMargin < 5) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -769,3 +771,4 @@ export const generateThermalReportTask = defineTask('generate-thermal-report', (
   },
   labels: ['mechanical-engineering', 'thermal', 'reporting']
 }));
+

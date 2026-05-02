@@ -65,6 +65,7 @@ export async function process(inputs, ctx) {
     });
 
     mechanisms.push(...additionalMechanisms.mechanisms);
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -486,3 +487,4 @@ export const synthesizeMechanismViewTask = defineTask('synthesize-mechanism-view
   },
   labels: ['agent', 'degenerate-mechanism', 'synthesis']
 }));
+

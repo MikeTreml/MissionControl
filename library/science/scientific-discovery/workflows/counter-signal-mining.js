@@ -60,6 +60,7 @@ export async function process(inputs, ctx) {
   counterSignals.push(...failureDetection.failures.map(f => ({
     ...f,
     type: 'failure'
+  })));
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -529,3 +530,4 @@ export const synthesizeCounterSignalInsightsTask = defineTask('synthesize-counte
   },
   labels: ['agent', 'counter-signal', 'synthesis']
 }));
+

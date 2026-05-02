@@ -1,4 +1,4 @@
-# AWS DrawIO Diagram Generator
+﻿# AWS DrawIO Diagram Generator
 
 Generate professional DrawIO architecture diagrams for Amazon Web Services.
 
@@ -32,7 +32,7 @@ CORRECT:                    WRONG:
 
 The aws4.xml stencil defines names with spaces, but DrawIO's style parser requires underscores.
 
-Always verify names in `assets/aws-icons.json`.
+Always verify names in `assets\aws-icons.json`.
 
 ## Quick Start
 
@@ -83,7 +83,7 @@ Upload an AWS architecture diagram image and the skill will:
 | Security & Identity | 27 | #DD344C |
 | Storage | 14 | #3F8624 |
 
-**Full list:** See `assets/aws-icons.json` for all services with exact shape names.
+**Full list:** See `assets\aws-icons.json` for all services with exact shape names.
 
 ## Container Types
 
@@ -127,18 +127,18 @@ Upload an AWS architecture diagram image and the skill will:
 - Use consistent connection styles (2pt open arrow, `#232F3E`)
 - Keep diagrams focused (max 15-20 icons per diagram)
 
-**Complete guidelines:** See `references/DIAGRAM-BEST-PRACTICES.md`
+**Complete guidelines:** See `references\DIAGRAM-BEST-PRACTICES.md`
 
 ## Validation & Export
 
 ### Validate Generated Diagrams
 ```bash
-python scripts/validate-drawio.py output.drawio --verbose
+python scripts\validate-drawio.py output.drawio --verbose
 ```
 
 ### Check Icon Compatibility
 ```bash
-python scripts/validate-aws-icons.py
+python scripts\validate-aws-icons.py
 ```
 
 ### Export to PNG/PDF
@@ -157,24 +157,24 @@ Requires DrawIO Desktop: `brew install drawio`
 
 ```
 generating-aws-diagrams/
-├── SKILL.md                    # Main skill instructions
-├── README.md                   # This file
-├── assets/
-│   ├── aws-icons.json          # 264 AWS services
-│   ├── aws-containers.json     # 13 container types
-│   └── templates/              # XML templates
-├── references/
-│   ├── DIAGRAM-BEST-PRACTICES.md
-│   ├── xml-examples.md
-│   ├── xml-parser-guide.md
-│   ├── coordinate-system.md
-│   └── style-guide.md
-└── scripts/
-    ├── validate-drawio.py      # Generic validation
-    ├── validate-aws-icons.py   # AWS-specific validation
-    ├── fix-aws-icons.py        # Auto-fix shape names
-    ├── analyze-existing.py     # Extract shapes/connections
-    └── ...
+â”œâ”€â”€ SKILL.md                    # Main skill instructions
+â”œâ”€â”€ README.md                   # This file
+â”œâ”€â”€ assets/
+â”‚   â”œâ”€â”€ assets\aws-icons.json          # 264 AWS services
+â”‚   â”œâ”€â”€ assets\aws-containers.json     # 13 container types
+â”‚   â””â”€â”€ templates/              # XML templates
+â”œâ”€â”€ references/
+â”‚   â”œâ”€â”€ references\DIAGRAM-BEST-PRACTICES.md
+â”‚   â”œâ”€â”€ references\xml-examples.md
+â”‚   â”œâ”€â”€ references\xml-parser-guide.md
+â”‚   â”œâ”€â”€ references\coordinate-system.md
+â”‚   â””â”€â”€ references\style-guide.md
+â””â”€â”€ scripts/
+    â”œâ”€â”€ scripts\validate-drawio.py      # Generic validation
+    â”œâ”€â”€ scripts\validate-aws-icons.py   # AWS-specific validation
+    â”œâ”€â”€ scripts\fix-aws-icons.py        # Auto-fix shape names
+    â”œâ”€â”€ scripts\analyze-existing.py     # Extract shapes/connections
+    â””â”€â”€ ...
 ```
 
 ## Version
@@ -184,3 +184,5 @@ generating-aws-diagrams/
 - **Services:** 264
 - **Validation:** 96.6% (255/264 exact matches)
 - **Categories:** 24
+
+

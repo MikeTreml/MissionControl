@@ -103,6 +103,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...matrixDefinition.artifacts);
 
   // Quality Gate: Matrix coverage must be comprehensive
+  if (matrixDefinition.priorityCombinations.length < 3) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -155,6 +156,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...platformSetup.artifacts);
 
   // Quality Gate: Platform integration must be successful
+  if (!platformSetup.success || !platformSetup.connectionVerified) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -207,6 +209,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Framework must support all required browsers
   const unsupportedBrowsers = frameworkIntegration.unsupportedBrowsers || [];
+  if (unsupportedBrowsers.length > 0) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -259,6 +262,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Test suite must cover critical user flows
   const criticalFlowCoverage = testSuiteCreation.criticalFlowCoverage || 0;
+  if (criticalFlowCoverage < 80) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -311,6 +315,7 @@ export async function process(inputs, ctx) {
     artifacts.push(...responsiveTests.artifacts);
 
     // Quality Gate: All critical viewports must be tested
+    if (responsiveTests.viewportsCovered < viewportSizes.length) {
         let lastFeedback_phase5Review = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_phase5Review) {
@@ -380,6 +385,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Parallel execution must be optimized
   const estimatedExecutionTime = parallelConfig.estimatedExecutionTime;
+  if (estimatedExecutionTime > acceptanceCriteria.executionTime) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -435,6 +441,7 @@ export async function process(inputs, ctx) {
 
   // Quality Gate: Initial execution should show reasonable pass rate
   const initialPassRate = initialExecution.overallPassRate;
+  if (initialPassRate < 50) {
       let lastFeedback_phase8Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase8Review) {
@@ -490,6 +497,7 @@ export async function process(inputs, ctx) {
   const criticalCompatibilityIssues = compatibilityAnalysis.criticalIssues || [];
 
   // Quality Gate: Critical compatibility issues must be reviewed
+  if (criticalCompatibilityIssues.length > 0) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -581,6 +589,7 @@ export async function process(inputs, ctx) {
   const criticalBrowserFailures = finalExecution.criticalBrowserFailures || 0;
 
   // Quality Gate: Final pass rate must meet acceptance criteria
+  if (finalPassRate < acceptanceCriteria.passRate) {
       let lastFeedback_phase12Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase12Review) {
@@ -619,6 +628,7 @@ export async function process(inputs, ctx) {
     } }
 
   // Quality Gate: Critical browser failures
+  if (criticalBrowserFailures > acceptanceCriteria.criticalBugs) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -673,6 +683,7 @@ export async function process(inputs, ctx) {
   const actualCoverage = coverageValidation.actualCoverage;
 
   // Quality Gate: Coverage must meet acceptance criteria
+  if (actualCoverage < acceptanceCriteria.coverage) {
       let lastFeedback_phase13Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase13Review) {
@@ -740,6 +751,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...cicdIntegration.artifacts);
 
   // Quality Gate: CI/CD integration must be functional
+  if (!cicdIntegration.success) {
       let lastFeedback_phase15Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase15Review) {
@@ -2208,3 +2220,4 @@ export const finalAssessmentTask = defineTask('final-assessment', (args, taskCtx
   },
   labels: ['agent', 'cross-browser', 'assessment', 'final-review']
 }));
+

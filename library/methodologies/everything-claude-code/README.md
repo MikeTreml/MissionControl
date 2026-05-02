@@ -1,4 +1,4 @@
-# Everything Claude Code Methodology
+﻿# Everything Claude Code Methodology
 
 Performance optimization system for AI agent harnesses, adapted from the [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) project. Integrates specialized subagents, skills, continuous learning, security scanning, and research-first development workflows into babysitter process definitions.
 
@@ -16,11 +16,11 @@ Performance optimization system for AI agent harnesses, adapted from the [Everyt
 
 | File | Process ID | Description |
 |------|-----------|-------------|
-| `ecc-orchestrator.js` | `methodologies/everything-claude-code/ecc-orchestrator` | Full lifecycle: planning -> TDD -> implementation -> review -> security -> deploy -> learning |
-| `ecc-tdd-workflow.js` | `methodologies/everything-claude-code/ecc-tdd-workflow` | TDD cycle: strategy -> RED -> GREEN -> REFACTOR -> coverage convergence |
-| `ecc-security-pipeline.js` | `methodologies/everything-claude-code/ecc-security-pipeline` | AgentShield: 5-category parallel scan -> red team -> report synthesis |
-| `ecc-continuous-learning.js` | `methodologies/everything-claude-code/ecc-continuous-learning` | Learning: extract -> evaluate -> create skills -> organize -> export |
-| `ecc-multi-service.js` | `methodologies/everything-claude-code/ecc-multi-service` | Multi-service: discover -> cascade/parallel build -> PM2 -> integration test |
+| `workflows\ecc-orchestrator.js` | `methodologies/everything-claude-code/ecc-orchestrator` | Full lifecycle: planning -> TDD -> implementation -> review -> security -> deploy -> learning |
+| `workflows\ecc-tdd-workflow.js` | `methodologies/everything-claude-code/ecc-tdd-workflow` | TDD cycle: strategy -> RED -> GREEN -> REFACTOR -> coverage convergence |
+| `workflows\ecc-security-pipeline.js` | `methodologies/everything-claude-code/ecc-security-pipeline` | AgentShield: 5-category parallel scan -> red team -> report synthesis |
+| `workflows\ecc-continuous-learning.js` | `methodologies/everything-claude-code/ecc-continuous-learning` | Learning: extract -> evaluate -> create skills -> organize -> export |
+| `workflows\ecc-multi-service.js` | `methodologies/everything-claude-code/ecc-multi-service` | Multi-service: discover -> cascade/parallel build -> PM2 -> integration test |
 
 ## Agents (8)
 
@@ -60,3 +60,4 @@ Performance optimization system for AI agent harnesses, adapted from the [Everyt
 ## Attribution
 
 Adapted from [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) by Affaan M.
+

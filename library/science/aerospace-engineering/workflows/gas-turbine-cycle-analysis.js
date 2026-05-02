@@ -88,6 +88,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check cycle convergence
+  if (!cycleAnalysis.converged) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -911,3 +912,4 @@ export const cycleReportTask = defineTask('cycle-report', (args, taskCtx) => ({
   },
   labels: ['propulsion', 'gas-turbine', 'reporting', 'aerospace']
 }));
+

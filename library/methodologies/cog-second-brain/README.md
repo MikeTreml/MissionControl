@@ -1,4 +1,4 @@
-# COG Second Brain
+﻿# COG Second Brain
 
 A self-evolving second brain system combining AI agents with markdown files and version control. COG = Cognition + Obsidian + Git.
 
@@ -12,11 +12,11 @@ COG Second Brain is a privacy-first, local-first knowledge management methodolog
 
 | Process | File | Description |
 |---------|------|-------------|
-| Main Orchestrator | `cog-orchestrator.js` | Full lifecycle: setup, onboarding, daily/weekly/monthly cycles |
-| Knowledge Capture | `cog-knowledge-capture.js` | Braindump, URL dump, meeting transcript processing |
-| Intelligence Cycle | `cog-intelligence-cycle.js` | Daily brief, team brief, comprehensive analysis |
-| Reflection & Synthesis | `cog-reflection-synthesis.js` | Weekly check-in, knowledge consolidation, monthly synthesis |
-| Vault Management | `cog-vault-management.js` | Update COG, self-healing, cross-reference maintenance |
+| Main Orchestrator | `workflows\cog-orchestrator.js` | Full lifecycle: setup, onboarding, daily/weekly/monthly cycles |
+| Knowledge Capture | `workflows\cog-knowledge-capture.js` | Braindump, URL dump, meeting transcript processing |
+| Intelligence Cycle | `workflows\cog-intelligence-cycle.js` | Daily brief, team brief, comprehensive analysis |
+| Reflection & Synthesis | `workflows\cog-reflection-synthesis.js` | Weekly check-in, knowledge consolidation, monthly synthesis |
+| Vault Management | `workflows\cog-vault-management.js` | Update COG, self-healing, cross-reference maintenance |
 
 ## Agents
 
@@ -99,3 +99,4 @@ babysitter run:create --process methodologies/cog-second-brain/cog-orchestrator 
 babysitter run:create --process methodologies/cog-second-brain/cog-orchestrator \
   --input '{"userName":"Alex","rolePack":"engineer","cycleMode":"full"}'
 ```
+

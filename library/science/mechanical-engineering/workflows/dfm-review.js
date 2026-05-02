@@ -136,6 +136,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Process DFM analysis complete - ${processAnalysisResult.issues.length} issues identified`);
 
   // Quality Gate: Critical DFM issues
+  if (processAnalysisResult.criticalIssues.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -283,6 +284,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Cost estimation complete - Estimated cost: $${costResult.estimatedCost.toFixed(2)}`);
 
   // Quality Gate: Cost exceeds target
+  if (targetCost && costResult.estimatedCost > targetCost) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -986,3 +988,4 @@ export const generateDFMReportTask = defineTask('generate-dfm-report', (args, ta
   },
   labels: ['mechanical-engineering', 'dfm', 'reporting', 'documentation']
 }));
+

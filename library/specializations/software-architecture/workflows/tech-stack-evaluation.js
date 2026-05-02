@@ -99,6 +99,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Must have at least 3 candidates for meaningful comparison
+  if (candidateIdentification.shortlist.length < 3) {
       let lastFeedback_phase2Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase2Review) {
@@ -254,6 +255,7 @@ export async function process(inputs, ctx) {
     risk => risk.severity === 'critical' && !risk.mitigationPlan
   );
 
+  if (criticalRisksWithoutMitigation.length > 0) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -1563,3 +1565,4 @@ export const createOnboardingPlanTask = defineTask('create-onboarding-plan', (ar
   },
   labels: ['software-architecture', 'tech-stack-evaluation', 'onboarding', 'training']
 }));
+

@@ -145,6 +145,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Security test results
+  if (securityTesting.vulnerabilities && securityTesting.vulnerabilities.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -733,3 +734,4 @@ export const incidentResponseTask = defineTask('incident-response', (args, taskC
   },
   labels: ['automotive', 'cybersecurity', 'incident-response', 'UN-R155']
 }));
+

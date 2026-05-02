@@ -1,4 +1,4 @@
----
+﻿---
 name: gas-optimizer
 description: Specialist in EVM gas optimization techniques including opcode analysis, storage packing, assembly optimization, and benchmark-driven performance tuning for smart contracts.
 role: Smart Contract Performance Engineer
@@ -286,5 +286,6 @@ function sumAssembly(uint256 a, uint256 b) external pure returns (uint256 result
 
 - `skills/evm-analysis/SKILL.md` - Bytecode analysis
 - `skills/foundry-framework/SKILL.md` - Gas reporting
-- `agents/solidity-auditor/AGENT.md` - Security review
+- `AGENT.md` - Security review
 - [evm.codes](https://www.evm.codes/)
+

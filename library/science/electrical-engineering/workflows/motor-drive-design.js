@@ -144,6 +144,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Performance must meet requirements
+  if (!performanceTesting.meetsSpecs) {
       let lastFeedback_phase7Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase7Review) {
@@ -515,3 +516,4 @@ export const loadValidationTask = defineTask('load-validation', (args, taskCtx) 
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['ee', 'motor-drive', 'validation']
 }));
+

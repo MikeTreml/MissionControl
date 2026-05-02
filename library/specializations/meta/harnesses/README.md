@@ -1,4 +1,4 @@
-# Coding Agent Harness Extensibility -- Comparison & Index
+﻿# Coding Agent Harness Extensibility -- Comparison & Index
 
 > **Last updated**: 2026-04-02
 > **Methodology**: Deep research via web search, official documentation, and source code analysis for each harness
@@ -28,31 +28,31 @@ This directory documents the extensibility, plugin systems, and capabilities of 
 
 | Harness | Plugin System | Manifest Format | Maturity |
 |---------|--------------|-----------------|----------|
-| **Claude Code** | Full plugin system | `.claude-plugin/plugin.json` | Mature |
+| **Claude Code** | Full plugin system | `claude-code\examples\plugin.json` | Mature |
 | **Codex CLI** | Rust-native plugins | `PLUGIN_MANIFEST_PATH` (emerging) | Early |
-| **Gemini CLI** | Full extension system | `gemini-extension.json` | Mature |
-| **Pi / Oh My Pi** | Extension API via `omp` field | `package.json` with `omp` field | Moderate |
+| **Gemini CLI** | Full extension system | `gemini-cli\examples\gemini-extension.json` | Mature |
+| **Pi / Oh My Pi** | Extension API via `omp` field | `pi\examples\package.json` with `omp` field | Moderate |
 | **OpenCode** | Plugin system (local + npm) | `opencode.json` plugin config | Active |
 | **GitHub Copilot** | MCP-first (old system deprecated) | `.agent.md` YAML frontmatter | Transitioning |
-| **Cursor** | Full plugin system (v2.5+) | `.cursor-plugin/plugin.json` | New (Feb 2026) |
+| **Cursor** | Full plugin system (v2.5+) | `claude-code\examples\plugin.json` | New (Feb 2026) |
 
 ### Skills Support
 
 | Harness | Skills | Format | Auto-Discovery |
 |---------|--------|--------|----------------|
-| **Claude Code** | Yes | `SKILL.md` with YAML frontmatter | Yes (paths globs, description matching) |
-| **Codex CLI** | Yes | `SKILL.md` | Yes (system + plugin skills) |
+| **Claude Code** | Yes | `claude-code\examples\SKILL.md` with YAML frontmatter | Yes (paths globs, description matching) |
+| **Codex CLI** | Yes | `claude-code\examples\SKILL.md` | Yes (system + plugin skills) |
 | **Gemini CLI** | Yes | `skills/` directory in extensions | Yes |
-| **Pi / Oh My Pi** | Yes | `SKILL.md` with YAML frontmatter | Via extension registration |
+| **Pi / Oh My Pi** | Yes | `claude-code\examples\SKILL.md` with YAML frontmatter | Via extension registration |
 | **OpenCode** | Yes | `instructions` config + globs | Yes (via config) |
 | **GitHub Copilot** | Yes (Agent Skills) | Folders with instructions/scripts | Yes (open standard) |
-| **Cursor** | Yes | `SKILL.md` with YAML frontmatter | Yes (description-based triggering) |
+| **Cursor** | Yes | `claude-code\examples\SKILL.md` with YAML frontmatter | Yes (description-based triggering) |
 
 ### Custom Commands
 
 | Harness | Custom Commands | Format |
 |---------|----------------|--------|
-| **Claude Code** | Yes (merged into skills) | `.claude/commands/*.md` or `skills/<name>/SKILL.md` |
+| **Claude Code** | Yes (merged into skills) | `.claude/commands/*.md` or `skills/<name>/claude-code\examples\SKILL.md` |
 | **Codex CLI** | Built-in only (`/review`, `/apps`) | No user-defined API |
 | **Gemini CLI** | Yes | Extension `commands/` directory |
 | **Pi / Oh My Pi** | Yes | `commands/*.md` with YAML frontmatter |
@@ -64,13 +64,13 @@ This directory documents the extensibility, plugin systems, and capabilities of 
 
 | Harness | Hooks | Event Count | Config Format | Key Events |
 |---------|-------|-------------|---------------|------------|
-| **Claude Code** | Yes | 20+ | `settings.json` | PreToolUse, PostToolUse, Stop, SessionStart, SubagentStart/Stop, FileChanged, WorktreeCreate/Remove |
+| **Claude Code** | Yes | 20+ | `claude-code\examples\settings.json` | PreToolUse, PostToolUse, Stop, SessionStart, SubagentStart/Stop, FileChanged, WorktreeCreate/Remove |
 | **Codex CLI** | Yes | 5 | `config.toml` | PreToolUse, PostToolUse, SessionStart, Stop, UserPromptSubmit |
-| **Gemini CLI** | Yes | 2+ | `hooks/hooks.json` | SessionStart, AfterAgent (block/allow/deny) |
+| **Gemini CLI** | Yes | 2+ | `cursor\examples\hooks.json` | SessionStart, AfterAgent (block/allow/deny) |
 | **Pi / Oh My Pi** | Yes (event-based) | 10 | ExtensionAPI.on() | session_start, agent_end, tool_call, context, turn_start/end |
 | **OpenCode** | Yes (plugin hooks) | 15+ | `opencode.json` plugin | tool.execute.before/after, session.created/idle, file.edited, shell.env |
 | **GitHub Copilot** | Yes | 8 | `.github/hooks/*.json` | sessionStart, preToolUse, postToolUse, agentStop, errorOccurred |
-| **Cursor** | Yes | 6+ | `.cursor/hooks.json` | beforeShellExecution, beforeMCPExecution, afterFileEdit, stop |
+| **Cursor** | Yes | 6+ | `cursor\examples\hooks.json` | beforeShellExecution, beforeMCPExecution, afterFileEdit, stop |
 
 ### Session ID Persistence Between Hooks
 
@@ -92,9 +92,9 @@ All adapters use `BABYSITTER_SESSION_ID` as the cross-harness standard env var f
 
 | Harness | MCP Support | Transports | Config Location |
 |---------|------------|------------|-----------------|
-| **Claude Code** | Full | stdio, sse, streamable-http, ws | `.mcp.json`, settings.json |
+| **Claude Code** | Full | stdio, sse, streamable-http, ws | `.mcp.json`, claude-code\examples\settings.json |
 | **Codex CLI** | Full | stdio + remote | `config.toml [mcp_servers]` |
-| **Gemini CLI** | Full | Via manifest mcpServers | `gemini-extension.json` |
+| **Gemini CLI** | Full | Via manifest mcpServers | `gemini-cli\examples\gemini-extension.json` |
 | **Pi / Oh My Pi** | No native | N/A (babysitter MCP available separately) | N/A |
 | **OpenCode** | Full | stdio, sse | `opencode.json` `mcp` key |
 | **GitHub Copilot** | Full (GA) | stdio, sse | Repo settings, `copilot-setup-steps.yml` |
@@ -154,7 +154,7 @@ All adapters use `BABYSITTER_SESSION_ID` as the cross-harness standard env var f
 
 ### Convergence Patterns
 
-1. **SKILL.md is becoming a standard**: Claude Code, Codex CLI, Cursor, and Pi all use SKILL.md with YAML frontmatter. The [AgentSkills.io](https://agentskills.io) open standard formalizes this.
+1. **claude-code\examples\SKILL.md is becoming a standard**: Claude Code, Codex CLI, Cursor, and Pi all use claude-code\examples\SKILL.md with YAML frontmatter. The [AgentSkills.io](https://agentskills.io) open standard formalizes this.
 
 2. **MCP is universal**: Every active harness except Pi/Oh My Pi supports MCP natively. GitHub Copilot even deprecated its proprietary extension system in favor of MCP.
 
@@ -162,7 +162,7 @@ All adapters use `BABYSITTER_SESSION_ID` as the cross-harness standard env var f
 
 4. **Custom instruction files**: Every harness reads at least one markdown instruction file (CLAUDE.md, AGENTS.md, GEMINI.md, .cursorrules, opencode.md). Most read multiple formats for cross-compatibility.
 
-5. **Plugin manifests**: Claude Code (plugin.json), Codex (.codex-plugin/plugin.json), Gemini CLI (gemini-extension.json), Cursor (.cursor-plugin/plugin.json), and GitHub Copilot (plugin.json) all use JSON manifests. Pi uses package.json with `omp` field.
+5. **Plugin manifests**: Claude Code (claude-code\examples\plugin.json), Codex (claude-code\examples\plugin.json), Gemini CLI (gemini-cli\examples\gemini-extension.json), Cursor (claude-code\examples\plugin.json), and GitHub Copilot (claude-code\examples\plugin.json) all use JSON manifests. Pi uses pi\examples\package.json with `omp` field.
 
 ### Divergence Points
 
@@ -194,35 +194,38 @@ The Babysitter SDK includes adapters for all 8 harnesses (`packages/sdk/src/harn
 
 ```
 harnesses/
-├── README.md                 # This file (comparison & index)
-├── claude-code/
-│   ├── README.md
-│   ├── references.md
-│   └── examples/
-├── codex/
-│   ├── README.md
-│   ├── references.md
-│   └── examples/
-├── gemini-cli/
-│   ├── README.md
-│   ├── references.md
-│   └── examples/
-├── pi/
-│   ├── README.md
-│   ├── references.md
-│   └── examples/
-├── oh-my-pi/
-│   ├── README.md
-│   └── references.md
-├── opencode/
-│   ├── README.md
-│   └── references.md
-├── github-copilot/
-│   ├── README.md
-│   ├── references.md
-│   └── examples/
-└── cursor/
-    ├── README.md
-    ├── references.md
-    └── examples/
+â”œâ”€â”€ README.md                 # This file (comparison & index)
+â”œâ”€â”€ claude-code/
+â”‚   â”œâ”€â”€ README.md
+â”‚   â”œâ”€â”€ claude-code\references.md
+â”‚   â””â”€â”€ examples/
+â”œâ”€â”€ codex/
+â”‚   â”œâ”€â”€ README.md
+â”‚   â”œâ”€â”€ claude-code\references.md
+â”‚   â””â”€â”€ examples/
+â”œâ”€â”€ gemini-cli/
+â”‚   â”œâ”€â”€ README.md
+â”‚   â”œâ”€â”€ claude-code\references.md
+â”‚   â””â”€â”€ examples/
+â”œâ”€â”€ pi/
+â”‚   â”œâ”€â”€ README.md
+â”‚   â”œâ”€â”€ claude-code\references.md
+â”‚   â””â”€â”€ examples/
+â”œâ”€â”€ oh-my-pi/
+â”‚   â”œâ”€â”€ README.md
+â”‚   â””â”€â”€ claude-code\references.md
+â”œâ”€â”€ opencode/
+â”‚   â”œâ”€â”€ README.md
+â”‚   â””â”€â”€ claude-code\references.md
+â”œâ”€â”€ github-copilot/
+â”‚   â”œâ”€â”€ README.md
+â”‚   â”œâ”€â”€ claude-code\references.md
+â”‚   â””â”€â”€ examples/
+â””â”€â”€ cursor/
+    â”œâ”€â”€ README.md
+    â”œâ”€â”€ claude-code\references.md
+    â””â”€â”€ examples/
 ```
+
+
+

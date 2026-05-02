@@ -102,6 +102,7 @@ export async function process(inputs, ctx) {
   // Quality Gate: Critical pain points and gaps identified
   const criticalGaps = currentStateAssessment.gaps.filter(g => g.severity === 'critical');
 
+  if (criticalGaps.length > 0) {
       let lastFeedback_qualityGateApproval = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval) {
@@ -160,6 +161,7 @@ export async function process(inputs, ctx) {
     !pipelineDesign.architecture.stages.some(s => s.type === stage)
   );
 
+  if (missingStages.length > 0) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -259,6 +261,7 @@ export async function process(inputs, ctx) {
   deploymentStrategy = deploymentStrategyDesign.strategy;
 
   // Quality Gate: Deployment strategy supports zero-downtime if required
+  if (constraints.downtime === 'zero' && !deploymentStrategyDesign.strategy.supportsZeroDowntime) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -335,6 +338,7 @@ export async function process(inputs, ctx) {
   rollbackProcedures = rollbackDesign.procedures;
 
   // Quality Gate: Rollback procedures meet time constraint
+  if (rollbackDesign.estimatedRollbackTime > constraints.rollbackTime) {
       let lastFeedback_phase5Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase5Review) {
@@ -390,6 +394,7 @@ export async function process(inputs, ctx) {
     !monitoringDesign.plan.slis.some(s => s.type === sli)
   );
 
+  if (missingSLIs.length > 0) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -1405,3 +1410,4 @@ export const implementationRoadmapTask = defineTask('implementation-roadmap', (a
   },
   labels: ['agent', 'devops', 'roadmap', 'implementation', 'phase-8']
 }));
+

@@ -144,6 +144,7 @@ export async function process(inputs, ctx) {
     ...acceleratedLifeTesting.failures
   ];
 
+  if (allFailures.length > 0) {
       let lastFeedback_phase6Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase6Review) {
@@ -552,3 +553,4 @@ export const testReportTask = defineTask('test-report', (args, taskCtx) => ({
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['ee', 'environmental', 'report']
 }));
+

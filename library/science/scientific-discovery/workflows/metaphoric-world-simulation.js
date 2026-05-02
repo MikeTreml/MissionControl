@@ -46,6 +46,7 @@ export async function process(inputs, ctx) {
     metaphorAnalysis,
     simulationDepth,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -470,3 +471,4 @@ export const extractInsightsTask = defineTask('extract-insights', (args, taskCtx
   },
   labels: ['agent', 'metaphoric-world', 'insights']
 }));
+

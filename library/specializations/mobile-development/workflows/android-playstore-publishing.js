@@ -58,6 +58,7 @@ export async function process(inputs, ctx) {
       appName, packageName, appVersion, releaseTrack, outputDir
     });
     artifacts.push(...result.artifacts);
+  }
   let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     // No preceding task identified for re-run with feedback
@@ -133,3 +134,4 @@ export const openTestingTask = createPublishingTask('open-testing', 'Open Testin
 export const productionReleaseTask = createPublishingTask('production-release', 'Production Release');
 export const stagedRolloutTask = createPublishingTask('staged-rollout', 'Staged Rollout Management');
 export const postLaunchTask = createPublishingTask('post-launch', 'Post-Launch Monitoring');
+

@@ -70,6 +70,7 @@ export async function process(inputs, ctx) {
     let systemInfo = await ctx.task(implementSystemInfoTask, { projectName, framework, targetPlatforms, outputDir });
     artifacts.push(...systemInfo.artifacts);
     serviceModules.push({ name: 'system-info', ...systemInfo });
+  }
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -197,3 +198,4 @@ export const validateServicesTask = defineTask('validate-services', (args, taskC
   io: { inputJsonPath: `tasks/${taskCtx.effectId}/input.json`, outputJsonPath: `tasks/${taskCtx.effectId}/result.json` },
   labels: ['desktop-development', 'system-services', 'validation']
 }));
+

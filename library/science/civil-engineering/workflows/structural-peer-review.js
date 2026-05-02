@@ -91,6 +91,7 @@ export async function process(inputs, ctx) {
   const totalComments = codeCompliance.comments.length +
                         loadReview.comments.length +
                         analysisReview.comments.length +
+                        memberReview.comments.length;
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -587,3 +588,4 @@ export const peerReviewReportTask = defineTask('peer-review-report', (args, task
   },
   labels: ['agent', 'civil-engineering', 'peer-review', 'reporting']
 }));
+

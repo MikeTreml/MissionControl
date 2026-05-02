@@ -163,6 +163,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...incidentDeclaration.artifacts);
 
   // Quality Gate: Team mobilization
+  if (!incidentDeclaration.teamMobilized) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -220,6 +221,7 @@ export async function process(inputs, ctx) {
   artifacts.push(...containmentStrategy.artifacts);
 
   // Quality Gate: Containment strategy approval
+  if (containmentStrategy.requiresApproval) {
       let lastFeedback_phase4Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase4Review) {
@@ -279,6 +281,7 @@ export async function process(inputs, ctx) {
     ctx.log('info', `Forensics Collection Complete - Evidence Items: ${forensicsData.evidenceItems.length}, Chain of Custody Established: ${forensicsData.chainOfCustodyEstablished}`);
 
     // Quality Gate: Forensics evidence preservation
+    if (!forensicsData.chainOfCustodyEstablished) {
         let lastFeedback_qualityGateApproval2 = null;
       for (let attempt = 0; attempt < 3; attempt++) {
         if (lastFeedback_qualityGateApproval2) {
@@ -335,6 +338,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Containment Execution - Success: ${containmentSuccessful}, Time: ${containmentExecution.executionTime}s`);
 
   // Quality Gate: Containment verification
+  if (!containmentSuccessful) {
       let lastFeedback_qualityGateApproval3 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval3) {
@@ -415,6 +419,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Investigation Complete - Data Compromised: ${impactAssessment.dataCompromised}, IOCs Identified: ${threatIntelligence.iocsIdentified.length}`);
 
   // Quality Gate: High-impact data breach notification
+  if (impactAssessment.dataCompromised && impactAssessment.recordsAffected > 500) {
       let lastFeedback_qualityGateApproval4 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval4) {
@@ -474,6 +479,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Eradication Complete - Success: ${eradicationSuccessful}, Malware Removed: ${eradication.malwareRemoved}, Backdoors Closed: ${eradication.backdoorsClosed}`);
 
   // Quality Gate: Eradication verification
+  if (!eradicationSuccessful) {
       let lastFeedback_qualityGateApproval5 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval5) {
@@ -532,6 +538,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Recovery Complete - Success: ${recoverySuccessful}, Systems Restored: ${recovery.systemsRestored}/${recovery.totalSystems}`);
 
   // Quality Gate: Recovery verification
+  if (!recoverySuccessful) {
       let lastFeedback_phase9Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase9Review) {
@@ -2144,3 +2151,4 @@ export const metricsImprovementTask = defineTask('metrics-improvement', (args, t
   },
   labels: ['agent', 'security-incident', 'metrics', 'continuous-improvement']
 }));
+

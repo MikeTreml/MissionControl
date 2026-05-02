@@ -103,6 +103,7 @@ export async function process(inputs, ctx) {
   });
 
   // Quality Gate: Check verification
+  if (!resultVerification.verified) {
       let lastFeedback_phase3Review = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_phase3Review) {
@@ -536,3 +537,4 @@ export const stepByStepSolutionTask = defineTask('step-by-step-solution', (args,
   },
   labels: ['mathematics', 'symbolic-computation', 'step-by-step']
 }));
+

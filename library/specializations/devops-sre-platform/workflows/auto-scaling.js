@@ -560,6 +560,7 @@ export async function process(inputs, ctx) {
   ctx.log('info', `Capacity planning complete - Estimated baseline cost: $${capacityPlanningResult.baselineCost}/month, Peak cost: $${capacityPlanningResult.peakCost}/month`);
 
   // Quality Gate: Cost review
+  if (capacityPlanningResult.peakCost > budget.maxMonthlyCost) {
       let lastFeedback_qualityGateApproval2 = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (lastFeedback_qualityGateApproval2) {
@@ -1726,3 +1727,4 @@ export const calculateScalingScoreTask = defineTask('calculate-scaling-score', (
   },
   labels: ['auto-scaling', 'assessment', args.infrastructure]
 }));
+

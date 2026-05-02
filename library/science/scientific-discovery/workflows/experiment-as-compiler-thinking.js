@@ -45,6 +45,7 @@ export async function process(inputs, ctx) {
     hypothesisLanguage,
     dataLanguage,
     domain
+  });
     let lastFeedback = null;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (lastFeedback) {
@@ -494,3 +495,4 @@ export const synthesizeCompilerInsightsTask = defineTask('synthesize-compiler-in
   },
   labels: ['agent', 'experiment-compiler', 'synthesis']
 }));
+

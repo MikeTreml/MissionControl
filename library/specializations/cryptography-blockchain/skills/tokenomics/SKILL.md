@@ -1,4 +1,4 @@
----
+﻿---
 name: tokenomics
 description: Token economics simulation and analysis. Supports supply modeling, staking mechanisms, liquidity mining, governance dynamics, agent-based simulations, and cadCAD integration.
 allowed-tools: Read, Grep, Write, Bash, Edit, Glob, WebFetch
@@ -367,6 +367,7 @@ class GovernanceSimulation:
 
 ## See Also
 
-- `skills/defi-protocols/SKILL.md` - DeFi integration
+- `SKILL.md` - DeFi integration
 - `agents/defi-architect/AGENT.md` - DeFi expert
 - [cadCAD Documentation](https://cadcad.org/)
+

@@ -1,4 +1,4 @@
-# GitHub Copilot Harness -- Extensibility Reference
+﻿# GitHub Copilot Harness -- Extensibility Reference
 
 > Last updated: 2026-04-02
 
@@ -30,7 +30,7 @@ Plugins can declare a `plugin.json` manifest (placed in `.github/plugin.json` or
   "author": { "name": "a5c.ai", "email": "support@a5c.ai" },
   "license": "MIT",
   "skills": "skills/",
-  "hooks": "hooks.json",
+  "hooks": "examples\hooks.json",
   "commands": "commands/",
   "agents": "AGENTS.md",
   "repository": {
@@ -52,7 +52,7 @@ Plugins can declare a `plugin.json` manifest (placed in `.github/plugin.json` or
 | `author` | string or object | Yes | Author name or `{ name, email }` |
 | `license` | string | No | SPDX license identifier |
 | `skills` | string | No | Relative path to skills directory |
-| `hooks` | string | No | Relative path to hooks.json |
+| `hooks` | string | No | Relative path to examples\hooks.json |
 | `commands` | string | No | Relative path to commands directory |
 | `agents` | string | No | Relative path to AGENTS.md file |
 | `repository` | object | No | Git repository info |
@@ -62,36 +62,36 @@ Plugins can declare a `plugin.json` manifest (placed in `.github/plugin.json` or
 
 ```
 my-copilot-plugin/
-├── plugin.json              # Plugin manifest
-├── hooks.json               # Hook event definitions
-├── hooks/
-│   ├── session-start.sh     # Unix hook scripts
-│   ├── session-start.ps1    # Windows hook scripts
-│   ├── session-end.sh
-│   ├── session-end.ps1
-│   ├── user-prompt-submitted.sh
-│   └── user-prompt-submitted.ps1
-├── skills/
-│   ├── babysit/SKILL.md
-│   ├── call/SKILL.md
-│   ├── plan/SKILL.md
-│   ├── resume/SKILL.md
-│   └── ...
-├── commands/
-│   ├── call.md
-│   ├── plan.md
-│   ├── resume.md
-│   └── ...
-├── .github/
-│   └── plugin.json          # Optional: .github-scoped manifest copy
-├── AGENTS.md                # Custom agent instructions
-├── bin/
-│   └── install.js           # Installation script
-├── scripts/
-│   ├── sync-command-surfaces.js
-│   └── team-install.js
-├── package.json             # npm distribution manifest
-└── README.md
+â”œâ”€â”€ plugin.json              # Plugin manifest
+â”œâ”€â”€ examples\hooks.json               # Hook event definitions
+â”œâ”€â”€ hooks/
+â”‚   â”œâ”€â”€ session-start.sh     # Unix hook scripts
+â”‚   â”œâ”€â”€ session-start.ps1    # Windows hook scripts
+â”‚   â”œâ”€â”€ session-end.sh
+â”‚   â”œâ”€â”€ session-end.ps1
+â”‚   â”œâ”€â”€ user-prompt-submitted.sh
+â”‚   â””â”€â”€ user-prompt-submitted.ps1
+â”œâ”€â”€ skills/
+â”‚   â”œâ”€â”€ babysit/SKILL.md
+â”‚   â”œâ”€â”€ call/SKILL.md
+â”‚   â”œâ”€â”€ plan/SKILL.md
+â”‚   â”œâ”€â”€ resume/SKILL.md
+â”‚   â””â”€â”€ ...
+â”œâ”€â”€ commands/
+â”‚   â”œâ”€â”€ call.md
+â”‚   â”œâ”€â”€ plan.md
+â”‚   â”œâ”€â”€ resume.md
+â”‚   â””â”€â”€ ...
+â”œâ”€â”€ .github/
+â”‚   â””â”€â”€ plugin.json          # Optional: .github-scoped manifest copy
+â”œâ”€â”€ AGENTS.md                # Custom agent instructions
+â”œâ”€â”€ bin/
+â”‚   â””â”€â”€ install.js           # Installation script
+â”œâ”€â”€ scripts/
+â”‚   â”œâ”€â”€ sync-command-surfaces.js
+â”‚   â””â”€â”€ team-install.js
+â”œâ”€â”€ package.json             # npm distribution manifest
+â””â”€â”€ README.md
 ```
 
 ### Plugin Distribution via npm
@@ -105,7 +105,7 @@ Copilot plugins are distributed as npm packages:
   "description": "Babysitter orchestration plugin for GitHub Copilot CLI",
   "bin": { "babysitter-github": "bin/cli.js" },
   "files": [
-    "plugin.json", "hooks.json", "hooks/", "skills/",
+    "plugin.json", "examples\hooks.json", "hooks/", "skills/",
     "bin/", "scripts/", "versions.json", "AGENTS.md",
     "commands/", ".github/", "README.md"
   ],
@@ -252,9 +252,9 @@ Hooks allow you to run custom scripts at specific points during an agent session
 
 ### Configuration
 
-Hooks are defined in a `hooks.json` file. For plugins, this is at the plugin root (referenced from `plugin.json`). For repositories, hooks can be at `.github/hooks/<name>.json`.
+Hooks are defined in a `examples\hooks.json` file. For plugins, this is at the plugin root (referenced from `plugin.json`). For repositories, hooks can be at `.github/hooks/<name>.json`.
 
-### hooks.json Format
+### examples\hooks.json Format
 
 ```json
 {
@@ -326,7 +326,7 @@ The `preToolUse` hook is uniquely powerful -- it can **approve, deny, or modify*
 { "decision": "approve" }
 ```
 
-See `examples/hooks.json` for a complete configuration.
+See `examples\hooks.json` for a complete configuration.
 
 ---
 
@@ -630,3 +630,6 @@ Both are fully replaced by MCP servers, custom agents, and agent skills.
 ## References
 
 See `references.md` for a categorized list of all source URLs.
+
+
+
