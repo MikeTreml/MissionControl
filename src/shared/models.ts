@@ -56,6 +56,13 @@ export const ProjectDecisionPolicySchema = z.object({
 });
 export type ProjectDecisionPolicy = z.infer<typeof ProjectDecisionPolicySchema>;
 
+export const FeatureDecisionScoreSchema = z.object({
+  scope: z.number().min(0).max(100),
+  impact: z.number().min(0).max(100),
+  risk: z.number().min(0).max(100),
+});
+export type FeatureDecisionScoreModel = z.infer<typeof FeatureDecisionScoreSchema>;
+
 /**
  * One item in a campaign task. Each item represents one unit of work the
  * agent will process (one DLL, one file, one entity). The runtime
@@ -93,6 +100,8 @@ export const TaskSchema = z.object({
    * campaign.
    */
   items: z.array(CampaignItemSchema).default([]),
+  /** Decision score used by project policy gates. Null means not scored yet. */
+  decisionScore: FeatureDecisionScoreSchema.nullable().default(null),
   /**
    * Free-text reason this task is currently blocked, if any. Decoupled
    * from `runState`/`lane` so it works in every wait scenario:
