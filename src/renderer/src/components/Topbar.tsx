@@ -110,7 +110,7 @@ export function Topbar(): JSX.Element {
           <span>Search tasks, projects, library</span>
           <span className="kbd">⌘K</span>
         </button>
-        <button className="button" onClick={() => setCreateOpen(true)}>
+        <button className="btn primary" onClick={() => setCreateOpen(true)}>
           + New task
         </button>
         <CreateTaskForm open={createOpen} onClose={() => setCreateOpen(false)} />

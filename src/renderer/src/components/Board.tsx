@@ -10,10 +10,11 @@ import { pushErrorToast } from "../hooks/useToasts";
 import { TaskCard } from "./TaskCard";
 import { SkeletonCard } from "./Skeleton";
 
-// 6-lane Kanban order (mockup): Drafting / Running / Review / Blocked / Done.
-// "Failed" is a 7th lane that's only shown when there are failed tasks
-// (same conditional treatment as Archived). "Archived" is opt-in.
-const DEFAULT_STAGES: readonly BoardStage[] = ["Drafting", "Running", "Review", "Blocked", "Done"] as const;
+// 6-lane Kanban (matches NewUI canvas): Drafting / Running / Review /
+// Blocked / Done / Archived. Archived is always rendered — empty state
+// reads "All older runs live here. Search to find one." per the canvas.
+// "Failed" is a 7th lane that's only shown when there are failed tasks.
+const DEFAULT_STAGES: readonly BoardStage[] = ["Drafting", "Running", "Review", "Blocked", "Done", "Archived"] as const;
 
 function groupByStage(tasks: UiTask[]): Record<BoardStage, UiTask[]> {
   const out: Record<BoardStage, UiTask[]> = {
@@ -28,8 +29,6 @@ type BoardTab = "kanban" | "drafts";
 export function Board(): JSX.Element {
   const { tasks, isDemo, loading } = useTasks();
   const byStage = groupByStage(tasks);
-  const archivedCount = byStage.Archived.length;
-  const [showArchived, setShowArchived] = useState(false);
   const [tab, setTab] = useState<BoardTab>("kanban");
 
   // Drafts subset per SPEC §2 Option A — boardStage Draft AND cycle 0.
@@ -38,6 +37,10 @@ export function Board(): JSX.Element {
   const drafts = tasks.filter((t) => t.boardStage === "Drafting" && t.cycle === 0);
   const draftCount = drafts.length;
   const failedCount = byStage.Failed.length;
+
+  // REMOVED 2026-05-02: "Show archived (N)" toggle. Canvas always
+  // renders the Archived lane (empty-state when count==0) so the user
+  // can see the count without a click.
 
   return (
     <section className="card">
@@ -65,16 +68,6 @@ export function Board(): JSX.Element {
           </BoardTabButton>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {tab === "kanban" && archivedCount > 0 && (
-            <button
-              className="button ghost"
-              onClick={() => setShowArchived((v) => !v)}
-              title={showArchived ? "Hide the Archived lane" : "Reveal archived tasks in a 6th lane"}
-              style={{ fontSize: 12 }}
-            >
-              {showArchived ? `Hide archived (${archivedCount})` : `Show archived (${archivedCount})`}
-            </button>
-          )}
           {isDemo && <span className="pill warn">Demo</span>}
         </div>
       </div>
@@ -82,7 +75,6 @@ export function Board(): JSX.Element {
       {tab === "kanban" ? (
         <KanbanView
           byStage={byStage}
-          showArchived={showArchived}
           showFailed={failedCount > 0}
           loadingCold={loading && tasks.length === 0}
         />
@@ -123,18 +115,15 @@ function BoardTabButton({
 
 function KanbanView({
   byStage,
-  showArchived,
   showFailed,
   loadingCold,
 }: {
   byStage: Record<BoardStage, UiTask[]>;
-  showArchived: boolean;
   showFailed: boolean;
   loadingCold: boolean;
 }): JSX.Element {
   const stages: BoardStage[] = [...DEFAULT_STAGES];
-  if (showFailed) stages.push("Failed");
-  if (showArchived) stages.push("Archived");
+  if (showFailed) stages.splice(stages.indexOf("Done"), 0, "Failed");
   return (
     <div className="lanes">
       {stages.map((stage) => (
@@ -150,11 +139,20 @@ function KanbanView({
             </div>
           ) : (
             <>
-              {byStage[stage].length === 0 && (
-                <div className="muted" style={{ fontSize: 12, padding: "6px 2px" }}>
-                  —
-                </div>
-              )}
+              {byStage[stage].length === 0 ? (
+                stage === "Archived" ? (
+                  <div className="empty-state" style={{ padding: "32px 12px" }}>
+                    <div className="glyph">▤</div>
+                    <div className="body" style={{ fontSize: 12 }}>
+                      All older runs live here. Search to find one.
+                    </div>
+                  </div>
+                ) : (
+                  <div className="muted" style={{ fontSize: 12, padding: "6px 2px" }}>
+                    —
+                  </div>
+                )
+              ) : null}
               {byStage[stage].map((t) => (
                 <TaskCard key={t.id} task={t} />
               ))}

@@ -41,6 +41,9 @@ async function main() {
   const win = await app.firstWindow();
   win.on("pageerror", (err) => console.log(`  [renderer:pageerror] ${err.message}`));
   await win.waitForLoadState("domcontentloaded");
+  // Match the canvas-mockup viewport so the 6-lane board, 4 KPIs, and
+  // 340px right rail all fit without horizontal scroll.
+  await win.setViewportSize({ width: 1600, height: 1000 });
   await win.waitForTimeout(700);
 
   let n = 0;

@@ -78,6 +78,7 @@ export function TaskCard({ task }: { task: UiTask }): JSX.Element {
 
   const cls = [
     "task",
+    "bleed",
     isRunning ? "running" : "",
     task.active ? "active" : "",
   ].filter(Boolean).join(" ");
