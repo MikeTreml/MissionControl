@@ -189,6 +189,20 @@ export const MCSettingsSchema = z.object({
    * isSample:true at read time and filtered in the renderer hooks.
    */
   showSampleData: z.boolean().default(true),
+  /** Runtime/review display behavior. Keep live review useful while avoiding
+   * unnecessary rendering across multiple active projects. */
+  liveTaskEventStreaming: z.boolean().default(true),
+  pendingEffectFallbackPolling: z.boolean().default(true),
+  pendingEffectPollIntervalMs: z.number().int().min(5_000).max(300_000).default(15_000),
+  liveUpdatesOnlyInTaskDetails: z.boolean().default(true),
+  lazyRawLogs: z.boolean().default(true),
+  /** Generated workflow safety gate. Off by default until generator wiring is
+   * validated across existing specs. */
+  generatedWorkflowConfidenceGate: z.boolean().default(false),
+  confidenceThreshold: z.number().int().min(0).max(100).default(90),
+  /** Hide legacy/borrowed metadata labels like domainGroup from MC UI without
+   * breaking old indexed data that may still contain those fields. */
+  hideLegacyDomainGroup: z.boolean().default(true),
 }).passthrough();
 export type MCSettings = z.infer<typeof MCSettingsSchema>;
 
