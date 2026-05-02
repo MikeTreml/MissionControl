@@ -172,6 +172,7 @@ export function TaskDetail(): JSX.Element {
           </div>
 
           <aside className="workshop-side">
+            <CostMeter events={events} />
             <TaskMeta task={task} events={events} />
             {!isDemo && <RunMetadataChips task={task} events={events} />}
             {!isDemo && <SpawnedFromPanel task={task} />}
@@ -180,6 +181,8 @@ export function TaskDetail(): JSX.Element {
             {!isDemo && <RunMetricsCard metrics={latestMetrics} fileName={metricsFileName} />}
           </aside>
         </div>
+
+        {!isDemo && <ApprovalBar task={task} events={events} />}
       </div>
     </>
   );
@@ -330,6 +333,100 @@ function PlanRail({ task, events }: { task: Task; events: TaskEvent[] }): JSX.El
         );
       })}
     </aside>
+  );
+}
+
+/**
+ * Cost meter (canvas: NewUI/.../index.html lines 1650-1697).
+ *
+ * Renders a radial conic-gradient dial showing % of the task's token
+ * budget consumed, plus a num/of secondary line. Budget defaults to
+ * 500k tokens — matches the magnitude on the Dashboard's Tokens · 24h
+ * KPI; promotable to a per-task setting later. Returns null when no
+ * runs have produced any tokens (don't render an empty 0% dial).
+ */
+const COST_BUDGET_TOKENS = 500_000;
+function CostMeter({ events }: { events: TaskEvent[] }): JSX.Element | null {
+  const runs = deriveRuns(events);
+  if (runs.length === 0) return null;
+  const totals = runs.reduce(
+    (a, r) => ({
+      tokensIn:  a.tokensIn  + (r.tokensIn  ?? 0),
+      tokensOut: a.tokensOut + (r.tokensOut ?? 0),
+      cost:      a.cost      + (r.costUSD   ?? 0),
+    }),
+    { tokensIn: 0, tokensOut: 0, cost: 0 },
+  );
+  const totalTokens = totals.tokensIn + totals.tokensOut;
+  if (totalTokens === 0 && totals.cost === 0) return null;
+  const pct = Math.min(100, Math.round((totalTokens / COST_BUDGET_TOKENS) * 100));
+  const fmt = (n: number): string =>
+    n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` :
+    n >= 1_000     ? `${(n / 1_000).toFixed(1)}k` :
+    String(n);
+  return (
+    <div className="side-block">
+      <h4>Cost</h4>
+      <div className="cost-meter">
+        <div className="cost-dial" style={{ ["--pct" as string]: pct }}>
+          <span className="pct">{pct}%</span>
+        </div>
+        <div className="info">
+          <div className="num">{fmt(totalTokens)} tokens</div>
+          <div className="of">
+            of {fmt(COST_BUDGET_TOKENS)} budget · ${totals.cost.toFixed(4)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Sticky approval footer (canvas: NewUI/.../index.html lines 1700-1722).
+ *
+ * Only renders when a `breakpoint_opened` event is pending — i.e. the
+ * SDK has paused for human input. Approve resumes the run; Reject
+ * stops it with a "rejected" reason. Hand off opens a placeholder
+ * toast for now (real handoff routing is a follow-up slice).
+ */
+function ApprovalBar({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const pending = derivePendingBreakpoint(events);
+  if (!pending) return null;
+  const question =
+    (pending.payload && typeof pending.payload["question"] === "string"
+      ? (pending.payload["question"] as string)
+      : null) ?? "Awaiting your decision";
+
+  async function approve(): Promise<void> {
+    if (!window.mc?.resumeRun) return;
+    try { await window.mc.resumeRun({ taskId: task.id }); publish("tasks"); }
+    catch (err) { pushErrorToast("Approve failed", err, task.id); }
+  }
+  async function reject(): Promise<void> {
+    if (!window.mc?.stopRun) return;
+    // "user" is the closest existing reason in the IPC contract; the
+     // approval-bar's "Reject" semantically maps to a user-driven stop.
+    try { await window.mc.stopRun({ taskId: task.id, reason: "user" }); publish("tasks"); }
+    catch (err) { pushErrorToast("Reject failed", err, task.id); }
+  }
+
+  return (
+    <div className="approval-bar">
+      <div className="label">
+        <b>{question}</b>
+        {pending.expert && (
+          <div className="muted2" style={{ fontSize: "var(--fs-xs)" }}>
+            expert: {pending.expert}
+            {pending.tags.length > 0 && ` · ${pending.tags.join(", ")}`}
+          </div>
+        )}
+      </div>
+      <div className="actions">
+        <button className="btn ghost" onClick={() => void reject()}>Reject</button>
+        <button className="btn primary" onClick={() => void approve()}>Approve →</button>
+      </div>
+    </div>
   );
 }
 
