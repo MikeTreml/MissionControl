@@ -71,6 +71,22 @@ async function main() {
     const cmdBar = await win.locator('input[placeholder*="Tell an agent"]').first().isVisible().catch(() => false);
     check(cmdBar, "Footer command bar input is visible");
 
+    // 1b. Task Detail — click a card and verify hero + plan-rail markup.
+    const card = win.locator(".task").first();
+    if (await card.isVisible().catch(() => false)) {
+      await card.click();
+      await win.waitForTimeout(400);
+      await shoot("01b-task-detail");
+      const hero = await win.locator(".task-hero").first().isVisible().catch(() => false);
+      check(hero, "Task Detail renders .task-hero");
+      const workshop = await win.locator(".workshop").first().isVisible().catch(() => false);
+      check(workshop, "Task Detail renders .workshop 3-col layout");
+      // Back to dashboard for the next steps.
+      const back = win.getByRole("button", { name: /Back/i }).first();
+      if (await back.isVisible().catch(() => false)) await back.click();
+      await win.waitForTimeout(300);
+    }
+
     // 2. Library page loads, has 4 kind tabs.
     await win.locator("text=Library").first().click();
     await win.waitForTimeout(500);

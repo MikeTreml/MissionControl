@@ -13,14 +13,16 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { useRoute } from "../router";
 import { useTask } from "../hooks/useTask";
 import { useTasks } from "../hooks/useTasks";
+import { useProjects } from "../hooks/useProjects";
 import { usePiModels } from "../hooks/usePiModels";
 import { usePendingAsks } from "../hooks/usePendingAsks";
 import { publish, useSubscribe } from "../hooks/data-bus";
 import { pushErrorToast } from "../hooks/useToasts";
 import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive-runs";
-import { derivePhases } from "../lib/derive-phases";
+import { derivePhases, type DerivedPhase } from "../lib/derive-phases";
 import { derivePendingBreakpoint } from "../lib/derive-pending-breakpoint";
 import { deriveSubagents, type SubagentEntry } from "../lib/derive-subagents";
+import { colorForKey } from "../lib/color-hash";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
 import { ChangeWorkflowModal } from "../components/ChangeWorkflowModal";
@@ -56,32 +58,29 @@ export function TaskDetail(): JSX.Element {
     );
   }
 
+  // Layout follows the design canvas (NewUI/.../index.html lines 482-727):
+  //   .topbar         — crumbs (project / Board / TASK-ID) + actions
+  //   .task-hero      — id-line + title + meta + plan-progress
+  //   .workshop       — 3-col: plan-rail | workshop-main | workshop-side
+  //
+  // REMOVED 2026-05-02: standalone PhaseChipStrip card. Phase data now
+  // renders twice in the new layout: as horizontal nodes inside the
+  // hero (.plan-progress) and as a vertical sticky list on the left
+  // (.plan-rail). The legacy chip strip duplicated both.
   return (
     <>
       <div className="topbar">
-        <div>
-          <h1>
-            {task.id} — {task.title}
-          </h1>
-          <p className="muted">
-            {task.kind} · project {task.project}
-            {isDemo && " · demo"}
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <Crumbs task={task} />
+        <div className="actions" style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <CostTicker events={events} />
           {!isDemo && (
-            <button
-              className="button ghost"
-              title="Edit title and description"
-              onClick={() => setEditOpen(true)}
-            >
+            <button className="btn ghost" title="Edit title and description" onClick={() => setEditOpen(true)}>
               Edit
             </button>
           )}
           {!isDemo && (
             <button
-              className="button ghost"
+              className="btn ghost"
               title="Re-assign or clear the curated library workflow used on the next Start"
               onClick={() => setWorkflowOpen(true)}
             >
@@ -90,7 +89,7 @@ export function TaskDetail(): JSX.Element {
           )}
           {!isDemo && (
             <button
-              className="button ghost"
+              className="btn ghost"
               title="Create a new task pre-filled from this one — edit anything before saving"
               onClick={() => setRerunOpen(true)}
             >
@@ -99,7 +98,7 @@ export function TaskDetail(): JSX.Element {
           )}
           {!isDemo && (
             <button
-              className="button ghost"
+              className="btn ghost"
               title="Open the task's folder in your OS file explorer"
               onClick={() => { void window.mc?.openTaskFolder(task.id); }}
             >
@@ -109,7 +108,7 @@ export function TaskDetail(): JSX.Element {
           {!isDemo && (
             <TaskActionsMenu>
               <button
-                className="button ghost"
+                className="btn ghost"
                 title="Spin off a doctor task — diagnose why this task is stuck without modifying it"
                 onClick={() => setDoctorOpen(true)}
               >
@@ -124,21 +123,11 @@ export function TaskDetail(): JSX.Element {
       </div>
 
       {!isDemo && (
-        <EditTaskForm
-          open={editOpen}
-          onClose={() => setEditOpen(false)}
-          task={task}
-        />
+        <EditTaskForm open={editOpen} onClose={() => setEditOpen(false)} task={task} />
       )}
-
       {!isDemo && (
-        <ChangeWorkflowModal
-          open={workflowOpen}
-          onClose={() => setWorkflowOpen(false)}
-          task={task}
-        />
+        <ChangeWorkflowModal open={workflowOpen} onClose={() => setWorkflowOpen(false)} task={task} />
       )}
-
       {!isDemo && (
         <CreateTaskForm
           open={rerunOpen}
@@ -146,7 +135,6 @@ export function TaskDetail(): JSX.Element {
           preload={buildRerunPreload(task, runConfig)}
         />
       )}
-
       {!isDemo && (
         <CreateTaskForm
           open={doctorOpen}
@@ -156,51 +144,192 @@ export function TaskDetail(): JSX.Element {
       )}
 
       <div className="content">
-        <Controls task={task} />
-        <PhaseChipStrip task={task} events={events} />
-        {!isDemo && <RunMetadataChips task={task} events={events} />}
-        {!isDemo && <PendingEffectsPanel task={task} events={events} />}
-        {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
+        <TaskHero task={task} events={events} isDemo={isDemo} />
 
-        {!isDemo && pendingAsks.map((ask) => (
-          <AskUserCard key={ask.toolCallId} taskId={task.id} ask={ask} />
-        ))}
+        <div className="workshop">
+          <PlanRail task={task} events={events} />
 
-        {!isDemo && <BlockerField task={task} />}
+          <div className="workshop-main">
+            <Controls task={task} />
+            {!isDemo && <PendingEffectsPanel task={task} events={events} />}
+            {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
+            {!isDemo && pendingAsks.map((ask) => (
+              <AskUserCard key={ask.toolCallId} taskId={task.id} ask={ask} />
+            ))}
+            {!isDemo && <BlockerField task={task} />}
 
+            <section className="card" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+              <Mission prompt={prompt} />
+              <StatusLog status={status} />
+            </section>
 
-        <section
-          className="card"
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}
-        >
-          <Mission prompt={prompt} />
-          <StatusLog status={status} />
-        </section>
+            <LaneTimeline task={task} events={events} />
 
-        <section className="card" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 18 }}>
-          <LaneTimeline task={task} events={events} />
-          <TaskMeta task={task} events={events} />
-        </section>
+            {task.kind === "campaign" && <CampaignItems task={task} />}
 
-        {task.kind === "campaign" && <CampaignItems task={task} />}
+            <SubagentsPanel events={events} />
+            <RunHistory events={events} />
+          </div>
 
-        {!isDemo && <SpawnedFromPanel task={task} />}
-
-        <SubagentsPanel events={events} />
-
-        <RunHistory events={events} />
-
-        <section
-          className="card"
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}
-        >
-          <LinkedFiles task={task} />
-        </section>
-
-        {!isDemo && <RunConfigCard runConfig={runConfig} />}
-        {!isDemo && <RunMetricsCard metrics={latestMetrics} fileName={metricsFileName} />}
+          <aside className="workshop-side">
+            <TaskMeta task={task} events={events} />
+            {!isDemo && <RunMetadataChips task={task} events={events} />}
+            {!isDemo && <SpawnedFromPanel task={task} />}
+            <LinkedFiles task={task} />
+            {!isDemo && <RunConfigCard runConfig={runConfig} />}
+            {!isDemo && <RunMetricsCard metrics={latestMetrics} fileName={metricsFileName} />}
+          </aside>
+        </div>
       </div>
     </>
+  );
+}
+
+// ─── Hero + plan rail (canvas: NewUI/.../index.html lines 484-575) ──
+
+function Crumbs({ task }: { task: Task }): JSX.Element {
+  const { projects } = useProjects();
+  const proj = projects.find((p) => p.id === task.project);
+  const projName = proj?.name ?? task.project;
+  const accent = task.id.includes("-") ? colorForKey(task.id.split("-")[0]!) : "var(--info)";
+  return (
+    <div className="crumbs">
+      <span>{projName}</span>
+      <span className="sep">/</span>
+      <span>Board</span>
+      <span className="sep">/</span>
+      <span className="now">
+        <code style={{ fontFamily: "var(--font-mono)", color: accent }}>{task.id}</code>
+      </span>
+    </div>
+  );
+}
+
+function TaskHero({ task, events, isDemo }: { task: Task; events: TaskEvent[]; isDemo: boolean }): JSX.Element {
+  const { phases, current } = derivePhases(task, events);
+  const pfx = task.id.includes("-") ? task.id.split("-")[0]! : "";
+  const rest = pfx ? task.id.slice(pfx.length) : task.id;
+  const accent = pfx ? colorForKey(pfx) : "var(--info)";
+  const elapsed = elapsedSinceLatestEvent(events) ?? "—";
+  const created = new Date(task.createdAt).toLocaleString();
+
+  // Status pill — "running" / "paused" / "idle" / "done" — matches
+  // canvas tone mapping (info for running, warning for paused).
+  const stateTone =
+    task.runState === "running" ? "info" :
+    task.runState === "paused" ? "warning" :
+    task.status === "done" ? "success" :
+    task.status === "failed" ? "danger" :
+    "neutral";
+
+  return (
+    <div className="task-hero" style={{ ["--task-accent" as string]: accent }}>
+      <div className="lhs">
+        <div className="id-line">
+          <div className="id">
+            <span className="pfx">{pfx}</span>{rest}
+          </div>
+          <span className={`pill ${stateTone}`}>
+            {task.runState === "running" && <span className="dot" />}
+            {task.runState === "running" ? "running" :
+             task.runState === "paused"  ? "paused"  :
+             task.status   === "done"    ? "merged"  :
+             task.status   === "failed"  ? "failed"  :
+             task.status   === "waiting" ? "waiting" :
+             "idle"}
+          </span>
+          {!isDemo && task.kind === "campaign" && (
+            <span className="pill neutral">{task.items.length} items</span>
+          )}
+        </div>
+        <h1>{task.title}</h1>
+        <div className="meta-line">
+          <span>{task.project}</span>
+          <span>·</span>
+          <span>{created}</span>
+          <span>·</span>
+          <span>{elapsed} elapsed</span>
+          <span>·</span>
+          <span>cycle {task.cycle}</span>
+        </div>
+        {phases.length > 0 && (
+          <PlanProgress phases={phases} current={current} />
+        )}
+      </div>
+      <div className="who-stack">
+        <div className="avatar bot" title="Agent">α</div>
+        <div className="avatar" title="You">MT</div>
+      </div>
+    </div>
+  );
+}
+
+function PlanProgress({
+  phases,
+  current,
+}: {
+  phases: DerivedPhase[];
+  current: string | null;
+}): JSX.Element {
+  return (
+    <div className="plan-progress" role="tablist" aria-label="Plan steps">
+      {phases.map((p, i) => {
+        const isCurrent = p.id === current;
+        const cls =
+          isCurrent ? "step active" :
+          p.status === "done" ? "step done" :
+          p.status === "failed" ? "step done" :
+          "step";
+        const node =
+          p.status === "done" ? "✓" :
+          p.status === "failed" ? "×" :
+          isCurrent ? String(i + 1) :
+          String(i + 1);
+        return (
+          <div key={p.id} className={cls} role="tab" title={p.label}>
+            <div className="node">{node}</div>
+            <div className="label">{p.label}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function PlanRail({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element | null {
+  const { phases, current } = derivePhases(task, events);
+  if (phases.length === 0) return null;
+  const doneCount = phases.filter((p) => p.status === "done").length;
+  return (
+    <aside className="plan-rail" aria-label="Plan steps">
+      <h4>Plan · {doneCount}/{phases.length}</h4>
+      {phases.map((p, i) => {
+        const isCurrent = p.id === current;
+        const cls =
+          isCurrent ? "rail-step active" :
+          p.status === "done" ? "rail-step done" :
+          p.status === "failed" ? "rail-step done" :
+          "rail-step";
+        const numText =
+          p.status === "done" ? "✓" :
+          p.status === "failed" ? "×" :
+          String(i + 1);
+        const meta =
+          p.enteredAt ? new Date(p.enteredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) :
+          isCurrent ? "running" :
+          p.status === "done" ? "" :
+          "queued";
+        return (
+          <div key={p.id} className={cls}>
+            <div className="num">{numText}</div>
+            <div>
+              <div className="text">{p.label}</div>
+              {meta && <div className="meta">{meta}</div>}
+            </div>
+          </div>
+        );
+      })}
+    </aside>
   );
 }
 
