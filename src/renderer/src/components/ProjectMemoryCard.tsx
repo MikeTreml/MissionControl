@@ -52,7 +52,7 @@ export function ProjectMemoryCard({
     try {
       await window.mc.writeProjectMemory(projectId, draft);
       setOriginal(draft);
-      pushToast({ tone: "good", title: "Memory saved", detail: `${projectId}/MEMORY.md` });
+      pushToast({ taskId: "", tone: "good", title: "Memory saved", detail: `${projectId}/MEMORY.md` });
     } catch (e) {
       pushErrorToast("Failed to save memory", e, projectId);
       setError(e instanceof Error ? e.message : String(e));

@@ -138,6 +138,7 @@ export function ProjectDetail(): JSX.Element {
         path: project.path,
         icon: project.icon,
         notes: project.notes,
+        isSample: false,
         gitInfo: { kind: "none", label: "", remoteUrl: "" },
       }
     : undefined;

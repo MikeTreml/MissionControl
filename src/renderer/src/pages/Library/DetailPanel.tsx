@@ -85,7 +85,7 @@ export function DetailPanel({ item }: { item: LibraryIndexItem | null }): JSX.El
         diskPath: item.diskPath,
         patch,
       });
-      pushToast({ tone: "good", title: "Item saved", detail: item.name });
+      pushToast({ taskId: "", tone: "good", title: "Item saved", detail: item.name });
       setOriginal(draft);
       setEditMode(false);
       // Refresh the library index so the new fields show up everywhere

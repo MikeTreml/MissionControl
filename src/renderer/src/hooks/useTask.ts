@@ -28,6 +28,8 @@ function mockTaskToTask(id: string): Task | null {
     items: [],
     blocker: "",
     parentTaskId: "",
+    babysitterMode: "plan",
+    isSample: false,
     createdAt: now,
     updatedAt: now,
   };

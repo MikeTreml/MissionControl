@@ -46,6 +46,7 @@ type CreateTaskInput = {
   workflow?: string;
   kind?: TaskKind;
   items?: CampaignItem[];
+  babysitterMode?: "plan" | "execute" | "direct";
   /** Source task id when this is a re-run / clone / spin-off. */
   parentTaskId?: string;
 };
