@@ -43,6 +43,19 @@ export type RunState = z.infer<typeof RunStateSchema>;
 export const TaskKindSchema = z.enum(["single", "campaign"]);
 export type TaskKind = z.infer<typeof TaskKindSchema>;
 
+export const ScopePolicySchema = z.enum(["strict", "balanced", "flexible", "experimental"]);
+export const ImpactPolicySchema = z.enum(["low", "medium", "high"]);
+export const RiskPolicySchema = z.enum(["low", "medium", "high"]);
+export const AutoProceedModeSchema = z.enum(["off", "suggest", "auto"]);
+
+export const ProjectDecisionPolicySchema = z.object({
+  scope: ScopePolicySchema.default("balanced"),
+  impact: ImpactPolicySchema.default("medium"),
+  risk: RiskPolicySchema.default("medium"),
+  autoProceedMode: AutoProceedModeSchema.default("suggest"),
+});
+export type ProjectDecisionPolicy = z.infer<typeof ProjectDecisionPolicySchema>;
+
 /**
  * One item in a campaign task. Each item represents one unit of work the
  * agent will process (one DLL, one file, one entity). The runtime
@@ -142,6 +155,8 @@ export const ProjectSchema = z.object({
   prefix: ProjectPrefixSchema,                 // e.g. "DA" — used in task IDs
   path: z.string().default(""),                // local folder; empty = track-only
   notes: z.string().default(""),
+  /** Feature/task decision policy used by MC gates. Scope is always a hard gate. */
+  policy: ProjectDecisionPolicySchema.default({}),
   // Optional visual icon shown in the sidebar chip. Empty = use the prefix.
   // A short emoji or 1-2 chars works best; no schema enforcement so future
   // formats (svg data url, icon name from a library) can drop in.
