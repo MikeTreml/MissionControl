@@ -22,6 +22,7 @@ import { deriveRuns, type DerivedRun, type DerivedSubagent } from "../lib/derive
 import { derivePhases, type DerivedPhase } from "../lib/derive-phases";
 import { derivePendingBreakpoint } from "../lib/derive-pending-breakpoint";
 import { deriveSubagents, type SubagentEntry } from "../lib/derive-subagents";
+import { deriveToolCalls, previewCmd, type ToolCall } from "../lib/derive-tool-calls";
 import { colorForKey } from "../lib/color-hash";
 import { AskUserCard } from "../components/AskUserCard";
 import { EditTaskForm } from "../components/EditTaskForm";
@@ -168,6 +169,7 @@ export function TaskDetail(): JSX.Element {
             {task.kind === "campaign" && <CampaignItems task={task} />}
 
             <SubagentsPanel events={events} />
+            {!isDemo && <ToolCalls events={events} />}
             <RunHistory events={events} />
           </div>
 
@@ -428,6 +430,66 @@ function ApprovalBar({ task, events }: { task: Task; events: TaskEvent[] }): JSX
       </div>
     </div>
   );
+}
+
+/**
+ * Terminal-style tool-call panes (canvas: NewUI/.../index.html lines
+ * 593-630). Renders one .tool-pane per pi:tool_execution_start/end pair
+ * — the head shows tool name + start time + exit-code chip; the body
+ * shows the toolInput preview as a single `$` cmd row. Newest pane
+ * first so a fresh tool call surfaces at the top instead of getting
+ * buried by an hour of history.
+ *
+ * Returns null when no tool calls exist — most tasks during their
+ * draft phase don't have any, and an empty pane stack reads as a
+ * broken card.
+ */
+function ToolCalls({ events }: { events: TaskEvent[] }): JSX.Element | null {
+  const calls = deriveToolCalls(events);
+  if (calls.length === 0) return null;
+  // Newest first; cap at 25 so a long-running task doesn't blow up the page.
+  const visible = calls.slice(-25).reverse();
+  return (
+    <section style={{ display: "grid", gap: 10 }}>
+      <h4 style={{ margin: "4px 0 0" }}>Tool calls · {calls.length}</h4>
+      {visible.map((c, i) => (
+        <ToolPane key={`${c.toolName}-${c.startedAt}-${i}`} call={c} />
+      ))}
+    </section>
+  );
+}
+
+function ToolPane({ call }: { call: ToolCall }): JSX.Element {
+  const when = new Date(call.startedAt).toLocaleTimeString();
+  const exitClass =
+    call.exitCode === null ? "" :
+    call.exitCode === 0    ? "ok" :
+    "fail";
+  const exitText =
+    call.exitCode === null ? "running" :
+    `exit ${call.exitCode}`;
+  return (
+    <div className="tool-pane">
+      <div className="pane-head">
+        <span className="tool">{call.toolName}</span>
+        <span className="when">· {when}</span>
+        {call.durationMs !== null && (
+          <span className="when">· {formatToolDuration(call.durationMs)}</span>
+        )}
+        <span className={`exit ${exitClass}`}>{exitText}</span>
+      </div>
+      <div className="pane-body">
+        <span className="ln">1</span>
+        <span className="row cmd">$ {previewCmd(call)}</span>
+      </div>
+    </div>
+  );
+}
+
+function formatToolDuration(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  if (ms < 60_000) return `${(ms / 1000).toFixed(1)}s`;
+  return `${(ms / 60_000).toFixed(1)}m`;
 }
 
 /**
