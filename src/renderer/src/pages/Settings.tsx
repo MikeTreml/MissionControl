@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useRoute, type ViewId } from "../router";
 import { publish } from "../hooks/data-bus";
 import type { MCSettings } from "../../../shared/models";
+import type { PiModelInfo } from "../global";
 
 const SUBTABS: ReadonlyArray<{ id: ViewId; label: string }> = [
   { id: "settings-global", label: "Global" },
@@ -257,12 +258,33 @@ function DisplaySettings(): JSX.Element {
 
 // ═══════════════ MODELS ═══════════════
 /**
- * Models sub-tab. Today: a stub explaining where Models ought to live
- * (per CLAUDE.md "Models = roster + provider toggles; no Lane defaults").
- * Wiring deferred — pi owns the model roster via ModelRegistry; we'll
- * surface that here in a later slice.
+ * Models sub-tab — read-only roster of models pi knows about. Source
+ * is `pi:listModels` IPC (PiSessionManager → pi-mono ModelRegistry).
+ * Per-model toggles (cost cap, default reasoning, etc.) wait on a
+ * pi-side write IPC; for now this is just the visible roster + the
+ * cost / context-window numbers from pi's catalog.
  */
 export function SettingsModels(): JSX.Element {
+  const [models, setModels] = useState<PiModelInfo[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    if (!window.mc?.listPiModels) {
+      setLoading(false);
+      return;
+    }
+    void window.mc.listPiModels()
+      .then((next) => {
+        setModels(next);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setError(e instanceof Error ? e.message : String(e));
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <>
       <Header />
@@ -271,17 +293,88 @@ export function SettingsModels(): JSX.Element {
         <div className="card">
           <h3>Models</h3>
           <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-            Pi owns the model roster via its ModelRegistry. This screen
-            will surface the configured providers + per-model toggles
-            (cost cap, default reasoning, max tokens) once pi exposes
-            them through IPC. Until then, models are auth'd via env
-            vars (<code>OPENAI_API_KEY</code> / <code>ANTHROPIC_API_KEY</code>)
-            and selected per-task on the Task Detail picker.
+            Read-only roster. Pi owns the live ModelRegistry; MC asks
+            for the list at boot via the <code>pi:listModels</code> IPC.
+            Per-task model selection lives on the Task Detail picker —
+            this screen is for awareness of what's available. Auth via
+            env vars in the shell that launched <code>npm run dev</code>
+            (<code>OPENAI_API_KEY</code> / <code>ANTHROPIC_API_KEY</code> / etc).
           </p>
-          <div className="muted" style={{ marginTop: 12, fontSize: 12 }}>
-            See <code>library/models.json</code> for the catalog and
-            <code>~/.pi/agent/auth.json</code> for credentials.
-          </div>
+          {loading && (
+            <div className="muted" style={{ marginTop: 12, fontSize: 12 }}>
+              Loading…
+            </div>
+          )}
+          {error && (
+            <div className="muted" style={{ marginTop: 12, color: "var(--bad)", fontSize: 12 }}>
+              Failed to load model roster: {error}
+            </div>
+          )}
+          {!loading && !error && models.length === 0 && (
+            <div className="muted" style={{ marginTop: 12, fontSize: 12 }}>
+              No models reported by pi. Confirm pi is installed and the
+              relevant API keys are set in the shell.
+            </div>
+          )}
+          {models.length > 0 && (
+            <div style={{ marginTop: 12, display: "grid", gap: 1 }} role="table">
+              <div
+                role="row"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1.4fr 100px 110px 90px 90px 70px",
+                  gap: 12,
+                  fontSize: 11,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  color: "var(--muted)",
+                  padding: "6px 10px",
+                }}
+              >
+                <span>Model</span>
+                <span>Provider</span>
+                <span>Context</span>
+                <span style={{ textAlign: "right" }}>$/Mtok in</span>
+                <span style={{ textAlign: "right" }}>$/Mtok out</span>
+                <span>Reasoning</span>
+              </div>
+              {models.map((m) => (
+                <div
+                  key={m.id}
+                  role="row"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1.4fr 100px 110px 90px 90px 70px",
+                    gap: 12,
+                    alignItems: "center",
+                    padding: "8px 10px",
+                    fontSize: 12,
+                    borderRadius: 6,
+                    background: "var(--raised)",
+                    boxShadow: "var(--lift)",
+                  }}
+                  title={m.id}
+                >
+                  <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span style={{ fontFamily: "var(--font-mono)" }}>{m.name || m.id}</span>
+                  </span>
+                  <span className="muted">{m.provider}</span>
+                  <span className="muted" style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {m.contextWindow > 0 ? `${(m.contextWindow / 1000).toFixed(0)}k` : "—"}
+                  </span>
+                  <span className="muted" style={{ textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
+                    {m.costInputPerMTok ? `$${m.costInputPerMTok.toFixed(2)}` : "—"}
+                  </span>
+                  <span className="muted" style={{ textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
+                    {m.costOutputPerMTok ? `$${m.costOutputPerMTok.toFixed(2)}` : "—"}
+                  </span>
+                  <span className={m.reasoning ? "pill info" : "muted"} style={{ fontSize: 10, marginRight: 0 }}>
+                    {m.reasoning ? "yes" : "—"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -290,13 +383,14 @@ export function SettingsModels(): JSX.Element {
 
 // ═══════════════ AGENTS ═══════════════
 /**
- * Agents sub-tab — stub. The Library page is the source of truth for
- * agents/skills/workflows; this sub-tab is here so the sidebar's
- * "Agents" link has a destination. A future slice could surface
- * runtime-configurable knobs (default agent per workflow, allow-list
- * of skills to load) without duplicating the catalog browser.
+ * Agents sub-tab. Library page is the catalog source-of-truth, so
+ * this surface is a sign-post + a deep-link rather than its own
+ * editor. Future slices can layer runtime knobs on top (default agent
+ * per workflow, skill allow-lists) without duplicating the catalog
+ * browser.
  */
 export function SettingsAgents(): JSX.Element {
+  const { setView } = useRoute();
   return (
     <>
       <Header />
@@ -305,14 +399,18 @@ export function SettingsAgents(): JSX.Element {
         <div className="card">
           <h3>Agents</h3>
           <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-            The agent / skill catalog is managed by the
-            <strong> Library</strong> page (sidebar → Library). This
-            sub-tab is reserved for runtime knobs (default agent per
-            workflow, skill allow-lists) that don't live in the
-            catalog itself.
+            The agent / skill catalog is managed by the{" "}
+            <strong>Library</strong> page. Each kind has its own tab
+            there; per-item details are edited via the inspector (the
+            Edit toggle writes to a sidecar <code>INFO.json</code> next
+            to the source file). This sub-tab is reserved for runtime
+            knobs (default agent per workflow, skill allow-lists) that
+            don't belong on the per-item editor.
           </p>
-          <div className="muted" style={{ marginTop: 12, fontSize: 12 }}>
-            Browse the catalog: <code>library/_index.json</code>.
+          <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+            <button className="button" onClick={() => setView("library")}>
+              Browse the catalog →
+            </button>
           </div>
         </div>
       </div>

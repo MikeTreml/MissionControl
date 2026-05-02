@@ -1173,62 +1173,6 @@ body:has(.context-strip) .app-shell {
   max-width: calc(100vw - 64px);
   margin-right: -170px;
 }
-.qa-scrubber {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-right: 10px;
-  border-right: 1px solid var(--hairline-strong);
-}
-.qa-scrubber .label {
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
-  color: var(--muted);
-}
-.qa-scrubber .track {
-  position: relative;
-  width: 200px;
-  height: 4px;
-  background: var(--canvas);
-  border-radius: 999px;
-  cursor: pointer;
-}
-.qa-scrubber .fill {
-  position: absolute;
-  inset: 0;
-  background: var(--info);
-  border-radius: 999px;
-}
-.qa-scrubber .head {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 12px; height: 12px;
-  background: var(--text);
-  border-radius: 999px;
-  box-shadow: 0 0 0 3px var(--floating);
-}
-.qa-scrubber .ticks {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: space-between;
-  pointer-events: none;
-}
-.qa-scrubber .tick {
-  width: 1px;
-  height: 8px;
-  background: var(--muted);
-  opacity: 0.5;
-  transform: translateY(-2px);
-}
-.qa-scrubber .now {
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  min-width: 38px;
-}
 .qa-cmd {
   display: flex;
   align-items: center;
@@ -1243,7 +1187,7 @@ body:has(.context-strip) .app-shell {
   color: var(--text);
   font-family: inherit;
   font-size: var(--fs-md);
-  width: 200px;
+  width: 360px;
 }
 .qa-cmd input::placeholder { color: var(--muted); }
 .qa-cmd .kbd {

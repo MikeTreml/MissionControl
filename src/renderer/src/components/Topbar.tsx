@@ -110,9 +110,6 @@ export function Topbar(): JSX.Element {
           <span>Search tasks, projects, library</span>
           <span className="kbd">⌘K</span>
         </button>
-        <button className="button ghost" title="Filter (pending)" disabled>
-          ⚲
-        </button>
         <button className="button" onClick={() => setCreateOpen(true)}>
           + New task
         </button>
