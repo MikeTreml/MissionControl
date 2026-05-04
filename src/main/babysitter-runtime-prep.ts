@@ -61,16 +61,62 @@ async function readSkillIndexItems(libraryRoot: string): Promise<LibraryIndexIte
 }
 
 /**
+ * Find every `skill: { ... }` occurrence, including ones with nested
+ * objects like `skill: { name: 'x', params: { y: 1 } }`. Returns the
+ * body (between the outermost braces) plus the full match span so the
+ * rewriter can do a slice replacement. Brace balance ignores braces
+ * inside string literals.
+ */
+function findSkillObjects(src: string): Array<{ start: number; end: number; body: string }> {
+  const out: Array<{ start: number; end: number; body: string }> = [];
+  const headRe = /skill:\s*\{/g;
+  let head: RegExpExecArray | null;
+  while ((head = headRe.exec(src)) !== null) {
+    const bodyStart = head.index + head[0].length;
+    let depth = 1;
+    let i = bodyStart;
+    let inString: string | null = null;
+    while (i < src.length && depth > 0) {
+      const ch = src[i]!;
+      if (inString) {
+        if (ch === "\\") { i += 2; continue; }
+        if (ch === inString) inString = null;
+      } else if (ch === "'" || ch === '"' || ch === "`") {
+        inString = ch;
+      } else if (ch === "{") {
+        depth += 1;
+      } else if (ch === "}") {
+        depth -= 1;
+        if (depth === 0) {
+          out.push({ start: head.index, end: i + 1, body: src.slice(bodyStart, i) });
+          headRe.lastIndex = i + 1;
+          break;
+        }
+      }
+      i += 1;
+    }
+  }
+  return out;
+}
+
+/**
  * Pull every skill name referenced by a workflow. Two shapes:
- *   skill: { name: 'foo' }                  (singular — needs rewrite)
- *   metadata: { ..., skills: ['a', 'b'] }   (plural — already SDK-shaped)
- * Names are lower-cased uniqued in source order.
+ *   skill: { name: 'foo', ...other fields }  (singular — needs rewrite)
+ *   metadata: { ..., skills: ['a', 'b'] }    (plural — already SDK-shaped)
+ *
+ * The singular matcher walks balanced braces so nested objects (e.g.
+ * `params: { ... }`) don't confuse it, then pulls `name: 'X'` from the
+ * outer body. Bodies without a `name:` field are skipped — that filters
+ * false-positive schema declarations like
+ * `properties: { skill: { type: 'number' } }`.
+ *
+ * Names are returned uniqued in source order.
  */
 export function extractSkillNames(src: string): { singular: string[]; plural: string[]; all: string[] } {
   const singular: string[] = [];
-  const singularRe = /skill:\s*\{\s*name:\s*['"]([^'"]+)['"]\s*\}/g;
-  for (const m of src.matchAll(singularRe)) {
-    if (m[1]) singular.push(m[1]);
+  for (const obj of findSkillObjects(src)) {
+    const nameMatch = obj.body.match(/\bname:\s*(['"])([^'"]+)\1/);
+    if (nameMatch && nameMatch[2]) singular.push(nameMatch[2]);
   }
 
   const plural: string[] = [];
@@ -119,23 +165,33 @@ export function resolveSkillSource(
 }
 
 /**
- * Rewrite `skill: { name: 'X' }` → `metadata: { skills: ['X'] }`. We
- * deliberately don't try to merge with an existing `metadata: {...}` on
- * the same task — none of MC's 238 affected workflows have one today,
- * and a real merge requires a JS parser. If a future workflow does,
- * the SDK will see two `metadata:` keys and the second wins; the run
- * will still execute, just without the skill if metadata-key order
- * loses. Callers should grep for `// OPEN:` if that bites.
+ * Rewrite `skill: { ...name: 'X'... }` → `metadata: { skills: ['X'] }`.
+ *
+ * The matcher tolerates additional fields inside the skill object
+ * (version, params, etc.); only `name` is preserved because that's all
+ * the SDK reads. Any sibling fields are dropped — the SDK's
+ * `delegationConfig.skills` is a `string[]` per harnessUtils.js:546, so
+ * there's nowhere for them to land.
+ *
+ * We deliberately don't try to merge with an existing `metadata: {...}`
+ * on the same task — none of MC's affected workflows have one today,
+ * and a real merge requires a JS parser. If a future workflow does, the
+ * SDK will see two `metadata:` keys and the second wins; the run will
+ * still execute, just without the skill if metadata-key order loses.
+ * // OPEN: per-task metadata merge if/when a workflow needs it.
  */
 export function rewriteWorkflowSource(src: string): { out: string; changed: boolean } {
+  // Walk skill objects in reverse so slice replacements don't shift
+  // earlier match indexes.
+  const objects = findSkillObjects(src).reverse();
+  let out = src;
   let changed = false;
-  const out = src.replace(
-    /skill:\s*\{\s*name:\s*(['"])([^'"]+)\1\s*\}/g,
-    (_match, _q, name: string) => {
-      changed = true;
-      return `metadata: { skills: ['${name}'] }`;
-    },
-  );
+  for (const obj of objects) {
+    const nameMatch = obj.body.match(/\bname:\s*(['"])([^'"]+)\1/);
+    if (!nameMatch || !nameMatch[2]) continue;
+    out = out.slice(0, obj.start) + `metadata: { skills: ['${nameMatch[2]}'] }` + out.slice(obj.end);
+    changed = true;
+  }
   return { out, changed };
 }
 
