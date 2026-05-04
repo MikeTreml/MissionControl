@@ -31,7 +31,7 @@ export function Board(): JSX.Element {
   const failedCount = byStage.Failed.length;
 
   return (
-    <section className="card">
+    <section data-surface-content="board">
       {isDemo && (
         <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
           <span className="pill warn">Demo</span>
