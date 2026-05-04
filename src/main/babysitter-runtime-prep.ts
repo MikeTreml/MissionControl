@@ -1,0 +1,208 @@
+/**
+ * Stage SKILL.md content into the workspace before babysitter spawns a
+ * curated run. Why this exists:
+ *
+ * The SDK's prompt builder (harnessUtils.js:546) loads skills from
+ *   <workspace>/.a5c/skills/<name>/SKILL.md
+ *   <workspace>/.claude/plugins/<name>/SKILL.md
+ * and *only* recognises the plural `metadata: { skills: [...] }` field on
+ * a task. Library workflows in MC use a singular `skill: { name: 'X' }`
+ * shape that the SDK silently ignores. So before invoking
+ * `harness:create-run` we:
+ *   1. extract every skill name referenced by the workflow,
+ *   2. resolve it against library/_index.skill.json + libraryRoot,
+ *   3. copy the resolved SKILL.md into <workspace>/.a5c/skills/<name>/,
+ *   4. emit a rewritten workflow copy under
+ *      <workspace>/.a5c/mc-generated/<basename>.gen.js that swaps
+ *      `skill: { name: 'X' }` → `metadata: { skills: ['X'] }`
+ *      so the SDK actually injects the SKILL.md text into the worker
+ *      session prompt.
+ *
+ * Scope (intentional): skills only — agent materialization is a follow-up.
+ * Resolution priority is by `name` field, then by trailing slug of
+ * `logicalPath`. Missing skills are reported but do not throw — the
+ * caller decides whether to abort.
+ */
+import { promises as fs, existsSync } from "node:fs";
+import path from "node:path";
+
+import { INDEX_FILES, type LibraryIndexItem } from "./library-walker.ts";
+
+export type SkillResolution = {
+  name: string;
+  status: "materialized" | "missing";
+  /** Source SKILL.md (absolute) when resolved. */
+  resolvedFrom?: string;
+  /** Destination SKILL.md (absolute) when materialized. */
+  materializedTo?: string;
+};
+
+export type RuntimePrepResult = {
+  /** Path to pass to `babysitter harness:create-run --process`. */
+  generatedWorkflowPath: string;
+  /** True when MC produced a rewritten copy under .a5c/mc-generated/. */
+  rewritten: boolean;
+  skills: SkillResolution[];
+  /** Names that appeared in the workflow source but had no library match. */
+  missingSkills: string[];
+};
+
+/** Bare-bones index reader — only pulls the skill index. */
+async function readSkillIndexItems(libraryRoot: string): Promise<LibraryIndexItem[]> {
+  const file = path.join(libraryRoot, INDEX_FILES.skill);
+  try {
+    const raw = await fs.readFile(file, "utf8");
+    const parsed = JSON.parse(raw) as { items?: LibraryIndexItem[] };
+    return Array.isArray(parsed.items) ? parsed.items : [];
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw e;
+  }
+}
+
+/**
+ * Pull every skill name referenced by a workflow. Two shapes:
+ *   skill: { name: 'foo' }                  (singular — needs rewrite)
+ *   metadata: { ..., skills: ['a', 'b'] }   (plural — already SDK-shaped)
+ * Names are lower-cased uniqued in source order.
+ */
+export function extractSkillNames(src: string): { singular: string[]; plural: string[]; all: string[] } {
+  const singular: string[] = [];
+  const singularRe = /skill:\s*\{\s*name:\s*['"]([^'"]+)['"]\s*\}/g;
+  for (const m of src.matchAll(singularRe)) {
+    if (m[1]) singular.push(m[1]);
+  }
+
+  const plural: string[] = [];
+  // metadata: { ... skills: [ 'a', "b" ] ... } — allow newlines inside
+  const pluralRe = /metadata:\s*\{[\s\S]*?skills:\s*\[([\s\S]*?)\]/g;
+  for (const m of src.matchAll(pluralRe)) {
+    const body = m[1] ?? "";
+    for (const item of body.matchAll(/['"]([^'"]+)['"]/g)) {
+      if (item[1]) plural.push(item[1]);
+    }
+  }
+
+  const seen = new Set<string>();
+  const all: string[] = [];
+  for (const n of [...singular, ...plural]) {
+    if (!seen.has(n)) { seen.add(n); all.push(n); }
+  }
+  return { singular: dedupe(singular), plural: dedupe(plural), all };
+}
+
+function dedupe(xs: string[]): string[] {
+  return [...new Set(xs)];
+}
+
+/**
+ * Resolve a skill name against the index. Match priority:
+ *   1. exact `name` field
+ *   2. trailing slug of `logicalPath`
+ * Returns the absolute disk path of the source SKILL.md, or null.
+ *
+ * NOTE: We don't trust `item.diskPath` from the index directly — those
+ * paths are recorded at index-build time and may reflect a different
+ * machine. We re-derive from `id` + libraryRoot.
+ */
+export function resolveSkillSource(
+  name: string,
+  libraryRoot: string,
+  items: LibraryIndexItem[],
+): string | null {
+  const byName = items.find((it) => it.name === name);
+  const byLeaf = byName ?? items.find((it) => it.logicalPath.split("/").at(-1) === name);
+  if (!byLeaf) return null;
+  // id looks like "business/.../skills/<slug>/SKILL" — append .md.
+  const candidate = path.join(libraryRoot, `${byLeaf.id}.md`);
+  return existsSync(candidate) ? candidate : null;
+}
+
+/**
+ * Rewrite `skill: { name: 'X' }` → `metadata: { skills: ['X'] }`. We
+ * deliberately don't try to merge with an existing `metadata: {...}` on
+ * the same task — none of MC's 238 affected workflows have one today,
+ * and a real merge requires a JS parser. If a future workflow does,
+ * the SDK will see two `metadata:` keys and the second wins; the run
+ * will still execute, just without the skill if metadata-key order
+ * loses. Callers should grep for `// OPEN:` if that bites.
+ */
+export function rewriteWorkflowSource(src: string): { out: string; changed: boolean } {
+  let changed = false;
+  const out = src.replace(
+    /skill:\s*\{\s*name:\s*(['"])([^'"]+)\1\s*\}/g,
+    (_match, _q, name: string) => {
+      changed = true;
+      return `metadata: { skills: ['${name}'] }`;
+    },
+  );
+  return { out, changed };
+}
+
+export async function prepareBabysitterRuntime(input: {
+  workspaceCwd: string;
+  libraryRoot: string;
+  workflowDiskPath: string;
+}): Promise<RuntimePrepResult> {
+  const { workspaceCwd, libraryRoot, workflowDiskPath } = input;
+  const src = await fs.readFile(workflowDiskPath, "utf8");
+  const { singular, all } = extractSkillNames(src);
+
+  const skills: SkillResolution[] = [];
+  const missingSkills: string[] = [];
+
+  if (all.length > 0) {
+    const indexItems = await readSkillIndexItems(libraryRoot);
+    const skillsRoot = path.join(workspaceCwd, ".a5c", "skills");
+    for (const name of all) {
+      const source = resolveSkillSource(name, libraryRoot, indexItems);
+      if (!source) {
+        skills.push({ name, status: "missing" });
+        missingSkills.push(name);
+        continue;
+      }
+      const destDir = path.join(skillsRoot, name);
+      const destFile = path.join(destDir, "SKILL.md");
+      await fs.mkdir(destDir, { recursive: true });
+      await fs.copyFile(source, destFile);
+      skills.push({
+        name,
+        status: "materialized",
+        resolvedFrom: source,
+        materializedTo: destFile,
+      });
+    }
+  }
+
+  if (singular.length === 0) {
+    return {
+      generatedWorkflowPath: workflowDiskPath,
+      rewritten: false,
+      skills,
+      missingSkills,
+    };
+  }
+
+  const { out, changed } = rewriteWorkflowSource(src);
+  if (!changed) {
+    return {
+      generatedWorkflowPath: workflowDiskPath,
+      rewritten: false,
+      skills,
+      missingSkills,
+    };
+  }
+
+  const genDir = path.join(workspaceCwd, ".a5c", "mc-generated");
+  await fs.mkdir(genDir, { recursive: true });
+  const baseName = path.basename(workflowDiskPath).replace(/\.js$/i, "");
+  const generatedWorkflowPath = path.join(genDir, `${baseName}.gen.js`);
+  await fs.writeFile(generatedWorkflowPath, out, "utf8");
+
+  return {
+    generatedWorkflowPath,
+    rewritten: true,
+    skills,
+    missingSkills,
+  };
+}

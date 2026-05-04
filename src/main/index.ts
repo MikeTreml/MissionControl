@@ -75,7 +75,7 @@ async function bootstrapStores(): Promise<void> {
   // Pi inherits auth from the environment: OPENAI_API_KEY,
   // ANTHROPIC_API_KEY, etc. Set them in the shell that launched `npm run dev`.
   const pi = new PiSessionManager(tasks);
-  const runs = new RunManager(tasks, pi, null, projects, settings);
+  const runs = new RunManager(tasks, pi, null, projects, settings, join(appRoot, "library"));
   pi.setOnSessionEnd((taskId, result) =>
     runs.completeRun(taskId, result.reason),
   );

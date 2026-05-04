@@ -28,6 +28,7 @@ import type { SettingsStore } from "./settings-store.ts";
 import { JournalReader } from "./journal-reader.ts";
 import { renderPromptFile } from "./render-prompt.ts";
 import { writeLatestRunMetricsArtifact } from "./run-cost-tracker.ts";
+import { prepareBabysitterRuntime } from "./babysitter-runtime-prep.ts";
 import type { CampaignItem, MCSettings, RunState, Task } from "../shared/models.ts";
 
 /**
@@ -63,6 +64,7 @@ export class RunManager {
   private readonly projects: ProjectStore | null;
   private readonly pi: PiSessionManager | null;
   private readonly settings: SettingsStore | null;
+  private readonly libraryRoot: string | null;
   /** Active journal readers per task. Stopped on completeRun. */
   private readonly journalReaders = new Map<string, JournalReader>();
 
@@ -72,11 +74,13 @@ export class RunManager {
     _legacyAgents?: unknown,
     projects?: ProjectStore | null,
     settings?: SettingsStore | null,
+    libraryRoot?: string | null,
   ) {
     this.tasks = tasks;
     this.pi = pi ?? null;
     this.projects = projects ?? null;
     this.settings = settings ?? null;
+    this.libraryRoot = libraryRoot ?? null;
   }
 
   /**
@@ -321,10 +325,45 @@ export class RunManager {
     await fs.mkdir(runsDir, { recursive: true });
     const beforeRuns = await snapshotBabysitterRuns(cwd);
 
+    // Materialize referenced SKILL.md into <cwd>/.a5c/skills/ and (if the
+    // workflow uses the legacy singular `skill: { name }` shape) emit a
+    // rewritten copy under <cwd>/.a5c/mc-generated/. The SDK's prompt
+    // builder only reads `metadata.skills` + .a5c/skills/<name>/SKILL.md,
+    // so without this step skills are silently dropped at runtime.
+    let effectiveProcessPath = processPath;
+    if (this.libraryRoot) {
+      try {
+        const prep = await prepareBabysitterRuntime({
+          workspaceCwd: cwd,
+          libraryRoot: this.libraryRoot,
+          workflowDiskPath: processPath,
+        });
+        effectiveProcessPath = prep.generatedWorkflowPath;
+        await this.tasks.appendEvent(task.id, {
+          type: "bs:prep",
+          rewritten: prep.rewritten,
+          materialized: prep.skills.filter((s) => s.status === "materialized").map((s) => s.name),
+          missing: prep.missingSkills,
+          processPath: effectiveProcessPath,
+        });
+        if (prep.missingSkills.length > 0) {
+          await this.tasks.appendStatus(
+            task.id,
+            `Warning — workflow references unresolved skills: ${prep.missingSkills.join(", ")}`,
+          );
+        }
+      } catch (e) {
+        await this.tasks.appendEvent(task.id, {
+          type: "bs:prep-error",
+          message: e instanceof Error ? e.message : String(e),
+        });
+      }
+    }
+
     const args = [
       cliPath,
       "harness:create-run",
-      "--process", processPath,
+      "--process", effectiveProcessPath,
       "--harness", "pi",
       "--workspace", cwd,
       "--runs-dir", runsDir,

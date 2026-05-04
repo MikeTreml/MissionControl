@@ -1,0 +1,4 @@
+interface:
+  display_name: "Electron Architect"
+  short_description: "Design and audit Electron architecture"
+  default_prompt: "Use $electron-architect to review Electron IPC, security, performance, and cross-platform architecture."
