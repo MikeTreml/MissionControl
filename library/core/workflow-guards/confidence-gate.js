@@ -1,13 +1,12 @@
 /**
  * Confidence gate helper for Babysitter workflows.
  *
- * Use this after an agent/task result when the workflow should continue only
- * when the result is likely correct enough. The helper uses ctx.breakpoint,
- * so MissionControl can render the approval card and answer through
- * Babysitter's native pending-effect/task:post flow.
+ * Run-first behavior:
+ * - High/normal confidence never interrupts.
+ * - Only very low or missing confidence asks for review.
  */
 
-export const DEFAULT_CONFIDENCE_THRESHOLD = 90;
+export const VERY_LOW_CONFIDENCE_THRESHOLD = 60;
 
 export function getConfidencePercent(result) {
   if (!result || typeof result !== 'object') return null;
@@ -31,49 +30,44 @@ export function getConfidencePercent(result) {
 }
 
 export async function requireConfidence(ctx, result, options = {}) {
-  const threshold = options.threshold ?? DEFAULT_CONFIDENCE_THRESHOLD;
+  const threshold = options.veryLowThreshold ?? VERY_LOW_CONFIDENCE_THRESHOLD;
   const confidence = getConfidencePercent(result);
-  const shouldAsk = confidence === null || confidence < threshold;
 
-  if (!shouldAsk) {
+  if (confidence === null || confidence < threshold) {
+    const approval = await ctx.breakpoint({
+      title: options.title ?? 'Very low confidence',
+      question:
+        options.question ??
+        (confidence === null
+          ? 'No confidence value returned. Continue?'
+          : `Confidence ${confidence}%. Continue?`),
+      options: options.options ?? ['Continue', 'Stop'],
+      tags: options.tags ?? ['confidence-gate'],
+      context: {
+        runId: ctx.runId,
+        confidence,
+        threshold,
+        result,
+        ...(options.context ?? {}),
+      },
+    });
+
+    if (!approval.approved && options.throwOnReject === true) {
+      throw new Error('Stopped by user: very low confidence.');
+    }
+
     return {
-      approved: true,
+      ...approval,
       confidence,
       threshold,
-      skipped: true,
+      skipped: false,
     };
   }
 
-  const approval = await ctx.breakpoint({
-    title: options.title ?? 'Confidence review required',
-    question:
-      options.question ??
-      (confidence === null
-        ? `The task did not return a confidence value. Review before continuing?`
-        : `The task returned ${confidence}% confidence. Required threshold is ${threshold}%. Continue?`),
-    options: options.options ?? ['Approve', 'Reject'],
-    tags: options.tags ?? ['confidence-gate'],
-    context: {
-      runId: ctx.runId,
-      confidence,
-      threshold,
-      result,
-      ...(options.context ?? {}),
-    },
-  });
-
-  if (!approval.approved && options.throwOnReject !== false) {
-    throw new Error(
-      confidence === null
-        ? 'Stopped by user: missing confidence value.'
-        : `Stopped by user: confidence ${confidence}% is below threshold ${threshold}%.`,
-    );
-  }
-
   return {
-    ...approval,
+    approved: true,
     confidence,
     threshold,
-    skipped: false,
+    skipped: true,
   };
 }
