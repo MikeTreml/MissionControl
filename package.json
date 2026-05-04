@@ -17,6 +17,7 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web && npm run typecheck:tests",
     "smoke": "node --experimental-strip-types src/main/store.smoke.ts && node --experimental-strip-types src/main/project-store.smoke.ts && node --experimental-strip-types src/main/git-detect.smoke.ts && node --experimental-strip-types src/main/run-manager.smoke.ts && node --experimental-strip-types src/main/pi-session-manager.smoke.ts && node --experimental-strip-types src/main/settings-store.smoke.ts && node --experimental-strip-types src/main/library-walker.smoke.ts && node --experimental-strip-types src/main/workflow-generator.smoke.ts && node --experimental-strip-types src/main/workflow-creator.smoke.ts && node --experimental-strip-types src/main/library-item-creator.smoke.ts && node --experimental-strip-types src/main/item-info-store.smoke.ts && node --experimental-strip-types src/main/memory-store.smoke.ts",
     "test:workflow": "node --experimental-strip-types tests/workflow/example-workflow.smoke.ts",
+    "test:workflow-guards": "node --experimental-strip-types tests/workflow-guards.smoke.ts",
     "test:replay": "echo \"No replay fixtures captured yet — see tests/replay/README.md\" && exit 0",
     "verify-ui": "node scripts/verify-ui.mjs",
     "doctor": "npm run typecheck && npm run smoke && npm run test:workflow && npm run build && npm run verify-ui",
