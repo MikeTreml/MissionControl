@@ -50,6 +50,16 @@ export type WorkflowSpec = {
    * separator text seen in cradle/* workflows.
    */
   headerNote?: string;
+  confidenceGate?: {
+    enabled?: boolean;
+    threshold?: number;
+    taskRefs?: string[];
+  };
+  testGate?: {
+    enabled?: boolean;
+    requireTestRun?: boolean;
+    taskRefs?: string[];
+  };
 };
 
 export type ImportSpec = {
@@ -228,6 +238,12 @@ export function generateWorkflow(spec: WorkflowSpec): string {
   parts.push(renderHeader(spec));
   parts.push("");
   parts.push("import { defineTask } from '@a5c-ai/babysitter-sdk';");
+  if (spec.confidenceGate?.enabled) {
+    parts.push("import { requireConfidence } from 'core/workflow-guards/confidence-gate.js';");
+  }
+  if (spec.testGate?.enabled) {
+    parts.push("import { requireTests } from 'core/workflow-guards/test-gate.js';");
+  }
   for (const imp of spec.extraImports ?? []) {
     parts.push(`import { ${imp.named.join(", ")} } from ${jsString(imp.source)};`);
   }
@@ -431,7 +447,7 @@ function renderProcess(spec: WorkflowSpec): string {
   spec.phases.forEach((phase, i) => {
     out.push(indentBlock(banner(`PHASE ${i + 1}: ${phase.title.toUpperCase()}`), 2));
     out.push("");
-    out.push(indentBlock(renderPhase(phase), 2));
+    out.push(indentBlock(renderPhase(phase, spec), 2));
     out.push("");
   });
 
@@ -449,10 +465,10 @@ function renderProcess(spec: WorkflowSpec): string {
   return out.join("\n");
 }
 
-function renderPhase(phase: Phase): string {
+function renderPhase(phase: Phase, spec: WorkflowSpec): string {
   switch (phase.kind) {
     case "sequential":
-      return renderSequential(phase);
+      return renderSequential(phase, spec);
     case "parallel":
       return renderParallel(phase);
     case "breakpoint":
@@ -462,17 +478,18 @@ function renderPhase(phase: Phase): string {
     case "conditional":
       return renderConditional(phase);
     case "conditional-block":
-      return renderConditionalBlock(phase);
+      return renderConditionalBlock(phase, spec);
     case "confirm-loop":
       return renderConfirmLoop(phase);
   }
 }
 
-function renderSequential(phase: SequentialPhase): string {
+function renderSequential(phase: SequentialPhase, spec: WorkflowSpec): string {
   const lines: string[] = [];
   if (phase.logMessage) lines.push(`ctx.log('info', ${jsString(phase.logMessage)});`);
   const decl = phase.mutable ? "let" : "const";
   lines.push(`${decl} ${phase.resultVar} = await ctx.task(${phase.taskRef}, ${renderArgs(phase.args)});`);
+  lines.push(...renderResultGuardCalls(spec, phase.taskRef, phase.resultVar));
   return lines.join("\n");
 }
 
@@ -566,9 +583,31 @@ function renderConditional(phase: ConditionalPhase): string {
   return lines.join("\n");
 }
 
-function renderConditionalBlock(phase: ConditionalBlockPhase): string {
-  const body = indentBlock(renderPhase(phase.body), 2);
+function renderConditionalBlock(phase: ConditionalBlockPhase, spec: WorkflowSpec): string {
+  const body = indentBlock(renderPhase(phase.body, spec), 2);
   return `if (${phase.condition}) {\n${body}\n}`;
+}
+
+function renderResultGuardCalls(spec: WorkflowSpec, taskRef: string, resultVar: string): string[] {
+  const lines: string[] = [];
+
+  if (
+    spec.confidenceGate?.enabled &&
+    (!spec.confidenceGate.taskRefs || spec.confidenceGate.taskRefs.includes(taskRef))
+  ) {
+    const threshold = spec.confidenceGate.threshold ?? 90;
+    lines.push(`await requireConfidence(ctx, ${resultVar}, { threshold: ${threshold} });`);
+  }
+
+  if (
+    spec.testGate?.enabled &&
+    (!spec.testGate.taskRefs || spec.testGate.taskRefs.includes(taskRef))
+  ) {
+    const requireTestRun = spec.testGate.requireTestRun ?? false;
+    lines.push(`await requireTests(ctx, ${resultVar}, { requireTestRun: ${requireTestRun} });`);
+  }
+
+  return lines;
 }
 
 function renderConfirmLoop(phase: ConfirmLoopPhase): string {

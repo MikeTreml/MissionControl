@@ -16,7 +16,7 @@ import { AddProjectForm } from "../components/AddProjectForm";
 import { SkeletonLine, SkeletonBlock, SkeletonRows } from "../components/Skeleton";
 import { ProjectMemoryCard } from "../components/ProjectMemoryCard";
 import type { UiTask } from "../hooks/useTasks";
-import type { ProjectWithGit } from "../../../shared/models";
+import { ProjectDecisionPolicySchema, type ProjectWithGit } from "../../../shared/models";
 import type { ProjectRunMetricsRollup } from "../global";
 
 export function ProjectDetail(): JSX.Element {
@@ -138,6 +138,7 @@ export function ProjectDetail(): JSX.Element {
         path: project.path,
         icon: project.icon,
         notes: project.notes,
+        policy: ProjectDecisionPolicySchema.parse({}),
         isSample: false,
         gitInfo: { kind: "none", label: "", remoteUrl: "" },
       }

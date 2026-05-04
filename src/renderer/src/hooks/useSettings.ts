@@ -7,13 +7,10 @@
  * MCSettingsSchema in src/shared/models.ts.
  */
 import { useEffect, useState } from "react";
-import type { MCSettings } from "../../../shared/models";
+import { MCSettingsSchema, type MCSettings } from "../../../shared/models";
 import { useSubscribe } from "./data-bus";
 
-const DEFAULTS: MCSettings = {
-  runConcurrencyCap: 10,
-  showSampleData: true,
-};
+const DEFAULTS: MCSettings = MCSettingsSchema.parse({});
 
 export function useSettings(): MCSettings {
   const [settings, setSettings] = useState<MCSettings>(DEFAULTS);

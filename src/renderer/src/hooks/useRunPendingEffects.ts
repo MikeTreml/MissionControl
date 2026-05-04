@@ -16,7 +16,7 @@ export function useRunPendingEffects(taskId: string | null | undefined): {
   error: string | null;
   refresh: () => Promise<void>;
 } {
-  const { settings } = useSettings();
+  const settings = useSettings();
   const [effects, setEffects] = useState<PendingRunEffect[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

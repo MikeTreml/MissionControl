@@ -26,6 +26,7 @@ function mockTaskToTask(id: string): Task | null {
     runState: m.active ? "running" : "idle",
     cycle: 1,
     items: [],
+    decisionScore: null,
     blocker: "",
     parentTaskId: "",
     babysitterMode: "plan",

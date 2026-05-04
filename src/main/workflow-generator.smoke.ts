@@ -204,6 +204,8 @@ async function main(): Promise<void> {
   assert(source.includes("@inputs { bugDescription?: string, component?: string }"), "inputs JSDoc rendered");
   assert(source.includes("@outputs { prUrl: string, summary: string }"), "outputs JSDoc rendered");
   assert(source.includes("import { defineTask } from '@a5c-ai/babysitter-sdk'"), "SDK import present");
+  assert(!source.includes("requireConfidence"), "confidence guard import omitted by default");
+  assert(!source.includes("requireTests"), "test guard import omitted by default");
   assert(source.includes("export async function process(inputs, ctx)"), "process signature present");
   assert(source.match(/PHASE 1: GATHER DETAILS/), "phase 1 banner");
   assert(source.match(/PHASE 2: RUN TESTS AND LINT/), "phase 2 banner");
@@ -252,6 +254,36 @@ async function main(): Promise<void> {
   const sourceWithSuccessExpr = generateWorkflow({ ...sampleSpec, successExpression: "prResult.success" });
   assert(sourceWithSuccessExpr.includes("success: prResult.success,"), "successExpression propagated to return");
   assert(!sourceWithSuccessExpr.includes("success: true,"), "default 'true' not emitted when successExpression set");
+
+  const guardedSource = generateWorkflow({
+    ...sampleSpec,
+    confidenceGate: { enabled: true, threshold: 75, taskRefs: ["gatherDetailsTask"] },
+    testGate: { enabled: true, requireTestRun: true, taskRefs: ["submitPrTask"] },
+  });
+  assert(
+    guardedSource.includes("import { requireConfidence } from 'core/workflow-guards/confidence-gate.js';"),
+    "confidence guard import emitted when enabled",
+  );
+  assert(
+    guardedSource.includes("import { requireTests } from 'core/workflow-guards/test-gate.js';"),
+    "test guard import emitted when enabled",
+  );
+  assert(
+    guardedSource.includes("await requireConfidence(ctx, details, { threshold: 75 });"),
+    "confidence guard call emitted after matching sequential task",
+  );
+  assert(
+    guardedSource.includes("await requireTests(ctx, prResult, { requireTestRun: true });"),
+    "test guard call emitted after matching sequential task",
+  );
+  assert(
+    !guardedSource.includes("await requireConfidence(ctx, prResult"),
+    "confidence guard not emitted for non-matching taskRef",
+  );
+  assert(
+    !guardedSource.includes("await requireTests(ctx, details"),
+    "test guard not emitted for non-matching taskRef",
+  );
 
   // jsString robustness: a question containing CR + U+2028 + U+2029 must produce
   // a parseable file. Round-trip through the same import mechanism.
