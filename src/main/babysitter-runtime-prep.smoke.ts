@@ -129,8 +129,8 @@ export const t3 = defineTask('c', () => ({
   const result = await prepareBabysitterRuntime({ workspaceCwd, libraryRoot, workflowDiskPath: workflowPath, runId: "TP-001A" });
   assert(result.rewritten, "result.rewritten true");
   assert(
-    result.generatedWorkflowPath.endsWith(path.join("mc-generated", "TP-001A-demo.gen.js")),
-    `generated path scoped by runId: ${result.generatedWorkflowPath}`,
+    result.generatedWorkflowPath.endsWith(path.join("mc-generated", "TP-001A", "demo.gen.js")),
+    `generated path scoped by runId directory: ${result.generatedWorkflowPath}`,
   );
 
   // Collision isolation: a second task that points at a *different*

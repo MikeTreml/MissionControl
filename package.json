@@ -31,6 +31,7 @@
     "list-pi-extensions": "node --experimental-strip-types scripts/list-pi-extensions.ts",
     "setup": "pwsh scripts/setup.ps1",
     "build-library-index": "node --experimental-strip-types scripts/build-library-index.ts",
+    "library:skill-audit": "node --experimental-strip-types scripts/library-skill-audit.ts",
     "library:enrichment-audit": "node --experimental-strip-types scripts/library-enrichment-audit.ts"
   },
   "dependencies": {

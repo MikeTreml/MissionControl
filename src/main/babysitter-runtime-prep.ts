@@ -13,7 +13,7 @@
  *   2. resolve it against library/_index.skill.json + libraryRoot,
  *   3. copy the resolved SKILL.md into <workspace>/.a5c/skills/<name>/,
  *   4. emit a rewritten workflow copy under
- *      <workspace>/.a5c/mc-generated/<basename>.gen.js that swaps
+ *      <workspace>/.a5c/mc-generated/<runId>/<basename>.gen.js that swaps
  *      `skill: { name: 'X' }` → `metadata: { skills: ['X'] }`
  *      so the SDK actually injects the SKILL.md text into the worker
  *      session prompt.
@@ -200,11 +200,11 @@ export async function prepareBabysitterRuntime(input: {
   libraryRoot: string;
   workflowDiskPath: string;
   /**
-   * Caller-supplied scope for the generated workflow filename — usually
+   * Caller-supplied scope for the generated workflow directory — usually
    * the task id. Without this, two tasks in the same project that pick
    * different workflows with the same basename (e.g. two repos each with
-   * `analysis.js`) would clobber each other's `.gen.js` under
-   * `<cwd>/.a5c/mc-generated/`. Required when the rewrite runs.
+   * `analysis.js`) would clobber each other's `.gen.js`. Required when
+   * the rewrite runs.
    */
   runId: string;
 }): Promise<RuntimePrepResult> {
@@ -257,11 +257,11 @@ export async function prepareBabysitterRuntime(input: {
     };
   }
 
-  const genDir = path.join(workspaceCwd, ".a5c", "mc-generated");
+  const safeRunId = runId.replace(/[^A-Za-z0-9._-]/g, "_");
+  const genDir = path.join(workspaceCwd, ".a5c", "mc-generated", safeRunId);
   await fs.mkdir(genDir, { recursive: true });
   const baseName = path.basename(workflowDiskPath).replace(/\.js$/i, "");
-  const safeRunId = runId.replace(/[^A-Za-z0-9._-]/g, "_");
-  const generatedWorkflowPath = path.join(genDir, `${safeRunId}-${baseName}.gen.js`);
+  const generatedWorkflowPath = path.join(genDir, `${baseName}.gen.js`);
   await fs.writeFile(generatedWorkflowPath, out, "utf8");
 
   return {
