@@ -1,4 +1,6 @@
-# CLAUDE.md — orientation for Claude Code
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 You're working in **mc-v2-electron**, the desktop app behind Mission Control.
 
@@ -42,17 +44,28 @@ Michael is the user / project owner. He:
 
 ## Commands
 
+This is the repo root — there's no nested `mc-v2-electron/` folder. Run all
+commands from here.
+
 ```bash
-# From mc-v2-electron/
 npm install
 npm run dev            # electron-vite dev server + Electron window
+npm run build          # production bundle into out/
+npm run build-library-index   # rebuild library/_index.json after edits
 
-# Type safety
-npx tsc --noEmit -p tsconfig.node.json   # main + preload
-npx tsc --noEmit -p tsconfig.web.json    # renderer
+# Type safety (npm run typecheck runs all three)
+npm run typecheck:node    # main + preload (tsconfig.node.json)
+npm run typecheck:web     # renderer       (tsconfig.web.json)
+npm run typecheck:tests   # tests/         (tests/tsconfig.json)
 
-# Smoke tests — see package.json `smoke` script for the full set.
-# Quick way: npm run smoke
+# Smoke tests — see package.json `smoke` script for the full set
+npm run smoke                  # all main-process *.smoke.ts in src/main/
+npm run test:workflow          # tests/workflow/example-workflow.smoke.ts
+npm run test:workflow-guards   # tests/workflow-guards.smoke.ts
+npm run verify-ui              # Playwright skeleton against built app
+
+# One-shot pre-commit gate — run this before every commit
+npm run doctor    # typecheck + smoke + test:workflow + build + verify-ui
 ```
 
 ## Orientation — grep these first
@@ -227,6 +240,7 @@ Follow these conventions so files don't scatter:
 | A new agent / skill / workflow | Add it under `library/` (matching kind), then `npm run build-library-index` to refresh `_index.json`. No code change. |
 | A reusable renderer utility | `src/renderer/src/lib/<name>.ts` |
 | A main-process helper (no state) | `src/main/<name>.ts` + consider a smoke test |
+| A workflow-level / cross-cutting smoke test | `tests/<name>.smoke.ts` (has its own `tsconfig.json`; covered by `npm run typecheck:tests`). Wire into a script in `package.json` if it should run in CI / `doctor`. |
 | Documentation | `docs/<NAME>.md` for long docs; inline JSDoc for anything code-adjacent |
 
 ## Naming conventions
