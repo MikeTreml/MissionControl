@@ -330,34 +330,51 @@ export class RunManager {
     // rewritten copy under <cwd>/.a5c/mc-generated/. The SDK's prompt
     // builder only reads `metadata.skills` + .a5c/skills/<name>/SKILL.md,
     // so without this step skills are silently dropped at runtime.
-    let effectiveProcessPath = processPath;
-    if (this.libraryRoot) {
-      try {
-        const prep = await prepareBabysitterRuntime({
-          workspaceCwd: cwd,
-          libraryRoot: this.libraryRoot,
-          workflowDiskPath: processPath,
-        });
-        effectiveProcessPath = prep.generatedWorkflowPath;
-        await this.tasks.appendEvent(task.id, {
-          type: "bs:prep",
-          rewritten: prep.rewritten,
-          materialized: prep.skills.filter((s) => s.status === "materialized").map((s) => s.name),
-          missing: prep.missingSkills,
-          processPath: effectiveProcessPath,
-        });
-        if (prep.missingSkills.length > 0) {
-          await this.tasks.appendStatus(
-            task.id,
-            `Warning — workflow references unresolved skills: ${prep.missingSkills.join(", ")}`,
-          );
-        }
-      } catch (e) {
+    //
+    // Failure policy: fail fast. A prep exception or any unresolved skill
+    // aborts the start so an "operational"-looking run can't ship without
+    // the SKILL.md context the workflow declared. If the library is
+    // missing references the fix is in the library (or skip the workflow);
+    // a half-prepped run papers over that and is harder to debug later.
+    // // OPEN: surface a per-task "allow degraded run" opt-in if Michael
+    // wants to ship workflows known to reference future skills.
+    if (!this.libraryRoot) {
+      await this.tasks.appendStatus(task.id, "Curated workflow start failed: library root not configured");
+      return task;
+    }
+    let effectiveProcessPath: string;
+    try {
+      const prep = await prepareBabysitterRuntime({
+        workspaceCwd: cwd,
+        libraryRoot: this.libraryRoot,
+        workflowDiskPath: processPath,
+        runId: task.id,
+      });
+      await this.tasks.appendEvent(task.id, {
+        type: "bs:prep",
+        rewritten: prep.rewritten,
+        materialized: prep.skills.filter((s) => s.status === "materialized").map((s) => s.name),
+        missing: prep.missingSkills,
+        processPath: prep.generatedWorkflowPath,
+      });
+      if (prep.missingSkills.length > 0) {
         await this.tasks.appendEvent(task.id, {
           type: "bs:prep-error",
-          message: e instanceof Error ? e.message : String(e),
+          message: `Unresolved skills: ${prep.missingSkills.join(", ")}`,
+          missing: prep.missingSkills,
         });
+        await this.tasks.appendStatus(
+          task.id,
+          `Curated workflow start aborted — workflow references unresolved skills: ${prep.missingSkills.join(", ")}. Add them to library/ or pick another workflow.`,
+        );
+        return task;
       }
+      effectiveProcessPath = prep.generatedWorkflowPath;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      await this.tasks.appendEvent(task.id, { type: "bs:prep-error", message });
+      await this.tasks.appendStatus(task.id, `Curated workflow start failed during prep: ${message}`);
+      return task;
     }
 
     const args = [

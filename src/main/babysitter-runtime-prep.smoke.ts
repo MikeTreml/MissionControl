@@ -126,9 +126,28 @@ export const t3 = defineTask('c', () => ({
   const workspaceCwd = path.join(tmp, "workspace");
   await fs.mkdir(workspaceCwd, { recursive: true });
 
-  const result = await prepareBabysitterRuntime({ workspaceCwd, libraryRoot, workflowDiskPath: workflowPath });
+  const result = await prepareBabysitterRuntime({ workspaceCwd, libraryRoot, workflowDiskPath: workflowPath, runId: "TP-001A" });
   assert(result.rewritten, "result.rewritten true");
-  assert(result.generatedWorkflowPath.endsWith("demo.gen.js"), `generated path: ${result.generatedWorkflowPath}`);
+  assert(
+    result.generatedWorkflowPath.endsWith(path.join("mc-generated", "TP-001A-demo.gen.js")),
+    `generated path scoped by runId: ${result.generatedWorkflowPath}`,
+  );
+
+  // Collision isolation: a second task that points at a *different*
+  // workflow file with the same basename must not clobber the first.
+  const altWorkflowDir = path.join(libraryRoot, "other-domain", "workflows");
+  await fs.mkdir(altWorkflowDir, { recursive: true });
+  const altWorkflowPath = path.join(altWorkflowDir, "demo.js");
+  await fs.writeFile(altWorkflowPath, `
+export const t = defineTask('z', () => ({ kind: 'agent', skill: { name: 'foo-skill' } }));
+// alt-workflow-marker
+`);
+  const altResult = await prepareBabysitterRuntime({ workspaceCwd, libraryRoot, workflowDiskPath: altWorkflowPath, runId: "TP-002B" });
+  assert(altResult.generatedWorkflowPath !== result.generatedWorkflowPath, "different runId → different generated path");
+  const altText = await fs.readFile(altResult.generatedWorkflowPath, "utf8");
+  assert(altText.includes("alt-workflow-marker"), "alt task's generated copy holds the alt source");
+  const firstText = await fs.readFile(result.generatedWorkflowPath, "utf8");
+  assert(!firstText.includes("alt-workflow-marker"), "first task's generated copy untouched by second prep");
 
   const matFoo = result.skills.find((s) => s.name === "foo-skill");
   assert(matFoo?.status === "materialized", "foo-skill materialized");
@@ -172,6 +191,7 @@ export const t3 = defineTask('c', () => ({
         workspaceCwd: realWorkspace,
         libraryRoot: realLibraryRoot,
         workflowDiskPath: realWorkflow,
+        runId: "REAL-001",
       });
       assert(realResult.rewritten, "real workflow rewritten");
       const realGen = await fs.readFile(realResult.generatedWorkflowPath, "utf8");

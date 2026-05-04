@@ -199,8 +199,16 @@ export async function prepareBabysitterRuntime(input: {
   workspaceCwd: string;
   libraryRoot: string;
   workflowDiskPath: string;
+  /**
+   * Caller-supplied scope for the generated workflow filename — usually
+   * the task id. Without this, two tasks in the same project that pick
+   * different workflows with the same basename (e.g. two repos each with
+   * `analysis.js`) would clobber each other's `.gen.js` under
+   * `<cwd>/.a5c/mc-generated/`. Required when the rewrite runs.
+   */
+  runId: string;
 }): Promise<RuntimePrepResult> {
-  const { workspaceCwd, libraryRoot, workflowDiskPath } = input;
+  const { workspaceCwd, libraryRoot, workflowDiskPath, runId } = input;
   const src = await fs.readFile(workflowDiskPath, "utf8");
   const { singular, all } = extractSkillNames(src);
 
@@ -252,7 +260,8 @@ export async function prepareBabysitterRuntime(input: {
   const genDir = path.join(workspaceCwd, ".a5c", "mc-generated");
   await fs.mkdir(genDir, { recursive: true });
   const baseName = path.basename(workflowDiskPath).replace(/\.js$/i, "");
-  const generatedWorkflowPath = path.join(genDir, `${baseName}.gen.js`);
+  const safeRunId = runId.replace(/[^A-Za-z0-9._-]/g, "_");
+  const generatedWorkflowPath = path.join(genDir, `${safeRunId}-${baseName}.gen.js`);
   await fs.writeFile(generatedWorkflowPath, out, "utf8");
 
   return {
