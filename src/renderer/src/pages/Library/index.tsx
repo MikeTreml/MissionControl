@@ -117,29 +117,11 @@ export function LibraryBrowser(): JSX.Element {
               setCreatorKind("workflow");
               setCreatorOpen(true);
             }}
-            title="Build a new workflow.js under library/workflows/"
+            title="Create a workflow, agent, or skill — pick the type from the form's tabs"
+            aria-label="Create library item"
+            style={{ width: 32, padding: 0 }}
           >
-            + Workflow
-          </button>
-          <button
-            className="button ghost"
-            onClick={() => {
-              setCreatorKind("agent");
-              setCreatorOpen(true);
-            }}
-            title="Create a new AGENT.md under a library root"
-          >
-            + Agent
-          </button>
-          <button
-            className="button ghost"
-            onClick={() => {
-              setCreatorKind("skill");
-              setCreatorOpen(true);
-            }}
-            title="Create a new SKILL.md under a library root"
-          >
-            + Skill
+            +
           </button>
           <button
             className="button"
