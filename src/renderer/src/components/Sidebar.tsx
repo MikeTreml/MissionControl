@@ -45,7 +45,6 @@ export function Sidebar(): JSX.Element {
   }
   // Total open tasks for the Board badge.
   const totalOpen = [...openByProject.values()].reduce((a, b) => a + b, 0);
-  const draftCount = tasks.filter((t) => t.boardStage === "Drafting" && t.cycle === 0).length;
   const runningCount = tasks.filter((t) => t.runState === "running").length;
 
   return (
@@ -133,16 +132,6 @@ export function Sidebar(): JSX.Element {
             badge={totalOpen}
             active={view === "dashboard"}
             onClick={() => setView("dashboard")}
-          />
-          <NavItem
-            glyph="📝"
-            label="Drafts"
-            badge={draftCount}
-            // Drafts is a tab inside Board; sending the user to the
-            // dashboard is the closest current behavior.
-            active={false}
-            onClick={() => setView("dashboard")}
-            tooltip="Drafts tab on the Board"
           />
           <NavItem
             glyph="📚"
