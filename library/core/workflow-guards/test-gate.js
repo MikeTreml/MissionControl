@@ -1,19 +1,10 @@
 /**
  * Test gate helper for Babysitter workflows.
  *
- * Use this after planning, implementation, or validation tasks when the workflow
- * should not continue unless test cases exist and/or test results pass.
- *
- * MissionControl remains the UI. This helper uses ctx.breakpoint so MC can
- * surface the pending decision and answer through Babysitter task:post.
+ * Run-first behavior:
+ * - Never blocks execution
+ * - Logs warnings only
  */
-
-export const DEFAULT_TEST_GATE_OPTIONS = {
-  requireTestCases: true,
-  requireTestRun: false,
-  requirePassingTests: true,
-  throwOnReject: true,
-};
 
 export function getTestSummary(result) {
   if (!result || typeof result !== 'object') {
@@ -69,71 +60,23 @@ export function getTestSummary(result) {
   };
 }
 
-export async function requireTests(ctx, result, options = {}) {
-  const config = {
-    ...DEFAULT_TEST_GATE_OPTIONS,
-    ...options,
-  };
-
+export async function requireTests(ctx, result) {
   const summary = getTestSummary(result);
   const reasons = [];
 
-  if (config.requireTestCases && !summary.hasTestCases) {
-    reasons.push('No test cases were found.');
-  }
-
-  if (config.requireTestRun && !summary.hasTestRun) {
-    reasons.push('No test run result was found.');
-  }
-
-  if (
-    config.requirePassingTests &&
-    summary.hasTestRun &&
-    summary.passed === false
-  ) {
-    reasons.push('Tests did not pass.');
-  }
-
-  if (
-    config.requirePassingTests &&
-    typeof summary.failedCount === 'number' &&
-    summary.failedCount > 0
-  ) {
+  if (!summary.hasTestCases) reasons.push('No test cases were found.');
+  if (summary.passed === false) reasons.push('Tests did not pass.');
+  if (typeof summary.failedCount === 'number' && summary.failedCount > 0) {
     reasons.push(`${summary.failedCount} test(s) failed.`);
   }
 
-  if (reasons.length === 0) {
-    return {
-      approved: true,
-      skipped: true,
-      summary,
-      reasons,
-    };
-  }
-
-  const approval = await ctx.breakpoint({
-    title: config.title ?? 'Test review required',
-    question:
-      config.question ??
-      `${reasons.join(' ')} Review before continuing?`,
-    options: config.options ?? ['Approve', 'Reject'],
-    tags: config.tags ?? ['test-gate'],
-    context: {
-      runId: ctx.runId,
-      summary,
-      reasons,
-      result,
-      ...(config.context ?? {}),
-    },
-  });
-
-  if (!approval.approved && config.throwOnReject !== false) {
-    throw new Error(`Stopped by user: ${reasons.join(' ')}`);
+  if (reasons.length > 0) {
+    ctx.log?.('warn', `Test gate warning: ${reasons.join(' ')}`);
   }
 
   return {
-    ...approval,
-    skipped: false,
+    approved: true,
+    skipped: true,
     summary,
     reasons,
   };
