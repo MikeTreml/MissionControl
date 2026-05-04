@@ -355,6 +355,7 @@ button {
   border-radius: var(--radius-md);
   cursor: pointer;
   position: relative;
+  text-align: left;
   transition: background var(--dur-fast) var(--ease-out);
 }
 .proj-row:hover { background: var(--raised); }
