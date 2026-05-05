@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@a5c-ai/babysitter-sdk": "^5.0.0",
-    "@mariozechner/pi-coding-agent": "^0.70.2",
+    "@mariozechner/pi-coding-agent": "^0.73.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zod": "^3.23.8"
