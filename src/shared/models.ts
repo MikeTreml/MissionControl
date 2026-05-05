@@ -165,7 +165,7 @@ export const ProjectSchema = z.object({
   path: z.string().default(""),                // local folder; empty = track-only
   notes: z.string().default(""),
   /** Feature/task decision policy used by MC gates. Scope is always a hard gate. */
-  policy: ProjectDecisionPolicySchema.default({}),
+  policy: ProjectDecisionPolicySchema.default({ scope: "balanced", impact: "medium", risk: "medium", autoProceedMode: "suggest" }),
   // Optional visual icon shown in the sidebar chip. Empty = use the prefix.
   // A short emoji or 1-2 chars works best; no schema enforcement so future
   // formats (svg data url, icon name from a library) can drop in.
