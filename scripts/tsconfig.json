@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.node.json",
+  "compilerOptions": {
+    "rootDir": ".."
+  },
+  "include": [
+    "canary-skill-injection-smoke.ts",
+    "../src/main/babysitter-cli-env.ts",
+    "../src/main/babysitter-runtime-prep.ts",
+    "../src/main/library-walker.ts"
+  ]
+}
