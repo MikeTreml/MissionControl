@@ -6,7 +6,7 @@
  * Channel naming: `<domain>:<verb>` (e.g. `tasks:list`, `agents:list`).
  * Keeps the main handler surface inspectable in one file.
  */
-import { ipcMain, shell } from "electron";
+import { BrowserWindow, ipcMain, shell } from "electron";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
@@ -20,6 +20,7 @@ import type { MemoryStore } from "./memory-store.ts";
 import type { WorkflowCreator, CreateWorkflowOpts } from "./workflow-creator.ts";
 import type { LibraryItemCreator, CreateLibraryItemOpts } from "./library-item-creator.ts";
 import type { ItemInfoStore, SaveItemInfoOpts } from "./item-info-store.ts";
+import type { TestRunner } from "./test-runner.ts";
 import { detectGit } from "./git-detect.ts";
 import type { Project, ProjectWithGit } from "../shared/models.ts";
 
@@ -44,6 +45,7 @@ export interface Stores {
   libraryItemCreator: LibraryItemCreator;
   itemInfo: ItemInfoStore;
   memory: MemoryStore;
+  tests: TestRunner;
 }
 
 /** Log each IPC hit at debug level. Uncomment the call site to silence. */
@@ -53,6 +55,12 @@ function logged<T>(channel: string, fn: () => Promise<T> | T): Promise<T> | T {
 }
 
 export function registerIpc(stores: Stores): void {
+  stores.tests.on("event", (event: unknown) => {
+    for (const win of BrowserWindow.getAllWindows()) {
+      if (!win.isDestroyed()) win.webContents.send("test:event", event);
+    }
+  });
+
   // ── tasks ────────────────────────────────────────────────────────────
   ipcMain.handle("tasks:list",   () => logged("tasks:list", () => stores.tasks.listTasks()));
   ipcMain.handle("tasks:get",    (_e, id: string) => logged(`tasks:get ${id}`, () => stores.tasks.getTask(id)));
@@ -208,6 +216,14 @@ export function registerIpc(stores: Stores): void {
     stores.settings.saveWorkflowRunTemplate(input));
   ipcMain.handle("settings:deleteWorkflowRunTemplate", (_e, id: string) =>
     stores.settings.deleteWorkflowRunTemplate(id));
+
+  // ── local test lab ──────────────────────────────────────────────────
+  ipcMain.handle("tests:listPresets", () => stores.tests.listPresets());
+  ipcMain.handle("tests:listRuns", () => stores.tests.listRuns());
+  ipcMain.handle("tests:start", (_e, presetId: string) =>
+    logged(`tests:start ${presetId}`, () => stores.tests.start(presetId)));
+  ipcMain.handle("tests:cancel", (_e, runId: string) =>
+    logged(`tests:cancel ${runId}`, () => stores.tests.cancel(runId)));
 
   // ── shell convenience — reveal folders in the OS file UI ─────────────
   // Point the user at on-disk state: task folder, babysitter run dir, etc.

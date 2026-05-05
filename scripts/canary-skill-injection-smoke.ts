@@ -9,6 +9,7 @@
  * It creates a temporary library/workspace, writes a salted SKILL.md and
  * workflow, calls prepareBabysitterRuntime, and asserts:
  *   - SKILL.md was copied into <workspace>/.a5c/skills/<name>/SKILL.md
+ *     and mirrored into <workspace>/.pi/skills/<name>/SKILL.md
  *   - the generated workflow uses metadata.skills
  *   - the generated workflow lives under .a5c/mc-generated/<runId>/
  *
@@ -88,9 +89,13 @@ async function main(): Promise<void> {
     assertEq(prep.missingSkills, [], "no missing skills");
 
     const materialized = path.join(workspaceCwd, ".a5c", "skills", SKILL_NAME, "SKILL.md");
+    const piMaterialized = path.join(workspaceCwd, ".pi", "skills", SKILL_NAME, "SKILL.md");
     const skillText = await fs.readFile(materialized, "utf8");
     assert(skillText.includes(MARKER), "materialized SKILL.md contains marker");
     assert(skillText.includes(HIDDEN_ANSWER), "materialized SKILL.md contains hidden answer");
+    const piSkillText = await fs.readFile(piMaterialized, "utf8");
+    assert(piSkillText.includes(MARKER), "Pi mirrored SKILL.md contains marker");
+    assert(piSkillText.includes(HIDDEN_ANSWER), "Pi mirrored SKILL.md contains hidden answer");
 
     const genText = await fs.readFile(prep.generatedWorkflowPath, "utf8");
     assert(genText.includes(`metadata: { skills: ['${SKILL_NAME}'] }`), "generated workflow uses metadata.skills");
@@ -99,6 +104,7 @@ async function main(): Promise<void> {
     console.log(`[canary] tmp=${tmp}`);
     console.log(`[canary] generated=${prep.generatedWorkflowPath}`);
     console.log(`[canary] materialized=${materialized}`);
+    console.log(`[canary] pi-materialized=${piMaterialized}`);
     console.log("[canary] prep-only checks passed");
 
     if (args.run) {

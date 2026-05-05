@@ -17,7 +17,8 @@ export type ViewId =
   | "settings-agents"
   | "metrics"
   | "run-history"
-  | "handoffs";
+  | "handoffs"
+  | "test-lab";
 
 export interface Route {
   view: ViewId;

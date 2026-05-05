@@ -104,6 +104,17 @@ const api = {
   saveWorkflowRunTemplate: (input: unknown) => ipcRenderer.invoke("settings:saveWorkflowRunTemplate", input),
   deleteWorkflowRunTemplate: (id: string) => ipcRenderer.invoke("settings:deleteWorkflowRunTemplate", id),
 
+  // ── local test lab ──────────────────────────────────────────────────
+  listTestPresets: () => ipcRenderer.invoke("tests:listPresets"),
+  listTestRuns: () => ipcRenderer.invoke("tests:listRuns"),
+  startTestRun: (presetId: string) => ipcRenderer.invoke("tests:start", presetId),
+  cancelTestRun: (runId: string) => ipcRenderer.invoke("tests:cancel", runId),
+  onTestEvent: (listener: (payload: unknown) => void) => {
+    const wrapped = (_e: unknown, payload: unknown) => listener(payload);
+    ipcRenderer.on("test:event", wrapped);
+    return () => ipcRenderer.off("test:event", wrapped);
+  },
+
   // ── live events (main → renderer push) ───────────────────────────────
   // Each subscribe returns an unsubscribe function. The listener fires
   // whenever main broadcasts the corresponding ipc message.

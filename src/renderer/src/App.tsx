@@ -22,6 +22,7 @@ import { Metrics } from "./pages/Metrics";
 import { SettingsGlobal, SettingsModels, SettingsAgents } from "./pages/Settings";
 import { RunHistory } from "./pages/RunHistory";
 import { Handoffs } from "./pages/Handoffs";
+import { TestLab } from "./pages/TestLab";
 
 import { RouteContext, type ViewId } from "./router";
 
@@ -39,6 +40,7 @@ function CurrentView({ view }: { view: ViewId }): JSX.Element {
     case "settings-agents":     return <SettingsAgents />;
     case "run-history":         return <RunHistory />;
     case "handoffs":            return <Handoffs />;
+    case "test-lab":            return <TestLab />;
   }
 }
 
