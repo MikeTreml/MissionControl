@@ -152,6 +152,7 @@ export const t = defineTask('z', () => ({ kind: 'agent', skill: { name: 'foo-ski
   const matFoo = result.skills.find((s) => s.name === "foo-skill");
   assert(matFoo?.status === "materialized", "foo-skill materialized");
   assert(matFoo?.materializedTo?.endsWith(path.join(".a5c", "skills", "foo-skill", "SKILL.md")), "destination path");
+  assert(matFoo?.piMaterializedTo?.endsWith(path.join(".pi", "skills", "foo-skill", "SKILL.md")), "pi destination path");
 
   const matMissing = result.skills.find((s) => s.name === "missing-skill");
   assert(matMissing?.status === "missing", "missing-skill flagged missing");
@@ -159,6 +160,8 @@ export const t = defineTask('z', () => ({ kind: 'agent', skill: { name: 'foo-ski
 
   const matText = await fs.readFile(matFoo!.materializedTo!, "utf8");
   assert(matText.includes("Real content."), "SKILL.md content copied");
+  const piMatText = await fs.readFile(matFoo!.piMaterializedTo!, "utf8");
+  assert(piMatText.includes("Real content."), "Pi SKILL.md mirror content copied");
 
   const genText = await fs.readFile(result.generatedWorkflowPath, "utf8");
   // Both the simple-shape and multi-field-shape skill: occurrences should

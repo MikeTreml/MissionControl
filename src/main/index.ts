@@ -36,6 +36,7 @@ import { MemoryStore } from "./memory-store.ts";
 import { WorkflowCreator } from "./workflow-creator.ts";
 import { LibraryItemCreator } from "./library-item-creator.ts";
 import { ItemInfoStore } from "./item-info-store.ts";
+import { TestRunner } from "./test-runner.ts";
 import { registerIpc } from "./ipc.ts";
 
 async function bootstrapStores(): Promise<void> {
@@ -63,6 +64,7 @@ async function bootstrapStores(): Promise<void> {
   const libraryItemCreator = new LibraryItemCreator(join(appRoot, "library"));
   const itemInfo = new ItemInfoStore(join(appRoot, "library"));
   const memory = new MemoryStore();
+  const tests = new TestRunner(appRoot);
 
   await Promise.all([tasks.init(), projects.init(), settings.init()]);
 
@@ -82,7 +84,7 @@ async function bootstrapStores(): Promise<void> {
 
   bootstrappedTasks = tasks;
 
-  registerIpc({ tasks, projects, runs, pi, settings, libraryIndex, workflowCreator, libraryItemCreator, itemInfo, memory });
+  registerIpc({ tasks, projects, runs, pi, settings, libraryIndex, workflowCreator, libraryItemCreator, itemInfo, memory, tests });
   console.log("[main] IPC handlers registered");
 }
 

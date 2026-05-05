@@ -174,6 +174,12 @@ export function Sidebar(): JSX.Element {
             active={view === "metrics"}
             onClick={() => setView("metrics")}
           />
+          <NavItem
+            glyph="🧪"
+            label="Test Lab"
+            active={view === "test-lab"}
+            onClick={() => setView("test-lab")}
+          />
         </div>
       </div>
 

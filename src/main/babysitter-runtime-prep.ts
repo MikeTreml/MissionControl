@@ -12,6 +12,8 @@
  *   1. extract every skill name referenced by the workflow,
  *   2. resolve it against library/_index.skill.json + libraryRoot,
  *   3. copy the resolved SKILL.md into <workspace>/.a5c/skills/<name>/,
+ *      and mirror it into <workspace>/.pi/skills/<name>/ so Pi's project
+ *      skill registry can discover the same skill,
  *   4. emit a rewritten workflow copy under
  *      <workspace>/.a5c/mc-generated/<runId>/<basename>.gen.js that swaps
  *      `skill: { name: 'X' }` → `metadata: { skills: ['X'] }`
@@ -33,8 +35,10 @@ export type SkillResolution = {
   status: "materialized" | "missing";
   /** Source SKILL.md (absolute) when resolved. */
   resolvedFrom?: string;
-  /** Destination SKILL.md (absolute) when materialized. */
+  /** Destination SKILL.md (absolute) when materialized for Babysitter. */
   materializedTo?: string;
+  /** Destination SKILL.md (absolute) when mirrored for Pi discovery. */
+  piMaterializedTo?: string;
 };
 
 export type RuntimePrepResult = {
@@ -218,6 +222,7 @@ export async function prepareBabysitterRuntime(input: {
   if (all.length > 0) {
     const indexItems = await readSkillIndexItems(libraryRoot);
     const skillsRoot = path.join(workspaceCwd, ".a5c", "skills");
+    const piSkillsRoot = path.join(workspaceCwd, ".pi", "skills");
     for (const name of all) {
       const source = resolveSkillSource(name, libraryRoot, indexItems);
       if (!source) {
@@ -227,13 +232,22 @@ export async function prepareBabysitterRuntime(input: {
       }
       const destDir = path.join(skillsRoot, name);
       const destFile = path.join(destDir, "SKILL.md");
+      const piDestDir = path.join(piSkillsRoot, name);
+      const piDestFile = path.join(piDestDir, "SKILL.md");
       await fs.mkdir(destDir, { recursive: true });
+      await fs.mkdir(piDestDir, { recursive: true });
       await fs.copyFile(source, destFile);
+      // CONFIRMED: Babysitter and Pi use different project skill roots.
+      // Babysitter injects from .a5c/skills; Pi discovers skills from
+      // .pi/skills. Keep both copies so orchestration and worker prompts
+      // see the same materialized catalog skill.
+      await fs.copyFile(source, piDestFile);
       skills.push({
         name,
         status: "materialized",
         resolvedFrom: source,
         materializedTo: destFile,
+        piMaterializedTo: piDestFile,
       });
     }
   }

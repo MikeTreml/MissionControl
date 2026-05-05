@@ -38,6 +38,36 @@ export interface WorkflowRunTemplate {
   inputs: Record<string, unknown>;
 }
 
+export interface TestPresetInfo {
+  id: string;
+  name: string;
+  group: string;
+  description: string;
+  cwd: string;
+  command: string;
+  args: string[];
+  kind: "command" | "server";
+  expectedReportPath?: string;
+  cwdExists?: boolean;
+}
+
+export interface TestRunSnapshot {
+  id: string;
+  presetId: string;
+  status: "running" | "passed" | "failed" | "cancelled";
+  startedAt: string;
+  finishedAt?: string;
+  exitCode?: number | null;
+  cwd: string;
+  commandLine: string;
+  output: string;
+}
+
+export type TestRunnerEvent =
+  | { type: "started"; run: TestRunSnapshot }
+  | { type: "output"; runId: string; stream: "stdout" | "stderr"; text: string }
+  | { type: "finished"; run: TestRunSnapshot };
+
 type CreateTaskInput = {
   title: string;
   description?: string;
@@ -204,6 +234,13 @@ export interface McApi {
   listWorkflowRunTemplates: () => Promise<WorkflowRunTemplate[]>;
   saveWorkflowRunTemplate: (input: Omit<WorkflowRunTemplate, "createdAt" | "updatedAt">) => Promise<WorkflowRunTemplate>;
   deleteWorkflowRunTemplate: (id: string) => Promise<void>;
+
+  // local test lab
+  listTestPresets: () => Promise<TestPresetInfo[]>;
+  listTestRuns: () => Promise<TestRunSnapshot[]>;
+  startTestRun: (presetId: string) => Promise<TestRunSnapshot>;
+  cancelTestRun: (runId: string) => Promise<TestRunSnapshot | null>;
+  onTestEvent: (listener: (payload: TestRunnerEvent) => void) => () => void;
 
   // live events (subscribe; returns unsubscribe)
   onTaskEvent: (listener: (payload: { taskId: string; event: TaskEvent }) => void) => () => void;
