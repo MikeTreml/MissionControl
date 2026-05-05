@@ -18,19 +18,17 @@ export interface AllTaskEventsState {
   /** Map of taskId → ordered events. Missing keys = no events yet. */
   perTask: Map<string, TaskEvent[]>;
   loading: boolean;
-  /** True when useTasks is in demo mode — perTask will be empty. */
-  isDemo: boolean;
 }
 
 export function useAllTaskEvents(): AllTaskEventsState {
-  const { tasks, isDemo } = useTasks();
+  const { tasks } = useTasks();
   const [perTask, setPerTask] = useState<Map<string, TaskEvent[]>>(new Map());
   const [loading, setLoading] = useState<boolean>(true);
 
   const taskIds = tasks.map((t) => t.id).join(",");
 
   async function load(): Promise<void> {
-    if (!window.mc || isDemo) {
+    if (!window.mc) {
       setPerTask(new Map());
       setLoading(false);
       return;
@@ -50,8 +48,8 @@ export function useAllTaskEvents(): AllTaskEventsState {
     setLoading(false);
   }
 
-  useEffect(() => { void load(); }, [taskIds, isDemo]);
+  useEffect(() => { void load(); }, [taskIds]);
   useSubscribe("tasks", () => { void load(); });
 
-  return { perTask, loading, isDemo };
+  return { perTask, loading };
 }

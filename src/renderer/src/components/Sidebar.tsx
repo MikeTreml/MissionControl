@@ -21,7 +21,7 @@ import { colorForKey } from "../lib/color-hash";
 
 export function Sidebar(): JSX.Element {
   const { view, setView, selectedProjectId, openProject } = useRoute();
-  const { projects, isDemo } = useProjects();
+  const { projects } = useProjects();
   const { tasks } = useTasks();
   const [addProjectOpen, setAddProjectOpen] = useState(false);
   const [appVersion, setAppVersion] = useState<string>("");
@@ -49,15 +49,6 @@ export function Sidebar(): JSX.Element {
 
   return (
     <aside className="sidebar">
-      {isDemo && (
-        <div className="demo-banner">
-          <b>Demo data</b>
-          <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>
-            Click + to add a project.
-          </div>
-        </div>
-      )}
-
       {/* ── Projects ──────────────────────────────────────────────── */}
       <div>
         <div className="sidebar-section-head">
@@ -96,7 +87,7 @@ export function Sidebar(): JSX.Element {
               </button>
             );
           })}
-          {projects.length === 0 && !isDemo && (
+          {projects.length === 0 && (
             <div
               className="muted"
               style={{

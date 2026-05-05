@@ -70,15 +70,26 @@ function patchPiWrapper(mod) {
   if (!mod || mod.__mcAgentDirShimApplied || typeof mod.createPiSession !== "function") {
     return mod;
   }
-  const originalCreatePiSession = mod.createPiSession;
-  mod.createPiSession = function createPiSessionWithDefaultAgentDir(options) {
+  const ensureOptions = (options) => {
     const next = { ...(options || {}) };
     if (!next.agentDir) {
       next.agentDir = defaultAgentDir(next);
     }
     next.model = resolvePiModel(next.model);
-    return originalCreatePiSession.call(this, next);
+    return next;
   };
+  const originalCreatePiSession = mod.createPiSession;
+  mod.createPiSession = function createPiSessionWithDefaultAgentDir(options) {
+    return originalCreatePiSession.call(this, ensureOptions(options));
+  };
+  const proto = mod.PiSessionHandle && mod.PiSessionHandle.prototype;
+  if (proto && typeof proto.doInitialize === "function") {
+    const originalDoInitialize = proto.doInitialize;
+    proto.doInitialize = async function patchedDoInitialize(...args) {
+      this.options = ensureOptions(this.options);
+      return originalDoInitialize.apply(this, args);
+    };
+  }
   Object.defineProperty(mod, "__mcAgentDirShimApplied", { value: true });
   return mod;
 }

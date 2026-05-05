@@ -21,8 +21,8 @@ import type { ProjectRunMetricsRollup } from "../global";
 
 export function ProjectDetail(): JSX.Element {
   const { selectedProjectId, setView } = useRoute();
-  const { projects, isDemo: projectsDemo, loading: projectsLoading } = useProjects();
-  const { tasks, isDemo: tasksDemo } = useTasks();
+  const { projects, loading: projectsLoading } = useProjects();
+  const { tasks } = useTasks();
   const [editOpen, setEditOpen] = useState(false);
   const [runMetricsRollup, setRunMetricsRollup] = useState<ProjectRunMetricsRollup | null>(null);
   const [rollupError, setRollupError] = useState("");
@@ -35,8 +35,6 @@ export function ProjectDetail(): JSX.Element {
         : projects[0],
     [projects, selectedProjectId],
   );
-
-  const isDemo = projectsDemo || tasksDemo;
 
   // Close the edit modal + bounce back to the dashboard if the project was
   // deleted (project will no longer appear in the list).
@@ -53,7 +51,7 @@ export function ProjectDetail(): JSX.Element {
   // this. The callback is still safe when `project` is null: it bails out
   // and clears the rollup state.
   const loadRunMetricsRollup = useCallback(async () => {
-    if (!window.mc || isDemo || !project?.id) {
+    if (!window.mc || !project?.id) {
       setRunMetricsRollup(null);
       setRollupError("");
       return;
@@ -66,7 +64,7 @@ export function ProjectDetail(): JSX.Element {
       setRunMetricsRollup(null);
       setRollupError(e instanceof Error ? e.message : String(e));
     }
-  }, [project?.id, isDemo]);
+  }, [project?.id]);
 
   useEffect(() => {
     void loadRunMetricsRollup();
@@ -114,10 +112,9 @@ export function ProjectDetail(): JSX.Element {
   }
 
   // CONFIRMED: ProjectDetail is scoped to a single project. Tasks carry their
-  // project slug on UiTask.projectId (added in useTasks). Demo tasks all share
-  // projectId === "demo" so they still show when we're in demo mode.
+  // project slug on UiTask.projectId (added in useTasks).
   const allProjectTasks = project
-    ? tasks.filter((t) => t.projectId === project.id || (tasksDemo && t.projectId === "demo"))
+    ? tasks.filter((t) => t.projectId === project.id)
     : [];
   const archivedCount = allProjectTasks.filter((t) => t.status === "archived").length;
   // Default: hide archived from stats and tables. Toggle includes them.
@@ -160,25 +157,13 @@ export function ProjectDetail(): JSX.Element {
           </h1>
           <p className="muted">
             How is this project doing over time?
-            {isDemo && " · demo data"}
           </p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <button
             className="button ghost"
-            onClick={() => {
-              console.log("[ProjectDetail] Edit clicked", {
-                project,
-                projectsDemo,
-                editingSubject,
-              });
-              setEditOpen(true);
-            }}
-            // Disable only when the projects LIST is demo (nothing real to edit).
-            // `isDemo` also includes `tasksDemo` which would wrongly block
-            // editing a real project that simply has no tasks yet.
-            disabled={projectsDemo}
-            title={projectsDemo ? "Can't edit demo projects — create a real one first" : "Edit this project"}
+            onClick={() => setEditOpen(true)}
+            title="Edit this project"
           >
             ✎ Edit
           </button>
@@ -194,8 +179,8 @@ export function ProjectDetail(): JSX.Element {
       </div>
 
       <div className="content">
-        <ProjectMemoryCard projectId={project.id} isDemo={isDemo} />
-        {projectTasks.length === 0 && !isDemo && (
+        <ProjectMemoryCard projectId={project.id} />
+        {projectTasks.length === 0 && (
           <section
             className="card"
             style={{
@@ -222,38 +207,36 @@ export function ProjectDetail(): JSX.Element {
           <Kpi label="Stuck (>24h)" value={stats.stuck} />
         </section>
 
-        {!isDemo && (
-          <section className="card">
-            <h3>Run metrics (artifacts)</h3>
-            <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-              Totals from every task in this project with <code>artifacts/*.metrics.json</code> (written when a run ends).
-            </p>
-            {rollupError && (
-              <p className="muted" style={{ marginTop: 8, color: "var(--bad)", fontSize: 12 }}>{rollupError}</p>
-            )}
-            {!rollupError && runMetricsRollup && runMetricsRollup.metricsArtifactCount === 0 && (
-              <p className="muted" style={{ marginTop: 8, fontSize: 12 }}>No metrics artifacts yet. Complete a run to populate this rollup.</p>
-            )}
-            {!rollupError && runMetricsRollup && runMetricsRollup.metricsArtifactCount > 0 && (
-              <div className="card-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
-                <Kpi label="Completed run snapshots" value={runMetricsRollup.metricsArtifactCount} />
-                <Kpi label="Tasks with metrics" value={runMetricsRollup.tasksWithArtifacts} />
-                <Kpi
-                  label="Tokens (in / out)"
-                  value={`${abbreviateTokens(runMetricsRollup.tokensIn)} / ${abbreviateTokens(runMetricsRollup.tokensOut)}`}
-                />
-                <Kpi
-                  label="Wall time (sum)"
-                  value={formatDurationSeconds(runMetricsRollup.wallTimeSeconds)}
-                />
-                <Kpi
-                  label="Spend (sum)"
-                  value={runMetricsRollup.costUSD > 0 ? `$${runMetricsRollup.costUSD.toFixed(4)}` : "—"}
-                />
-              </div>
-            )}
-          </section>
-        )}
+        <section className="card">
+          <h3>Run metrics (artifacts)</h3>
+          <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
+            Totals from every task in this project with <code>artifacts/*.metrics.json</code> (written when a run ends).
+          </p>
+          {rollupError && (
+            <p className="muted" style={{ marginTop: 8, color: "var(--bad)", fontSize: 12 }}>{rollupError}</p>
+          )}
+          {!rollupError && runMetricsRollup && runMetricsRollup.metricsArtifactCount === 0 && (
+            <p className="muted" style={{ marginTop: 8, fontSize: 12 }}>No metrics artifacts yet. Complete a run to populate this rollup.</p>
+          )}
+          {!rollupError && runMetricsRollup && runMetricsRollup.metricsArtifactCount > 0 && (
+            <div className="card-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+              <Kpi label="Completed run snapshots" value={runMetricsRollup.metricsArtifactCount} />
+              <Kpi label="Tasks with metrics" value={runMetricsRollup.tasksWithArtifacts} />
+              <Kpi
+                label="Tokens (in / out)"
+                value={`${abbreviateTokens(runMetricsRollup.tokensIn)} / ${abbreviateTokens(runMetricsRollup.tokensOut)}`}
+              />
+              <Kpi
+                label="Wall time (sum)"
+                value={formatDurationSeconds(runMetricsRollup.wallTimeSeconds)}
+              />
+              <Kpi
+                label="Spend (sum)"
+                value={runMetricsRollup.costUSD > 0 ? `$${runMetricsRollup.costUSD.toFixed(4)}` : "—"}
+              />
+            </div>
+          )}
+        </section>
 
         <section className="card">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>

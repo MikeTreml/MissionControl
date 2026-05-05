@@ -35,7 +35,7 @@ import type { PiModelInfo } from "../global";
 
 export function TaskDetail(): JSX.Element {
   const { selectedTaskId } = useRoute();
-  const { task, events, prompt, status, runConfig, latestMetrics, metricsFileName, isDemo, loading } = useTask(selectedTaskId);
+  const { task, events, prompt, status, runConfig, latestMetrics, metricsFileName, loading } = useTask(selectedTaskId);
   const pendingAsks = usePendingAsks(selectedTaskId);
   const [editOpen, setEditOpen] = useState(false);
   const [workflowOpen, setWorkflowOpen] = useState(false);
@@ -74,90 +74,72 @@ export function TaskDetail(): JSX.Element {
         <Crumbs task={task} />
         <div className="actions" style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <CostTicker events={events} />
-          {!isDemo && (
-            <button className="btn ghost" title="Edit title and description" onClick={() => setEditOpen(true)}>
-              Edit
-            </button>
-          )}
-          {!isDemo && (
+          <button className="btn ghost" title="Edit title and description" onClick={() => setEditOpen(true)}>
+            Edit
+          </button>
+          <button
+            className="btn ghost"
+            title="Re-assign or clear the curated library workflow used on the next Start"
+            onClick={() => setWorkflowOpen(true)}
+          >
+            Workflow…
+          </button>
+          <button
+            className="btn ghost"
+            title="Create a new task pre-filled from this one — edit anything before saving"
+            onClick={() => setRerunOpen(true)}
+          >
+            ↻ Re-run…
+          </button>
+          <button
+            className="btn ghost"
+            title="Open the task's folder in your OS file explorer"
+            onClick={() => { void window.mc?.openTaskFolder(task.id); }}
+          >
+            📁 Open folder
+          </button>
+          <TaskActionsMenu>
             <button
               className="btn ghost"
-              title="Re-assign or clear the curated library workflow used on the next Start"
-              onClick={() => setWorkflowOpen(true)}
+              title="Spin off a doctor task — diagnose why this task is stuck without modifying it"
+              onClick={() => setDoctorOpen(true)}
             >
-              Workflow…
+              ↳ Spin off doctor
             </button>
-          )}
-          {!isDemo && (
-            <button
-              className="btn ghost"
-              title="Create a new task pre-filled from this one — edit anything before saving"
-              onClick={() => setRerunOpen(true)}
-            >
-              ↻ Re-run…
-            </button>
-          )}
-          {!isDemo && (
-            <button
-              className="btn ghost"
-              title="Open the task's folder in your OS file explorer"
-              onClick={() => { void window.mc?.openTaskFolder(task.id); }}
-            >
-              📁 Open folder
-            </button>
-          )}
-          {!isDemo && (
-            <TaskActionsMenu>
-              <button
-                className="btn ghost"
-                title="Spin off a doctor task — diagnose why this task is stuck without modifying it"
-                onClick={() => setDoctorOpen(true)}
-              >
-                ↳ Spin off doctor
-              </button>
-              <ArchiveTaskButton task={task} />
-              <DeleteTaskButton taskId={task.id} />
-            </TaskActionsMenu>
-          )}
+            <ArchiveTaskButton task={task} />
+            <DeleteTaskButton taskId={task.id} />
+          </TaskActionsMenu>
           <BackToDashboard />
         </div>
       </div>
 
-      {!isDemo && (
-        <EditTaskForm open={editOpen} onClose={() => setEditOpen(false)} task={task} />
-      )}
-      {!isDemo && (
-        <ChangeWorkflowModal open={workflowOpen} onClose={() => setWorkflowOpen(false)} task={task} />
-      )}
-      {!isDemo && (
-        <CreateTaskForm
-          open={rerunOpen}
-          onClose={() => setRerunOpen(false)}
-          preload={buildRerunPreload(task, runConfig)}
-        />
-      )}
-      {!isDemo && (
-        <CreateTaskForm
-          open={doctorOpen}
-          onClose={() => setDoctorOpen(false)}
-          preload={buildDoctorPreload(task, runConfig)}
-        />
-      )}
+      <EditTaskForm open={editOpen} onClose={() => setEditOpen(false)} task={task} />
+      <ChangeWorkflowModal open={workflowOpen} onClose={() => setWorkflowOpen(false)} task={task} />
+      <CreateTaskForm
+        open={rerunOpen}
+        onClose={() => setRerunOpen(false)}
+        preload={buildRerunPreload(task, runConfig)}
+      />
+      <CreateTaskForm
+        open={doctorOpen}
+        onClose={() => setDoctorOpen(false)}
+        preload={buildDoctorPreload(task, runConfig)}
+      />
 
       <div className="content">
-        <TaskHero task={task} events={events} isDemo={isDemo} />
+        <TaskHero task={task} events={events} />
 
         <div className="workshop">
           <PlanRail task={task} events={events} />
 
           <div className="workshop-main">
             <Controls task={task} />
-            {!isDemo && <PendingEffectsPanel task={task} events={events} />}
-            {!isDemo && <RunStatusCard task={task} events={events} runConfig={runConfig} />}
-            {!isDemo && pendingAsks.map((ask) => (
+            <PendingEffectsPanel task={task} events={events} />
+            <RunStatusCard task={task} events={events} runConfig={runConfig} />
+            {pendingAsks.map((ask) => (
               <AskUserCard key={ask.toolCallId} taskId={task.id} ask={ask} />
             ))}
-            {!isDemo && <BlockerField task={task} />}
+            <BlockerField task={task} />
 
             <section className="card" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
               <Mission prompt={prompt} />
@@ -169,22 +151,22 @@ export function TaskDetail(): JSX.Element {
             {task.kind === "campaign" && <CampaignItems task={task} />}
 
             <SubagentsPanel events={events} />
-            {!isDemo && <ToolCalls events={events} />}
+            <ToolCalls events={events} />
             <RunHistory events={events} />
           </div>
 
           <aside className="workshop-side">
             <CostMeter events={events} />
             <TaskMeta task={task} events={events} />
-            {!isDemo && <RunMetadataChips task={task} events={events} />}
-            {!isDemo && <SpawnedFromPanel task={task} />}
+            <RunMetadataChips task={task} events={events} />
+            <SpawnedFromPanel task={task} />
             <LinkedFiles task={task} />
-            {!isDemo && <RunConfigCard runConfig={runConfig} />}
-            {!isDemo && <RunMetricsCard metrics={latestMetrics} fileName={metricsFileName} />}
+            <RunConfigCard runConfig={runConfig} />
+            <RunMetricsCard metrics={latestMetrics} fileName={metricsFileName} />
           </aside>
         </div>
 
-        {!isDemo && <ApprovalBar task={task} events={events} />}
+        <ApprovalBar task={task} events={events} />
       </div>
     </>
   );
@@ -210,7 +192,7 @@ function Crumbs({ task }: { task: Task }): JSX.Element {
   );
 }
 
-function TaskHero({ task, events, isDemo }: { task: Task; events: TaskEvent[]; isDemo: boolean }): JSX.Element {
+function TaskHero({ task, events }: { task: Task; events: TaskEvent[] }): JSX.Element {
   const { phases, current } = derivePhases(task, events);
   const pfx = task.id.includes("-") ? task.id.split("-")[0]! : "";
   const rest = pfx ? task.id.slice(pfx.length) : task.id;
@@ -243,7 +225,7 @@ function TaskHero({ task, events, isDemo }: { task: Task; events: TaskEvent[]; i
              task.status   === "waiting" ? "waiting" :
              "idle"}
           </span>
-          {!isDemo && task.kind === "campaign" && (
+          {task.kind === "campaign" && (
             <span className="pill neutral">{task.items.length} items</span>
           )}
         </div>
@@ -688,12 +670,8 @@ function RunMetadataChips({ task, events }: { task: Task; events: TaskEvent[] })
  * relationships that this panel surfaces.
  */
 function SpawnedFromPanel({ task }: { task: Task }): JSX.Element | null {
-  const { tasks, isDemo: tasksDemo } = useTasks();
+  const { tasks } = useTasks();
   const { openTask } = useRoute();
-
-  // Don't try to render lineage from demo data — the IDs are
-  // synthetic and won't link to anything meaningful.
-  if (tasksDemo) return null;
 
   const parent = task.parentTaskId
     ? tasks.find((t) => t.id === task.parentTaskId)

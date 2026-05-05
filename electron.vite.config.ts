@@ -7,12 +7,17 @@
  */
 import { defineConfig } from "electron-vite";
 import react from "@vitejs/plugin-react";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default defineConfig({
   main: {
     build: {
       rollupOptions: {
+        external: ["electron"],
         input: { index: resolve(__dirname, "src/main/index.ts") },
       },
     },
@@ -20,6 +25,10 @@ export default defineConfig({
   preload: {
     build: {
       rollupOptions: {
+        // electron-vite 5 + vite 8 no longer auto-externalize `electron` in
+        // the preload target — without this, the bundler inlines the npm
+        // package's launcher (getElectronPath) and preload throws on load.
+        external: ["electron"],
         input: { index: resolve(__dirname, "src/preload/index.ts") },
         // Electron's preload loader is CommonJS-only. Our package.json has
         // "type": "module" which would otherwise make electron-vite emit

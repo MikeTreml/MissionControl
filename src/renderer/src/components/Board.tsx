@@ -6,8 +6,6 @@ import { SkeletonCard } from "./Skeleton";
 import {
   buildRunningHistory,
   buildShippedHistory,
-  DEMO_RUNNING_CHIPS,
-  DEMO_SHIPPED_CHIPS,
   type LaneChip,
 } from "../lib/lane-history";
 
@@ -26,21 +24,15 @@ function groupByStage(tasks: UiTask[]): Record<BoardStage, UiTask[]> {
 }
 
 export function Board(): JSX.Element {
-  const { tasks, isDemo, loading } = useTasks();
+  const { tasks, loading } = useTasks();
   const byStage = groupByStage(tasks);
   const failedCount = byStage.Failed.length;
 
   return (
     <section data-surface-content="board">
-      {isDemo && (
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-          <span className="pill warn">Demo</span>
-        </div>
-      )}
       <KanbanView
         byStage={byStage}
         tasks={tasks}
-        isDemo={isDemo}
         showFailed={failedCount > 0}
         loadingCold={loading && tasks.length === 0}
       />
@@ -51,13 +43,11 @@ export function Board(): JSX.Element {
 function KanbanView({
   byStage,
   tasks,
-  isDemo,
   showFailed,
   loadingCold,
 }: {
   byStage: Record<BoardStage, UiTask[]>;
   tasks: UiTask[];
-  isDemo: boolean;
   showFailed: boolean;
   loadingCold: boolean;
 }): JSX.Element {
@@ -66,9 +56,8 @@ function KanbanView({
   if (showFailed) stages.splice(stages.indexOf("Done"), 0, "Failed");
 
   // Lane history strips: Running → recent runs · last 24h, Done → shipped · last 7d.
-  // Demo mode shows the canvas's hardcoded chips so the strip isn't empty.
-  const runningChips: LaneChip[] = isDemo ? DEMO_RUNNING_CHIPS : buildRunningHistory(perTask);
-  const shippedChips: LaneChip[] = isDemo ? DEMO_SHIPPED_CHIPS : buildShippedHistory(tasks);
+  const runningChips: LaneChip[] = buildRunningHistory(perTask);
+  const shippedChips: LaneChip[] = buildShippedHistory(tasks);
 
   return (
     <div className="lanes">

@@ -22,19 +22,11 @@ export function Topbar(): JSX.Element {
   const [createOpen, setCreateOpen] = useState(false);
   const [bridgeOk, setBridgeOk] = useState<boolean>(Boolean(window.mc));
 
-  const { tasks, isDemo: tasksDemo, loading: tasksLoading } = useTasks();
-  const { projects, isDemo: projectsDemo, loading: projectsLoading } = useProjects();
-  const isDemo = tasksDemo && projectsDemo;
-  const settled = !tasksLoading && !projectsLoading;
-  const [hasBeenReal, setHasBeenReal] = useState(false);
-  useEffect(() => {
-    if (settled && !isDemo) setHasBeenReal(true);
-  }, [settled, isDemo]);
-  const demoRegressed = settled && isDemo && hasBeenReal;
+  const { tasks } = useTasks();
+  const { projects } = useProjects();
 
   const attentionTasks = tasks.filter(
     (t) =>
-      !tasksDemo &&
       (t.boardStage === "Review" || t.boardStage === "Blocked") &&
       t.status !== "archived",
   );
@@ -90,16 +82,6 @@ export function Topbar(): JSX.Element {
             ⚠ {attentionCount} awaiting input
           </button>
         )}
-        {demoRegressed && (
-          <span
-            className="pill bad"
-            title="The app was showing real data and just fell back to demo data — likely an IPC error."
-            style={{ fontSize: 11, fontWeight: 600 }}
-          >
-            ⚠ Demo fallback active
-          </span>
-        )}
-
         <button
           className="search"
           type="button"

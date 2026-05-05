@@ -1,24 +1,16 @@
 /**
  * useProjects — calls window.mc.listProjects().
  *
- * Two important behaviors:
- *   1. If `window.mc` isn't available (tests, static preview, first boot
- *      before preload), returns the mock list with `isDemo: true` so the
- *      wireframe stays alive.
- *   2. If the real store returns [], same demo default — otherwise every new
- *      user boots into an empty dashboard, which looks broken.
- *
- * When the user creates a real project, this re-fetches and the demo flag
- * flips off.
+ * Returns an empty list when window.mc is unavailable (preload failure)
+ * or when the user has no projects. Empty-state UX lives in the consumer
+ * (Sidebar shows a "+ Add your first project" card).
  */
 import { useEffect, useMemo, useState } from "react";
 
-import { mockProjects, type MockProject } from "../mock-data";
 import { useSubscribe } from "./data-bus";
 import { useSettings } from "./useSettings";
 import type { ProjectWithGit } from "../../../shared/models";
 
-/** Shape rendered by the sidebar. Real Project OR mock, with flags. */
 export interface UiProject {
   id: string;
   name: string;
@@ -27,9 +19,9 @@ export interface UiProject {
   path: string;          // local folder path, may be empty
   notes: string;         // free-form notes (carried through for the edit form)
   sourceHint: string;    // "GitHub: owner/repo" or the raw path
-  stats: string;         // computed for real projects, canned for mock
+  stats: string;         // computed for real projects
   active?: boolean;
-  /** True if loaded from library/samples/ (read-only demo data). */
+  /** True if loaded from library/samples/ (read-only sample data). */
   isSample: boolean;
 }
 
@@ -51,25 +43,9 @@ function toUiProject(p: ProjectWithGit): UiProject {
   };
 }
 
-function mockToUi(p: MockProject): UiProject {
-  return {
-    id: p.id,
-    name: p.name,
-    prefix: p.prefix,
-    icon: "",
-    path: "",
-    notes: "",
-    sourceHint: p.source,
-    stats: p.stats,
-    active: p.active,
-    isSample: false,
-  };
-}
-
 export interface ProjectsState {
   projects: UiProject[];
   loading: boolean;
-  isDemo: boolean;       // true when we used mock data
   error: Error | null;
   refresh: () => Promise<void>;
 }
@@ -77,29 +53,22 @@ export interface ProjectsState {
 export function useProjects(): ProjectsState {
   const [projects, setProjects] = useState<UiProject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isDemo, setIsDemo] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   async function load(): Promise<void> {
+    if (!window.mc) {
+      setProjects([]);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
-      if (!window.mc) {
-        setProjects(mockProjects.map(mockToUi));
-        setIsDemo(true);
-        return;
-      }
       const real = await window.mc.listProjects();
-      if (real.length === 0) {
-        setProjects(mockProjects.map(mockToUi));
-        setIsDemo(true);
-      } else {
-        setProjects(real.map(toUiProject));
-        setIsDemo(false);
-      }
+      setProjects(real.map(toUiProject));
+      setError(null);
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
-      setProjects(mockProjects.map(mockToUi));
-      setIsDemo(true);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
@@ -121,5 +90,5 @@ export function useProjects(): ProjectsState {
     [projects, showSampleData],
   );
 
-  return { projects: visible, loading, isDemo, error, refresh: load };
+  return { projects: visible, loading, error, refresh: load };
 }

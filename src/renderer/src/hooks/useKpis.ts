@@ -24,11 +24,10 @@ export interface KpiItem {
 export interface KpisState {
   kpis: KpiItem[];
   loading: boolean;
-  isDemo: boolean;
 }
 
 export function useKpis(): KpisState {
-  const { tasks, loading, isDemo } = useTasks();
+  const { tasks, loading } = useTasks();
   const { perTask } = useAllTaskEvents();
 
   const inProgress = tasks.filter((t) =>
@@ -76,22 +75,8 @@ export function useKpis(): KpisState {
   const tokensTotal = tokensIn + tokensOut;
   const tokensLabel = tokensTotal === 0 ? "—" : compactNumber(tokensTotal);
 
-  if (isDemo) {
-    return {
-      loading,
-      isDemo,
-      kpis: [
-        { label: "In progress",     value: 7,      delta: "+2 today",        deltaTone: "up" },
-        { label: "Awaiting review", value: 3,      delta: "unchanged" },
-        { label: "Avg. turnaround", value: "14m",  delta: "−6m vs. last week", deltaTone: "up" },
-        { label: "Tokens · 24h",    value: "812k", delta: "+18% vs. avg",    deltaTone: "down" },
-      ],
-    };
-  }
-
   return {
     loading,
-    isDemo,
     kpis: [
       { label: "In progress",     value: inProgress },
       { label: "Awaiting review", value: awaitingReview },

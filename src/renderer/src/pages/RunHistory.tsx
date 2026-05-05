@@ -54,7 +54,7 @@ function deriveRuns(perTask: Map<string, TaskEvent[]>, taskTitle: Map<string, st
 }
 
 export function RunHistory(): JSX.Element {
-  const { tasks, isDemo } = useTasks();
+  const { tasks } = useTasks();
   const { projects } = useProjects();
   const { perTask } = useAllTaskEvents();
   const { setView, openTask } = useRoute();
@@ -83,11 +83,6 @@ export function RunHistory(): JSX.Element {
           <h3 style={{ marginBottom: 8 }}>
             Run history{rows.length > 0 && <span className="muted" style={{ fontWeight: 400, marginLeft: 8 }}>({rows.length})</span>}
           </h3>
-          {isDemo && (
-            <p className="muted" style={{ fontSize: 12, marginBottom: 12 }}>
-              Sample data shown — real runs will appear here as tasks complete.
-            </p>
-          )}
           {rows.length === 0 ? (
             <div className="muted" style={{ padding: "24px 4px", fontSize: 13 }}>
               No completed runs yet.

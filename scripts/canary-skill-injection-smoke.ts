@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/// <reference types="node" />
 /**
  * Canary test for "did the skill actually reach the runtime?"
  *
