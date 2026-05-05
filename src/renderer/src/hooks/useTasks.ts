@@ -1,52 +1,83 @@
 /**
  * useTasks — calls window.mc.listTasks(), maps real Task → UiTask.
  *
- * Same demo-default pattern as useProjects. The UI consumes UiTask which
- * matches the shape Board + TaskCard already render; transformation lives
- * here so components stay dumb.
+ * The UI consumes UiTask which matches the shape Board + TaskCard already
+ * render; transformation lives here so components stay dumb.
  */
 import { useEffect, useMemo, useState } from "react";
 
-import { mockTasks, type MockLane, type MockPill, type MockRoleLabel, type MockTask } from "../mock-data";
 import { useSubscribe } from "./data-bus";
 import { useSettings } from "./useSettings";
 import { latestModelForEvents } from "../lib/derive-runs";
 import type { Task, TaskEvent, TaskStatus, RunState } from "../../../shared/models";
 
+/** 5-way lane the kanban groups tasks into. */
+export type LaneId =
+  | "Idle"
+  | "Running"
+  | "Waiting"
+  | "Done"
+  | "Failed";
+
 /**
- * Board-shaped task. Extends MockTask with:
- *   - projectId: slug so callers can filter (e.g. Project Detail page)
- *   - projectIcon: derived from the owning project for display
+ * Pill text on each card. Aligned to the design canvas
+ * (NewUI/.../index.html) so cards read "running" / "paused" /
+ * "awaiting review" / "blocked" / "merged" / "failed" — not the lane name.
+ * Empty string suppresses the pill (Drafting + Archived).
+ */
+export type RoleLabel =
+  | ""
+  | "running"
+  | "paused"
+  | "awaiting review"
+  | "blocked"
+  | "merged"
+  | "failed";
+
+/** Empty string suppresses the pill render in TaskCard. */
+export type RolePill = "" | "good" | "warn" | "bad" | "info";
+
+/**
+ * 7-way kanban stage (broader than LaneId — adds Drafting / Review /
+ * Blocked / Archived for board grouping).
  *
- * CONFIRMED: `projectId` is the Project.id slug, not the prefix. Tasks
- * reference projects by slug; the prefix is encoded in the task id itself.
+ * CONFIRMED: `projectId` on UiTask is the Project.id slug, not the prefix.
+ * Tasks reference projects by slug; the prefix is encoded in the task id.
  */
 export type BoardStage = "Drafting" | "Running" | "Review" | "Blocked" | "Failed" | "Done" | "Archived";
 
-export type UiTask = MockTask & {
+export interface UiTask {
+  id: string;                 // "DA-015F"
+  summary: string;            // task title
+  lane: LaneId;
+  roleLabel: RoleLabel;
+  rolePill: RolePill;
+  stepLine: string;           // "Cycle 1"
+  sub?: string;
+  active?: boolean;
   projectId: string;
-  projectIcon: string;     // empty if no icon set on the project
-  cycle: number;           // Task.cycle — counts reviewer loopbacks
-  updatedAt: string;       // ISO 8601 — needed for idle / stuck calculations
+  projectIcon: string;        // empty if no icon set on the project
+  cycle: number;              // counts reviewer loopbacks
+  updatedAt: string;          // ISO 8601 — needed for idle / stuck calculations
   currentModel: string;
   boardStage: BoardStage;
   status: TaskStatus;
   runState: RunState;
   /** Source task id when this is a re-run / clone / spin-off. "" = no parent. */
   parentTaskId: string;
-  /** True if loaded from library/samples/ (read-only demo data). */
+  /** True if loaded from library/samples/ (read-only sample data). */
   isSample: boolean;
-};
+}
 
 /**
  * Derive the pill label + tone for a task card from its boardStage.
  * Canvas (NewUI/.../index.html) uses one of:
  *   running (info, with dot) · paused (warning) · awaiting review (warning) ·
  *   blocked (danger) · merged (success) · failed (danger)
- * Drafting + Archived render no pill — return null. The lane title above
- * the cards already conveys those states.
+ * Drafting + Archived render no pill — return "" for both label and pill.
+ * The lane title above the cards already conveys those states.
  */
-function deriveLaneStyle(t: Task): { lane: MockLane; role: MockRoleLabel; pill: MockPill } {
+function deriveLaneStyle(t: Task): { lane: LaneId; role: RoleLabel; pill: RolePill } {
   const stage = deriveBoardStage(t);
   if (stage === "Done")    return { lane: "Done",    role: "merged",          pill: "good" };
   if (stage === "Failed")  return { lane: "Failed",  role: "failed",          pill: "bad"  };
@@ -56,8 +87,8 @@ function deriveLaneStyle(t: Task): { lane: MockLane; role: MockRoleLabel; pill: 
     if (t.runState === "paused") return { lane: "Waiting", role: "paused",  pill: "warn" };
     return { lane: "Running", role: "running", pill: "info" };
   }
-  // Drafting + Archived — no pill. Empty rolePill suppresses render in TaskCard.
-  return { lane: "Idle", role: "", pill: "" as MockPill };
+  // Drafting + Archived — no pill.
+  return { lane: "Idle", role: "", pill: "" };
 }
 
 function toUiTask(t: Task, projectIcon: string, currentModel: string): UiTask {
@@ -102,18 +133,9 @@ function deriveBoardStage(t: Task): BoardStage {
   return "Drafting";
 }
 
-function mockToBoardStage(lane: MockLane): BoardStage {
-  if (lane === "Done") return "Done";
-  if (lane === "Failed") return "Failed";
-  if (lane === "Waiting") return "Blocked";
-  if (lane === "Running") return "Running";
-  return "Drafting";
-}
-
 export interface TasksState {
   tasks: UiTask[];
   loading: boolean;
-  isDemo: boolean;
   error: Error | null;
   refresh: () => Promise<void>;
 }
@@ -121,44 +143,34 @@ export interface TasksState {
 export function useTasks(): TasksState {
   const [tasks, setTasks] = useState<UiTask[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isDemo, setIsDemo] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   async function load(): Promise<void> {
+    if (!window.mc) {
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
-      if (!window.mc) {
-        // Mock tasks don't have a real project id; stamp a synthetic one so
-        // filters don't collapse them.
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "", isSample: false })));
-        setIsDemo(true);
-        return;
-      }
       const [real, projects] = await Promise.all([
         window.mc.listTasks(),
         window.mc.listProjects(),
       ]);
-      // Map project id → icon so each task can carry its project's icon.
       const iconByProject = new Map(projects.map((p) => [p.id, p.icon]));
-      if (real.length === 0) {
-        setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "", isSample: false })));
-        setIsDemo(true);
-      } else {
-        const eventRows = await Promise.all(real.map(async (t) => {
-          try {
-            return [t.id, await window.mc.readTaskEvents(t.id)] as const;
-          } catch {
-            return [t.id, [] as TaskEvent[]] as const;
-          }
-        }));
-        const modelByTask = new Map(eventRows.map(([id, events]) => [id, latestModelForEvents(events)]));
-        setTasks(real.map((t) => toUiTask(t, iconByProject.get(t.project) ?? "", modelByTask.get(t.id) ?? "")));
-        setIsDemo(false);
-      }
+      const eventRows = await Promise.all(real.map(async (t) => {
+        try {
+          return [t.id, await window.mc.readTaskEvents(t.id)] as const;
+        } catch {
+          return [t.id, [] as TaskEvent[]] as const;
+        }
+      }));
+      const modelByTask = new Map(eventRows.map(([id, events]) => [id, latestModelForEvents(events)]));
+      setTasks(real.map((t) => toUiTask(t, iconByProject.get(t.project) ?? "", modelByTask.get(t.id) ?? "")));
+      setError(null);
     } catch (e) {
       setError(e instanceof Error ? e : new Error(String(e)));
-      setTasks(mockTasks.map((t) => ({ ...t, projectId: "demo", projectIcon: "", cycle: 1, updatedAt: new Date().toISOString(), currentModel: "", boardStage: mockToBoardStage(t.lane), status: t.lane === "Done" ? "done" : t.lane === "Waiting" ? "waiting" : "active", runState: t.active ? "running" : "idle", parentTaskId: "", isSample: false })));
-      setIsDemo(true);
+      setTasks([]);
     } finally {
       setLoading(false);
     }
@@ -178,5 +190,5 @@ export function useTasks(): TasksState {
     [tasks, showSampleData],
   );
 
-  return { tasks: visible, loading, isDemo, error, refresh: load };
+  return { tasks: visible, loading, error, refresh: load };
 }

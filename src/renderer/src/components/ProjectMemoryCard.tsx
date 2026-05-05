@@ -7,9 +7,6 @@
  * CLAUDE.md "pi-memory-md wire-up" item). This card just gives the
  * operator a place to edit it without leaving MC. Saves are explicit;
  * unsaved edits are kept in local state.
- *
- * Hidden in demo mode (sample projects can't have a real memory file
- * — pi wouldn't see it anyway).
  */
 import { useEffect, useState } from "react";
 
@@ -17,10 +14,8 @@ import { pushErrorToast, pushToast } from "../hooks/useToasts";
 
 export function ProjectMemoryCard({
   projectId,
-  isDemo,
 }: {
   projectId: string;
-  isDemo: boolean;
 }): JSX.Element | null {
   const [original, setOriginal] = useState<string | null>(null);
   const [draft, setDraft] = useState<string>("");
@@ -60,8 +55,6 @@ export function ProjectMemoryCard({
       setSaving(false);
     }
   }
-
-  if (isDemo) return null;
 
   const dirty = original !== null && draft !== original;
   const placeholder =

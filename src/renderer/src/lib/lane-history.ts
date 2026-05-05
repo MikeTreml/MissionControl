@@ -72,26 +72,3 @@ function relativeShort(ms: number): string {
   if (hr < 24) return `${hr}h`;
   return `${Math.round(hr / 24)}d`;
 }
-
-/** Canvas-matching demo chips — used when isDemo so the strip isn't blank. */
-export const DEMO_RUNNING_CHIPS: LaneChip[] = [
-  { taskId: "ALGD-0142", state: "success", whenMs: 11 * 60_000,        whenLabel: "11m" },
-  { taskId: "ALGD-0141", state: "success", whenMs: 38 * 60_000,        whenLabel: "38m" },
-  { taskId: "BRIE-0020", state: "failed",  whenMs: 2 * 3600_000,       whenLabel: "2h"  },
-  { taskId: "CIRR-0087", state: "success", whenMs: 3 * 3600_000,       whenLabel: "3h"  },
-  { taskId: "ALGD-0137", state: "paused",  whenMs: 5 * 3600_000,       whenLabel: "5h"  },
-  { taskId: "DMTR-0003", state: "success", whenMs: 8 * 3600_000,       whenLabel: "8h"  },
-  { taskId: "ALGD-0136", state: "success", whenMs: 11 * 3600_000,      whenLabel: "11h" },
-  { taskId: "CIRR-0085", state: "failed",  whenMs: 14 * 3600_000,      whenLabel: "14h" },
-];
-
-export const DEMO_SHIPPED_CHIPS: LaneChip[] = [
-  { taskId: "ALGD-0137", state: "success", whenMs: 2 * DAY_MS, whenLabel: "2d" },
-  { taskId: "ALGD-0136", state: "success", whenMs: 2 * DAY_MS, whenLabel: "2d" },
-  { taskId: "BRIE-0016", state: "success", whenMs: 3 * DAY_MS, whenLabel: "3d" },
-  { taskId: "ALGD-0134", state: "success", whenMs: 3 * DAY_MS, whenLabel: "3d" },
-  { taskId: "CIRR-0079", state: "success", whenMs: 4 * DAY_MS, whenLabel: "4d" },
-  { taskId: "ALGD-0131", state: "success", whenMs: 5 * DAY_MS, whenLabel: "5d" },
-  { taskId: "DMTR-0002", state: "success", whenMs: 6 * DAY_MS, whenLabel: "6d" },
-  { taskId: "BRIE-0014", state: "success", whenMs: 7 * DAY_MS, whenLabel: "7d" },
-];

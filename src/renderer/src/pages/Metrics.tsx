@@ -2,10 +2,6 @@
  * Metrics — cross-project rollups. Reads every task's events.jsonl via
  * useAllTaskEvents, derives per-run data with deriveRuns, and aggregates
  * into KPIs + a per-agent table.
- *
- * Demo default: when useTasks is in demo mode (no real tasks on disk),
- * the canned wireframe numbers still render so a fresh install has
- * something visible.
  */
 import React from "react";
 
@@ -16,16 +12,14 @@ import { deriveRuns, runDurationMs, type DerivedRun } from "../lib/derive-runs";
 
 export function Metrics(): JSX.Element {
   const { setView } = useRoute();
-  const { tasks, isDemo } = useTasks();
+  const { tasks } = useTasks();
   const { perTask } = useAllTaskEvents();
 
   const tasksDone = tasks.filter((t) => t.lane === "Done").length;
   const tasksActive = tasks.filter((t) => t.lane !== "Done").length;
 
   // Collect every run across every task so we can aggregate.
-  const allRuns: DerivedRun[] = isDemo
-    ? []
-    : [...perTask.values()].flatMap(deriveRuns);
+  const allRuns: DerivedRun[] = [...perTask.values()].flatMap(deriveRuns);
 
   const totals = allRuns.reduce(
     (acc, r) => ({
@@ -39,35 +33,26 @@ export function Metrics(): JSX.Element {
   // Per-agent rollup (runs, avg duration, avg tokens, top model).
   const perAgent = aggregatePerAgent(allRuns);
 
-  const kpis = isDemo
-    ? [
-        { label: "Tasks done (30d)", value: 47 },
-        { label: "Avg cycles / task", value: "2.8" },
-        { label: "First-pass rate", value: "62%" },
-        { label: "Total tokens (30d)", value: "4.1M" },
-        { label: "Spend (30d)", value: "$62" },
-        { label: "Local runs (free)", value: 134 },
-      ]
-    : [
-        { label: "Tasks done", value: tasksDone },
-        { label: "Tasks active", value: tasksActive },
-        { label: "Runs total", value: allRuns.length },
-        {
-          label: "Total tokens (in / out)",
-          value: `${abbreviate(totals.tokensIn)} / ${abbreviate(totals.tokensOut)}`,
-        },
-        {
-          label: "Spend",
-          value: totals.costUSD > 0 ? `$${totals.costUSD.toFixed(4)}` : "—",
-        },
-        {
-          label: "Avg cycles / task",
-          value:
-            tasks.length === 0
-              ? "—"
-              : (tasks.reduce((s, t) => s + t.cycle, 0) / tasks.length).toFixed(1),
-        },
-      ];
+  const kpis = [
+    { label: "Tasks done", value: tasksDone },
+    { label: "Tasks active", value: tasksActive },
+    { label: "Runs total", value: allRuns.length },
+    {
+      label: "Total tokens (in / out)",
+      value: `${abbreviate(totals.tokensIn)} / ${abbreviate(totals.tokensOut)}`,
+    },
+    {
+      label: "Spend",
+      value: totals.costUSD > 0 ? `$${totals.costUSD.toFixed(4)}` : "—",
+    },
+    {
+      label: "Avg cycles / task",
+      value:
+        tasks.length === 0
+          ? "—"
+          : (tasks.reduce((s, t) => s + t.cycle, 0) / tasks.length).toFixed(1),
+    },
+  ];
 
   return (
     <>
@@ -76,7 +61,6 @@ export function Metrics(): JSX.Element {
           <h1>Metrics</h1>
           <p className="muted">
             What are my agents good at? What's slow?
-            {isDemo && " · demo data"}
           </p>
         </div>
         <button className="button ghost" onClick={() => setView("dashboard")}>
@@ -97,15 +81,11 @@ export function Metrics(): JSX.Element {
         <section className="card">
           <h3>Per-agent performance</h3>
           <p className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-            {isDemo
-              ? "Demo data. Real numbers appear once tasks have run."
-              : perAgent.length === 0
-                ? "No runs yet. Start a task to populate this table."
-                : "Aggregated from each task's events.jsonl (pi:turn_end events)."}
+            {perAgent.length === 0
+              ? "No runs yet. Start a task to populate this table."
+              : "Aggregated from each task's events.jsonl (pi:turn_end events)."}
           </p>
-          {isDemo ? (
-            <DemoPerRoleTable />
-          ) : perAgent.length > 0 ? (
+          {perAgent.length > 0 && (
             <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 10, fontSize: 13 }}>
               <thead>
                 <tr style={{ color: "var(--muted)", textAlign: "left" }}>
@@ -132,7 +112,7 @@ export function Metrics(): JSX.Element {
                 ))}
               </tbody>
             </table>
-          ) : null}
+          )}
         </section>
 
         <section className="card">
@@ -235,47 +215,3 @@ function abbreviate(n: number): string {
 
 const th: React.CSSProperties = { padding: "8px 10px", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 };
 const cell: React.CSSProperties = { padding: "8px 10px" };
-
-// ── demo-mode table ──────────────────────────────────────────────────────
-// Kept as a separate helper so the main return stays focused. Numbers are
-// the same canned values the wireframe always shipped.
-
-function DemoPerRoleTable(): JSX.Element {
-  // Demo wireframe rows. The real per-role rollup, once built, will
-  // group on whatever agentSlugs the workflows declared at runtime —
-  // there is no fixed roster of roles in MC. These rows are
-  // illustrative only; treat them as a layout placeholder, not as
-  // a list of agents the system supports.
-  const rows = [
-    { role: "Agent A", runs: 58, avgDuration: "14m",    avgTokens: "11,200", loopBack: "—",             topModel: "Claude Opus 4.6" },
-    { role: "Agent B", runs: 52, avgDuration: "3h 18m", avgTokens: "38,400", loopBack: "12%",           topModel: "GPT-5 Codex" },
-    { role: "Agent C", runs: 52, avgDuration: "22m",    avgTokens: "7,900",  loopBack: "38% loop-back", topModel: "Claude Opus 4.6" },
-    { role: "Agent D", runs: 47, avgDuration: "9m",     avgTokens: "4,100",  loopBack: "—",             topModel: "Qwen 2.5 Coder" },
-  ];
-  return (
-    <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 10, fontSize: 13 }}>
-      <thead>
-        <tr style={{ color: "var(--muted)", textAlign: "left" }}>
-          <th style={th}>Role</th>
-          <th style={th}>Runs</th>
-          <th style={th}>Avg duration</th>
-          <th style={th}>Avg tokens</th>
-          <th style={th}>Loop-back %</th>
-          <th style={th}>Top model</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r) => (
-          <tr key={r.role} style={{ borderTop: "1px solid var(--border)" }}>
-            <td style={cell}>{r.role}</td>
-            <td style={cell}>{r.runs}</td>
-            <td style={cell}>{r.avgDuration}</td>
-            <td style={cell}>{r.avgTokens}</td>
-            <td style={cell}>{r.loopBack}</td>
-            <td style={cell}>{r.topModel}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}

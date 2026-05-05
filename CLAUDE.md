@@ -109,7 +109,7 @@ Then read these in order:
                                   └ library/_index.json (built artifact)
 ```
 
-- **Hooks** fetch via `window.mc.*`, use mock data with `isDemo: true` when needed.
+- **Hooks** fetch via `window.mc.*` and return empty data on bridge failure or empty stores. No mock fallback — empty-state UX lives in consumers (e.g. Sidebar's "+ Add your first project" card). Removed 2026-05-04 to kill phantom-data confusion.
 - **Mutations** publish via `hooks/data-bus.ts` so every hook instance refetches.
 - **Shared models** (`src/shared/models.ts`) drive both sides — Zod schemas, TS types.
 
@@ -119,7 +119,9 @@ Then read these in order:
 
 - Project + Task CRUD (persists to `<userData>/projects/` and `tasks/`,
   git auto-detect on project paths, icon picker, immutable prefix)
-- All pages route, all hooks wired, demo defaults for empty state
+- All pages route, all hooks wired. Empty stores render real empty
+  states ("+ Add your first project", "No tasks yet"); no fabricated
+  demo data anywhere.
 
 **Real + live:**
 

@@ -1,18 +1,13 @@
 /**
- * Right rail — live Run Activity + a Queue placeholder.
+ * Right rail — live Run Activity + Subagents + Needs Attention.
  *
  * Run Activity subscribes directly to `window.mc.onTaskEvent` and keeps
  * the most-recent N events in local state. Each incoming event renders
  * as one row: taskId · type · (subtle detail).
- *
- * When window.mc is unavailable (e.g. static preview without preload)
- * we use canned mockRunActivity data so the wireframe still renders
- * something meaningful.
  */
 import { useEffect, useState } from "react";
 
 import { useSubscribe } from "../hooks/data-bus";
-import { mockRunActivity, mockQueue } from "../mock-data";
 import { useRoute } from "../router";
 import { useAllTaskEvents } from "../hooks/useAllTaskEvents";
 import { deriveSubagents, type SubagentEntry } from "../lib/derive-subagents";
@@ -85,26 +80,19 @@ export function RightBar(): JSX.Element {
       <div className="group">
         <h3>Run Activity</h3>
         <div className="task-list" style={{ marginTop: 10 }}>
-          {hasBridge
-            ? live.length === 0
-              ? (
-                <div className="muted" style={{ fontSize: 12, padding: "6px 2px" }}>
-                  No activity yet. Start a task to see events here.
-                </div>
-              )
-              : live.map((entry, idx) => (
-                <LiveRow
-                  key={`${entry.taskId}-${entry.event.timestamp}-${idx}`}
-                  entry={entry}
-                  onOpen={() => openTask(entry.taskId)}
-                />
-              ))
-            : mockRunActivity.map((r) => (
-              <div key={r.label} className="task">
-                <strong>{r.label}</strong>
-                <div className="sub">{r.detail}</div>
-              </div>
-            ))}
+          {live.length === 0 ? (
+            <div className="muted" style={{ fontSize: 12, padding: "6px 2px" }}>
+              No activity yet. Start a task to see events here.
+            </div>
+          ) : (
+            live.map((entry, idx) => (
+              <LiveRow
+                key={`${entry.taskId}-${entry.event.timestamp}-${idx}`}
+                entry={entry}
+                onOpen={() => openTask(entry.taskId)}
+              />
+            ))
+          )}
         </div>
       </div>
 
@@ -222,8 +210,6 @@ function formatShortMs(ms: number): string {
  *   1. lane === "approval"   (waiting for review-then-ship sign-off)
  *   2. status === "failed"
  *   3. runState === "paused" (someone hit Pause and walked away)
- * Hidden when there are no real tasks; uses the canned mockQueue so the
- * wireframe still reads the same in static-preview mode.
  */
 function NeedsAttentionPanel({
   hasBridge,
@@ -245,23 +231,6 @@ function NeedsAttentionPanel({
 
   useEffect(() => { void load(); }, [hasBridge]);
   useSubscribe("tasks", () => { void load(); });
-
-  // Static-preview default — keeps the mock for the wireframe.
-  if (!hasBridge) {
-    return (
-      <div className="group">
-        <h3>Queue</h3>
-        <div className="task-list" style={{ marginTop: 10 }}>
-          {mockQueue.map((q) => (
-            <div key={q.taskId} className="task">
-              <strong>{q.taskId}</strong>
-              <div className="sub">{q.detail}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   // Reason precedence:
   //   1. user-set blocker — most specific, shown verbatim
