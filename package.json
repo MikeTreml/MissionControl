@@ -35,7 +35,7 @@
     "library:enrichment-audit": "node --experimental-strip-types scripts/library-enrichment-audit.ts"
   },
   "dependencies": {
-    "@a5c-ai/babysitter-sdk": "^0.0.187",
+    "@a5c-ai/babysitter-sdk": "^5.0.0",
     "@mariozechner/pi-coding-agent": "^0.70.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
