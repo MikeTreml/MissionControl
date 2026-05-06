@@ -427,13 +427,30 @@ export class RunManager {
     // + skill-driven `run:iterate` as the supported curated path.
 
     // Build inputs.json from the task's RUN_CONFIG when present, else a
-    // minimal stub. // OPEN: surface a per-workflow "Inputs" UI so this
-    // isn't a single-field placeholder.
+    // minimal stub.
+    //
+    // Resolution order (highest to lowest priority):
+    //   1. cfg.runSettings.inputs — where RunWorkflowModal writes its
+    //      InputsForm payload + Quality subsection (targetQuality,
+    //      maxIterations, schema-driven fields). This is the canonical
+    //      path used by MC's UI.
+    //   2. cfg.libraryWorkflow.inputs — accepted for backward compatibility
+    //      with any RUN_CONFIG.json on disk authored before runSettings
+    //      became the standard location. // PROPOSED: remove this fallback
+    //      after a release confirms no live tasks reference it.
+    //   3. { projectName: task.title } — minimal stub so workflows that
+    //      destructure projectName get a sensible default.
     const cfg = await this.tasks.readRunConfig(task.id);
-    const lwInputs = (cfg as { libraryWorkflow?: { inputs?: unknown } } | null)
-      ?.libraryWorkflow?.inputs;
-    const inputsObj =
-      lwInputs && typeof lwInputs === "object" ? lwInputs : { projectName: task.title };
+    const cfgRecord = cfg as
+      | { runSettings?: { inputs?: unknown }; libraryWorkflow?: { inputs?: unknown } }
+      | null;
+    const userInputs =
+      cfgRecord?.runSettings?.inputs && typeof cfgRecord.runSettings.inputs === "object"
+        ? cfgRecord.runSettings.inputs
+        : cfgRecord?.libraryWorkflow?.inputs && typeof cfgRecord.libraryWorkflow.inputs === "object"
+          ? cfgRecord.libraryWorkflow.inputs
+          : null;
+    const inputsObj = userInputs ?? { projectName: task.title };
     const inputsPath = path.join(runsDir, `.mc-inputs-${task.id}.json`);
     await fs.writeFile(inputsPath, JSON.stringify(inputsObj, null, 2), "utf8");
 
