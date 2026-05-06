@@ -364,7 +364,6 @@ export class RunManager {
     const cwd = await this.resolveCwd(task);
     const runsDir = path.join(cwd, ".a5c", "runs");
     await fs.mkdir(runsDir, { recursive: true });
-    const beforeRuns = await snapshotBabysitterRuns(cwd);
 
     // Materialize referenced SKILL.md into <cwd>/.a5c/skills/ and (if the
     // workflow uses the legacy singular `skill: { name }` shape) emit a
@@ -426,7 +425,6 @@ export class RunManager {
     // with `The "path" argument must be of type string. Received undefined`.
     // The README and ORCHESTRATION_GUIDE.md both document `run:create`
     // + skill-driven `run:iterate` as the supported curated path.
-    void beforeRuns; // existing parameter retained for future "stale-run sweep" — currently unused
 
     // Build inputs.json from the task's RUN_CONFIG when present, else a
     // minimal stub. // OPEN: surface a per-workflow "Inputs" UI so this
@@ -444,12 +442,7 @@ export class RunManager {
       mode: "curated",
       processPath,
       cwd,
-      // CONFIRMED 2026-05-06: emit the active model on run-started so the
-      // Task Detail hero can render a "Model: <id>" chip via event replay
-      // without a new IPC channel. Falls back to the per-task active-model
-      // map (set just above in startNow) and finally null when neither is
-      // present (pi default).
-      model: input.model ?? this.activeModel.get(task.id) ?? null,
+      model: this.resolveActiveModelForEvent(input, task.id),
     });
     await this.tasks.appendStatus(
       task.id,
@@ -761,9 +754,7 @@ export class RunManager {
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
       ...(chosenAgent ? { agentSlug: chosenAgent } : {}),
-      // CONFIRMED 2026-05-06: emit the active model on run-started so the
-      // Task Detail hero can render a "Model: <id>" chip via event replay.
-      model: input.model ?? this.activeModel.get(task.id) ?? null,
+      model: this.resolveActiveModelForEvent(input, task.id),
     });
     await this.tasks.appendStatus(
       task.id,
@@ -798,9 +789,7 @@ export class RunManager {
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
       ...(chosenAgent ? { agentSlug: chosenAgent } : {}),
-      // CONFIRMED 2026-05-06: emit the active model on run-started so the
-      // Task Detail hero can render a "Model: <id>" chip via event replay.
-      model: input.model ?? this.activeModel.get(task.id) ?? null,
+      model: this.resolveActiveModelForEvent(input, task.id),
     });
     await this.tasks.appendStatus(
       task.id,
@@ -1166,6 +1155,28 @@ export class RunManager {
     return task;
   }
 
+
+  /**
+   * CONFIRMED 2026-05-06: emit the active model on every `run-started`
+   * journal event so the Task Detail hero can render a "Model: <id>" chip
+   * via event replay — no new IPC channel, no shared-models change, and the
+   * value is already replay-safe because it lives in the events log.
+   *
+   * Resolution order, highest to lowest priority:
+   *   1. The model the caller passed in this Start (e.g., the model picker).
+   *   2. The per-task active model already cached in `activeModel` (set in
+   *      `startNow` so subsequent campaign items inherit the choice).
+   *   3. `null`, meaning "use pi's default" — the chip hides on null.
+   *
+   * Used by all three Start paths (curated, single, campaign) so they
+   * surface the model identically without each restating the fallback chain.
+   */
+  private resolveActiveModelForEvent(
+    input: { model?: string },
+    taskId: string,
+  ): string | null {
+    return input.model ?? this.activeModel.get(taskId) ?? null;
+  }
 
   /**
    * Resolve workspace cwd. Prefer project.path when set so pi can see
