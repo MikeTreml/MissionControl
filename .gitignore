@@ -22,3 +22,7 @@ nul
 .claude/worktrees/relaxed-leakey-6a9414
 .claude/worktrees/frosty-noyce-a76ff3
 /.claude
+
+# --- babysitter managed ---
+# (.a5c/ is already covered above; section preserved for idempotent re-runs)
+# --- end babysitter managed ---
