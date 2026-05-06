@@ -11,10 +11,14 @@
  * across the whole campaign; flips to "idle" only when every item is
  * done OR the user stops. Stop marks any "running" item as "failed".
  *
- * Curated path (Phase 5): when a task has a libraryWorkflow.diskPath in
- * its run config, RunManager spawns `babysitter harness:create-run
- * --process <path>` directly via the SDK CLI (see
- * `startCuratedWorkflow`), skipping babysitter's auto-gen Phase 1.
+ * Curated path (Phase 5, updated 2026-05-06): when a task has a
+ * libraryWorkflow.diskPath in its run config, RunManager stages the run
+ * via `babysitter run:create --entry <path>#process` and then drives
+ * `run:iterate` in MC itself, dispatching each pending agent effect to a
+ * headless `claude -p` call and posting results via `task:post`. See
+ * `startCuratedWorkflow` + `driveCuratedRun`. The previous
+ * `harness:create-run --process` argv was empirically broken in SDK
+ * 0.0.187 (Phase-2 path-undefined crash when Phase 1 is skipped).
  */
 import { spawn } from "node:child_process";
 import { existsSync, promises as fs } from "node:fs";
@@ -46,6 +50,43 @@ function resolveBabysitterCliPath(): string | null {
 }
 
 export type StopReason = "user" | "completed" | "failed";
+
+// Shape of `babysitter run:iterate --json` output (relevant subset).
+interface PendingAction {
+  effectId: string;
+  invocationKey?: string;
+  kind: string;
+  label?: string;
+  taskDef: {
+    kind?: string;
+    title?: string;
+    agent?: {
+      name?: string;
+      prompt?: {
+        role?: string;
+        task?: string;
+        context?: unknown;
+        instructions?: string[];
+        outputFormat?: string;
+      };
+      outputSchema?: unknown;
+    };
+    shell?: {
+      command?: string;
+      cwd?: string;
+    };
+    execution?: { model?: string; harness?: string };
+  };
+}
+
+interface IterateResult {
+  iteration: number;
+  status: "executed" | "waiting" | "completed" | "failed" | "none";
+  action?: string;
+  reason?: string;
+  nextActions?: PendingAction[];
+  error?: string;
+}
 
 interface ParallelStepState {
   stepId: string;
@@ -377,71 +418,324 @@ export class RunManager {
       return task;
     }
 
-    const args = [
-      cliPath,
-      "harness:create-run",
-      "--process", effectiveProcessPath,
-      "--harness", "pi",
-      "--workspace", cwd,
-      "--runs-dir", runsDir,
-      "--non-interactive",
-      "--json",
-    ];
-    if (input.model) args.push("--model", input.model);
+    // CONFIRMED 2026-05-06: switched from `harness:create-run --process`
+    // to `run:create --entry` + MC-driven `run:iterate` loop.
+    // `harness:create-run` Phase 2 reads a path Phase 1 normally produces;
+    // when Phase 1 is `status: "skipped"` (because we supply a curated
+    // workflow file directly) that path is undefined and Phase 2 crashes
+    // with `The "path" argument must be of type string. Received undefined`.
+    // The README and ORCHESTRATION_GUIDE.md both document `run:create`
+    // + skill-driven `run:iterate` as the supported curated path.
+    void beforeRuns; // existing parameter retained for future "stale-run sweep" — currently unused
+
+    // Build inputs.json from the task's RUN_CONFIG when present, else a
+    // minimal stub. // OPEN: surface a per-workflow "Inputs" UI so this
+    // isn't a single-field placeholder.
+    const cfg = await this.tasks.readRunConfig(task.id);
+    const lwInputs = (cfg as { libraryWorkflow?: { inputs?: unknown } } | null)
+      ?.libraryWorkflow?.inputs;
+    const inputsObj =
+      lwInputs && typeof lwInputs === "object" ? lwInputs : { projectName: task.title };
+    const inputsPath = path.join(runsDir, `.mc-inputs-${task.id}.json`);
+    await fs.writeFile(inputsPath, JSON.stringify(inputsObj, null, 2), "utf8");
 
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
       mode: "curated",
       processPath,
       cwd,
+      // CONFIRMED 2026-05-06: emit the active model on run-started so the
+      // Task Detail hero can render a "Model: <id>" chip via event replay
+      // without a new IPC channel. Falls back to the per-task active-model
+      // map (set just above in startNow) and finally null when neither is
+      // present (pi default).
+      model: input.model ?? this.activeModel.get(task.id) ?? null,
     });
     await this.tasks.appendStatus(
       task.id,
       `Started — curated workflow ${path.basename(path.dirname(processPath))}`,
     );
 
-    const child = spawn(process.execPath, args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
-    // Once the SDK creates its run directory, start streaming the
-    // journal events into the task journal as bs:journal:* entries.
-    void this.detectBabysitterRun(task.id, cwd, beforeRuns);
-    const onLine = (chunk: Buffer | string, stream: "stdout" | "stderr"): void => {
-      const text = typeof chunk === "string" ? chunk : chunk.toString("utf8");
-      for (const raw of text.split(/\r?\n/)) {
-        const line = raw.trim();
-        if (!line) continue;
-        let parsed: Record<string, unknown> | null = null;
-        try {
-          const obj = JSON.parse(line);
-          if (obj && typeof obj === "object") parsed = obj as Record<string, unknown>;
-        } catch { /* not JSON */ }
-        // Classify so RightBar / Live events can render decently:
-        //   bs:phase   — CLI progress markers ({phase, status, ...})
-        //   bs:error   — phase status === failed
-        //   bs:log     — anything else (raw text or unstructured JSON)
-        let type = `bs:${stream}`;
-        if (parsed) {
-          if (typeof parsed.phase === "string") {
-            type = parsed.status === "failed" ? "bs:error" : "bs:phase";
-          } else {
-            type = "bs:log";
-          }
-        }
-        void this.tasks.appendEvent(task.id, {
-          type,
-          ...(parsed ?? { line }),
-        });
-      }
-    };
-    child.stdout?.on("data", (c) => onLine(c, "stdout"));
-    child.stderr?.on("data", (c) => onLine(c, "stderr"));
-    child.on("exit", (code) => {
-      const reason: StopReason = code === 0 ? "completed" : "failed";
-      void this.completeRun(task.id, reason);
+    // Phase 1: stage the run via `run:create` (does NOT execute).
+    let created: { runId: string; runDir: string };
+    try {
+      created = (await this.runSdkCli([
+        "run:create",
+        "--process-id", `mc/curated/${path.basename(processPath, ".js")}`,
+        "--entry",      `${effectiveProcessPath}#process`,
+        "--inputs",     inputsPath,
+        "--prompt",     task.title,
+        "--run-id",     task.id,
+        "--runs-dir",   runsDir,
+        "--json",
+      ])) as { runId: string; runDir: string };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      await this.tasks.appendEvent(task.id, { type: "bs:error", message: msg });
+      await this.tasks.appendStatus(task.id, `Curated workflow start failed at run:create: ${msg}`);
+      return task;
+    }
+
+    // Reuse the existing detection event shape so RightBar / live-events
+    // pick the run up the same way the legacy spawn path did.
+    await this.tasks.appendEvent(task.id, {
+      type: "babysitter-run-detected",
+      babysitterRunId: created.runId,
+      runPath: created.runDir,
     });
+    this.startJournalReader(task.id, created.runDir);
 
     const next: Task = { ...task, runState: "running" };
     await this.tasks.saveTask(next);
+
+    // Phase 2: drive `run:iterate` to completion. Fire-and-forget — the
+    // driver calls completeRun(reason) when it finishes or errors.
+    void this.driveCuratedRun(task.id, created.runDir, cwd, input.model);
+
     return next;
+  }
+
+  /**
+   * Drive a curated run by repeatedly calling `run:iterate`, dispatching
+   * each pending agent task to a one-shot harness invocation, posting the
+   * result via `task:post`, and looping until the SDK reports a terminal
+   * status. Replaces the in-CLI loop that `harness:create-run` was supposed
+   * to provide (broken in SDK 0.0.187 when --process is supplied).
+   *
+   * Per-task model selection is honored via `taskDef.execution.model`.
+   * // PROPOSED 2026-05-06: extend dispatch to switch on
+   * `taskDef.execution.harness` so codex / oh-my-pi can take per-task work.
+   * For now everything routes through `claude -p` headless.
+   */
+  private async driveCuratedRun(
+    taskId: string,
+    runDir: string,
+    cwd: string,
+    runLevelModel: string | undefined,
+  ): Promise<void> {
+    const MAX_ITER = 100;
+    let iteration = 0;
+    let stopReason: StopReason = "user";
+
+    try {
+      while (iteration < MAX_ITER) {
+        iteration += 1;
+
+        const result = (await this.runSdkCli([
+          "run:iterate", runDir, "--json", "--iteration", String(iteration),
+        ])) as IterateResult;
+
+        await this.tasks.appendEvent(taskId, {
+          type: "bs:phase",
+          phase: "iterate",
+          iteration,
+          status: result.status,
+          ...(result.action ? { action: result.action } : {}),
+          ...(result.reason ? { reason: result.reason } : {}),
+        });
+
+        if (result.status === "completed") { stopReason = "completed"; break; }
+        if (result.status === "failed")    { stopReason = "failed";    break; }
+        if (result.status === "waiting") {
+          // Soft pause — leave runState=running so the user sees it's
+          // blocked. Anything that needs a response (breakpoint UI, sleep
+          // timer) lives outside this loop. // PROPOSED: route
+          // `breakpoint-waiting` through respondBreakpoint once the UI
+          // surface for in-flight curated runs is wired.
+          await this.tasks.appendStatus(
+            taskId,
+            `Run waiting: ${result.reason ?? "unknown"}`,
+          );
+          return;
+        }
+
+        const pending = result.nextActions ?? [];
+        if (pending.length === 0) continue;
+
+        for (const action of pending) {
+          if (action.kind === "agent") {
+            const value = await this.dispatchCuratedAgentTask(action, cwd, runLevelModel);
+            await this.runSdkCli([
+              "task:post", runDir, action.effectId,
+              "--status", "ok",
+              "--value-inline", JSON.stringify(value),
+              "--json",
+            ]);
+            await this.tasks.appendEvent(taskId, {
+              type: "bs:effect-resolved",
+              effectId: action.effectId,
+              ...(action.label ? { label: action.label } : {}),
+            });
+          } else if (action.kind === "shell") {
+            // Shell effects: spawn the declared command, capture stdout/stderr/
+            // exitCode, post the result. We always post --status ok with the
+            // captured shape — workflows decide what exitCode means (a TS gate
+            // expects exitCode===0, but other shells may intentionally tolerate
+            // non-zero). // CONFIRMED 2026-05-06: design choice for the
+            // continue-mission-control-with-quality flow.
+            const result = await this.dispatchCuratedShellTask(action, cwd);
+            await this.runSdkCli([
+              "task:post", runDir, action.effectId,
+              "--status", "ok",
+              "--value-inline", JSON.stringify(result),
+              "--json",
+            ]);
+            await this.tasks.appendEvent(taskId, {
+              type: "bs:effect-resolved",
+              effectId: action.effectId,
+              shellExitCode: result.exitCode,
+              ...(action.label ? { label: action.label } : {}),
+            });
+          } else {
+            // breakpoint / sleep / custom kinds remain out of scope for this
+            // driver. Mark errored so the run doesn't silently hang.
+            // // OPEN: route breakpoint-waiting through respondBreakpoint when
+            // the curated-run UI surface is ready.
+            await this.tasks.appendEvent(taskId, {
+              type: "bs:error",
+              message: `Effect kind '${action.kind}' not yet handled by RunManager driver`,
+              effectId: action.effectId,
+            });
+            await this.runSdkCli([
+              "task:post", runDir, action.effectId,
+              "--status", "error",
+              "--error-inline", JSON.stringify({
+                message: `Effect kind '${action.kind}' not handled by MC RunManager driver`,
+              }),
+              "--json",
+            ]).catch(() => undefined);
+            stopReason = "failed";
+            return;
+          }
+        }
+      }
+      if (iteration >= MAX_ITER) {
+        stopReason = "failed";
+        await this.tasks.appendEvent(taskId, {
+          type: "bs:error",
+          message: `Curated run hit max iterations (${MAX_ITER}) — aborting`,
+        });
+      }
+    } catch (e) {
+      stopReason = "failed";
+      await this.tasks.appendEvent(taskId, {
+        type: "bs:error",
+        message: e instanceof Error ? e.message : String(e),
+      });
+    } finally {
+      await this.completeRun(taskId, stopReason);
+    }
+  }
+
+  /**
+   * Execute a single pending agent task by invoking `claude` headless and
+   * parsing its JSON envelope. Per-task model (taskDef.execution.model)
+   * overrides the run-level default. // PROPOSED: switch on
+   * `execution.harness` to route codex / oh-my-pi tasks to their CLIs.
+   */
+  /**
+   * Execute a single pending shell task by spawning its declared command and
+   * capturing stdout/stderr/exitCode. Returns a structured result the workflow
+   * can read in subsequent agent tasks (e.g., a typecheck gate that consumes
+   * `result.exitCode`). The orchestrator never throws on non-zero exit — the
+   * result is posted with `--status ok` so the workflow controls what failure
+   * means; the orchestrator only fails on actual spawn errors.
+   */
+  private async dispatchCuratedShellTask(
+    action: PendingAction,
+    fallbackCwd: string,
+  ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+    const shell = action.taskDef?.shell;
+    const command = shell?.command;
+    if (!command || typeof command !== "string") {
+      throw new Error(`Shell task ${action.effectId} has no shell.command`);
+    }
+    const cwd = typeof shell?.cwd === "string" && shell.cwd.trim().length > 0
+      ? shell.cwd
+      : fallbackCwd;
+
+    return await new Promise<{ exitCode: number; stdout: string; stderr: string }>((resolve, reject) => {
+      // shell: true so workflows can use `npm run X`, chained commands, etc.
+      // The command string is sourced from a curated workflow file checked into
+      // the project, not user input — shell-injection risk is the same as for
+      // any package.json script.
+      const child = spawn(command, {
+        cwd,
+        shell: true,
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+      let stdout = "";
+      let stderr = "";
+      child.stdout?.on("data", (c: Buffer) => { stdout += c.toString(); });
+      child.stderr?.on("data", (c: Buffer) => { stderr += c.toString(); });
+      child.on("error", reject);
+      child.on("exit", (code) => {
+        resolve({ exitCode: code ?? 1, stdout, stderr });
+      });
+    });
+  }
+
+  private async dispatchCuratedAgentTask(
+    action: PendingAction,
+    cwd: string,
+    runLevelModel: string | undefined,
+  ): Promise<unknown> {
+    const taskDef = action.taskDef;
+    const agent = taskDef?.agent;
+    if (!agent) {
+      throw new Error(`Agent task ${action.effectId} has no agent definition`);
+    }
+    const model = taskDef.execution?.model ?? runLevelModel;
+    const promptObj = agent.prompt ?? {};
+
+    const promptText = [
+      `Role: ${promptObj.role ?? "Assistant"}.`,
+      `Task: ${promptObj.task ?? "Execute the requested work."}`,
+      promptObj.context !== undefined
+        ? `Context:\n${JSON.stringify(promptObj.context, null, 2)}`
+        : "",
+      Array.isArray(promptObj.instructions) && promptObj.instructions.length > 0
+        ? `Instructions:\n${(promptObj.instructions as string[])
+            .map((s, i) => `${i + 1}. ${s}`)
+            .join("\n")}`
+        : "",
+      `Output format: ${promptObj.outputFormat ?? "JSON"}.`,
+      "Return ONLY the JSON object that satisfies the schema. No prose, no fences.",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
+    const args = ["-p", promptText, "--output-format", "json"];
+    if (model) args.push("--model", model);
+
+    return await new Promise<unknown>((resolve, reject) => {
+      const child = spawn("claude", args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+      let stdout = "";
+      let stderr = "";
+      child.stdout?.on("data", (c) => { stdout += c.toString(); });
+      child.stderr?.on("data", (c) => { stderr += c.toString(); });
+      child.on("error", reject);
+      child.on("exit", (code) => {
+        if (code !== 0) {
+          reject(new Error(
+            `claude exited ${code} for effect ${action.effectId}: ${stderr.trim() || stdout.slice(0, 200)}`,
+          ));
+          return;
+        }
+        // Claude headless emits a JSON envelope { result: "<agent stdout>" }.
+        // Try to parse the result as JSON; otherwise wrap it.
+        try {
+          const envelope = JSON.parse(stdout) as { result?: string };
+          if (typeof envelope.result === "string") {
+            try { resolve(JSON.parse(envelope.result)); return; }
+            catch { resolve({ raw: envelope.result }); return; }
+          }
+          resolve(envelope);
+        } catch {
+          resolve({ raw: stdout });
+        }
+      });
+    });
   }
 
   /** Single-task path: one /babysit run, agent_end flips task to idle. */
@@ -467,6 +761,9 @@ export class RunManager {
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
       ...(chosenAgent ? { agentSlug: chosenAgent } : {}),
+      // CONFIRMED 2026-05-06: emit the active model on run-started so the
+      // Task Detail hero can render a "Model: <id>" chip via event replay.
+      model: input.model ?? this.activeModel.get(task.id) ?? null,
     });
     await this.tasks.appendStatus(
       task.id,
@@ -501,6 +798,9 @@ export class RunManager {
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
       ...(chosenAgent ? { agentSlug: chosenAgent } : {}),
+      // CONFIRMED 2026-05-06: emit the active model on run-started so the
+      // Task Detail hero can render a "Model: <id>" chip via event replay.
+      model: input.model ?? this.activeModel.get(task.id) ?? null,
     });
     await this.tasks.appendStatus(
       task.id,
