@@ -402,3 +402,29 @@ pwsh scripts/setup.ps1
 
 Runs: `npm install` → `npm run typecheck` → every smoke. Stops on first
 failure with the bad output so you know exactly what to fix.
+
+## Babysitter — when working ON this repo
+
+> Note: MissionControl **uses** `@a5c-ai/babysitter-sdk` as a runtime library
+> (see "MC, pi, babysitter — who owns what" above). This section is about
+> editing the MC codebase itself, not about MC's runtime behavior. CI/CD
+> integration is intentionally **not** wired — `npm run doctor` remains the
+> manual pre-commit gate.
+
+Recommended methodology: **evolutionary** (incremental change, low ceremony,
+matches the solo trunk-based workflow).
+
+Recommended babysitter skills/agents when iterating on MC:
+
+- `babysit` — orchestrate multi-step work
+- `feature-dev` — guided feature development for new IPC surface or pages
+- `process-builder` — scaffold new MC-specific processes under `.a5c/processes/`
+- `Explore` — fast read-only search across the 200+ commit codebase
+- `feature-dev:code-architect` — design IPC additions with the **5-layer
+  lockstep** in mind (`shared/models.ts` → `main/ipc.ts` → `preload/index.ts`
+  → `renderer/global.d.ts` → consuming hook/page)
+
+Project profile lives at `.a5c/project-profile.json` (and `.md`); read/update
+via `babysitter profile:read --project --json` and
+`babysitter profile:merge --project --input <file> --json`. Don't edit the JSON
+directly.

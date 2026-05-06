@@ -209,6 +209,22 @@ function TaskHero({ task, events }: { task: Task; events: TaskEvent[] }): JSX.El
     task.status === "failed" ? "danger" :
     "neutral";
 
+  // CONFIRMED 2026-05-06: derive the active model from the most recent
+  // run-started event. RunManager emits `model` on run-started for all
+  // three start paths (curated/single/campaign); the chip is hidden when
+  // no run-started has been seen yet or when model is null/empty (pi
+  // default). TaskEvent's payload is open so we cast through unknown and
+  // probe the field — distinct from RunStatusCard's RUN_CONFIG.model
+  // (configured override) which lives on the runConfig sidecar.
+  let activeModel: string | null = null;
+  for (let i = events.length - 1; i >= 0; i -= 1) {
+    const ev = events[i] as unknown as { type?: string; model?: unknown };
+    if (ev.type === "run-started") {
+      if (typeof ev.model === "string" && ev.model.length > 0) activeModel = ev.model;
+      break;
+    }
+  }
+
   return (
     <div className="task-hero" style={{ ["--task-accent" as string]: accent }}>
       <div className="lhs">
@@ -225,6 +241,11 @@ function TaskHero({ task, events }: { task: Task; events: TaskEvent[] }): JSX.El
              task.status   === "waiting" ? "waiting" :
              "idle"}
           </span>
+          {activeModel && (
+            <span className="pill neutral" title="Active model on the latest run-started event">
+              Model: {activeModel}
+            </span>
+          )}
           {task.kind === "campaign" && (
             <span className="pill neutral">{task.items.length} items</span>
           )}
