@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "2026.01.state-cache",
+  "savedAt": "2026-05-07T13:37:29.652Z",
+  "journalHead": {
+    "seq": 4,
+    "ulid": "01KR1AGR05P6WF908XG33VNCYR"
+  },
+  "stateVersion": 4,
+  "effectsByInvocation": {
+    "bakeoff/story-500:S000001:writer": {
+      "effectId": "01KR1AFKT2VPQ1WKNZCMF0XZCR",
+      "invocationKey": "bakeoff/story-500:S000001:writer",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "writer",
+      "stepId": "S000001",
+      "requestedAt": "2026-05-07T13:36:52.596Z",
+      "resolvedAt": "2026-05-07T13:37:29.138Z"
+    }
+  },
+  "pendingEffectsByKind": {},
+  "rebuildReason": "post_completion"
+}

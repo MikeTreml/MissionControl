@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "2026.01.state-cache",
+  "savedAt": "2026-05-07T13:36:04.972Z",
+  "journalHead": {
+    "seq": 8,
+    "ulid": "01KR1AE5ACYBTYB7JBV892PWZP"
+  },
+  "stateVersion": 8,
+  "effectsByInvocation": {
+    "bakeoff/failure-resume:S000001:planner": {
+      "effectId": "01KR1ACWMW9FVV867XMM9H8V0G",
+      "invocationKey": "bakeoff/failure-resume:S000001:planner",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "planner",
+      "stepId": "S000001",
+      "requestedAt": "2026-05-07T13:35:23.342Z",
+      "resolvedAt": "2026-05-07T13:35:36.277Z"
+    },
+    "bakeoff/failure-resume:S000002:worker": {
+      "effectId": "01KR1AD9PFTDW3R1NNH7D57P96",
+      "invocationKey": "bakeoff/failure-resume:S000002:worker",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "worker",
+      "stepId": "S000002",
+      "requestedAt": "2026-05-07T13:35:36.702Z",
+      "resolvedAt": "2026-05-07T13:35:50.229Z"
+    },
+    "bakeoff/failure-resume:S000003:reviewer": {
+      "effectId": "01KR1ADQBZ0EWXR2H95Z3NDS6V",
+      "invocationKey": "bakeoff/failure-resume:S000003:reviewer",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "reviewer",
+      "stepId": "S000003",
+      "requestedAt": "2026-05-07T13:35:50.700Z",
+      "resolvedAt": "2026-05-07T13:36:04.534Z"
+    }
+  },
+  "pendingEffectsByKind": {},
+  "rebuildReason": "post_completion"
+}

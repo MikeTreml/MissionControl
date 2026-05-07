@@ -1,0 +1,68 @@
+{
+  "final": {
+    "qualityPercent": 88,
+    "iterations": 1,
+    "status": "passed"
+  },
+  "calls": [
+    {
+      "step": "read-input",
+      "kind": "tool",
+      "inputRef": "inputs/01-read-input.json",
+      "outputRef": "outputs/01-read-input.json",
+      "status": "ok",
+      "durationMs": 1
+    },
+    {
+      "step": "summarizer",
+      "kind": "agent",
+      "inputRef": "inputs/02-summarizer.json",
+      "outputRef": "outputs/02-summarizer.json",
+      "status": "ok",
+      "durationMs": 1
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\artifacts\\bs\\tool-artifact\\bs-tool-artifact.json",
+      "kind": "json"
+    }
+  ],
+  "errors": [],
+  "progressEvents": [
+    {
+      "event": "run-started",
+      "at": "2026-05-07T13:35:07.991Z"
+    },
+    {
+      "event": "artifact-written",
+      "step": "summarizer",
+      "at": "2026-05-07T13:35:07.993Z"
+    }
+  ],
+  "workItems": [
+    {
+      "step": "read-input",
+      "input": {},
+      "output": {
+        "exitCode": 0,
+        "stderr": "",
+        "stdout": "bakeoff-tool-ok\r\n"
+      }
+    },
+    {
+      "step": "summarizer",
+      "input": {
+        "toolResult": {
+          "exitCode": 0,
+          "stderr": "",
+          "stdout": "bakeoff-tool-ok\r\n"
+        }
+      },
+      "output": {
+        "ok": true,
+        "summary": "tool artifact created"
+      }
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "final": {
+    "qualityPercent": 90,
+    "iterations": 2,
+    "status": "passed"
+  },
+  "calls": [
+    {
+      "step": "planner",
+      "kind": "agent",
+      "inputRef": "inputs/01-planner.json",
+      "outputRef": "outputs/01-planner.json",
+      "status": "ok",
+      "durationMs": 1
+    },
+    {
+      "step": "worker",
+      "kind": "agent",
+      "inputRef": "inputs/02-worker.json",
+      "outputRef": "outputs/02-worker.json",
+      "status": "ok",
+      "durationMs": 1
+    },
+    {
+      "step": "reviewer",
+      "kind": "agent",
+      "inputRef": "inputs/03-reviewer.json",
+      "outputRef": "outputs/03-reviewer.json",
+      "status": "ok",
+      "durationMs": 1
+    },
+    {
+      "step": "worker",
+      "kind": "agent",
+      "inputRef": "inputs/03-worker.json",
+      "outputRef": "outputs/02-worker.json",
+      "status": "ok",
+      "durationMs": 1
+    },
+    {
+      "step": "reviewer",
+      "kind": "agent",
+      "inputRef": "inputs/04-reviewer.json",
+      "outputRef": "outputs/03-reviewer.json",
+      "status": "ok",
+      "durationMs": 1
+    }
+  ],
+  "artifacts": [],
+  "errors": [],
+  "progressEvents": [
+    {
+      "event": "run-started",
+      "at": "2026-05-07T13:33:38.504Z"
+    },
+    {
+      "event": "quality-scored",
+      "step": "reviewer",
+      "at": "2026-05-07T13:33:38.505Z"
+    },
+    {
+      "event": "quality-passed",
+      "step": "reviewer",
+      "at": "2026-05-07T13:33:38.506Z"
+    }
+  ],
+  "workItems": [
+    {
+      "step": "planner",
+      "input": {
+        "scenario": "chain-loop"
+      },
+      "output": {
+        "plan": "two iteration plan",
+        "ready": true
+      }
+    },
+    {
+      "step": "worker",
+      "input": {
+        "iteration": 1
+      },
+      "output": {
+        "iteration": 1,
+        "work": "completed"
+      }
+    },
+    {
+      "step": "reviewer",
+      "input": {
+        "iteration": 1
+      },
+      "output": {
+        "approved": false,
+        "qualityPercent": 72
+      }
+    },
+    {
+      "step": "worker",
+      "input": {
+        "iteration": 2
+      },
+      "output": {
+        "iteration": 2,
+        "work": "completed"
+      }
+    },
+    {
+      "step": "reviewer",
+      "input": {
+        "iteration": 2
+      },
+      "output": {
+        "approved": true,
+        "qualityPercent": 90
+      }
+    }
+  ]
+}

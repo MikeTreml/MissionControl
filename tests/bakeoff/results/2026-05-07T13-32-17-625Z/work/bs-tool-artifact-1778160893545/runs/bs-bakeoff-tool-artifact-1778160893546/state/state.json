@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "2026.01.state-cache",
+  "savedAt": "2026-05-07T13:35:08.058Z",
+  "journalHead": {
+    "seq": 6,
+    "ulid": "01KR1ACDQSRF1MXBATXXT999XJ"
+  },
+  "stateVersion": 6,
+  "effectsByInvocation": {
+    "bakeoff/tool-artifact:S000001:read-input": {
+      "effectId": "01KR1AC0AF7NP0TWPQ59VNHVS0",
+      "invocationKey": "bakeoff/tool-artifact:S000001:read-input",
+      "status": "resolved_ok",
+      "kind": "shell",
+      "label": "bakeoff",
+      "taskId": "read-input",
+      "stepId": "S000001",
+      "requestedAt": "2026-05-07T13:34:54.335Z",
+      "resolvedAt": "2026-05-07T13:34:54.761Z"
+    },
+    "bakeoff/tool-artifact:S000002:summarizer": {
+      "effectId": "01KR1AC1364SKFJMSG1XHP1B0N",
+      "invocationKey": "bakeoff/tool-artifact:S000002:summarizer",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "summarizer",
+      "stepId": "S000002",
+      "requestedAt": "2026-05-07T13:34:55.123Z",
+      "resolvedAt": "2026-05-07T13:35:07.648Z"
+    }
+  },
+  "pendingEffectsByKind": {},
+  "rebuildReason": "post_completion"
+}

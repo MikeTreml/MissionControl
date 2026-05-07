@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "2026.01.state-cache",
+  "savedAt": "2026-05-07T13:33:38.599Z",
+  "journalHead": {
+    "seq": 12,
+    "ulid": "01KR1A9PBR634B2M1JY8D78AP8"
+  },
+  "stateVersion": 12,
+  "effectsByInvocation": {
+    "bakeoff/chain-loop:S000001:planner": {
+      "effectId": "01KR1A784D7R831804XSREA3PB",
+      "invocationKey": "bakeoff/chain-loop:S000001:planner",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "planner",
+      "stepId": "S000001",
+      "requestedAt": "2026-05-07T13:32:18.495Z",
+      "resolvedAt": "2026-05-07T13:32:35.538Z"
+    },
+    "bakeoff/chain-loop:S000002:worker": {
+      "effectId": "01KR1A7S6BVMP22AMYZQVFHQ5W",
+      "invocationKey": "bakeoff/chain-loop:S000002:worker",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "worker",
+      "stepId": "S000002",
+      "requestedAt": "2026-05-07T13:32:35.961Z",
+      "resolvedAt": "2026-05-07T13:32:51.503Z"
+    },
+    "bakeoff/chain-loop:S000003:reviewer": {
+      "effectId": "01KR1A88QE7B4JEW277VVYZP9H",
+      "invocationKey": "bakeoff/chain-loop:S000003:reviewer",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "reviewer",
+      "stepId": "S000003",
+      "requestedAt": "2026-05-07T13:32:51.868Z",
+      "resolvedAt": "2026-05-07T13:33:05.080Z"
+    },
+    "bakeoff/chain-loop:S000004:worker": {
+      "effectId": "01KR1A8P01W97NC1E6WKD9QZDA",
+      "invocationKey": "bakeoff/chain-loop:S000004:worker",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "worker",
+      "stepId": "S000004",
+      "requestedAt": "2026-05-07T13:33:05.456Z",
+      "resolvedAt": "2026-05-07T13:33:22.258Z"
+    },
+    "bakeoff/chain-loop:S000005:reviewer": {
+      "effectId": "01KR1A96TBR05Z83FBP0FFBPM5",
+      "invocationKey": "bakeoff/chain-loop:S000005:reviewer",
+      "status": "resolved_ok",
+      "kind": "agent",
+      "label": "bakeoff",
+      "taskId": "reviewer",
+      "stepId": "S000005",
+      "requestedAt": "2026-05-07T13:33:22.682Z",
+      "resolvedAt": "2026-05-07T13:33:38.176Z"
+    }
+  },
+  "pendingEffectsByKind": {},
+  "rebuildReason": "post_completion"
+}

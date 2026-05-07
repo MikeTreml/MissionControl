@@ -1,0 +1,116 @@
+{
+  "final": {
+    "qualityPercent": 88,
+    "iterations": 2,
+    "status": "passed"
+  },
+  "calls": [
+    {
+      "step": "planner",
+      "kind": "agent",
+      "inputRef": "inputs/01-planner.json",
+      "outputRef": "outputs/01-planner.json",
+      "status": "ok",
+      "durationMs": 1
+    },
+    {
+      "step": "worker",
+      "kind": "agent",
+      "inputRef": "inputs/02-worker.json",
+      "status": "error",
+      "durationMs": 1,
+      "error": {
+        "message": "forced worker failure for bakeoff",
+        "step": "worker",
+        "nextAction": "resume"
+      }
+    },
+    {
+      "step": "resume",
+      "kind": "resume",
+      "inputRef": "inputs/03-resume.json",
+      "outputRef": "outputs/03-resume.json",
+      "status": "ok",
+      "durationMs": 1
+    },
+    {
+      "step": "worker",
+      "kind": "agent",
+      "inputRef": "inputs/04-worker.json",
+      "outputRef": "outputs/04-worker.json",
+      "status": "ok",
+      "durationMs": 1
+    },
+    {
+      "step": "reviewer",
+      "kind": "agent",
+      "inputRef": "inputs/05-reviewer.json",
+      "outputRef": "outputs/05-reviewer.json",
+      "status": "ok",
+      "durationMs": 1
+    }
+  ],
+  "artifacts": [],
+  "errors": [
+    {
+      "message": "forced worker failure for bakeoff",
+      "step": "worker",
+      "inputRef": "inputs/02-worker.json",
+      "nextAction": "resume"
+    }
+  ],
+  "progressEvents": [
+    {
+      "event": "run-started",
+      "at": "2026-05-07T13:36:04.893Z"
+    },
+    {
+      "event": "step-failed",
+      "step": "worker",
+      "at": "2026-05-07T13:36:04.894Z"
+    },
+    {
+      "event": "run-resumed",
+      "step": "resume",
+      "at": "2026-05-07T13:36:04.895Z"
+    }
+  ],
+  "workItems": [
+    {
+      "step": "planner",
+      "input": {
+        "scenario": "failure-resume"
+      },
+      "output": {
+        "plan": "two iteration plan",
+        "ready": true
+      }
+    },
+    {
+      "step": "worker",
+      "input": {
+        "iteration": 2,
+        "priorFailure": {
+          "message": "forced worker failure for bakeoff",
+          "step": "worker",
+          "inputRef": "inputs/02-worker.json",
+          "nextAction": "resume"
+        }
+      },
+      "output": {
+        "iteration": 2,
+        "work": "completed"
+      }
+    },
+    {
+      "step": "reviewer",
+      "input": {
+        "iteration": 2
+      },
+      "output": {
+        "approved": true,
+        "qualityPercent": 90
+      }
+    }
+  ]
+}
