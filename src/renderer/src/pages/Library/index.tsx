@@ -164,7 +164,7 @@ export function LibraryBrowser(): JSX.Element {
           </div>
         )}
         {!loading && !error && (
-          <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 14 }}>
+          <div className="library-browser-grid">
             <Tree
               items={filteredItems}
               selectedId={selectedId}
