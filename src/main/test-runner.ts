@@ -57,6 +57,16 @@ function commandLine(command: string, args: string[]): string {
   return [command, ...args].map(quoteArg).join(" ");
 }
 
+function spawnCommandForPlatform(command: string, args: string[]): { command: string; args: string[] } {
+  if (process.platform !== "win32" || !/\.(cmd|bat)$/i.test(command)) {
+    return { command, args };
+  }
+  return {
+    command: process.env["ComSpec"] || "cmd.exe",
+    args: ["/d", "/s", "/c", commandLine(command, args)],
+  };
+}
+
 export class TestRunner extends EventEmitter {
   private readonly presets: TestPreset[];
   private readonly active = new Map<string, ActiveRun>();
@@ -184,7 +194,8 @@ export class TestRunner extends EventEmitter {
       commandLine: commandLine(preset.command, preset.args),
       output: "",
     };
-    const child = spawn(preset.command, preset.args, {
+    const spawnSpec = spawnCommandForPlatform(preset.command, preset.args);
+    const child = spawn(spawnSpec.command, spawnSpec.args, {
       cwd: preset.cwd,
       env: { ...process.env },
       shell: false,

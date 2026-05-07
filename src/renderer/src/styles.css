@@ -556,7 +556,7 @@ button {
 .card {
   background: var(--raised);
   border-radius: var(--radius-lg);
-  padding: 14px 16px;
+  padding: var(--space-4);
   box-shadow: var(--lift);
   transition: background var(--dur-fast);
 }
@@ -2107,6 +2107,12 @@ body::after {
 /* MC-specific: Library file tree + kind-tab accordion. The design
  * canvas has `.files-list` for a flat file list, but the live Library
  * Browser is a tree of ~3,500 items with kind tabs above. */
+.library-browser-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 14px;
+  padding-block: 10px;
+}
 .library-tree-panel {
   min-height: 560px;
   position: relative;
@@ -2386,3 +2392,103 @@ body::after {
  * because it sits next to a scrubber. We removed the scrubber (no
  * real metric to bind it to), so let the input take more room. */
 .qa-cmd input { width: 360px; }
+
+.test-lab-error {
+  color: var(--danger);
+  margin-bottom: 14px;
+}
+.test-lab-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1.4fr);
+  gap: 14px;
+}
+.test-lab-presets,
+.test-lab-runs,
+.test-lab-group,
+.test-lab-preset {
+  display: grid;
+  align-content: start;
+}
+.test-lab-presets { gap: 14px; }
+.test-lab-runs {
+  gap: 12px;
+  min-width: 0;
+}
+.test-lab-group,
+.test-lab-preset {
+  gap: 8px;
+}
+.test-lab-preset,
+.test-lab-meta {
+  background: var(--panel);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  min-width: 0;
+}
+.test-lab-preset-head,
+.test-lab-runs-head,
+.test-lab-run-list {
+  display: flex;
+  gap: 10px;
+}
+.test-lab-preset-head {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.test-lab-runs-head {
+  justify-content: space-between;
+  align-items: center;
+}
+.test-lab-run-list {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.test-lab-run-list .button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.test-lab-min { min-width: 0; }
+.test-lab-preset-name { font-weight: var(--fw-bold); }
+.test-lab-small { font-size: var(--fs-sm); }
+.test-lab-runs-title {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.test-lab-code,
+.test-lab-muted-code {
+  word-break: break-word;
+}
+.test-lab-muted-code { color: var(--muted); }
+.test-lab-status {
+  font-weight: var(--fw-bold);
+}
+.test-lab-status-passed { color: var(--success); }
+.test-lab-status-failed { color: var(--danger); }
+.test-lab-status-cancelled { color: var(--warning); }
+.test-lab-status-running { color: var(--accent); }
+.test-lab-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.test-lab-meta-label { font-size: var(--fs-xs); }
+.test-lab-meta-value {
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.test-lab-output {
+  margin: 0;
+  min-height: 420px;
+  max-height: 58vh;
+  overflow: auto;
+  padding: var(--space-3);
+  background: var(--canvas);
+  color: var(--text);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

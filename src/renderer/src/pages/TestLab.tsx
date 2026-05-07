@@ -1,17 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type { TestPresetInfo, TestRunSnapshot, TestRunnerEvent } from "../global";
 
-function statusColor(status: TestRunSnapshot["status"]): string {
-  switch (status) {
-    case "passed":
-      return "var(--success)";
-    case "failed":
-      return "var(--danger)";
-    case "cancelled":
-      return "var(--warning)";
-    case "running":
-      return "var(--accent)";
-  }
+function statusClass(status: TestRunSnapshot["status"]): string {
+  return `test-lab-status test-lab-status-${status}`;
 }
 
 function formatDuration(run: TestRunSnapshot): string {
@@ -122,31 +113,22 @@ export function TestLab(): JSX.Element {
       </div>
 
       {error && (
-        <section className="card" style={{ color: "var(--danger)", marginBottom: 14 }}>
+        <section className="card test-lab-error">
           {error}
         </section>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(360px, 0.9fr) minmax(0, 1.4fr)", gap: 14 }}>
-        <section className="card" style={{ display: "grid", gap: 14, alignContent: "start" }}>
+      <div className="test-lab-layout">
+        <section className="card test-lab-presets">
           {grouped.map(([group, groupPresets]) => (
-            <div key={group} style={{ display: "grid", gap: 8 }}>
+            <div key={group} className="test-lab-group">
               <div className="section-label">{group}</div>
               {groupPresets.map((preset) => (
-                <div
-                  key={preset.id}
-                  style={{
-                    display: "grid",
-                    gap: 8,
-                    padding: 10,
-                    background: "var(--panel)",
-                    borderRadius: 8,
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "start" }}>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontWeight: 700 }}>{preset.name}</div>
-                      <div className="muted" style={{ fontSize: 12 }}>{preset.description}</div>
+                <div key={preset.id} className="test-lab-preset">
+                  <div className="test-lab-preset-head">
+                    <div className="test-lab-min">
+                      <div className="test-lab-preset-name">{preset.name}</div>
+                      <div className="muted test-lab-small">{preset.description}</div>
                     </div>
                     <button
                       className="button"
@@ -157,14 +139,14 @@ export function TestLab(): JSX.Element {
                       {preset.kind === "server" ? "Start" : "Run"}
                     </button>
                   </div>
-                  <code style={{ color: "var(--muted)", wordBreak: "break-word" }}>
+                  <code className="test-lab-muted-code">
                     {preset.cwd}
                   </code>
-                  <code style={{ wordBreak: "break-word" }}>
+                  <code className="test-lab-code">
                     {[preset.command, ...preset.args].join(" ")}
                   </code>
                   {preset.expectedReportPath && (
-                    <code style={{ color: "var(--muted)", wordBreak: "break-word" }}>
+                    <code className="test-lab-muted-code">
                       report: {preset.expectedReportPath}
                     </code>
                   )}
@@ -174,12 +156,12 @@ export function TestLab(): JSX.Element {
           ))}
         </section>
 
-        <section className="card" style={{ display: "grid", gap: 12, alignContent: "start", minWidth: 0 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}>
+        <section className="card test-lab-runs">
+          <div className="test-lab-runs-head">
             <div>
-              <h2 style={{ margin: 0, fontSize: 16 }}>Runs</h2>
+              <h2 className="test-lab-runs-title">Runs</h2>
               {selectedRun && (
-                <div className="muted" style={{ fontSize: 12 }}>
+                <div className="muted test-lab-small">
                   {selectedRun.commandLine}
                 </div>
               )}
@@ -191,16 +173,15 @@ export function TestLab(): JSX.Element {
             )}
           </div>
 
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <div className="test-lab-run-list">
             {runs.map((run) => (
               <button
                 key={run.id}
                 className={run.id === selectedRun?.id ? "button" : "button ghost"}
                 type="button"
                 onClick={() => setSelectedRunId(run.id)}
-                style={{ display: "flex", gap: 8, alignItems: "center" }}
               >
-                <span style={{ color: statusColor(run.status), fontWeight: 800 }}>●</span>
+                <span className={statusClass(run.status)}>●</span>
                 <span>{presets.find((preset) => preset.id === run.presetId)?.name ?? run.presetId}</span>
                 <span className="muted">{formatDuration(run)}</span>
               </button>
@@ -210,28 +191,13 @@ export function TestLab(): JSX.Element {
 
           {selectedRun && (
             <>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 8 }}>
-                <Meta label="Status" value={selectedRun.status} color={statusColor(selectedRun.status)} />
+              <div className="test-lab-meta-grid">
+                <Meta label="Status" value={selectedRun.status} status={selectedRun.status} />
                 <Meta label="Exit" value={selectedRun.exitCode === undefined ? "-" : String(selectedRun.exitCode)} />
                 <Meta label="Duration" value={formatDuration(selectedRun)} />
                 <Meta label="Started" value={new Date(selectedRun.startedAt).toLocaleTimeString()} />
               </div>
-              <pre
-                style={{
-                  margin: 0,
-                  minHeight: 420,
-                  maxHeight: "58vh",
-                  overflow: "auto",
-                  padding: 12,
-                  background: "var(--canvas)",
-                  color: "var(--text)",
-                  borderRadius: 8,
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 12,
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                }}
-              >
+              <pre className="test-lab-output">
                 {selectedRun.output || "(waiting for output)"}
               </pre>
             </>
@@ -242,11 +208,19 @@ export function TestLab(): JSX.Element {
   );
 }
 
-function Meta({ label, value, color }: { label: string; value: string; color?: string }): JSX.Element {
+function Meta({
+  label,
+  value,
+  status,
+}: {
+  label: string;
+  value: string;
+  status?: TestRunSnapshot["status"];
+}): JSX.Element {
   return (
-    <div style={{ background: "var(--panel)", borderRadius: 8, padding: 10, minWidth: 0 }}>
-      <div className="muted" style={{ fontSize: 11 }}>{label}</div>
-      <div style={{ color, fontFamily: "var(--font-mono)", overflow: "hidden", textOverflow: "ellipsis" }}>
+    <div className="test-lab-meta">
+      <div className="muted test-lab-meta-label">{label}</div>
+      <div className={`test-lab-meta-value${status ? ` test-lab-status-${status}` : ""}`}>
         {value}
       </div>
     </div>
