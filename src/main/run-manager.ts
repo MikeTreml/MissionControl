@@ -1280,12 +1280,14 @@ function buildBabysitPrompt(
   //              only useful from a real pi TUI; in MC's programmatic
   //              session breakpoints have no surface to land on)
   //   /yolo    — author + execute NON-interactively (no breakpoints)
+  //   /forever — author + execute in babysitter's continuous mode
   //   "direct" — no slash command; pi runs as a single agent on the brief
   //              alone. Skips babysitter authoring + execution entirely.
   const prefix =
-    mode === "execute" ? "/yolo " :
-    mode === "plan"    ? "/plan "  :
-    "";  // direct
+    mode === "yolo" || mode === "execute" ? "/yolo " :
+    mode === "forever"                    ? "/forever " :
+    mode === "plan"                       ? "/plan " :
+    "";  // legacy direct
   const lines = [
     `${prefix}${task.title}`,
     "",
@@ -1326,9 +1328,10 @@ function buildItemBabysitPrompt(
   mode: Task["babysitterMode"] = "plan",
 ): string {
   const prefix =
-    mode === "execute" ? "/yolo " :
-    mode === "plan"    ? "/plan "  :
-    "";  // direct
+    mode === "yolo" || mode === "execute" ? "/yolo " :
+    mode === "forever"                    ? "/forever " :
+    mode === "plan"                       ? "/plan " :
+    "";  // legacy direct
   const total = task.items.length;
   const idx = task.items.findIndex((i) => i.id === item.id);
   return [

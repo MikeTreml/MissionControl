@@ -128,14 +128,15 @@ export const TaskSchema = z.object({
    * MCSettings; moved to per-task on 2026-05-01 so different tasks can
    * use different modes without flipping a global setting between runs.
    *
-   *   - "plan"    → /plan   (author a process.js + run scaffold, don't run)
-   *   - "execute" → /yolo   (author + run end-to-end, no breakpoints)
-   *   - "direct"  → no slash command — send the task brief as a regular
-   *                 pi prompt. Skips babysitter entirely. Cheapest.
+   *   - "plan"    → /plan    (author a process.js + run scaffold, don't run)
+   *   - "yolo"    → /yolo    (author + run end-to-end, no breakpoints)
+   *   - "forever" → /forever (keep babysitter running continuously)
    *
    * Defaults to "plan" — the safest first test.
+   * Legacy "execute" / "direct" values are still accepted so older task
+   * manifests continue to load.
    */
-  babysitterMode: z.enum(["plan", "execute", "direct"]).default("plan"),
+  babysitterMode: z.enum(["plan", "yolo", "forever", "execute", "direct"]).default("plan"),
   /**
    * Marker for sample/demo records that ship with the app under
    * `library/samples/`. Tagged at read-time by TaskStore when loaded

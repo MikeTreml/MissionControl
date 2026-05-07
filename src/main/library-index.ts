@@ -50,12 +50,43 @@ export class LibraryIndexStore {
 
   async readJsonSchema(absPath: string | null | undefined): Promise<Record<string, unknown> | null> {
     if (!absPath) return null;
-    const resolved = path.resolve(absPath);
+    const resolved = this.resolveLibraryPath(absPath);
     if (!resolved.startsWith(this.libraryRoot)) {
       throw new Error("Schema path must be under library root");
     }
     const raw = await fs.readFile(resolved, "utf8");
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     return parsed;
+  }
+
+  async readJsonFile(absPath: string | null | undefined): Promise<Record<string, unknown> | null> {
+    if (!absPath) return null;
+    const resolved = this.resolveLibraryPath(absPath);
+    if (!resolved.startsWith(this.libraryRoot)) {
+      throw new Error("JSON path must be under library root");
+    }
+    const raw = await fs.readFile(resolved, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error("Expected a JSON object");
+    }
+    return parsed as Record<string, unknown>;
+  }
+
+  private resolveLibraryPath(inputPath: string): string {
+    const resolved = path.resolve(inputPath);
+    if (resolved.startsWith(this.libraryRoot)) return resolved;
+
+    // Older checked-in indexes may contain absolute paths from the machine
+    // that generated them. If the path still includes a library/ suffix,
+    // remap that relative tail onto this checkout's library root.
+    const normalized = inputPath.replace(/\\/g, "/");
+    const marker = "/library/";
+    const markerIdx = normalized.lastIndexOf(marker);
+    if (markerIdx >= 0) {
+      const rel = normalized.slice(markerIdx + marker.length);
+      return path.resolve(this.libraryRoot, rel);
+    }
+    return resolved;
   }
 }
