@@ -1,0 +1,151 @@
+{
+  "runner": "aa",
+  "scenario": "chain-loop",
+  "success": true,
+  "final": {
+    "qualityPercent": 90,
+    "iterations": 2,
+    "status": "passed"
+  },
+  "metadata": {
+    "calls": [
+      {
+        "step": "planner",
+        "kind": "agent",
+        "inputRef": "inputs/01-planner.json",
+        "outputRef": "outputs/01-planner.json",
+        "status": "ok",
+        "durationMs": 12521,
+        "command": "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff planner.\\n\\n# INTERNAL ASSISTANT STEPS\\n- For any input, return exactly {\\\"plan\\\":\\\"two iteration plan\\\",\\\"ready\\\":true}.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"scenario\\\":\\\"chain-loop\\\"}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff planner agent.\",\n  \"properties\": {\n    \"plan\": {\n      \"description\": \"Plan text\",\n      \"title\": \"Plan\",\n      \"type\": \"string\"\n    },\n    \"ready\": {\n      \"description\": \"Whether the plan is ready\",\n      \"title\": \"Ready\",\n      \"type\": \"boolean\"\n    }\n  },\n  \"required\": [\n    \"plan\",\n    \"ready\"\n  ],\n  \"title\": \"PlannerOutput\",\n  \"type\": \"object\"\n} --output-format json"
+      },
+      {
+        "step": "worker",
+        "kind": "agent",
+        "inputRef": "inputs/02-worker.json",
+        "outputRef": "outputs/02-worker.json",
+        "status": "ok",
+        "durationMs": 15529,
+        "command": "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff worker.\\n\\n# INTERNAL ASSISTANT STEPS\\n- Return exactly {\\\"work\\\":\\\"completed\\\",\\\"iteration\\\":ITERATION}, using the input iteration number.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":1,\\\"prior_failure\\\":null}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff worker agent.\",\n  \"properties\": {\n    \"work\": {\n      \"description\": \"Work result marker\",\n      \"title\": \"Work\",\n      \"type\": \"string\"\n    },\n    \"iteration\": {\n      \"description\": \"Iteration completed\",\n      \"title\": \"Iteration\",\n      \"type\": \"integer\"\n    }\n  },\n  \"required\": [\n    \"work\",\n    \"iteration\"\n  ],\n  \"title\": \"WorkerOutput\",\n  \"type\": \"object\"\n} --output-format json"
+      },
+      {
+        "step": "reviewer",
+        "kind": "agent",
+        "inputRef": "inputs/03-reviewer.json",
+        "outputRef": "outputs/03-reviewer.json",
+        "status": "ok",
+        "durationMs": 17558,
+        "command": "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff reviewer.\\n\\n# INTERNAL ASSISTANT STEPS\\n- If iteration is 1 return {\\\"qualityPercent\\\":72,\\\"approved\\\":false}; if iteration is 2 return {\\\"qualityPercent\\\":90,\\\"approved\\\":true}.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":1}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff reviewer agent.\",\n  \"properties\": {\n    \"qualityPercent\": {\n      \"description\": \"Quality percentage\",\n      \"maximum\": 100,\n      \"minimum\": 0,\n      \"title\": \"Qualitypercent\",\n      \"type\": \"integer\"\n    },\n    \"approved\": {\n      \"description\": \"Whether quality passed\",\n      \"title\": \"Approved\",\n      \"type\": \"boolean\"\n    }\n  },\n  \"required\": [\n    \"qualityPercent\",\n    \"approved\"\n  ],\n  \"title\": \"ReviewerOutput\",\n  \"type\": \"object\"\n} --output-format json"
+      },
+      {
+        "step": "worker",
+        "kind": "agent",
+        "inputRef": "inputs/03-worker.json",
+        "outputRef": "outputs/03-worker.json",
+        "status": "ok",
+        "durationMs": 11709,
+        "command": "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff worker.\\n\\n# INTERNAL ASSISTANT STEPS\\n- Return exactly {\\\"work\\\":\\\"completed\\\",\\\"iteration\\\":ITERATION}, using the input iteration number.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":1,\\\"prior_failure\\\":null}\"\n  },\n  {\n    \"role\": \"assistant\",\n    \"content\": \"{\\\"work\\\":\\\"completed\\\",\\\"iteration\\\":1}\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":2,\\\"prior_failure\\\":null}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff worker agent.\",\n  \"properties\": {\n    \"work\": {\n      \"description\": \"Work result marker\",\n      \"title\": \"Work\",\n      \"type\": \"string\"\n    },\n    \"iteration\": {\n      \"description\": \"Iteration completed\",\n      \"title\": \"Iteration\",\n      \"type\": \"integer\"\n    }\n  },\n  \"required\": [\n    \"work\",\n    \"iteration\"\n  ],\n  \"title\": \"WorkerOutput\",\n  \"type\": \"object\"\n} --output-format json"
+      },
+      {
+        "step": "reviewer",
+        "kind": "agent",
+        "inputRef": "inputs/04-reviewer.json",
+        "outputRef": "outputs/04-reviewer.json",
+        "status": "ok",
+        "durationMs": 15559,
+        "command": "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff reviewer.\\n\\n# INTERNAL ASSISTANT STEPS\\n- If iteration is 1 return {\\\"qualityPercent\\\":72,\\\"approved\\\":false}; if iteration is 2 return {\\\"qualityPercent\\\":90,\\\"approved\\\":true}.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":1}\"\n  },\n  {\n    \"role\": \"assistant\",\n    \"content\": \"{\\\"qualityPercent\\\":72,\\\"approved\\\":false}\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":2}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff reviewer agent.\",\n  \"properties\": {\n    \"qualityPercent\": {\n      \"description\": \"Quality percentage\",\n      \"maximum\": 100,\n      \"minimum\": 0,\n      \"title\": \"Qualitypercent\",\n      \"type\": \"integer\"\n    },\n    \"approved\": {\n      \"description\": \"Whether quality passed\",\n      \"title\": \"Approved\",\n      \"type\": \"boolean\"\n    }\n  },\n  \"required\": [\n    \"qualityPercent\",\n    \"approved\"\n  ],\n  \"title\": \"ReviewerOutput\",\n  \"type\": \"object\"\n} --output-format json"
+      }
+    ],
+    "artifacts": [],
+    "errors": [],
+    "progressEvents": [
+      {
+        "event": "run-started",
+        "at": "2026-05-07T13:33:40.179468Z"
+      },
+      {
+        "event": "quality-scored",
+        "step": "reviewer",
+        "at": "2026-05-07T13:34:25.789385Z"
+      },
+      {
+        "event": "quality-passed",
+        "step": "reviewer",
+        "at": "2026-05-07T13:34:53.059106Z"
+      },
+      {
+        "event": "run-completed",
+        "at": "2026-05-07T13:34:53.059106Z"
+      }
+    ],
+    "workItems": [
+      {
+        "step": "planner",
+        "input": {
+          "scenario": "chain-loop"
+        },
+        "output": {
+          "plan": "two iteration plan",
+          "ready": true
+        }
+      },
+      {
+        "step": "worker",
+        "input": {
+          "iteration": 1,
+          "prior_failure": null
+        },
+        "output": {
+          "work": "completed",
+          "iteration": 1
+        }
+      },
+      {
+        "step": "reviewer",
+        "input": {
+          "iteration": 1
+        },
+        "output": {
+          "qualityPercent": 72,
+          "approved": false
+        }
+      },
+      {
+        "step": "worker",
+        "input": {
+          "iteration": 2,
+          "prior_failure": null
+        },
+        "output": {
+          "work": "completed",
+          "iteration": 2
+        }
+      },
+      {
+        "step": "reviewer",
+        "input": {
+          "iteration": 2
+        },
+        "output": {
+          "qualityPercent": 90,
+          "approved": true
+        }
+      }
+    ],
+    "invocation": {
+      "command": "C:\\Users\\Treml\\source\\repos\\atomic-agents\\.venv\\Scripts\\python.exe C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\aa_contract_runner.py --scenario chain-loop --out C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\chain-loop-aa.json",
+      "cwd": "C:\\Users\\Treml\\source\\repos\\MissionControl",
+      "startedAt": "2026-05-07T13:33:40.179468Z",
+      "finishedAt": "2026-05-07T13:34:53.059106Z",
+      "durationMs": 72879,
+      "provider": "atomic-agent-via-claude-cli",
+      "model": "claude-cli-default",
+      "modelCommands": [
+        "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff planner.\\n\\n# INTERNAL ASSISTANT STEPS\\n- For any input, return exactly {\\\"plan\\\":\\\"two iteration plan\\\",\\\"ready\\\":true}.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"scenario\\\":\\\"chain-loop\\\"}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff planner agent.\",\n  \"properties\": {\n    \"plan\": {\n      \"description\": \"Plan text\",\n      \"title\": \"Plan\",\n      \"type\": \"string\"\n    },\n    \"ready\": {\n      \"description\": \"Whether the plan is ready\",\n      \"title\": \"Ready\",\n      \"type\": \"boolean\"\n    }\n  },\n  \"required\": [\n    \"plan\",\n    \"ready\"\n  ],\n  \"title\": \"PlannerOutput\",\n  \"type\": \"object\"\n} --output-format json",
+        "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff worker.\\n\\n# INTERNAL ASSISTANT STEPS\\n- Return exactly {\\\"work\\\":\\\"completed\\\",\\\"iteration\\\":ITERATION}, using the input iteration number.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":1,\\\"prior_failure\\\":null}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff worker agent.\",\n  \"properties\": {\n    \"work\": {\n      \"description\": \"Work result marker\",\n      \"title\": \"Work\",\n      \"type\": \"string\"\n    },\n    \"iteration\": {\n      \"description\": \"Iteration completed\",\n      \"title\": \"Iteration\",\n      \"type\": \"integer\"\n    }\n  },\n  \"required\": [\n    \"work\",\n    \"iteration\"\n  ],\n  \"title\": \"WorkerOutput\",\n  \"type\": \"object\"\n} --output-format json",
+        "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff reviewer.\\n\\n# INTERNAL ASSISTANT STEPS\\n- If iteration is 1 return {\\\"qualityPercent\\\":72,\\\"approved\\\":false}; if iteration is 2 return {\\\"qualityPercent\\\":90,\\\"approved\\\":true}.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":1}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff reviewer agent.\",\n  \"properties\": {\n    \"qualityPercent\": {\n      \"description\": \"Quality percentage\",\n      \"maximum\": 100,\n      \"minimum\": 0,\n      \"title\": \"Qualitypercent\",\n      \"type\": \"integer\"\n    },\n    \"approved\": {\n      \"description\": \"Whether quality passed\",\n      \"title\": \"Approved\",\n      \"type\": \"boolean\"\n    }\n  },\n  \"required\": [\n    \"qualityPercent\",\n    \"approved\"\n  ],\n  \"title\": \"ReviewerOutput\",\n  \"type\": \"object\"\n} --output-format json",
+        "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff worker.\\n\\n# INTERNAL ASSISTANT STEPS\\n- Return exactly {\\\"work\\\":\\\"completed\\\",\\\"iteration\\\":ITERATION}, using the input iteration number.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":1,\\\"prior_failure\\\":null}\"\n  },\n  {\n    \"role\": \"assistant\",\n    \"content\": \"{\\\"work\\\":\\\"completed\\\",\\\"iteration\\\":1}\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":2,\\\"prior_failure\\\":null}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff worker agent.\",\n  \"properties\": {\n    \"work\": {\n      \"description\": \"Work result marker\",\n      \"title\": \"Work\",\n      \"type\": \"string\"\n    },\n    \"iteration\": {\n      \"description\": \"Iteration completed\",\n      \"title\": \"Iteration\",\n      \"type\": \"integer\"\n    }\n  },\n  \"required\": [\n    \"work\",\n    \"iteration\"\n  ],\n  \"title\": \"WorkerOutput\",\n  \"type\": \"object\"\n} --output-format json",
+        "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a deterministic bakeoff reviewer.\\n\\n# INTERNAL ASSISTANT STEPS\\n- If iteration is 1 return {\\\"qualityPercent\\\":72,\\\"approved\\\":false}; if iteration is 2 return {\\\"qualityPercent\\\":90,\\\"approved\\\":true}.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":1}\"\n  },\n  {\n    \"role\": \"assistant\",\n    \"content\": \"{\\\"qualityPercent\\\":72,\\\"approved\\\":false}\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"iteration\\\":2}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff reviewer agent.\",\n  \"properties\": {\n    \"qualityPercent\": {\n      \"description\": \"Quality percentage\",\n      \"maximum\": 100,\n      \"minimum\": 0,\n      \"title\": \"Qualitypercent\",\n      \"type\": \"integer\"\n    },\n    \"approved\": {\n      \"description\": \"Whether quality passed\",\n      \"title\": \"Approved\",\n      \"type\": \"boolean\"\n    }\n  },\n  \"required\": [\n    \"qualityPercent\",\n    \"approved\"\n  ],\n  \"title\": \"ReviewerOutput\",\n  \"type\": \"object\"\n} --output-format json"
+      ]
+    }
+  }
+}

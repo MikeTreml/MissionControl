@@ -1,0 +1,72 @@
+{
+  "runner": "bs",
+  "scenario": "story-500",
+  "success": true,
+  "final": {
+    "qualityPercent": 90,
+    "iterations": 1,
+    "status": "passed",
+    "wordCount": 484
+  },
+  "metadata": {
+    "invocation": {
+      "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-story-500-1778148953675\\story-500.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-story-500-1778148953675\\story-500.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-story-500-1778148953675\\runs --process-id bakeoff/story-500 --run-id bs-bakeoff-story-500-1778148953676 --max-iterations 20 --json",
+      "contractRunnerCommand": "node --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\bs-contract-runner.ts --scenario story-500 --out C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-2eJyjx\\bs-story-500.json",
+      "cwd": "C:\\Users\\Treml\\source\\repos\\MissionControl",
+      "startedAt": "2026-05-07T10:15:53.676Z",
+      "finishedAt": "2026-05-07T10:16:27.878Z",
+      "durationMs": 34202,
+      "runId": "bs-bakeoff-story-500-1778148953676",
+      "runDir": "C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-story-500-1778148953675\\runs\\bs-bakeoff-story-500-1778148953676"
+    },
+    "calls": [
+      {
+        "step": "writer",
+        "kind": "agent",
+        "inputRef": "inputs/01-writer.json",
+        "outputRef": "outputs/01-writer.json",
+        "status": "ok",
+        "durationMs": 1
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-story-500-1778148953675\\bs-story-500.json",
+        "kind": "json"
+      }
+    ],
+    "errors": [],
+    "progressEvents": [
+      {
+        "event": "run-started",
+        "at": "2026-05-07T10:16:27.744Z"
+      },
+      {
+        "event": "story-written",
+        "step": "writer",
+        "at": "2026-05-07T10:16:27.747Z"
+      },
+      {
+        "event": "run-completed",
+        "at": "2026-05-07T10:16:27.878Z"
+      }
+    ],
+    "workItems": [
+      {
+        "step": "writer",
+        "input": {
+          "targetWords": 500,
+          "minWords": 450,
+          "maxWords": 550,
+          "subject": "Mission Control orchestrating agents"
+        },
+        "output": {
+          "story": "At 03:14, Mission Control woke up because the build did not. A red dot bloomed on the Topbar, and the journal began streaming the kind of stack trace that smells like a missing dependency and a forgotten migration holding hands. Michael was asleep. The sunrise deploy was in two hours and forty-six minutes. Mission Control did the only thing it knew how to do: it dispatched.\n\nIt opened a curated workflow from the library and spawned the first agent, a quiet diagnostician named Cartographer. Cartographer walked the repo like a lighthouse keeper, tracing imports, sniffing lockfiles, listening for the hollow sound of a module that used to be there. Within ninety seconds it filed a finding to the journal: a transitive dependency had been yanked from the registry, and a schema migration referenced a column that no longer existed. Two failures, braided together, pretending to be one.\n\nMission Control split the rope. It handed the dependency thread to Pipefitter and the migration thread to Surveyor, and told them not to talk to each other yet. Pipefitter pinned the yanked package to its last good version, mirrored it into the internal cache, and rewrote the lockfile with the calm precision of someone who has done this in their sleep, which, in a sense, it had. Surveyor opened the migration, found the orphaned column reference, and asked the journal a careful question: was the column dropped on purpose, or by accident? The journal answered with a commit from three days ago titled simply \"a.\" Surveyor flagged it as ambiguous and waited.\n\nMission Control did not guess. It woke a third agent, Notary, whose only job was to read history and decide. Notary cross-referenced the commit against the project's STATUS.md, found a sentence Michael had written at midnight about \"cleaning up unused fields,\" and ruled the drop intentional. Surveyor rewrote the migration to match, regenerated the down-migration for safety, and handed the patch back.\n\nNow Mission Control let the threads talk. It opened a single session, fed both patches in, and asked Pipefitter and Surveyor to review each other's work. They argued briefly, in the polite way agents argue, about whether the lockfile change should land before or after the migration. Mission Control broke the tie by reading the workflow: migrations first, dependencies second, tests last. The order held.\n\nAt 04:52, the build went green. Mission Control did not celebrate. It wrote a one-paragraph summary to STATUS.md, attached the journal, queued a draft commit on main, and left it unpushed. Michael's rule was clear: pushing to main was his decision, not the orchestrator's. Mission Control set the Topbar dot back to calm blue, dimmed the RightBar, and waited.\n\nAt 05:58, two minutes before sunrise, Michael's coffee machine started somewhere across the house. Mission Control noticed, because Mission Control notices everything, and prepared to explain, in fewer than five hundred words, exactly what had happened while he slept.",
+          "storyTitle": "The Hour Before Sunrise",
+          "theme": "Quiet, disciplined orchestration: many small agents, one calm conductor, and a human who still owns the final push.",
+          "wordCount": 484
+        }
+      }
+    ]
+  }
+}

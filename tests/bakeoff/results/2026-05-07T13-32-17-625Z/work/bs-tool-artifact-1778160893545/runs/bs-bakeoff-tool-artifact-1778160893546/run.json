@@ -1,0 +1,13 @@
+{
+  "runId": "bs-bakeoff-tool-artifact-1778160893546",
+  "request": "bakeoff/tool-artifact",
+  "processId": "bakeoff/tool-artifact",
+  "entrypoint": {
+    "importPath": "../../tool-artifact.workflow.js",
+    "exportName": "process"
+  },
+  "processPath": "../../tool-artifact.workflow.js",
+  "layoutVersion": "2026.01-storage-preview",
+  "createdAt": "2026-05-07T13:34:53.892Z",
+  "completionProof": "1c0810b269654e1b802faa000c8b300f"
+}

@@ -1,0 +1,20 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-05-07T13:35:36.702Z",
+  "data": {
+    "effectId": "01KR1AD9PFTDW3R1NNH7D57P96",
+    "invocationKey": "bakeoff/failure-resume:S000002:worker",
+    "invocationHash": "380c4fc5d523a9f382cff38006e18db17e85edc65369593449fabb19b1860b70",
+    "stepId": "S000002",
+    "taskId": "worker",
+    "kind": "agent",
+    "label": "bakeoff",
+    "taskDefRef": "tasks/01KR1AD9PFTDW3R1NNH7D57P96/task.json",
+    "labels": [
+      "bakeoff",
+      "agent",
+      "worker"
+    ]
+  },
+  "checksum": "a668dcbb555a9934c629db918d853a8823590c42a0eece75118a97e7c3f89d65"
+}

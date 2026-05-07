@@ -7,10 +7,21 @@
  * MCSettingsSchema in src/shared/models.ts.
  */
 import { useEffect, useState } from "react";
-import { MCSettingsSchema, type MCSettings } from "../../../shared/models";
+import type { MCSettings } from "../../../shared/models";
 import { useSubscribe } from "./data-bus";
 
-const DEFAULTS: MCSettings = MCSettingsSchema.parse({});
+const DEFAULTS: MCSettings = {
+  runConcurrencyCap: 10,
+  showSampleData: true,
+  liveTaskEventStreaming: true,
+  pendingEffectFallbackPolling: true,
+  pendingEffectPollIntervalMs: 15_000,
+  liveUpdatesOnlyInTaskDetails: true,
+  lazyRawLogs: true,
+  generatedWorkflowConfidenceGate: false,
+  confidenceThreshold: 90,
+  hideLegacyDomainGroup: true,
+};
 
 export function useSettings(): MCSettings {
   const [settings, setSettings] = useState<MCSettings>(DEFAULTS);

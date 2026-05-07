@@ -1,0 +1,87 @@
+{
+  "runner": "bs",
+  "scenario": "tool-artifact",
+  "success": true,
+  "final": {
+    "qualityPercent": 88,
+    "iterations": 1,
+    "status": "passed"
+  },
+  "metadata": {
+    "invocation": {
+      "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\work\\bs-tool-artifact-1778160893545\\tool-artifact.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\work\\bs-tool-artifact-1778160893545\\tool-artifact.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\work\\bs-tool-artifact-1778160893545\\runs --process-id bakeoff/tool-artifact --run-id bs-bakeoff-tool-artifact-1778160893546 --max-iterations 20 --json",
+      "contractRunnerCommand": "node --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\bs-contract-runner.ts --scenario tool-artifact --out C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\tool-artifact-bs.json",
+      "cwd": "C:\\Users\\Treml\\source\\repos\\MissionControl",
+      "startedAt": "2026-05-07T13:34:53.546Z",
+      "finishedAt": "2026-05-07T13:35:08.118Z",
+      "durationMs": 14572,
+      "runId": "bs-bakeoff-tool-artifact-1778160893546",
+      "runDir": "C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\work\\bs-tool-artifact-1778160893545\\runs\\bs-bakeoff-tool-artifact-1778160893546"
+    },
+    "calls": [
+      {
+        "step": "read-input",
+        "kind": "tool",
+        "inputRef": "inputs/01-read-input.json",
+        "outputRef": "outputs/01-read-input.json",
+        "status": "ok",
+        "durationMs": 1
+      },
+      {
+        "step": "summarizer",
+        "kind": "agent",
+        "inputRef": "inputs/02-summarizer.json",
+        "outputRef": "outputs/02-summarizer.json",
+        "status": "ok",
+        "durationMs": 1
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\artifacts\\bs\\tool-artifact\\bs-tool-artifact.json",
+        "kind": "json"
+      }
+    ],
+    "errors": [],
+    "progressEvents": [
+      {
+        "event": "run-started",
+        "at": "2026-05-07T13:35:07.991Z"
+      },
+      {
+        "event": "artifact-written",
+        "step": "summarizer",
+        "at": "2026-05-07T13:35:07.993Z"
+      },
+      {
+        "event": "run-completed",
+        "at": "2026-05-07T13:35:08.118Z"
+      }
+    ],
+    "workItems": [
+      {
+        "step": "read-input",
+        "input": {},
+        "output": {
+          "exitCode": 0,
+          "stderr": "",
+          "stdout": "bakeoff-tool-ok\r\n"
+        }
+      },
+      {
+        "step": "summarizer",
+        "input": {
+          "toolResult": {
+            "exitCode": 0,
+            "stderr": "",
+            "stdout": "bakeoff-tool-ok\r\n"
+          }
+        },
+        "output": {
+          "ok": true,
+          "summary": "tool artifact created"
+        }
+      }
+    ]
+  }
+}

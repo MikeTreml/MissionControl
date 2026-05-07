@@ -1,0 +1,59 @@
+{
+  "agent": {
+    "name": "bakeoff-summarizer",
+    "outputSchema": {
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "summary",
+        "ok"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "toolResult": {
+          "exitCode": 0,
+          "stderr": "",
+          "stdout": "bakeoff-tool-ok\r\n"
+        }
+      },
+      "instructions": [
+        "Return exactly {\"summary\":\"tool artifact created\",\"ok\":true}.",
+        "No prose. No markdown fences."
+      ],
+      "outputFormat": "JSON object with summary:string and ok:boolean",
+      "role": "Deterministic bakeoff summarizer",
+      "task": "Return an exact summary JSON object."
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KR1AC1364SKFJMSG1XHP1B0N/input.json",
+    "outputJsonPath": "tasks/01KR1AC1364SKFJMSG1XHP1B0N/result.json"
+  },
+  "kind": "agent",
+  "labels": [
+    "agent",
+    "bakeoff",
+    "summarizer"
+  ],
+  "title": "Summarizer",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KR1AC1364SKFJMSG1XHP1B0N",
+  "taskId": "summarizer",
+  "invocationKey": "bakeoff/tool-artifact:S000002:summarizer",
+  "stepId": "S000002",
+  "inputs": {
+    "toolResult": {
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "bakeoff-tool-ok\r\n"
+    }
+  }
+}

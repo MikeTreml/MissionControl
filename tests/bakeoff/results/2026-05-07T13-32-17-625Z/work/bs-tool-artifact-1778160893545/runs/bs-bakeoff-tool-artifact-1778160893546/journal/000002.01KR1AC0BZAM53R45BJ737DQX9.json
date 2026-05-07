@@ -1,0 +1,19 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-05-07T13:34:54.335Z",
+  "data": {
+    "effectId": "01KR1AC0AF7NP0TWPQ59VNHVS0",
+    "invocationKey": "bakeoff/tool-artifact:S000001:read-input",
+    "invocationHash": "404993b2cba0dabf2d9339815a94e217cd4ca7474e9190bd23f25d09aa7a82e4",
+    "stepId": "S000001",
+    "taskId": "read-input",
+    "kind": "shell",
+    "label": "bakeoff",
+    "taskDefRef": "tasks/01KR1AC0AF7NP0TWPQ59VNHVS0/task.json",
+    "labels": [
+      "bakeoff",
+      "tool"
+    ]
+  },
+  "checksum": "cc10e76b7b167fbc0f9cd190d3987ce53cef450151fa4e027a55f30b65ec3e21"
+}

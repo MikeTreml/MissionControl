@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KR1AC1364SKFJMSG1XHP1B0N",
+  "taskId": "summarizer",
+  "invocationKey": "bakeoff/tool-artifact:S000002:summarizer",
+  "status": "ok",
+  "result": {
+    "ok": true,
+    "summary": "tool artifact created"
+  },
+  "startedAt": "2026-05-07T13:35:07.601Z",
+  "finishedAt": "2026-05-07T13:35:07.601Z",
+  "value": {
+    "ok": true,
+    "summary": "tool artifact created"
+  }
+}

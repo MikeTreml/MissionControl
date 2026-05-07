@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-05-07T10:17:03.367Z",
+  "resultsDir": "C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T10-11-34-837Z",
+  "scenarios": [
+    {
+      "scenario": "chain-loop",
+      "bs": {
+        "qualityPercent": 90,
+        "iterations": 2,
+        "status": "passed",
+        "durationMs": 71278,
+        "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-chain-loop-1778148694910\\chain-loop.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-chain-loop-1778148694910\\chain-loop.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-chain-loop-1778148694910\\runs --process-id bakeoff/chain-loop --run-id bs-bakeoff-chain-loop-1778148694912 --max-iterations 20 --json"
+      },
+      "aa": {
+        "qualityPercent": 90,
+        "iterations": 2,
+        "status": "passed",
+        "durationMs": 68584,
+        "command": "C:\\Users\\Treml\\source\\repos\\atomic-agents\\.venv\\Scripts\\python.exe C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\aa_contract_runner.py --scenario chain-loop --out C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-2eJyjx\\aa-chain-loop.json"
+      }
+    },
+    {
+      "scenario": "tool-artifact",
+      "bs": {
+        "qualityPercent": 88,
+        "iterations": 1,
+        "status": "passed",
+        "durationMs": 14341,
+        "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-tool-artifact-1778148836854\\tool-artifact.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-tool-artifact-1778148836854\\tool-artifact.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-tool-artifact-1778148836854\\runs --process-id bakeoff/tool-artifact --run-id bs-bakeoff-tool-artifact-1778148836856 --max-iterations 20 --json"
+      },
+      "aa": {
+        "qualityPercent": 88,
+        "iterations": 1,
+        "status": "passed",
+        "durationMs": 12673,
+        "command": "C:\\Users\\Treml\\source\\repos\\atomic-agents\\.venv\\Scripts\\python.exe C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\aa_contract_runner.py --scenario tool-artifact --out C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-2eJyjx\\aa-tool-artifact.json"
+      }
+    },
+    {
+      "scenario": "failure-resume",
+      "bs": {
+        "qualityPercent": 88,
+        "iterations": 2,
+        "status": "passed",
+        "durationMs": 42174,
+        "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-failure-resume-1778148865937\\failure-resume.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-failure-resume-1778148865937\\failure-resume.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-failure-resume-1778148865937\\runs --process-id bakeoff/failure-resume --run-id bs-bakeoff-failure-resume-1778148865940 --max-iterations 20 --json"
+      },
+      "aa": {
+        "qualityPercent": 88,
+        "iterations": 2,
+        "status": "passed",
+        "durationMs": 43609,
+        "command": "C:\\Users\\Treml\\source\\repos\\atomic-agents\\.venv\\Scripts\\python.exe C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\aa_contract_runner.py --scenario failure-resume --out C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-2eJyjx\\aa-failure-resume.json"
+      }
+    },
+    {
+      "scenario": "story-500",
+      "bs": {
+        "qualityPercent": 90,
+        "iterations": 1,
+        "status": "passed",
+        "wordCount": 484,
+        "durationMs": 34202,
+        "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-story-500-1778148953675\\story-500.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-story-500-1778148953675\\story-500.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-story-500-1778148953675\\runs --process-id bakeoff/story-500 --run-id bs-bakeoff-story-500-1778148953676 --max-iterations 20 --json"
+      },
+      "aa": {
+        "qualityPercent": 90,
+        "iterations": 1,
+        "status": "passed",
+        "wordCount": 482,
+        "durationMs": 33676,
+        "command": "C:\\Users\\Treml\\source\\repos\\atomic-agents\\.venv\\Scripts\\python.exe C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\aa_contract_runner.py --scenario story-500 --out C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-2eJyjx\\aa-story-500.json"
+      }
+    }
+  ]
+}

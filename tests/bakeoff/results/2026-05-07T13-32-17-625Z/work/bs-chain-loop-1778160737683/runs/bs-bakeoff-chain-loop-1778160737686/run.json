@@ -1,0 +1,13 @@
+{
+  "runId": "bs-bakeoff-chain-loop-1778160737686",
+  "request": "bakeoff/chain-loop",
+  "processId": "bakeoff/chain-loop",
+  "entrypoint": {
+    "importPath": "../../chain-loop.workflow.js",
+    "exportName": "process"
+  },
+  "processPath": "../../chain-loop.workflow.js",
+  "layoutVersion": "2026.01-storage-preview",
+  "createdAt": "2026-05-07T13:32:18.054Z",
+  "completionProof": "d45698230db44236222e4ea862b1644b"
+}

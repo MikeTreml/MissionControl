@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KR1A784D7R831804XSREA3PB",
+  "taskId": "planner",
+  "invocationKey": "bakeoff/chain-loop:S000001:planner",
+  "status": "ok",
+  "result": {
+    "plan": "two iteration plan",
+    "ready": true
+  },
+  "startedAt": "2026-05-07T13:32:35.490Z",
+  "finishedAt": "2026-05-07T13:32:35.490Z",
+  "value": {
+    "plan": "two iteration plan",
+    "ready": true
+  }
+}

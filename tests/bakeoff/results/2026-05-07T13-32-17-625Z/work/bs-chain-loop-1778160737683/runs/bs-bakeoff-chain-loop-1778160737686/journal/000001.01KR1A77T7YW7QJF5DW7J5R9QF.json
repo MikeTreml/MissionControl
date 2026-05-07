@@ -1,0 +1,14 @@
+{
+  "type": "RUN_CREATED",
+  "recordedAt": "2026-05-07T13:32:18.119Z",
+  "data": {
+    "runId": "bs-bakeoff-chain-loop-1778160737686",
+    "processId": "bakeoff/chain-loop",
+    "entrypoint": {
+      "importPath": "../../chain-loop.workflow.js",
+      "exportName": "process"
+    },
+    "inputsRef": "inputs.json"
+  },
+  "checksum": "21aaf6616a5062192f61f2e1d5a2b45aafb035ebb9e47ad7e158e5b9bd74b435"
+}
