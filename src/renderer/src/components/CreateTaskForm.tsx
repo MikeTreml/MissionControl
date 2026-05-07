@@ -21,6 +21,8 @@ import type { LibraryIndexItem } from "../types/library";
 import type { WorkflowRunTemplate } from "../global";
 
 const DEFAULT_WORKFLOW_LETTER = "F";
+const DEFAULT_TARGET_QUALITY = 90;
+const DEFAULT_MAX_ITERATIONS = 1;
 /** Sentinel for the "no curated workflow — auto-gen" choice. */
 const AUTO_GEN_VALUE = "__autogen__";
 
@@ -98,7 +100,7 @@ export function CreateTaskForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [kind, setKind] = useState<"single" | "campaign">("single");
-  const [babysitterMode, setBabysitterMode] = useState<"plan" | "execute" | "direct">("plan");
+  const [babysitterMode, setBabysitterMode] = useState<"plan" | "yolo" | "forever">("plan");
   // One item per line for campaigns. Blank lines ignored. Each becomes
   // a CampaignItem with description + auto-generated id.
   const [itemsText, setItemsText] = useState("");
@@ -106,6 +108,7 @@ export function CreateTaskForm({
   const [schema, setSchema] = useState<Record<string, unknown> | null>(null);
   const [templates, setTemplates] = useState<WorkflowRunTemplate[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+  const [selectedExamplePath, setSelectedExamplePath] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [saving, setSaving] = useState(false);
 
@@ -119,6 +122,13 @@ export function CreateTaskForm({
   }, [libraryItems]);
 
   const selectedWorkflow = workflows.find((w) => w.logicalPath === workflowLogicalPath) ?? null;
+  const workflowExamples = useMemo<LibraryIndexItem[]>(() => {
+    if (!selectedWorkflow) return [];
+    return libraryItems
+      .filter((item) => item.kind === "example")
+      .filter((item) => isExampleForWorkflow(item, selectedWorkflow))
+      .sort((a, b) => exampleScore(b, selectedWorkflow) - exampleScore(a, selectedWorkflow));
+  }, [libraryItems, selectedWorkflow]);
 
   // Default project: the one currently being viewed (selectedProjectId from
   // the router). Uses the first project only when nothing is
@@ -174,6 +184,7 @@ export function CreateTaskForm({
       setTemplates([]);
       setInputs({});
       setSelectedTemplateId("");
+      setSelectedExamplePath("");
       return;
     }
     const path = selectedWorkflow.inputsSchemaPath ?? null;
@@ -182,9 +193,27 @@ export function CreateTaskForm({
       .listWorkflowRunTemplates()
       .then((all) => setTemplates(all.filter((t) => t.workflowLogicalPath === selectedWorkflow.logicalPath)))
       .catch(() => setTemplates([]));
-    setInputs({});
     setSelectedTemplateId("");
-  }, [open, selectedWorkflow]);
+    setSelectedExamplePath(workflowExamples[0]?.diskPath ?? "");
+  }, [open, selectedWorkflow, workflowExamples]);
+
+  useEffect(() => {
+    if (!open || !window.mc || !selectedWorkflow) return;
+    if (!selectedExamplePath) {
+      setInputs(defaultRunInputs());
+      return;
+    }
+    let cancelled = false;
+    void window.mc
+      .readLibraryJsonFile(selectedExamplePath)
+      .then((exampleInputs) => {
+        if (!cancelled) setInputs(withRunDefaults(exampleInputs ?? {}));
+      })
+      .catch(() => {
+        if (!cancelled) setInputs(defaultRunInputs());
+      });
+    return () => { cancelled = true; };
+  }, [open, selectedWorkflow, selectedExamplePath]);
 
   function onLoadTemplate(id: string): void {
     setSelectedTemplateId(id);
@@ -195,7 +224,7 @@ export function CreateTaskForm({
     const template = templates.find((t) => t.id === id);
     if (!template) return;
     if (!description && template.goal) setDescription(template.goal);
-    setInputs(template.inputs ?? {});
+    setInputs(withRunDefaults(template.inputs ?? {}));
   }
 
   const activeProject = projects.find((p) => p.id === projectId);
@@ -396,6 +425,26 @@ export function CreateTaskForm({
             </div>
           )}
 
+          {selectedWorkflow && workflowExamples.length > 0 && (
+            <div className="field">
+              <label>Load example inputs</label>
+              <select
+                value={selectedExamplePath}
+                onChange={(e) => setSelectedExamplePath(e.target.value)}
+              >
+                <option value="">Start from defaults</option>
+                {workflowExamples.map((example) => (
+                  <option key={example.diskPath} value={example.diskPath}>
+                    {example.logicalPath}
+                  </option>
+                ))}
+              </select>
+              <div className="hint">
+                The closest library example is loaded automatically and can be edited below.
+              </div>
+            </div>
+          )}
+
           {selectedWorkflow && (
             <div className="field">
               <label>Inputs {schema ? "(schema-driven)" : "(JSON)"}</label>
@@ -407,34 +456,59 @@ export function CreateTaskForm({
               </div>
             </div>
           )}
+          {selectedWorkflow && (
+            <div className="field">
+              <label>Quality and iterations</label>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <div style={{ display: "grid", gap: 4 }}>
+                  <label>Quality percentage</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={typeof inputs.targetQuality === "number" ? inputs.targetQuality : DEFAULT_TARGET_QUALITY}
+                    onChange={(e) => setInputs((prev) => ({ ...prev, targetQuality: Number(e.target.value) }))}
+                  />
+                </div>
+                <div style={{ display: "grid", gap: 4 }}>
+                  <label>Iterations</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={typeof inputs.maxIterations === "number" ? inputs.maxIterations : DEFAULT_MAX_ITERATIONS}
+                    onChange={(e) => setInputs((prev) => ({ ...prev, maxIterations: Number(e.target.value) }))}
+                  />
+                </div>
+              </div>
+              <div className="hint">
+                Written into Input JSON as targetQuality and maxIterations. Iterations defaults to 1.
+              </div>
+            </div>
+          )}
           <div className="field">
-            <label>Kind</label>
+            <label>Task shape</label>
             <select value={kind} onChange={(e) => setKind(e.target.value as "single" | "campaign")}>
-              <option value="single">Single — one task × N cycles</option>
-              <option value="campaign">Campaign — one task × N items (iterate each)</option>
+              <option value="single">Iterate this task</option>
+              <option value="campaign">Campaign items</option>
             </select>
             <div className="hint">
-              Campaigns process a list of items, one session per item. Runtime
-              iteration is not wired yet — items show up for planning only.
+              Default is one task with one iteration. Use campaign only when
+              you want one session per listed item.
             </div>
           </div>
           <div className="field">
             <label>Babysitter mode</label>
             <select
               value={babysitterMode}
-              onChange={(e) => setBabysitterMode(e.target.value as "plan" | "execute" | "direct")}
+              onChange={(e) => setBabysitterMode(e.target.value as "plan" | "yolo" | "forever")}
             >
-              <option value="plan">Plan only — /plan (author process.js, don't execute)</option>
-              <option value="execute">Plan + execute — /yolo (author + run end-to-end)</option>
-              <option value="direct">Direct — single-agent, skip babysitter</option>
+              <option value="plan">plan — /plan</option>
+              <option value="yolo">yolo — /yolo</option>
+              <option value="forever">forever — /forever</option>
             </select>
             <div className="hint">
-              How MC drives pi when you click Start on this task.{" "}
-              <strong>Plan only</strong> is the safest first try.{" "}
-              <strong>Plan + execute</strong> runs without breakpoints.{" "}
-              <strong>Direct</strong> skips babysitter entirely — use for
-              trivial tasks where the ~$0.30 + 90s investigation overhead
-              isn't worth it.
+              How MC drives pi when you click Start on this task.
             </div>
           </div>
           <div className="field">
@@ -513,4 +587,38 @@ export function CreateTaskForm({
       </form>
     </Modal>
   );
+}
+
+function defaultRunInputs(): Record<string, unknown> {
+  return {
+    targetQuality: DEFAULT_TARGET_QUALITY,
+    maxIterations: DEFAULT_MAX_ITERATIONS,
+  };
+}
+
+function withRunDefaults(inputs: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...defaultRunInputs(),
+    ...inputs,
+  };
+}
+
+function isExampleForWorkflow(example: LibraryIndexItem, workflow: LibraryIndexItem): boolean {
+  const workflowParts = workflow.logicalPath.split("/");
+  const exampleParts = example.logicalPath.split("/");
+  const sameContainer = Boolean(workflow.container && example.container === workflow.container);
+  const sameTopLevelArea = workflowParts[0] === exampleParts[0] && workflowParts[1] === exampleParts[1];
+  return sameContainer || sameTopLevelArea;
+}
+
+function exampleScore(example: LibraryIndexItem, workflow: LibraryIndexItem): number {
+  const haystack = `${example.logicalPath} ${example.name} ${example.description ?? ""}`.toLowerCase();
+  const workflowName = workflow.name.toLowerCase();
+  let score = 0;
+  if (example.container && example.container === workflow.container) score += 20;
+  if (haystack.includes(workflowName)) score += 100;
+  for (const token of workflowName.split(/[^a-z0-9]+/).filter((x) => x.length > 2)) {
+    if (haystack.includes(token)) score += 5;
+  }
+  return score;
 }

@@ -133,6 +133,8 @@ export function registerIpc(stores: Stores): void {
     logged("library:refresh", () => stores.libraryIndex.refresh()));
   ipcMain.handle("library:readJsonSchema", (_e, absPath: string | null | undefined) =>
     stores.libraryIndex.readJsonSchema(absPath));
+  ipcMain.handle("library:readJsonFile", (_e, absPath: string | null | undefined) =>
+    stores.libraryIndex.readJsonFile(absPath));
   ipcMain.handle("library:createWorkflow", (_e, opts: CreateWorkflowOpts) =>
     logged(`library:createWorkflow ${opts.category}/${opts.slug}`, () =>
       stores.workflowCreator.create(opts),

@@ -76,7 +76,7 @@ type CreateTaskInput = {
   workflow?: string;
   kind?: TaskKind;
   items?: CampaignItem[];
-  babysitterMode?: "plan" | "execute" | "direct";
+  babysitterMode?: "plan" | "yolo" | "forever" | "execute" | "direct";
   /** Source task id when this is a re-run / clone / spin-off. */
   parentTaskId?: string;
 };
@@ -159,6 +159,7 @@ export interface McApi {
   /** Walk the library tree in-process, write `_index.json`, return fresh index. */
   refreshLibraryIndex: () => Promise<LibraryIndex>;
   readLibraryJsonSchema: (absPath: string | null | undefined) => Promise<Record<string, unknown> | null>;
+  readLibraryJsonFile: (absPath: string | null | undefined) => Promise<Record<string, unknown> | null>;
   /** Generate a workflow.js from a WorkflowSpec and write it under library/workflows/. */
   createLibraryWorkflow: (
     opts: CreateWorkflowOpts,

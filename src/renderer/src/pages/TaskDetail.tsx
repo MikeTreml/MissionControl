@@ -241,6 +241,18 @@ function TaskHero({ task, events }: { task: Task; events: TaskEvent[] }): JSX.El
              task.status   === "waiting" ? "waiting" :
              "idle"}
           </span>
+          {(() => {
+            const blocker = (task.blocker ?? "").trim();
+            return blocker ? (
+              <span
+                className="pill neutral"
+                title={blocker}
+                style={{ maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+              >
+                Waiting on: {blocker}
+              </span>
+            ) : null;
+          })()}
           {activeModel && (
             <span className="pill neutral" title="Active model on the latest run-started event">
               Model: {activeModel}

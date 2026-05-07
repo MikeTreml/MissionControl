@@ -364,7 +364,6 @@ export class RunManager {
     const cwd = await this.resolveCwd(task);
     const runsDir = path.join(cwd, ".a5c", "runs");
     await fs.mkdir(runsDir, { recursive: true });
-    const beforeRuns = await snapshotBabysitterRuns(cwd);
 
     // Materialize referenced SKILL.md into <cwd>/.a5c/skills/ and (if the
     // workflow uses the legacy singular `skill: { name }` shape) emit a
@@ -426,16 +425,32 @@ export class RunManager {
     // with `The "path" argument must be of type string. Received undefined`.
     // The README and ORCHESTRATION_GUIDE.md both document `run:create`
     // + skill-driven `run:iterate` as the supported curated path.
-    void beforeRuns; // existing parameter retained for future "stale-run sweep" — currently unused
 
     // Build inputs.json from the task's RUN_CONFIG when present, else a
-    // minimal stub. // OPEN: surface a per-workflow "Inputs" UI so this
-    // isn't a single-field placeholder.
+    // minimal stub.
+    //
+    // Resolution order (highest to lowest priority):
+    //   1. cfg.runSettings.inputs — where RunWorkflowModal writes its
+    //      InputsForm payload + Quality subsection (targetQuality,
+    //      maxIterations, schema-driven fields). This is the canonical
+    //      path used by MC's UI.
+    //   2. cfg.libraryWorkflow.inputs — accepted for backward compatibility
+    //      with any RUN_CONFIG.json on disk authored before runSettings
+    //      became the standard location. // PROPOSED: remove this fallback
+    //      after a release confirms no live tasks reference it.
+    //   3. { projectName: task.title } — minimal stub so workflows that
+    //      destructure projectName get a sensible default.
     const cfg = await this.tasks.readRunConfig(task.id);
-    const lwInputs = (cfg as { libraryWorkflow?: { inputs?: unknown } } | null)
-      ?.libraryWorkflow?.inputs;
-    const inputsObj =
-      lwInputs && typeof lwInputs === "object" ? lwInputs : { projectName: task.title };
+    const cfgRecord = cfg as
+      | { runSettings?: { inputs?: unknown }; libraryWorkflow?: { inputs?: unknown } }
+      | null;
+    const userInputs =
+      cfgRecord?.runSettings?.inputs && typeof cfgRecord.runSettings.inputs === "object"
+        ? cfgRecord.runSettings.inputs
+        : cfgRecord?.libraryWorkflow?.inputs && typeof cfgRecord.libraryWorkflow.inputs === "object"
+          ? cfgRecord.libraryWorkflow.inputs
+          : null;
+    const inputsObj = userInputs ?? { projectName: task.title };
     const inputsPath = path.join(runsDir, `.mc-inputs-${task.id}.json`);
     await fs.writeFile(inputsPath, JSON.stringify(inputsObj, null, 2), "utf8");
 
@@ -444,12 +459,7 @@ export class RunManager {
       mode: "curated",
       processPath,
       cwd,
-      // CONFIRMED 2026-05-06: emit the active model on run-started so the
-      // Task Detail hero can render a "Model: <id>" chip via event replay
-      // without a new IPC channel. Falls back to the per-task active-model
-      // map (set just above in startNow) and finally null when neither is
-      // present (pi default).
-      model: input.model ?? this.activeModel.get(task.id) ?? null,
+      model: this.resolveActiveModelForEvent(input, task.id),
     });
     await this.tasks.appendStatus(
       task.id,
@@ -761,9 +771,7 @@ export class RunManager {
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
       ...(chosenAgent ? { agentSlug: chosenAgent } : {}),
-      // CONFIRMED 2026-05-06: emit the active model on run-started so the
-      // Task Detail hero can render a "Model: <id>" chip via event replay.
-      model: input.model ?? this.activeModel.get(task.id) ?? null,
+      model: this.resolveActiveModelForEvent(input, task.id),
     });
     await this.tasks.appendStatus(
       task.id,
@@ -798,9 +806,7 @@ export class RunManager {
     await this.tasks.appendEvent(task.id, {
       type: "run-started",
       ...(chosenAgent ? { agentSlug: chosenAgent } : {}),
-      // CONFIRMED 2026-05-06: emit the active model on run-started so the
-      // Task Detail hero can render a "Model: <id>" chip via event replay.
-      model: input.model ?? this.activeModel.get(task.id) ?? null,
+      model: this.resolveActiveModelForEvent(input, task.id),
     });
     await this.tasks.appendStatus(
       task.id,
@@ -1168,6 +1174,28 @@ export class RunManager {
 
 
   /**
+   * CONFIRMED 2026-05-06: emit the active model on every `run-started`
+   * journal event so the Task Detail hero can render a "Model: <id>" chip
+   * via event replay — no new IPC channel, no shared-models change, and the
+   * value is already replay-safe because it lives in the events log.
+   *
+   * Resolution order, highest to lowest priority:
+   *   1. The model the caller passed in this Start (e.g., the model picker).
+   *   2. The per-task active model already cached in `activeModel` (set in
+   *      `startNow` so subsequent campaign items inherit the choice).
+   *   3. `null`, meaning "use pi's default" — the chip hides on null.
+   *
+   * Used by all three Start paths (curated, single, campaign) so they
+   * surface the model identically without each restating the fallback chain.
+   */
+  private resolveActiveModelForEvent(
+    input: { model?: string },
+    taskId: string,
+  ): string | null {
+    return input.model ?? this.activeModel.get(taskId) ?? null;
+  }
+
+  /**
    * Resolve workspace cwd. Prefer project.path when set so pi can see
    * the real codebase; otherwise use the per-task scratch workspace.
    */
@@ -1252,12 +1280,14 @@ function buildBabysitPrompt(
   //              only useful from a real pi TUI; in MC's programmatic
   //              session breakpoints have no surface to land on)
   //   /yolo    — author + execute NON-interactively (no breakpoints)
+  //   /forever — author + execute in babysitter's continuous mode
   //   "direct" — no slash command; pi runs as a single agent on the brief
   //              alone. Skips babysitter authoring + execution entirely.
   const prefix =
-    mode === "execute" ? "/yolo " :
-    mode === "plan"    ? "/plan "  :
-    "";  // direct
+    mode === "yolo" || mode === "execute" ? "/yolo " :
+    mode === "forever"                    ? "/forever " :
+    mode === "plan"                       ? "/plan " :
+    "";  // legacy direct
   const lines = [
     `${prefix}${task.title}`,
     "",
@@ -1298,9 +1328,10 @@ function buildItemBabysitPrompt(
   mode: Task["babysitterMode"] = "plan",
 ): string {
   const prefix =
-    mode === "execute" ? "/yolo " :
-    mode === "plan"    ? "/plan "  :
-    "";  // direct
+    mode === "yolo" || mode === "execute" ? "/yolo " :
+    mode === "forever"                    ? "/forever " :
+    mode === "plan"                       ? "/plan " :
+    "";  // legacy direct
   const total = task.items.length;
   const idx = task.items.findIndex((i) => i.id === item.id);
   return [

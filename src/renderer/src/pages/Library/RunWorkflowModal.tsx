@@ -238,6 +238,56 @@ export function RunWorkflowModal({
             </select>
           </div>
 
+          <div className="card" style={{ padding: 10, borderRadius: 10 }}>
+            <div className="muted" style={{ fontSize: 12, marginBottom: 6 }}>Quality (optional)</div>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <div style={{ display: "grid", gap: 4, minWidth: 150 }}>
+                <label className="muted" style={{ fontSize: 11 }}>Target score (0-100)</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={typeof inputs.targetQuality === "number" ? inputs.targetQuality : ""}
+                  placeholder="(workflow default)"
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    setInputs((prev) => {
+                      const next = { ...prev };
+                      if (raw === "") delete next.targetQuality;
+                      else next.targetQuality = Number(raw);
+                      return next;
+                    });
+                  }}
+                  style={inputStyle}
+                />
+              </div>
+              <div style={{ display: "grid", gap: 4, minWidth: 150 }}>
+                <label className="muted" style={{ fontSize: 11 }}>Max attempts</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={typeof inputs.maxIterations === "number" ? inputs.maxIterations : ""}
+                  placeholder="(workflow default)"
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    setInputs((prev) => {
+                      const next = { ...prev };
+                      if (raw === "") delete next.maxIterations;
+                      else next.maxIterations = Number(raw);
+                      return next;
+                    });
+                  }}
+                  style={inputStyle}
+                />
+              </div>
+            </div>
+            <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>
+              Applies to quality-gated workflows that read targetQuality / maxIterations from inputs.
+              Empty = the workflow's own destructured defaults win.
+            </div>
+          </div>
+
           <div>
             <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Inputs</div>
             <InputsForm schema={schema} value={inputs} onChange={setInputs} />
