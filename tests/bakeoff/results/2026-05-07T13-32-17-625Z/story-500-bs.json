@@ -1,0 +1,72 @@
+{
+  "runner": "bs",
+  "scenario": "story-500",
+  "success": true,
+  "final": {
+    "qualityPercent": 90,
+    "iterations": 1,
+    "status": "passed",
+    "wordCount": 471
+  },
+  "metadata": {
+    "invocation": {
+      "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\work\\bs-story-500-1778161011742\\story-500.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\work\\bs-story-500-1778161011742\\story-500.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\work\\bs-story-500-1778161011742\\runs --process-id bakeoff/story-500 --run-id bs-bakeoff-story-500-1778161011744 --max-iterations 20 --json",
+      "contractRunnerCommand": "node --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\bs-contract-runner.ts --scenario story-500 --out C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\story-500-bs.json",
+      "cwd": "C:\\Users\\Treml\\source\\repos\\MissionControl",
+      "startedAt": "2026-05-07T13:36:51.744Z",
+      "finishedAt": "2026-05-07T13:37:29.726Z",
+      "durationMs": 37983,
+      "runId": "bs-bakeoff-story-500-1778161011744",
+      "runDir": "C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\work\\bs-story-500-1778161011742\\runs\\bs-bakeoff-story-500-1778161011744"
+    },
+    "calls": [
+      {
+        "step": "writer",
+        "kind": "agent",
+        "inputRef": "inputs/01-writer.json",
+        "outputRef": "outputs/01-writer.json",
+        "status": "ok",
+        "durationMs": 1
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\results\\2026-05-07T13-32-17-625Z\\artifacts\\bs\\story-500\\bs-story-500.json",
+        "kind": "json"
+      }
+    ],
+    "errors": [],
+    "progressEvents": [
+      {
+        "event": "run-started",
+        "at": "2026-05-07T13:37:29.573Z"
+      },
+      {
+        "event": "story-written",
+        "step": "writer",
+        "at": "2026-05-07T13:37:29.575Z"
+      },
+      {
+        "event": "run-completed",
+        "at": "2026-05-07T13:37:29.726Z"
+      }
+    ],
+    "workItems": [
+      {
+        "step": "writer",
+        "input": {
+          "targetWords": 500,
+          "minWords": 450,
+          "maxWords": 550,
+          "subject": "Mission Control orchestrating agents"
+        },
+        "output": {
+          "story": "At 03:14, Mission Control woke me with a single red dot on the Topbar. The nightly build had collapsed somewhere between the renderer typecheck and the preload bundle, and the deploy window opened in two hours and forty-six minutes. I opened the task — DA-091F, kind: campaign — and watched the phase timeline draw itself: Draft, Active, blank.\n\nI clicked Start. The curated workflow path took over. RunManager spawned the babysitter harness with our triage process file, and the journal began streaming bs:phase events into the right rail. Phase 1 dispatched the Explorer agent. It walked the failing commit, opened the diff, and posted a one-line summary to STATUS.md: a vite plugin had been bumped two minors during a transitive update, and the preload was now emitting ESM where Electron expected CJS.\n\nThe Explorer handed off to the Hypothesis agent, running on a different model — Michael had unlocked the model picker last week precisely so we could mix Sonnet's caution with Haiku's speed on the same task. Hypothesis proposed three repairs and ranked them by blast radius. Mission Control surfaced the ranking in the live events pane, each row a chip with a type icon: a wrench for patch, a flask for test, a lock for revert.\n\nI approved option two. The Patch agent opened electron.vite.config.ts, restored the explicit .cjs output rule, and pinned the offending dependency back to its known-good version. It wrote a comment above the change: // CONFIRMED: preload must be CJS — see CLAUDE.md gotchas. No editorializing, no apology, just the marker we agreed on.\n\nThen the Verifier woke up. It ran typecheck:node, typecheck:web, typecheck:tests in parallel, three terminals blooming green in sequence. It ran the smoke suite. It ran verify-ui against a freshly built bundle, and Playwright clicked through Create Task, Run Workflow, Start, Pause — each assertion landing like a footstep on dry leaves. Mission Control debounced the event stream so the UI never stuttered, even as four hundred journal entries arrived in ninety seconds.\n\nAt 04:52 the campaign closed its last item. The Reviewer agent drafted a commit message in present-tense imperative, under seventy-two characters: Restore preload CJS output after vite plugin bump. It refused to add a Co-Authored-By line because it had not been asked to.\n\nI pushed to main directly. No branch dance, no PR, the way Michael wanted it. The deploy pipeline lit up amber, then green. The Topbar dot returned to its quiet gray.\n\nOutside, the sky was the color of unlit slate, then slate with a seam of orange. Mission Control archived the run, folded the phase timeline back to a tidy three-chip skeleton, and waited. Somewhere in the library, a workflow.js file sat unchanged on disk, source of truth, ready for the next mission. The agents went still. The build held. The sun came up on time.",
+          "storyTitle": "The Sunrise Patch",
+          "theme": "Coordinated AI agents repair a broken build through orchestrated triage, patching, and verification before deployment.",
+          "wordCount": 471
+        }
+      }
+    ]
+  }
+}

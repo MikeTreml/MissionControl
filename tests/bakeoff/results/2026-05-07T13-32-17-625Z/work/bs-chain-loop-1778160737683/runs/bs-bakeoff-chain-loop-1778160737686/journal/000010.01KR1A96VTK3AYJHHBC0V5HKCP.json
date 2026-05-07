@@ -1,0 +1,20 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-05-07T13:33:22.682Z",
+  "data": {
+    "effectId": "01KR1A96TBR05Z83FBP0FFBPM5",
+    "invocationKey": "bakeoff/chain-loop:S000005:reviewer",
+    "invocationHash": "48bf896c55c843f89b3479104b24fea15c7df76222bf5f87494ec83154fea761",
+    "stepId": "S000005",
+    "taskId": "reviewer",
+    "kind": "agent",
+    "label": "bakeoff",
+    "taskDefRef": "tasks/01KR1A96TBR05Z83FBP0FFBPM5/task.json",
+    "labels": [
+      "bakeoff",
+      "agent",
+      "reviewer"
+    ]
+  },
+  "checksum": "9377297e5d0b46147b0ee673921a2ade6b20dcbd4d33026163b7ac5f0546721c"
+}

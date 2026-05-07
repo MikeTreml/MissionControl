@@ -16,8 +16,15 @@ import { AddProjectForm } from "../components/AddProjectForm";
 import { SkeletonLine, SkeletonBlock, SkeletonRows } from "../components/Skeleton";
 import { ProjectMemoryCard } from "../components/ProjectMemoryCard";
 import type { UiTask } from "../hooks/useTasks";
-import { ProjectDecisionPolicySchema, type ProjectWithGit } from "../../../shared/models";
+import type { ProjectDecisionPolicy, ProjectWithGit } from "../../../shared/models";
 import type { ProjectRunMetricsRollup } from "../global";
+
+const DEFAULT_PROJECT_POLICY: ProjectDecisionPolicy = {
+  scope: "balanced",
+  impact: "medium",
+  risk: "medium",
+  autoProceedMode: "suggest",
+};
 
 export function ProjectDetail(): JSX.Element {
   const { selectedProjectId, setView } = useRoute();
@@ -135,7 +142,7 @@ export function ProjectDetail(): JSX.Element {
         path: project.path,
         icon: project.icon,
         notes: project.notes,
-        policy: ProjectDecisionPolicySchema.parse({}),
+        policy: DEFAULT_PROJECT_POLICY,
         isSample: false,
         gitInfo: { kind: "none", label: "", remoteUrl: "" },
       }
@@ -219,7 +226,7 @@ export function ProjectDetail(): JSX.Element {
             <p className="muted" style={{ marginTop: 8, fontSize: 12 }}>No metrics artifacts yet. Complete a run to populate this rollup.</p>
           )}
           {!rollupError && runMetricsRollup && runMetricsRollup.metricsArtifactCount > 0 && (
-            <div className="card-grid" style={{ marginTop: 12, gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+            <div className="card-grid project-run-metrics-grid">
               <Kpi label="Completed run snapshots" value={runMetricsRollup.metricsArtifactCount} />
               <Kpi label="Tasks with metrics" value={runMetricsRollup.tasksWithArtifacts} />
               <Kpi

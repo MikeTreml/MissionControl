@@ -1,0 +1,135 @@
+{
+  "runner": "bs",
+  "scenario": "failure-resume",
+  "success": true,
+  "final": {
+    "qualityPercent": 88,
+    "iterations": 2,
+    "status": "passed"
+  },
+  "metadata": {
+    "invocation": {
+      "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-failure-resume-1778148865937\\failure-resume.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-failure-resume-1778148865937\\failure-resume.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-failure-resume-1778148865937\\runs --process-id bakeoff/failure-resume --run-id bs-bakeoff-failure-resume-1778148865940 --max-iterations 20 --json",
+      "contractRunnerCommand": "node --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\bs-contract-runner.ts --scenario failure-resume --out C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-2eJyjx\\bs-failure-resume.json",
+      "cwd": "C:\\Users\\Treml\\source\\repos\\MissionControl",
+      "startedAt": "2026-05-07T10:14:25.940Z",
+      "finishedAt": "2026-05-07T10:15:08.114Z",
+      "durationMs": 42174,
+      "runId": "bs-bakeoff-failure-resume-1778148865940",
+      "runDir": "C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-failure-resume-1778148865937\\runs\\bs-bakeoff-failure-resume-1778148865940"
+    },
+    "calls": [
+      {
+        "step": "planner",
+        "kind": "agent",
+        "inputRef": "inputs/01-planner.json",
+        "outputRef": "outputs/01-planner.json",
+        "status": "ok",
+        "durationMs": 1
+      },
+      {
+        "step": "worker",
+        "kind": "agent",
+        "inputRef": "inputs/02-worker.json",
+        "status": "error",
+        "durationMs": 1,
+        "error": {
+          "message": "forced worker failure for bakeoff",
+          "step": "worker",
+          "nextAction": "resume"
+        }
+      },
+      {
+        "step": "resume",
+        "kind": "resume",
+        "inputRef": "inputs/03-resume.json",
+        "outputRef": "outputs/03-resume.json",
+        "status": "ok",
+        "durationMs": 1
+      },
+      {
+        "step": "worker",
+        "kind": "agent",
+        "inputRef": "inputs/04-worker.json",
+        "outputRef": "outputs/04-worker.json",
+        "status": "ok",
+        "durationMs": 1
+      },
+      {
+        "step": "reviewer",
+        "kind": "agent",
+        "inputRef": "inputs/05-reviewer.json",
+        "outputRef": "outputs/05-reviewer.json",
+        "status": "ok",
+        "durationMs": 1
+      }
+    ],
+    "artifacts": [],
+    "errors": [
+      {
+        "message": "forced worker failure for bakeoff",
+        "step": "worker",
+        "inputRef": "inputs/02-worker.json",
+        "nextAction": "resume"
+      }
+    ],
+    "progressEvents": [
+      {
+        "event": "run-started",
+        "at": "2026-05-07T10:15:07.953Z"
+      },
+      {
+        "event": "step-failed",
+        "step": "worker",
+        "at": "2026-05-07T10:15:07.954Z"
+      },
+      {
+        "event": "run-resumed",
+        "step": "resume",
+        "at": "2026-05-07T10:15:07.955Z"
+      },
+      {
+        "event": "run-completed",
+        "at": "2026-05-07T10:15:08.114Z"
+      }
+    ],
+    "workItems": [
+      {
+        "step": "planner",
+        "input": {
+          "scenario": "failure-resume"
+        },
+        "output": {
+          "plan": "two iteration plan",
+          "ready": true
+        }
+      },
+      {
+        "step": "worker",
+        "input": {
+          "iteration": 2,
+          "priorFailure": {
+            "message": "forced worker failure for bakeoff",
+            "step": "worker",
+            "inputRef": "inputs/02-worker.json",
+            "nextAction": "resume"
+          }
+        },
+        "output": {
+          "iteration": 2,
+          "work": "completed"
+        }
+      },
+      {
+        "step": "reviewer",
+        "input": {
+          "iteration": 2
+        },
+        "output": {
+          "approved": true,
+          "qualityPercent": 90
+        }
+      }
+    ]
+  }
+}

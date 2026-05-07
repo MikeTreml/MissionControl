@@ -1,0 +1,75 @@
+{
+  "runner": "aa",
+  "scenario": "story-500",
+  "success": true,
+  "final": {
+    "qualityPercent": 90,
+    "iterations": 1,
+    "status": "passed",
+    "wordCount": 482
+  },
+  "metadata": {
+    "calls": [
+      {
+        "step": "writer",
+        "kind": "agent",
+        "inputRef": "inputs/01-writer.json",
+        "outputRef": "outputs/01-writer.json",
+        "status": "ok",
+        "durationMs": 33675,
+        "command": "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a Mission Control story writer.\\n\\n# INTERNAL ASSISTANT STEPS\\n- Write one original story about Mission Control coordinating several AI agents to repair a broken build before sunrise. Aim for 500 words and stay between 450 and 550 words. Return JSON with storyTitle, story, and theme.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"targetWords\\\":500,\\\"minWords\\\":450,\\\"maxWords\\\":550,\\\"subject\\\":\\\"Mission Control orchestrating agents\\\"}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff story writer agent.\",\n  \"properties\": {\n    \"storyTitle\": {\n      \"description\": \"Story title\",\n      \"title\": \"Storytitle\",\n      \"type\": \"string\"\n    },\n    \"story\": {\n      \"description\": \"Complete story text\",\n      \"title\": \"Story\",\n      \"type\": \"string\"\n    },\n    \"theme\": {\n      \"description\": \"Story theme\",\n      \"title\": \"Theme\",\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"storyTitle\",\n    \"story\",\n    \"theme\"\n  ],\n  \"title\": \"WriterOutput\",\n  \"type\": \"object\"\n} --output-format json"
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-2eJyjx\\aa-story-500.json",
+        "kind": "json"
+      }
+    ],
+    "errors": [],
+    "progressEvents": [
+      {
+        "event": "run-started",
+        "at": "2026-05-07T10:16:29.262806Z"
+      },
+      {
+        "event": "story-written",
+        "step": "writer",
+        "at": "2026-05-07T10:17:02.940033Z"
+      },
+      {
+        "event": "run-completed",
+        "at": "2026-05-07T10:17:02.940033Z"
+      }
+    ],
+    "workItems": [
+      {
+        "step": "writer",
+        "input": {
+          "targetWords": 500,
+          "minWords": 450,
+          "maxWords": 550,
+          "subject": "Mission Control orchestrating agents"
+        },
+        "output": {
+          "storyTitle": "The Sunrise Build",
+          "story": "At 03:14, Mission Control's amber alert chimed once and went still. The nightly build had broken at commit 4f9a2c, and a customer demo was scheduled for 07:00. Lena, the lone operator on shift, set down her coffee and tapped Start.\n\nThe orchestrator woke first. It read the journal, parsed the stack trace, and dispatched three agents into the workspace: Scout, Mason, and Sentinel. Each got a narrow mandate, a budget, and a shared status board they could all write to but never overwrite.\n\nScout moved first, fast and shallow. It crawled the failing test output, traced the import graph, and pinned the regression to a renamed export in a shared models module. It posted its finding to the board with three confidence markers and a single line: likely cause, two suspects, one hypothesis. Then it stepped back.\n\nMason picked up the hypothesis and went deep. It opened the suspect file, diffed it against the last green commit, and found the rename: a Zod schema had been split into two without a re-export shim. Mason drafted a patch, ran the affected unit tests locally inside a sandboxed worker, and watched seventeen reds turn green. It did not commit. Mason never committed. That was Sentinel's job.\n\nSentinel was slower and more suspicious. It pulled Mason's patch, ran the full type-check across three tsconfigs, then the smoke suite, then a headless UI pass against the built app. One screenshot diff flagged a phantom toolbar pixel. Sentinel paused, asked the orchestrator for guidance, and got a terse reply: cosmetic, not blocking, log and proceed. Sentinel logged it, proceeded, and produced a signed verification record.\n\nLena watched the timeline chips bloom across her screen: Scout green, Mason green, Sentinel green. She did not touch the keyboard. The orchestrator surfaced a single approval prompt with the diff, the test deltas, and the cosmetic note pinned beneath. Lena read it twice. She approved.\n\nThe commit landed at 04:52. The build server picked it up, ran for nine minutes, and posted a green checkmark to the channel where the demo team would see it when they woke. Mission Control closed the run, archived the journal, and rolled the agents back into their idle pools.\n\nAt 05:30, Lena stood up to stretch. The eastern windows were beginning to pale. She thought about how, a year ago, this would have been her until dawn: grepping, guessing, second-guessing, drinking cold coffee while the sky brightened around her failure. Tonight she had been a conductor, not a soloist. Three agents had each done one thing well, and a fourth had refused to let any of them ship without proof.\n\nShe wrote a short note in the run retrospective: Scout was too eager on suspect two; tighten its budget. Mason's patch was clean; promote the pattern. Sentinel's pixel-diff threshold needs tuning.\n\nThen she watched the sun come up over a green build, and she smiled.",
+          "theme": "Coordinated AI agents under human supervision turn a pre-dawn crisis into a calm, verifiable repair.",
+          "wordCount": 482
+        }
+      }
+    ],
+    "invocation": {
+      "command": "C:\\Users\\Treml\\source\\repos\\atomic-agents\\.venv\\Scripts\\python.exe C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\aa_contract_runner.py --scenario story-500 --out C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-2eJyjx\\aa-story-500.json",
+      "cwd": "C:\\Users\\Treml\\source\\repos\\MissionControl",
+      "startedAt": "2026-05-07T10:16:29.262806Z",
+      "finishedAt": "2026-05-07T10:17:02.940033Z",
+      "durationMs": 33676,
+      "provider": "atomic-agent-via-claude-cli",
+      "model": "claude-cli-default",
+      "modelCommands": [
+        "claude -p You are the model backend for an Atomic Agents bakeoff.\n\nReturn only a JSON object. No prose. No markdown fences.\n\nConversation messages:\n\n[\n  {\n    \"role\": \"system\",\n    \"content\": \"# IDENTITY and PURPOSE\\n- You are a Mission Control story writer.\\n\\n# INTERNAL ASSISTANT STEPS\\n- Write one original story about Mission Control coordinating several AI agents to repair a broken build before sunrise. Aim for 500 words and stay between 450 and 550 words. Return JSON with storyTitle, story, and theme.\\n- Return exactly the requested structured JSON.\\n\\n# OUTPUT INSTRUCTIONS\\n- Always respond using the proper JSON schema.\\n- Always use the available additional information and context to enhance the response.\"\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"{\\\"targetWords\\\":500,\\\"minWords\\\":450,\\\"maxWords\\\":550,\\\"subject\\\":\\\"Mission Control orchestrating agents\\\"}\"\n  }\n]\n\nRequired JSON schema:\n\n{\n  \"description\": \"Output from the bakeoff story writer agent.\",\n  \"properties\": {\n    \"storyTitle\": {\n      \"description\": \"Story title\",\n      \"title\": \"Storytitle\",\n      \"type\": \"string\"\n    },\n    \"story\": {\n      \"description\": \"Complete story text\",\n      \"title\": \"Story\",\n      \"type\": \"string\"\n    },\n    \"theme\": {\n      \"description\": \"Story theme\",\n      \"title\": \"Theme\",\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"storyTitle\",\n    \"story\",\n    \"theme\"\n  ],\n  \"title\": \"WriterOutput\",\n  \"type\": \"object\"\n} --output-format json"
+      ]
+    }
+  }
+}

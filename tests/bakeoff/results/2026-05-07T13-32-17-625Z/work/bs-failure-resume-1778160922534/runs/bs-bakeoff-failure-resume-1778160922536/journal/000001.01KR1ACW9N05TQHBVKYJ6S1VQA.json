@@ -1,0 +1,14 @@
+{
+  "type": "RUN_CREATED",
+  "recordedAt": "2026-05-07T13:35:22.933Z",
+  "data": {
+    "runId": "bs-bakeoff-failure-resume-1778160922536",
+    "processId": "bakeoff/failure-resume",
+    "entrypoint": {
+      "importPath": "../../failure-resume.workflow.js",
+      "exportName": "process"
+    },
+    "inputsRef": "inputs.json"
+  },
+  "checksum": "e665f5b9eb27ace8f16a8ddd6363b54492717a93160e1b5478ef843d708e678e"
+}

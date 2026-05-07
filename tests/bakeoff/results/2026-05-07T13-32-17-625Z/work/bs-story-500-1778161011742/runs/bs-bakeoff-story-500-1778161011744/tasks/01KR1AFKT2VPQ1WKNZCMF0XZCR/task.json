@@ -1,0 +1,63 @@
+{
+  "agent": {
+    "name": "bakeoff-story-writer",
+    "outputSchema": {
+      "properties": {
+        "story": {
+          "type": "string"
+        },
+        "storyTitle": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "storyTitle",
+        "story",
+        "theme"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "maxWords": 550,
+        "minWords": 450,
+        "subject": "Mission Control orchestrating agents",
+        "targetWords": 500
+      },
+      "instructions": [
+        "Write one original story about Mission Control coordinating several AI agents to repair a broken build before sunrise.",
+        "Aim for 500 words. Stay between 450 and 550 words.",
+        "Return JSON with storyTitle:string, story:string, and theme:string.",
+        "No markdown fences."
+      ],
+      "outputFormat": "JSON object with storyTitle:string, story:string, theme:string",
+      "role": "Mission Control story writer",
+      "task": "Write a complete approximately 500 word story for the orchestration bakeoff."
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KR1AFKT2VPQ1WKNZCMF0XZCR/input.json",
+    "outputJsonPath": "tasks/01KR1AFKT2VPQ1WKNZCMF0XZCR/result.json"
+  },
+  "kind": "agent",
+  "labels": [
+    "agent",
+    "bakeoff",
+    "writer"
+  ],
+  "title": "500 word story writer",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KR1AFKT2VPQ1WKNZCMF0XZCR",
+  "taskId": "writer",
+  "invocationKey": "bakeoff/story-500:S000001:writer",
+  "stepId": "S000001",
+  "inputs": {
+    "maxWords": 550,
+    "minWords": 450,
+    "subject": "Mission Control orchestrating agents",
+    "targetWords": 500
+  }
+}

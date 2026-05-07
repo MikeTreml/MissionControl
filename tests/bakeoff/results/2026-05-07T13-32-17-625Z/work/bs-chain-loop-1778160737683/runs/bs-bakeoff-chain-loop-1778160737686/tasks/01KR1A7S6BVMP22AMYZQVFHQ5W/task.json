@@ -1,0 +1,51 @@
+{
+  "agent": {
+    "name": "bakeoff-worker",
+    "outputSchema": {
+      "properties": {
+        "iteration": {
+          "type": "number"
+        },
+        "work": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "work",
+        "iteration"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "iteration": 1
+      },
+      "instructions": [
+        "Return exactly {\"work\":\"completed\",\"iteration\":ITERATION}, replacing ITERATION with the numeric iteration from context.",
+        "No prose. No markdown fences."
+      ],
+      "outputFormat": "JSON object with work:string and iteration:number",
+      "role": "Deterministic bakeoff worker",
+      "task": "Return the exact JSON object requested for the orchestration bakeoff."
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KR1A7S6BVMP22AMYZQVFHQ5W/input.json",
+    "outputJsonPath": "tasks/01KR1A7S6BVMP22AMYZQVFHQ5W/result.json"
+  },
+  "kind": "agent",
+  "labels": [
+    "agent",
+    "bakeoff",
+    "worker"
+  ],
+  "title": "Worker iteration 1",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KR1A7S6BVMP22AMYZQVFHQ5W",
+  "taskId": "worker",
+  "invocationKey": "bakeoff/chain-loop:S000002:worker",
+  "stepId": "S000002",
+  "inputs": {
+    "iteration": 1
+  }
+}

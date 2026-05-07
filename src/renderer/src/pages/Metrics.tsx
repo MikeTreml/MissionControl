@@ -69,9 +69,9 @@ export function Metrics(): JSX.Element {
       </div>
 
       <div className="content">
-        <section className="card-grid" style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }}>
+        <section className="card-grid">
           {kpis.map((k) => (
-            <div key={k.label} className="card" style={{ padding: 12 }}>
+            <div key={k.label} className="card">
               <div className="muted">{k.label}</div>
               <div className="kpi" style={{ fontSize: 22 }}>{k.value}</div>
             </div>

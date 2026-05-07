@@ -1,0 +1,21 @@
+{
+  "io": {
+    "inputJsonPath": "tasks/01KR1AC0AF7NP0TWPQ59VNHVS0/input.json",
+    "outputJsonPath": "tasks/01KR1AC0AF7NP0TWPQ59VNHVS0/output.json"
+  },
+  "kind": "shell",
+  "labels": [
+    "bakeoff",
+    "tool"
+  ],
+  "shell": {
+    "command": "echo bakeoff-tool-ok"
+  },
+  "title": "Read deterministic input",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KR1AC0AF7NP0TWPQ59VNHVS0",
+  "taskId": "read-input",
+  "invocationKey": "bakeoff/tool-artifact:S000001:read-input",
+  "stepId": "S000001",
+  "inputs": {}
+}

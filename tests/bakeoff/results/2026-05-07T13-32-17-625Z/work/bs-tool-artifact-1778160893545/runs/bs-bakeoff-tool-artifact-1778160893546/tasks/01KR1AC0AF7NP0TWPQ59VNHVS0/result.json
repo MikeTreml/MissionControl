@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KR1AC0AF7NP0TWPQ59VNHVS0",
+  "taskId": "read-input",
+  "invocationKey": "bakeoff/tool-artifact:S000001:read-input",
+  "status": "ok",
+  "result": {
+    "exitCode": 0,
+    "stderr": "",
+    "stdout": "bakeoff-tool-ok\r\n"
+  },
+  "startedAt": "2026-05-07T13:34:54.718Z",
+  "finishedAt": "2026-05-07T13:34:54.718Z",
+  "value": {
+    "exitCode": 0,
+    "stderr": "",
+    "stdout": "bakeoff-tool-ok\r\n"
+  }
+}

@@ -180,7 +180,17 @@ export class RunManager {
     const cliPath = resolveBabysitterCliPath();
     if (!cliPath) throw new Error("babysitter SDK not installed");
     return await new Promise((resolve, reject) => {
-      const child = spawn(process.execPath, [cliPath, ...args], { stdio: ["ignore", "pipe", "pipe"] });
+      // CONFIRMED 2026-05-07: in an Electron app `process.execPath` is
+      // electron.exe, not node.exe. Without ELECTRON_RUN_AS_NODE=1 the
+      // child tries to start as a desktop app, can't init Chromium in a
+      // child context, and exits with Windows code 4294967295 (-1) before
+      // emitting any stderr — the curated workflow start failure mode.
+      // Setting the env var makes Electron launch as a plain Node runtime
+      // for this child, which is what the SDK CLI expects.
+      const child = spawn(process.execPath, [cliPath, ...args], {
+        stdio: ["ignore", "pipe", "pipe"],
+        env: { ...process.env, ELECTRON_RUN_AS_NODE: "1" },
+      });
       let stdout = "";
       let stderr = "";
       child.stdout?.on("data", (c) => { stdout += c.toString(); });
@@ -255,7 +265,14 @@ export class RunManager {
       "--json",
     ];
     await new Promise<void>((resolve, reject) => {
-      const child = spawn(process.execPath, args, { stdio: ["ignore", "pipe", "pipe"] });
+      // CONFIRMED 2026-05-07: same Electron-execPath gotcha as runSdkCli.
+      // Mirrors the env override there so any future ctx.breakpoint() flow
+      // doesn't crash with Windows exit 4294967295. See run-manager.ts
+      // runSdkCli for the full explanation.
+      const child = spawn(process.execPath, args, {
+        stdio: ["ignore", "pipe", "pipe"],
+        env: { ...process.env, ELECTRON_RUN_AS_NODE: "1" },
+      });
       let stderr = "";
       child.stderr?.on("data", (c) => { stderr += c.toString(); });
       child.on("error", reject);
@@ -546,21 +563,19 @@ export class RunManager {
 
         if (result.status === "completed") { stopReason = "completed"; break; }
         if (result.status === "failed")    { stopReason = "failed";    break; }
-        if (result.status === "waiting") {
-          // Soft pause — leave runState=running so the user sees it's
-          // blocked. Anything that needs a response (breakpoint UI, sleep
-          // timer) lives outside this loop. // PROPOSED: route
-          // `breakpoint-waiting` through respondBreakpoint once the UI
-          // surface for in-flight curated runs is wired.
-          await this.tasks.appendStatus(
-            taskId,
-            `Run waiting: ${result.reason ?? "unknown"}`,
-          );
-          return;
-        }
 
+        // CONFIRMED 2026-05-07: the SDK uses status="waiting" to mean
+        // "pending effects need external resolution" — NOT "external time
+        // pause". The reason field disambiguates (agent-pending /
+        // shell-pending / breakpoint-pending / sleep-pending). We must
+        // process every dispatchable kind (agent, shell) and re-iterate;
+        // only bail on waiting when nothing in nextActions is dispatchable.
+        // The previous `if (status === "waiting") return;` was a latent
+        // bug that would have stranded any curated workflow that needs a
+        // dispatch. // PROPOSED: route `breakpoint-pending` through
+        // respondBreakpoint once the curated-run UI surface is wired.
         const pending = result.nextActions ?? [];
-        if (pending.length === 0) continue;
+        let processedAny = false;
 
         for (const action of pending) {
           if (action.kind === "agent") {
@@ -576,6 +591,7 @@ export class RunManager {
               effectId: action.effectId,
               ...(action.label ? { label: action.label } : {}),
             });
+            processedAny = true;
           } else if (action.kind === "shell") {
             // Shell effects: spawn the declared command, capture stdout/stderr/
             // exitCode, post the result. We always post --status ok with the
@@ -583,19 +599,20 @@ export class RunManager {
             // expects exitCode===0, but other shells may intentionally tolerate
             // non-zero). // CONFIRMED 2026-05-06: design choice for the
             // continue-mission-control-with-quality flow.
-            const result = await this.dispatchCuratedShellTask(action, cwd);
+            const shellResult = await this.dispatchCuratedShellTask(action, cwd);
             await this.runSdkCli([
               "task:post", runDir, action.effectId,
               "--status", "ok",
-              "--value-inline", JSON.stringify(result),
+              "--value-inline", JSON.stringify(shellResult),
               "--json",
             ]);
             await this.tasks.appendEvent(taskId, {
               type: "bs:effect-resolved",
               effectId: action.effectId,
-              shellExitCode: result.exitCode,
+              shellExitCode: shellResult.exitCode,
               ...(action.label ? { label: action.label } : {}),
             });
+            processedAny = true;
           } else {
             // breakpoint / sleep / custom kinds remain out of scope for this
             // driver. Mark errored so the run doesn't silently hang.
@@ -617,6 +634,17 @@ export class RunManager {
             stopReason = "failed";
             return;
           }
+        }
+
+        if (!processedAny && result.status === "waiting") {
+          // True soft pause — nextActions held nothing dispatchable;
+          // reason is breakpoint-pending / sleep-pending or similar. Leave
+          // runState=running so the user sees it's blocked.
+          await this.tasks.appendStatus(
+            taskId,
+            `Run waiting: ${result.reason ?? "unknown"}`,
+          );
+          return;
         }
       }
       if (iteration >= MAX_ITER) {
