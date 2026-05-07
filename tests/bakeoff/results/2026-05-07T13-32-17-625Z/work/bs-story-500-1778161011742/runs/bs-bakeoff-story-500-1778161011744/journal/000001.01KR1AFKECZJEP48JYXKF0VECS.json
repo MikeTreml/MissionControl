@@ -1,0 +1,14 @@
+{
+  "type": "RUN_CREATED",
+  "recordedAt": "2026-05-07T13:36:52.173Z",
+  "data": {
+    "runId": "bs-bakeoff-story-500-1778161011744",
+    "processId": "bakeoff/story-500",
+    "entrypoint": {
+      "importPath": "../../story-500.workflow.js",
+      "exportName": "process"
+    },
+    "inputsRef": "inputs.json"
+  },
+  "checksum": "76a57cfd6eeaf969ca9ceb6c2dc215599de211745b6ca188be7b722e187d114e"
+}

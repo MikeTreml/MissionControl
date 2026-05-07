@@ -15,7 +15,7 @@ import { useKpis } from "../hooks/useKpis";
 export function KpiRow(): JSX.Element {
   const { kpis } = useKpis();
   return (
-    <section className="card-grid" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))", marginBottom: 14 }}>
+    <section className="card-grid dashboard-kpi-grid">
       {kpis.map((k) => (
         <div key={k.label} className="kpi-card">
           <div className="label">{k.label}</div>

@@ -1,0 +1,52 @@
+{
+  "agent": {
+    "name": "bakeoff-reviewer",
+    "outputSchema": {
+      "properties": {
+        "approved": {
+          "type": "boolean"
+        },
+        "qualityPercent": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "qualityPercent",
+        "approved"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "iteration": 2
+      },
+      "instructions": [
+        "If context.iteration is 1, return exactly {\"qualityPercent\":72,\"approved\":false}.",
+        "If context.iteration is 2, return exactly {\"qualityPercent\":90,\"approved\":true}.",
+        "No prose. No markdown fences."
+      ],
+      "outputFormat": "JSON object with qualityPercent:number and approved:boolean",
+      "role": "Deterministic bakeoff reviewer",
+      "task": "Return the exact quality score for the orchestration bakeoff."
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KR1ADQBZ0EWXR2H95Z3NDS6V/input.json",
+    "outputJsonPath": "tasks/01KR1ADQBZ0EWXR2H95Z3NDS6V/result.json"
+  },
+  "kind": "agent",
+  "labels": [
+    "agent",
+    "bakeoff",
+    "reviewer"
+  ],
+  "title": "Reviewer iteration 2",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KR1ADQBZ0EWXR2H95Z3NDS6V",
+  "taskId": "reviewer",
+  "invocationKey": "bakeoff/failure-resume:S000003:reviewer",
+  "stepId": "S000003",
+  "inputs": {
+    "iteration": 2
+  }
+}

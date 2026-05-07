@@ -1,0 +1,20 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-05-07T13:32:35.961Z",
+  "data": {
+    "effectId": "01KR1A7S6BVMP22AMYZQVFHQ5W",
+    "invocationKey": "bakeoff/chain-loop:S000002:worker",
+    "invocationHash": "cd5689e9ce930176ac5f46cce60795fca8c17fda093848fee03f6b1465e482db",
+    "stepId": "S000002",
+    "taskId": "worker",
+    "kind": "agent",
+    "label": "bakeoff",
+    "taskDefRef": "tasks/01KR1A7S6BVMP22AMYZQVFHQ5W/task.json",
+    "labels": [
+      "bakeoff",
+      "agent",
+      "worker"
+    ]
+  },
+  "checksum": "1bbc6bde9db40860c5fd7d16ef23fc039ed287186a9eb12f03b1fd3b290fa8cf"
+}

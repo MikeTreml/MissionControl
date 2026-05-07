@@ -1,0 +1,13 @@
+{
+  "runId": "bs-bakeoff-failure-resume-1778160922536",
+  "request": "bakeoff/failure-resume",
+  "processId": "bakeoff/failure-resume",
+  "entrypoint": {
+    "importPath": "../../failure-resume.workflow.js",
+    "exportName": "process"
+  },
+  "processPath": "../../failure-resume.workflow.js",
+  "layoutVersion": "2026.01-storage-preview",
+  "createdAt": "2026-05-07T13:35:22.867Z",
+  "completionProof": "958d22a2f05eda87e81cc34a65d06b2b"
+}

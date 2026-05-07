@@ -1,0 +1,86 @@
+{
+  "runner": "bs",
+  "scenario": "chain-loop",
+  "success": true,
+  "final": {
+    "qualityPercent": 90,
+    "iterations": 2,
+    "status": "passed"
+  },
+  "metadata": {
+    "invocation": {
+      "command": "C:\\Program Files\\nodejs\\node.exe --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\scripts\\drive-task.ts --workflow C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-chain-loop-1778146803371\\chain-loop.workflow.js --inputs C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-chain-loop-1778146803371\\chain-loop.inputs.json --runs-dir C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-chain-loop-1778146803371\\runs --process-id bakeoff/chain-loop --run-id bs-bakeoff-chain-loop-1778146803372 --max-iterations 20 --json",
+      "contractRunnerCommand": "node --experimental-strip-types C:\\Users\\Treml\\source\\repos\\MissionControl\\tests\\bakeoff\\runners\\bs-contract-runner.ts --scenario chain-loop --out C:\\Users\\Treml\\AppData\\Local\\Temp\\mc-orchestration-bakeoff-CHpntk\\bs-chain-loop.json",
+      "cwd": "C:\\Users\\Treml\\source\\repos\\MissionControl",
+      "startedAt": "2026-05-07T09:40:03.372Z",
+      "finishedAt": "2026-05-07T09:41:17.427Z",
+      "durationMs": 74055,
+      "runId": "bs-bakeoff-chain-loop-1778146803372",
+      "runDir": "C:\\Users\\Treml\\source\\repos\\MissionControl\\.bakeoff-tmp\\bs-chain-loop-1778146803371\\runs\\bs-bakeoff-chain-loop-1778146803372"
+    },
+    "calls": [
+      {
+        "step": "planner",
+        "kind": "agent",
+        "inputRef": "inputs/01-planner.json",
+        "outputRef": "outputs/01-planner.json",
+        "status": "ok",
+        "durationMs": 1
+      },
+      {
+        "step": "worker",
+        "kind": "agent",
+        "inputRef": "inputs/02-worker.json",
+        "outputRef": "outputs/02-worker.json",
+        "status": "ok",
+        "durationMs": 1
+      },
+      {
+        "step": "reviewer",
+        "kind": "agent",
+        "inputRef": "inputs/03-reviewer.json",
+        "outputRef": "outputs/03-reviewer.json",
+        "status": "ok",
+        "durationMs": 1
+      },
+      {
+        "step": "worker",
+        "kind": "agent",
+        "inputRef": "inputs/03-worker.json",
+        "outputRef": "outputs/02-worker.json",
+        "status": "ok",
+        "durationMs": 1
+      },
+      {
+        "step": "reviewer",
+        "kind": "agent",
+        "inputRef": "inputs/04-reviewer.json",
+        "outputRef": "outputs/03-reviewer.json",
+        "status": "ok",
+        "durationMs": 1
+      }
+    ],
+    "artifacts": [],
+    "errors": [],
+    "progressEvents": [
+      {
+        "event": "run-started",
+        "at": "2026-05-07T09:41:17.266Z"
+      },
+      {
+        "event": "quality-scored",
+        "step": "reviewer",
+        "at": "2026-05-07T09:41:17.267Z"
+      },
+      {
+        "event": "quality-passed",
+        "step": "reviewer",
+        "at": "2026-05-07T09:41:17.268Z"
+      },
+      {
+        "event": "run-completed",
+        "at": "2026-05-07T09:41:17.427Z"
+      }
+    ]
+  }
+}

@@ -33,22 +33,42 @@ runnable workflows; layer them by area, don't pick one.
 
 ## How to invoke a workflow
 
+Use the lower-level **Agent commands** — `run:create` to seed the run, then
+`run:iterate` repeatedly to drive replay. The `harness:*` aliases
+(`harness:create-run`, `harness:call`, `harness:yolo`) are listed under
+"agents should never call these directly" in `babysitter --help`; they're
+intended for higher-level wrappers like MC's RunManager, not for direct
+agent or human use at the prompt.
+
 ```powershell
-babysitter harness:create-run `
-  --process library/specializations/<spec>/workflows/<workflow>.js#process `
-  --harness pi `
-  --workspace . `
-  --runs-dir .a5c/runs `
-  --non-interactive `
-  --json
+# 1. Seed the run (creates .a5c/runs/<runId>/, writes RUN_CREATED to journal).
+babysitter run:create `
+  --process-id specializations/<spec>/<workflow> `
+  --entry library/specializations/<spec>/workflows/<workflow>.js#process `
+  --inputs <path-to-inputs.json> `
+  --runs-dir .a5c/runs --json
+
+# 2. Drive replay until completion (or first pending agent effect).
+babysitter run:iterate .a5c/runs/<runId> --json
+
+# 3. When iteration pauses with pending agent effects, list them, resolve
+#    them by executing the agent task externally, post the result, iterate.
+babysitter task:list .a5c/runs/<runId> --pending --json
+babysitter task:post .a5c/runs/<runId> <effectId> --status ok --value-inline '{...}'
+babysitter run:iterate .a5c/runs/<runId> --json
+# …repeat steps 2-3 until the run reports complete.
 ```
 
-For an MC-local process, swap the `--process` path:
+For an MC-local process, swap the `--entry` path and pick a `--process-id`
+slug that's recognizable in the run directory (the slug is metadata; it
+identifies the run, it doesn't change behavior):
 
 ```powershell
-babysitter harness:create-run `
-  --process .a5c/processes/frontend-improvement-loop.js#process `
-  --harness pi --workspace . --runs-dir .a5c/runs --non-interactive --json
+babysitter run:create `
+  --process-id local/frontend-improvement-loop `
+  --entry .a5c/processes/frontend-improvement-loop.js#process `
+  --inputs .a5c/processes/frontend-improvement-loop.inputs.json `
+  --runs-dir .a5c/runs --json
 ```
 
 ## CRITICAL: AGENT.md / SKILL.md inlining
@@ -161,6 +181,73 @@ AGENT.md resolution bug above:
    the intent obvious without a README. (Optional. Costs an
    `_index.json` rebuild and possibly hardcoded paths in test files.)
 
+## MC integration smoke test (dad-joke)
+
+`.a5c/processes/dad-joke-mc-test.js` is a small curated workflow that
+proves the entire MC → babysitter → pi → result-back-to-MC chain is
+healthy. It dispatches two parallel-style agent tasks:
+
+- **A** — `agent.name='general-purpose'` with `dad-joke-bob`'s AGENT.md
+  body inlined into the prompt (the workaround pattern).
+- **B** (control) — `agent.name='dad-joke-bob'` with no inlining. The
+  slug alone reaches the runtime.
+
+The oracle is the literal phrase `"I'm Bob"` taken from line 16 of
+`dad-joke-bob/AGENT.md`. The slug `dad-joke-bob` cannot have produced
+that phrase; only the inlined file body could. So:
+
+| Result | Verdict | Meaning |
+|---|---|---|
+| A says "I'm Bob", B does not | **pass** | Pipeline healthy, workaround works |
+| Both say "I'm Bob" | **unexpected** | SDK started auto-loading AGENT.md (workaround now redundant — investigate before removing) |
+| A does NOT say "I'm Bob" | **fail-pipeline** | Pipeline broken at one of: filesystem read, prompt build, agent dispatch, pi response, result write-back. Diagnostic fields point at which leg. |
+| Only B says "I'm Bob" | **fail-test** | Impossible state in theory; likely a test bug — inspect `tasks/<effectId>/input.json` |
+
+### Recipe
+
+```powershell
+# 1. Create a test sandbox project pointing at the MC repo (so library/
+#    is reachable when the process resolves libraryRoot from cwd).
+npm run mc -- project create test-sandbox `
+  --name "Test Sandbox" --prefix TS --icon 🧪 `
+  --path C:\Users\Treml\source\repos\MissionControl
+
+# 2. Create the dad-joke task wired to the curated workflow.
+npm run mc -- task create `
+  --project test-sandbox `
+  --title "Dad-joke MC integration test" `
+  --workflow .a5c/processes/dad-joke-mc-test.js `
+  --inputs .a5c/processes/dad-joke-mc-test.inputs.json `
+  --mode yolo
+
+# 3. Open MC, find the new task in test-sandbox, click Start.
+
+# 4. Watch the task journal. The final run output shows the verdict.
+#    A "pass" means MC's pipeline is fully wired.
+```
+
+### What "pass" verifies, end to end
+
+1. MC reads `<userData>/tasks/<id>/RUN_CONFIG.json` and finds
+   `libraryWorkflow.diskPath`.
+2. MC's RunManager spawns
+   `babysitter run:create --entry .a5c/processes/dad-joke-mc-test.js#process …`
+   with workspace = project.path (the MC repo).
+3. MC drives `run:iterate`, which loads the process and runs Phase 1
+   (`loadAgentMd` reads the file from disk).
+4. Phase 2 issues two `kind: 'agent'` effects. MC's RunManager dispatches
+   each to its pi session manager.
+5. Pi receives the prompt (with the inlined AGENT.md body for A, slug-only
+   for B), generates a response.
+6. The response lands back in `tasks/<effectId>/output.json`. MC posts
+   the result via `task:post`. `run:iterate` resumes.
+7. Phase 3 compares introductions, picks a verdict, returns.
+8. MC writes the run output to the task journal where you can see it.
+
+If any single step breaks, the verdict becomes `fail-pipeline` and the
+diagnostic fields (`agentMdSnippet`, both `introduction` strings) tell
+you which step.
+
 ## Available workflows by specialization (current count)
 
 - `desktop-development/workflows/` — 24 workflows (auto-update-system,
@@ -194,8 +281,9 @@ AGENT.md resolution bug above:
 
 | Process | Purpose |
 |---|---|
-| `frontend-improvement-loop.js` | This file's primary deliverable — iterative renderer improvement loop with checkpoint, AGENT.md inlining, verify-or-revert, commit-on-pass. |
-| `agent-resolution-test.js` | The empirical AGENT.md test. Run after any SDK upgrade. |
+| `frontend-improvement-loop.js` | Iterative renderer improvement loop with checkpoint, AGENT.md inlining, verify-or-revert, commit-on-pass. |
+| `dad-joke-mc-test.js` | MC integration smoke test. Two-variant (with/without inlining) introduction comparison; verdict proves the full MC → babysitter → pi pipeline. See "MC integration smoke test" section. |
+| `agent-resolution-test.js` | The empirical AGENT.md SDK probe (no inlining). Run after any SDK upgrade — if results change, update accordingly. |
 | `dynamic-agent-activation.js` | Existing pattern: general-purpose + rich inline prompt. Reference template for new MC processes. |
 | `cleanup-a5c-runs-and-processes.js` | Periodic housekeeping. |
 | `next-10-mission-control.js` | Multi-step MC feature work. |
@@ -203,36 +291,77 @@ AGENT.md resolution bug above:
 
 ## Running the frontend improvement loop
 
+The loop is driven via `run:create` + `run:iterate` (Agent commands path).
+Shell tasks (preflight, verify, revert, commit) execute inline during
+`run:iterate`. Agent tasks (select-candidate, implement-fix) become
+**pending effects** between iterations and are resolved by an external
+agent driver — typically you (typing into Claude Code) or any other
+agentic CLI you trust.
+
 ```powershell
 # 1. Commit any in-progress work first (the loop checks for a clean tracked tree).
 git add -A; git commit -m "wip: pre-loop checkpoint"
 
-# 2. Run the loop with default inputs (3 iterations, non-interactive).
-babysitter harness:create-run `
-  --process .a5c/processes/frontend-improvement-loop.js#process `
+# 2. Seed the run.
+babysitter run:create `
+  --process-id local/frontend-improvement-loop `
+  --entry .a5c/processes/frontend-improvement-loop.js#process `
   --inputs .a5c/processes/frontend-improvement-loop.inputs.json `
-  --harness pi --workspace . --runs-dir .a5c/runs `
-  --non-interactive --json
+  --runs-dir .a5c/runs --json
+# → returns { runId, runDir, ... }. Note the runDir.
 
-# 3. Inspect what got committed.
+# 3. Drive replay. This will run shell tasks inline and stop at the first
+#    pending agent task (select-candidate or implement-fix).
+babysitter run:iterate <runDir> --json
+
+# 4. List pending agent effects.
+babysitter task:list <runDir> --pending --json
+
+# 5. Resolve each pending agent effect:
+#    Read the task's input.json (in <runDir>/tasks/<effectId>/input.json),
+#    do the agent work (pick a candidate / implement the fix), then post the
+#    result.
+babysitter task:post <runDir> <effectId> --status ok --value-inline '{...}'
+
+# 6. Iterate again. Repeat 3-6 until run completes (status RUN_COMPLETED).
+babysitter run:iterate <runDir> --json
+
+# 7. Inspect what got committed.
 git log --oneline @{1}..HEAD
 
-# 4. If you don't like any of it, the checkpoint SHA is in the run output.
-#    Recover with:
+# 8. If you don't like any of it, the checkpoint SHA is in the run output
+#    (search journal events for the preflight task result).
 git reset --hard <checkpointSha>
 ```
 
 The loop:
 
-1. Records HEAD as the checkpoint SHA.
+1. Records HEAD as the checkpoint SHA (preflight shell task — runs inline).
 2. Pre-loads `ui-implementer/AGENT.md` and `visual-qa-scorer/AGENT.md`
-   from the library and inlines them into prompts.
-3. Per iteration: `select candidate → implement → verify → commit-or-revert`.
-   Verify runs `npm run typecheck && npm run smoke && npm run test:workflow
-   && npm run verify-ui`.
-4. On iteration failure: `git stash --include-untracked && git stash drop`
+   from the library and inlines them into agent task prompts.
+3. Per iteration: `select-candidate (agent)` → `implement-fix (agent)` →
+   `verify (shell)` → `commit-or-revert (shell)`. Each agent task is a
+   pause point during `run:iterate` until you post a result.
+4. Verify runs `npm run typecheck && npm run smoke && npm run test:workflow
+   && npm run verify-ui` — same as `npm run doctor`.
+5. On iteration failure: `git stash --include-untracked && git stash drop`
    (recoverable from reflog for ~30 days).
-5. Returns `{ success, checkpointSha, iterations, results: [...] }`.
+6. Returns `{ success, checkpointSha, iterations, results: [...] }` once
+   the final iteration completes.
+
+### Driving the loop from a single Claude Code session
+
+Easiest workflow: open Claude Code in the MC repo, ask it to "run the
+frontend improvement loop". Claude does steps 2–6 itself — calling
+`run:create`, then `run:iterate` until pending agent effects appear, then
+*it* does the agent work (picking candidates, implementing fixes), then
+`task:post`s the result, then iterates again. From your perspective
+that's one prompt and a series of commit notifications.
+
+If you want a hands-off background loop instead, that's what
+MC's RunManager + the `harness:call` wrapper exist for — but those are
+non-agent paths intended for higher-level tooling, not for direct human
+or agent invocation at the prompt.
 
 ## Open follow-ups
 

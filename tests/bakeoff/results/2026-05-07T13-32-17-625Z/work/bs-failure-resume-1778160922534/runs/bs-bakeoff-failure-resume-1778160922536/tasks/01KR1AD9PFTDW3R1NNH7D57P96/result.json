@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KR1AD9PFTDW3R1NNH7D57P96",
+  "taskId": "worker",
+  "invocationKey": "bakeoff/failure-resume:S000002:worker",
+  "status": "ok",
+  "result": {
+    "iteration": 2,
+    "work": "completed"
+  },
+  "startedAt": "2026-05-07T13:35:50.188Z",
+  "finishedAt": "2026-05-07T13:35:50.188Z",
+  "value": {
+    "iteration": 2,
+    "work": "completed"
+  }
+}

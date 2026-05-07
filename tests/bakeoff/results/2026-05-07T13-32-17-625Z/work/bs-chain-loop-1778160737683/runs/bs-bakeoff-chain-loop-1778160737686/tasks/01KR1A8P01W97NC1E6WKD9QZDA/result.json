@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KR1A8P01W97NC1E6WKD9QZDA",
+  "taskId": "worker",
+  "invocationKey": "bakeoff/chain-loop:S000004:worker",
+  "status": "ok",
+  "result": {
+    "iteration": 2,
+    "work": "completed"
+  },
+  "startedAt": "2026-05-07T13:33:22.205Z",
+  "finishedAt": "2026-05-07T13:33:22.205Z",
+  "value": {
+    "iteration": 2,
+    "work": "completed"
+  }
+}

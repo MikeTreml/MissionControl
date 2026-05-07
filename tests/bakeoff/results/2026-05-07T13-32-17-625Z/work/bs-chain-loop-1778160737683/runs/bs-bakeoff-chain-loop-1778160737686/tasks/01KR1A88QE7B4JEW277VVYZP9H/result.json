@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KR1A88QE7B4JEW277VVYZP9H",
+  "taskId": "reviewer",
+  "invocationKey": "bakeoff/chain-loop:S000003:reviewer",
+  "status": "ok",
+  "result": {
+    "approved": false,
+    "qualityPercent": 72
+  },
+  "startedAt": "2026-05-07T13:33:05.036Z",
+  "finishedAt": "2026-05-07T13:33:05.036Z",
+  "value": {
+    "approved": false,
+    "qualityPercent": 72
+  }
+}
